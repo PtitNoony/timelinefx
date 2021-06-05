@@ -40,7 +40,6 @@ public class MetadataParser {
     public static PictureInfo parseMetadata(File file) {
         String fileName = file.getName();
         String filePath = file.getAbsolutePath();
-        System.err.println(" FILE PATH " + fileName);
         String projectRelativePath = FileUtils.fromAbsoluteToProjectRelative(file);
         LocalDateTime creationDate = DEFAULT_DATE;
         int xRes = DEFAULT_RESOLUTION;
@@ -85,7 +84,7 @@ public class MetadataParser {
                 result = LocalDateTime.parse(tiffDate.getStringValue(), DT_PARSER);
             }
         } catch (final ImageReadException | DateTimeParseException e) {
-            Logger.getLogger(MetadataParser.class.getName()).log(Level.SEVERE, null, e);
+            LOG.log(Level.SEVERE, null, e);
         }
         return result;
     }

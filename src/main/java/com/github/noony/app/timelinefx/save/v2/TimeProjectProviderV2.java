@@ -178,7 +178,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                         parseFriezes(project, element);
                     }
                     case PICTURE_CHRONOLOGIES_GROUP -> {
-                        System.err.println(" FOUND :: PICTURE_CHRONOLOGIES_GROUP");
                         parsePictureChronologies(project, element);
                     }
                     default -> throw new UnsupportedOperationException("Unknown element :: " + element.getTagName());

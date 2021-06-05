@@ -58,6 +58,8 @@ public class GalleryTiles {
 
     public static final String TILE_CLICKED = "tileClicked";
 
+    private static final Logger LOG = Logger.getGlobal();
+
     private static final double IMAGE_RATIO = 0.9;
     private static final double IMAGE_WIDTH = TILE_WIDTH * IMAGE_RATIO;
     private static final double IMAGE_HEIGHT = TILE_HEIGHT * IMAGE_RATIO;
@@ -119,7 +121,7 @@ public class GalleryTiles {
                 imageStream = new FileInputStream(smallImageFilePath);
                 smallImage = new Image(imageStream);
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(GalleryTiles.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, null, ex);
             }
         } else {
             String largeImagePath = picture.getAbsolutePath();
@@ -129,7 +131,7 @@ public class GalleryTiles {
             try {
                 localUrl = pictureFile.toURI().toURL().toString();
             } catch (MalformedURLException ex) {
-                Logger.getLogger(GalleryTiles.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, null, ex);
             }
             Image largeImage = new Image(localUrl);
             Dimension largeDimension = new Dimension((int) largeImage.getWidth(), (int) largeImage.getHeight());

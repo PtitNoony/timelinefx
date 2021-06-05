@@ -19,7 +19,6 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.ProjectConfiguration;
-import com.github.noony.app.timelinefx.hmi.freemap.PortraitDrawing;
 import com.github.noony.app.timelinefx.utils.FileUtils;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -52,6 +51,8 @@ public class PersonCreationViewController implements Initializable {
     public static final String CANCEL_PERSON_CREATION = "cancelPersonCreation";
     public static final String PERSON_CREATED = "personCreated";
     public static final String PERSON_EDITIED = "personEdited";
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(PersonCreationViewController.this);
 
@@ -191,7 +192,6 @@ public class PersonCreationViewController implements Initializable {
 
     private void updatePersonPictureName(String pictureName) {
         personPictureName = pictureName;
-        System.err.println(" !! PICTURE NAME = " + pictureName);
         updateStatus();
     }
 
@@ -207,10 +207,8 @@ public class PersonCreationViewController implements Initializable {
     }
 
     private void updateImage() {
-        System.err.println("UPDATING IMAGE");
         // TODO improve to only update on change
         String picturePath = ProjectConfiguration.getProjectLocation() + File.separatorChar + personPictureName;
-        System.err.println(" >> picturePath=" + picturePath);
         File pictureFile = new File(picturePath);
         if (Files.exists(pictureFile.toPath())) {
             FileInputStream inputstream;
@@ -219,8 +217,7 @@ public class PersonCreationViewController implements Initializable {
                 image = new Image(inputstream);
                 imageView.setImage(image);
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(PortraitDrawing.class.getName()).log(Level.SEVERE, null, ex);
-//                throw new IllegalStateException();
+                LOG.log(Level.SEVERE, "Exception while updating image for {0} : {1}", new Object[]{personPictureName, ex});
             }
         } else {
             image = new Image(File.separatorChar + Person.DEFAULT_PICTURE_NAME);

@@ -147,13 +147,12 @@ public class PortraitDrawing extends AbstractFxScalableNode {
 
     private void updateImage() {
         try {
-            LOG.log(Level.INFO, "Trying to load file {0}{1}{2}", new Object[]{ProjectConfiguration.getProjectLocation(), File.separatorChar, portrait.getPerson().getPictureName()});
+            LOG.log(Level.FINE, "Trying to load file {0}{1}{2}", new Object[]{ProjectConfiguration.getProjectLocation(), File.separatorChar, portrait.getPerson().getPictureName()});
             FileInputStream inputstream = new FileInputStream(ProjectConfiguration.getProjectLocation() + File.separatorChar + portrait.getPerson().getPictureName());
             image = new Image(inputstream);
             imageView.setImage(image);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(PortraitDrawing.class.getName()).log(Level.SEVERE, " Ex :: {0}", ex);
-            ex.printStackTrace();
+            LOG.log(Level.SEVERE, " Ex :: {0}", new Object[]{ex});
             throw new IllegalStateException();
         }
     }

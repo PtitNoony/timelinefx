@@ -506,7 +506,6 @@ public final class FriezeFreeMap {
         propertyChangeSupport.firePropertyChange(LAYOUT_CHANGED, this, newDimension);
         places.values().forEach(p -> p.setWidth(getPlaceDrawingWidth()));
         //
-        System.err.println("TODO DEPENDING ON TIME MODE");
         displayTimeAsProportional();
     }
 

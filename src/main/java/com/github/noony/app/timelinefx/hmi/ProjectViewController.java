@@ -181,8 +181,8 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleFriezeCreation(ActionEvent event) {
         LOG.log(Level.INFO, "handleFriezeCreation {0}", event);
-        Frieze frieze = new Frieze(timeLineProject, "New Frieze");
-        timeLineProject.getStays().forEach(frieze::addStayPeriod);
+        Frieze frieze = new Frieze(timeLineProject, "New Frieze", timeLineProject.getStays());
+        System.err.println("TODO handle freize creation");
         // TODO use a property change instead ?
         timelineController.loadFreize(frieze);
     }

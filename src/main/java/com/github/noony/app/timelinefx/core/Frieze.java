@@ -58,7 +58,7 @@ public class Frieze {
     private long minDateWindow = minDate;
     private long maxDateWindow = maxDate;
 
-    public Frieze(TimeLineProject aProject, String friezeName) {
+    public Frieze(TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
 //        TODO use factory
         project = aProject;
         name = friezeName;
@@ -71,6 +71,12 @@ public class Frieze {
         //
         project.addFrieze(Frieze.this);
         project.addListener(Frieze.this::handleTimeLineProjectChanges);
+        // TODO : optimize
+        staysToConsider.forEach(Frieze.this::addStayPeriod);
+    }
+
+    public Frieze(TimeLineProject aProject, String friezeName) {
+        this(aProject, friezeName, Collections.EMPTY_LIST);
     }
 
     public String getName() {
@@ -119,6 +125,24 @@ public class Frieze {
             maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(0);
             //
             propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stay);
+        }
+    }
+
+    public void updatePlaceSelection(Place aPlace, boolean selected) {
+        if (selected) {
+            places.add(aPlace);
+            project.getStays().stream().filter(s -> s.getPlace() == aPlace & persons.contains(s.getPerson())).forEach(this::addStayPeriod);
+        } else {
+            removePlace(aPlace);
+        }
+    }
+
+    public void updatePersonSelection(Person aPerson, boolean selected) {
+        if (selected) {
+            persons.add(aPerson);
+            project.getStays().stream().filter(s -> s.getPerson() == aPerson).forEach(this::addStayPeriod);
+        } else {
+            removePerson(aPerson);
         }
     }
 
@@ -203,8 +227,11 @@ public class Frieze {
 
     private void handleTimeLineProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PERSON_ADDED, TimeLineProject.PLACE_ADDED, TimeLineProject.STAY_ADDED -> {
+            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PERSON_ADDED, TimeLineProject.PLACE_ADDED -> {
+                // Nothing to do
             }
+            case TimeLineProject.STAY_ADDED ->
+                addStayPeriod((StayPeriod) event.getNewValue());
             case TimeLineProject.STAY_REMOVED ->
                 removeStay((StayPeriod) event.getNewValue());
             case TimeLineProject.PLACE_REMOVED -> {
@@ -218,7 +245,6 @@ public class Frieze {
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }
-        // ignore
     }
 
     private void removePlace(Place placeRemoved) {

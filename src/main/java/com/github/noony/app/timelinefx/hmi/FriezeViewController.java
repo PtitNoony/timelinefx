@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
+import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
@@ -31,9 +32,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +45,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.CheckTreeView;
@@ -48,6 +53,9 @@ import org.controlsfx.control.CheckTreeView;
 public class FriezeViewController implements Initializable {
 
     private static final Logger LOG = Logger.getGlobal();
+
+    @FXML
+    private TextField nameField;
 
     @FXML
     private CheckListView<Person> personCheckListView;
@@ -61,18 +69,22 @@ public class FriezeViewController implements Initializable {
     private TimeLineProject project;
     //
     private PropertyChangeListener projectListener;
+    private PropertyChangeListener placeCheckTreeItemChangeListener;
     //
     private AnchorPane spatialViewRootPane;
     private AnchorPane peopleViewRootPane;
 
     private FriezePlaceViewController spatialViewController;
     private FriezePeopleViewController peopleViewController;
+    //
+    private List<CheckBoxTreeItem<Place>> allTreeItems = new LinkedList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         createSpatialView();
         createPeopleView();
         projectListener = this::handleProjectChanges;
+        placeCheckTreeItemChangeListener = this::handlePlaceCheckTreeItemChanges;
     }
 
     @FXML
@@ -83,13 +95,13 @@ public class FriezeViewController implements Initializable {
     }
 
     protected void setFrieze(Frieze aFrieze) {
-//        TODO CLEAN
         //
         frieze = aFrieze;
         if (frieze != null) {
             project = frieze.getProject();
             project.addListener(projectListener);
         }
+        updatePropertiesTab();
         updatePersonTab();
         updatePlacesTab();
         //
@@ -99,29 +111,61 @@ public class FriezeViewController implements Initializable {
         frieze.getFriezeFreeMaps().forEach(this::createFreeMapView);
     }
 
+    private void updatePropertiesTab() {
+        nameField.setText(frieze.getName());
+    }
+
     private void updatePersonTab() {
-        personCheckListView.getItems().setAll(frieze.getPersons());
-        // TODO : find proper check model
-        personCheckListView.getCheckModel().checkAll();
+        List<Person> persons = frieze.getPersons();
+        //TODO remove old listeners
+        personCheckListView.getItems().setAll(PersonFactory.getPERSONS());
+        // Not Optimal...
+        persons.forEach(p -> personCheckListView.getCheckModel().check(p));
+        personCheckListView.getCheckModel().getCheckedItems().addListener((ListChangeListener.Change<? extends Person> change) -> {
+            while (change.next()) {
+                change.getAddedSubList().forEach(p -> frieze.updatePersonSelection(p, true));
+                change.getRemoved().forEach(p -> frieze.updatePersonSelection(p, false));
+            }
+        });
     }
 
     private void updatePlacesTab() {
+        // TODO remove listeners
+        allTreeItems = new LinkedList<>();
         var rootPlaceItem = createRootPlaceItem();
-        frieze.getPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
+        PlaceFactory.getRootPlaces().forEach(p -> {
+            rootPlaceItem.getChildren().add(createTreeItemPlace(p));
+            allTreeItems.add(rootPlaceItem);
+        });
         placesCheckTreeView.setRoot(rootPlaceItem);
         rootPlaceItem.setExpanded(true);
-        // TODO : find proper check model
+        //Not Optimal...
+        List<Place> placesInFrieze = frieze.getPlaces();
+        allTreeItems.forEach(treeItem -> treeItem.setSelected(placesInFrieze.contains(treeItem.getValue())));
     }
 
     private CheckBoxTreeItem<Place> createRootPlaceItem() {
         var rootPlace = PlaceFactory.createPlace("Universe", PlaceLevel.UNIVERSE, null);
         var rootPlaceItem = new CheckBoxTreeItem<>(rootPlace);
+        rootPlaceItem.setIndependent(true);
+        allTreeItems.add(rootPlaceItem);
+        rootPlaceItem.selectedProperty().addListener((ov, t, t1) -> {
+            frieze.updatePlaceSelection(rootPlace, t1);
+        });
         return rootPlaceItem;
     }
 
     private CheckBoxTreeItem<Place> createTreeItemPlace(Place place) {
         var placeItem = new CheckBoxTreeItem<>(place);
+        placeItem.setIndependent(true);
         placeItem.setExpanded(true);
+        allTreeItems.add(placeItem);
+        //
+        placeItem.selectedProperty().addListener((ov, t, t1) -> {
+            frieze.updatePlaceSelection(place, t1);
+        });
+        //
+        place.getPlaces().forEach(childPlace -> placeItem.getChildren().add(createTreeItemPlace(childPlace)));
         return placeItem;
     }
 
@@ -179,6 +223,15 @@ public class FriezeViewController implements Initializable {
             default:
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }
+    }
+
+    private void handlePlaceCheckTreeItemChanges(PropertyChangeEvent event) {
+//        switch(event.getPropertyName()){
+//            case CheckBoxTreeItem.checkBoxSelectionChangedEvent().getName():
+//                break;
+//        }
+        System.err.println(event);
+
     }
 
 }

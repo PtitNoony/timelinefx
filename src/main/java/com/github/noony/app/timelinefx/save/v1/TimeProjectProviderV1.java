@@ -330,13 +330,12 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
     private Frieze parseFrieze(TimeLineProject project, Element friezeElement) {
         // <frieze name="SW 1-2">
         String name = friezeElement.getAttribute(NAME_ATR);
-        Frieze frieze = new Frieze(project, name);
         NodeList stayGroups = friezeElement.getElementsByTagName(STAYS_REF_GROUP);
+        List<StayPeriod> stays = parseStaysInFreize((Element) stayGroups.item(0));
+        Frieze frieze = new Frieze(project, name,stays);
         if (stayGroups.getLength() != 1) {
             throw new IllegalStateException("Wrong number of STAYS_GROUP : " + stayGroups.getLength());
         }
-        List<StayPeriod> stays = parseStaysInFreize((Element) stayGroups.item(0));
-        stays.forEach(frieze::addStayPeriod);
         //
         NodeList freemapGroups = friezeElement.getElementsByTagName(FREEMAPS_GROUP);
         if (freemapGroups.getLength() != 1) {
@@ -554,7 +553,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
             }
         }
     }
-    
+
     private static Element createPlaceElement(Document doc, Place place, String fromPlace) {
         LOG.log(Level.FINE, "> Creating place {0} from {1}", new Object[]{place.getName(), fromPlace});
         Element placeElement = doc.createElement(PLACE_ELEMENT);

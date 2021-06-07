@@ -68,8 +68,6 @@ public class FreeMapViewController implements Initializable {
     private ColorPicker handleColorPicker;
     @FXML
     private Button linearTimeButton, constantTimeButton;
-//    @FXML
-//    private TextArea textArea;
 
     private FriezeFreeFormDrawing friezeFreeFormDrawing;
     private Frieze frieze;
@@ -133,7 +131,6 @@ public class FreeMapViewController implements Initializable {
             } else {
                 var fontSize = Double.parseDouble(t1);
                 if (friezeFreeMap != null) {
-                    System.err.println(" :: setting font size :: " + fontSize);
                     friezeFreeMap.setFontSize(fontSize);
                 }
             }
@@ -215,15 +212,12 @@ public class FreeMapViewController implements Initializable {
         widthField.setText(Double.toString(friezeFreeMap.getWidth()));
         heightField.setText(Double.toString(friezeFreeMap.getHeight()));
         plotWidthField.setText(Double.toString(friezeFreeMap.getPlotSize()));
-        // TEMP FIXs
-//        portraitRadiusField.setText(Double.toString(friezeFreeMap.getPortraitRadius()));
         fontSizeField.setText(Double.toString(friezeFreeMap.getFontSize()));
 
     }
 
     private void handleSelectedItemChange(PropertyChangeEvent event) {
         Selectable selectable = (Selectable) event.getOldValue();
-        System.err.println("> " + selectable.getInfo());
     }
 
     private void createDrawing() {
@@ -231,11 +225,6 @@ public class FreeMapViewController implements Initializable {
         friezeFreeFormDrawing.addPropertyChangeListener(this::handleSelectedItemChange);
         Node node = friezeFreeFormDrawing.getNode();
         viewScrollPane.setContent(node);
-//        viewRootPane.getChildren().add(node);
-//        AnchorPane.setBottomAnchor(node, 0.0);
-//        AnchorPane.setTopAnchor(node, 0.0);
-//        AnchorPane.setLeftAnchor(node, 0.0);
-//        AnchorPane.setRightAnchor(node, 0.0);
     }
 
 }

@@ -385,7 +385,7 @@ public final class FriezeFreeMap {
     }
 
     public void displayTimeAsEqualSplit() {
-        System.err.println("TODO");
+        throw new UnsupportedOperationException("displayTimeAsEqualSplit :: TODO");
     }
 
     public void setPortraitRadius(double newPortraitRadius) {

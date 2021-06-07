@@ -16,13 +16,13 @@
  */
 package com.github.noony.app.timelinefx.examples;
 
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
+import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
@@ -50,20 +50,20 @@ public class TestExample {
         //
         StayPeriodSimpleTime stay1_A = StayFactory.createStayPeriodSimpleTime(PERSON_A, 0, 20, PLACE_A);
         StayPeriodSimpleTime stay2_A = StayFactory.createStayPeriodSimpleTime(PERSON_A, 21, 40, PLACE_B);
-        frieze.addStayPeriod(stay1_A);
-        frieze.addStayPeriod(stay2_A);
+        timeLineProject.addStay(stay1_A);
+        timeLineProject.addStay(stay2_A);
         //
         StayPeriodSimpleTime stay1_B = StayFactory.createStayPeriodSimpleTime(PERSON_B, 0, 25, PLACE_A);
         StayPeriodSimpleTime stay2_B = StayFactory.createStayPeriodSimpleTime(PERSON_B, 26, 45, PLACE_B);
-//        frieze.addStayPeriod(stay1_B);
-//        frieze.addStayPeriod(stay2_B);
+//        timeLineProject.addStay(stay1_B);
+//        timeLineProject.addStay(stay2_B);
         //
         StayPeriodSimpleTime stay1_C = StayFactory.createStayPeriodSimpleTime(PERSON_C, 0, 15, PLACE_B);
         StayPeriodSimpleTime stay2_C = StayFactory.createStayPeriodSimpleTime(PERSON_C, 16, 30, PLACE_A);
         StayPeriodSimpleTime stay3_C = StayFactory.createStayPeriodSimpleTime(PERSON_C, 31, 40, PLACE_B);
-//        frieze.addStayPeriod(stay1_C);
-//        frieze.addStayPeriod(stay2_C);
-//        frieze.addStayPeriod(stay3_C);
+//        timeLineProject.addStay(stay1_C);
+//        timeLineProject.addStay(stay2_C);
+//        timeLineProject.addStay(stay3_C);
 
 //        timeLineProject.addFrieze(frieze);
         return timeLineProject;

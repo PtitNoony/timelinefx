@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.core;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import javafx.scene.paint.Color;
@@ -33,6 +34,8 @@ public class Place extends FriezeObject {
     public static final String CONTENT_CHANGED = "contentChanged";
 
     public static final Color DEFAULT_COLOR = Color.GREY;
+
+    public static final Comparator<Place> COMPARATOR = (p1, p2) -> p1.getName().compareTo(p2.getName());
 
     private final List<Place> places;
     private String name;

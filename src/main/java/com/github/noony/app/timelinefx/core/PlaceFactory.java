@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.core;
 
 import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -36,16 +37,23 @@ public class PlaceFactory {
 
     private static final Map<Long, Place> PLACES = new HashMap<>();
 
+    private static final List<Place> ROOT_PLACES = new LinkedList<>();
+
     private PlaceFactory() {
         // private utility constructor
     }
 
     public static final void reset() {
         PLACES.clear();
+        ROOT_PLACES.clear();
     }
 
     public static List<Place> getPlaces() {
         return PLACES.values().stream().collect(Collectors.toList());
+    }
+
+    public static List<Place> getRootPlaces() {
+        return ROOT_PLACES.stream().collect(Collectors.toList());
     }
 
     public static Place getPlace(long placeID) {
@@ -57,6 +65,9 @@ public class PlaceFactory {
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
         var place = new Place(FriezeObjectFactory.getNextID(), placeName, placeLevel, trueParentPlace);
         PLACES.put(place.getId(), place);
+        if (place.isRootPlace()) {
+            addRootPlace(place);
+        }
         FriezeObjectFactory.addObject(place);
         return place;
     }
@@ -66,6 +77,9 @@ public class PlaceFactory {
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
         var place = new Place(FriezeObjectFactory.getNextID(), placeName, placeLevel, trueParentPlace, color);
         PLACES.put(place.getId(), place);
+        if (place.isRootPlace()) {
+            addRootPlace(place);
+        }
         FriezeObjectFactory.addObject(place);
         return place;
     }
@@ -78,7 +92,15 @@ public class PlaceFactory {
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
         var place = new Place(id, placeName, placeLevel, trueParentPlace, color);
         PLACES.put(place.getId(), place);
+        if (place.isRootPlace()) {
+            addRootPlace(place);
+        }
         FriezeObjectFactory.addObject(place);
         return place;
+    }
+
+    private static void addRootPlace(Place aRootPlace) {
+        ROOT_PLACES.add(aRootPlace);
+        ROOT_PLACES.sort(Place.COMPARATOR);
     }
 }

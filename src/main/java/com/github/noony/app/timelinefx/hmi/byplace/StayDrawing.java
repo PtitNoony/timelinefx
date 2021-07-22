@@ -18,7 +18,6 @@ package com.github.noony.app.timelinefx.hmi.byplace;
 
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import java.beans.PropertyChangeEvent;
-import javafx.scene.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
@@ -41,8 +40,6 @@ public class StayDrawing {
         stayPeriod = stay;
         line = new Line();
         line.setStroke(stayPeriod.getPerson().getColor());
-//        line.setFill(stayPeriod.getPerson().getColor());
-//        line.set
         line.setStrokeWidth(STROKE_WIDTH);
         line.setStrokeType(StrokeType.CENTERED);
         line.setStrokeLineCap(StrokeLineCap.BUTT);
@@ -57,7 +54,7 @@ public class StayDrawing {
         });
     }
 
-    public Node getLine() {
+    public Line getLine() {
         return line;
     }
 

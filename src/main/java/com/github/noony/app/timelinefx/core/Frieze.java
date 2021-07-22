@@ -72,7 +72,7 @@ public class Frieze {
         project.addFrieze(Frieze.this);
         project.addListener(Frieze.this::handleTimeLineProjectChanges);
         // TODO : optimize
-        staysToConsider.forEach(Frieze.this::addStayPeriod);
+        staysToConsider.stream().forEachOrdered(Frieze.this::addStayPeriod);
     }
 
     public Frieze(TimeLineProject aProject, String friezeName) {
@@ -87,12 +87,31 @@ public class Frieze {
         return project;
     }
 
+    public void addPerson(Person aPerson) {
+        if (!persons.contains(aPerson)) {
+            persons.add(aPerson);
+            var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).collect(Collectors.toList());
+            var tmpPlaces = stays.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList());
+            tmpPlaces.forEach(place -> {
+                var tempPersons = personsAtPlaces.get(place);
+                if (tempPersons == null) {
+                    tempPersons = new LinkedList<>();
+                    personsAtPlaces.put(place, tempPersons);
+                }
+                tempPersons.add(aPerson);
+            });
+            // notify place added
+            // may be needed before adding stays for some variable updates
+            propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
+            stays.forEach(this::addStayPeriod);
+        }
+    }
+
     public void addStayPeriod(StayPeriod stay) {
         if (!stayPeriods.contains(stay)) {
             stayPeriods.add(stay);
             minDate = Math.min(minDate, stay.getStartDate());
             maxDate = Math.max(maxDate, stay.getEndDate());
-            propertyChangeSupport.firePropertyChange(STAY_ADDED, this, stay);
             // Should this code be in the TimeLineProject Class ??
             Place place = stay.getPlace();
             Person person = stay.getPerson();
@@ -113,6 +132,7 @@ public class Frieze {
             } else if (!personsAtPlaces.get(stay.getPlace()).contains(stay.getPerson())) {
                 personsAtPlaces.get(stay.getPlace()).add(stay.getPerson());
             }
+            propertyChangeSupport.firePropertyChange(STAY_ADDED, this, stay);
         }
     }
 
@@ -130,7 +150,9 @@ public class Frieze {
 
     public void updatePlaceSelection(Place aPlace, boolean selected) {
         if (selected) {
-            places.add(aPlace);
+            if (!places.contains(aPlace)) {
+                places.add(aPlace);
+            }
             project.getStays().stream().filter(s -> s.getPlace() == aPlace & persons.contains(s.getPerson())).forEach(this::addStayPeriod);
         } else {
             removePlace(aPlace);
@@ -163,6 +185,10 @@ public class Frieze {
 
     public List<StayPeriod> getStayPeriods(Person person) {
         return stayPeriods.stream().filter(s -> s.getPerson().equals(person)).collect(Collectors.toList());
+    }
+
+    public List<StayPeriod> getStayPeriods(Place aPlace) {
+        return stayPeriods.stream().filter(s -> s.getPlace().equals(aPlace)).collect(Collectors.toList());
     }
 
     public int getStayIndex(StayPeriod stayPeriod) {
@@ -227,9 +253,11 @@ public class Frieze {
 
     private void handleTimeLineProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PERSON_ADDED, TimeLineProject.PLACE_ADDED -> {
+            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED,  TimeLineProject.PLACE_ADDED -> {
                 // Nothing to do
             }
+            case TimeLineProject.PERSON_ADDED ->
+                addPerson((Person) event.getNewValue());
             case TimeLineProject.STAY_ADDED ->
                 addStayPeriod((StayPeriod) event.getNewValue());
             case TimeLineProject.STAY_REMOVED ->

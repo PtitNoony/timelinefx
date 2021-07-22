@@ -45,8 +45,6 @@ public class FriezeSpaceLinearDrawing {
     private final Rectangle background;
 
     private final Map<Place, PlaceDrawing> placesAndDrawings;
-
-//    private final List<Place> visiblePlaces;
     //
     private double width = 800;
     private double height = 600;
@@ -54,13 +52,14 @@ public class FriezeSpaceLinearDrawing {
     // temp since no zoom
     private double timeWindowWidth;
     private double timeWindowX;
+    //
+    private double timeRatio = 1;
 
     public FriezeSpaceLinearDrawing(Frieze aFrieze) {
         frieze = aFrieze;
         frieze.addListener(FriezeSpaceLinearDrawing.this::handleFriezeChange);
         //
         placesAndDrawings = new HashMap<>();
-//        visiblePlaces = new LinkedList<>();
         //
         mainNode = new Group();
         placesGroup = new VBox();
@@ -80,14 +79,19 @@ public class FriezeSpaceLinearDrawing {
         });
     }
 
-    private void addPlaceDrawing(Place place) {
-        PlaceDrawing placeDrawing = new PlaceDrawing(place, frieze);
-        placesGroup.getChildren().add(placeDrawing.getNode());
-        placesAndDrawings.put(place, placeDrawing);
-        runLater(() -> {
-            updateStaysWidth();
-            updateStaysHeight();
-        });
+    private PlaceDrawing addPlaceDrawing(Place place) {
+        if (!frieze.getStayPeriods(place).isEmpty()) {
+            var placeDrawing = new PlaceDrawing(place, frieze);
+            placesGroup.getChildren().add(placeDrawing.getNode());
+            placesAndDrawings.put(place, placeDrawing);
+            runLater(() -> {
+                placeDrawing.setWidth(placeWith);
+                updateStaysWidth();
+                updateStaysHeight();
+            });
+            return placeDrawing;
+        }
+        return null;
     }
 
     private void removePlaceDrawing(Place deletedPlace) {
@@ -100,6 +104,16 @@ public class FriezeSpaceLinearDrawing {
                 updateStaysHeight();
             });
         }
+    }
+
+    private void addStayDrawing(StayPeriod stayAdded) {
+        Place place = stayAdded.getPlace();
+        PlaceDrawing placeDrawing = placesAndDrawings.get(place);
+        if (placeDrawing == null) {
+            placeDrawing = addPlaceDrawing(place);
+        }
+        placeDrawing.addStay(stayAdded);
+        updateStaysHeight();
     }
 
     private void removeStayDrawing(StayPeriod stayRemoved) {
@@ -134,7 +148,8 @@ public class FriezeSpaceLinearDrawing {
     private void updateStaysWidth() {
         // simple for now
         double ratio = timeWindowWidth / (frieze.getMaxDateWindow() - frieze.getMinDateWindow());
-        placesAndDrawings.values().forEach(p -> p.updateDateRatio(frieze.getMinDateWindow(), ratio));
+        timeRatio = ratio;
+        placesAndDrawings.values().forEach(p -> p.updateDateRatio(frieze.getMinDateWindow(), timeRatio));
     }
 
     private void updateStaysHeight() {
@@ -142,31 +157,32 @@ public class FriezeSpaceLinearDrawing {
 
     private void handleFriezeChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Frieze.DATE_WINDOW_CHANGED:
+            case Frieze.DATE_WINDOW_CHANGED ->
                 updateStaysWidth();
-                break;
-            case Frieze.STAY_ADDED:
-                System.err.println("TODO :: handle STAY_ADDED in FriezeSpaceLinearDrawing");
-                break;
-            case Frieze.PERSON_ADDED:
+            case Frieze.STAY_ADDED -> {
+                StayPeriod stayAdded = (StayPeriod) event.getNewValue();
+                addStayDrawing(stayAdded);
+            }
+            case Frieze.PERSON_ADDED -> {
                 // nothing to do
-                break;
-            case Frieze.PLACE_ADDED:
+                // the frieze is in charge of adding itself the stays
+            }
+            case Frieze.PLACE_ADDED -> {
                 Place newPlace = (Place) event.getNewValue();
                 addPlaceDrawing(newPlace);
-                break;
-            case Frieze.STAY_REMOVED:
+            }
+            case Frieze.STAY_REMOVED -> {
                 StayPeriod stayRemoved = (StayPeriod) event.getNewValue();
                 removeStayDrawing(stayRemoved);
-                break;
-            case Frieze.PERSON_REMOVED:
-                System.err.println("TODO :: handle PERSON_REMOVED in FriezeSpaceLinearDrawing");
-                break;
-            case Frieze.PLACE_REMOVED:
+            }
+            case Frieze.PERSON_REMOVED -> {
+                // Nothing to do
+            }
+            case Frieze.PLACE_REMOVED -> {
                 Place placeRemoved = (Place) event.getNewValue();
                 removePlaceDrawing(placeRemoved);
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
         }
     }

@@ -41,7 +41,7 @@ public class TestExample {
         Place placeA = PlaceFactory.createPlace("PLACE_A", PlaceLevel.INTER_SYSTEM_SPACE, galaxy, Color.LIGHTSTEELBLUE);
         Place placeB = PlaceFactory.createPlace("PLACE_B", PlaceLevel.SYSTEM, galaxy, Color.LIGHTGREEN);
         //
-        Person personA = PersonFactory.createPerson("PERSON_A", Color.AQUAMARINE);
+        Person personA = PersonFactory.createPerson("PERSON_A", Color.RED);
         Person personB = PersonFactory.createPerson("PERSON_B", Color.AQUA);
         Person personC = PersonFactory.createPerson("PERSON_C", Color.CHARTREUSE);
         Frieze frieze = new Frieze(timeLineProject, "Test 1");

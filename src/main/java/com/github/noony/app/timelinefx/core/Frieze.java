@@ -161,8 +161,7 @@ public class Frieze {
 
     public void updatePersonSelection(Person aPerson, boolean selected) {
         if (selected) {
-            persons.add(aPerson);
-            project.getStays().stream().filter(s -> s.getPerson() == aPerson).forEach(this::addStayPeriod);
+            addPerson(aPerson);
         } else {
             removePerson(aPerson);
         }

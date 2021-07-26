@@ -20,6 +20,7 @@ import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.drawings.Drawing;
 import com.github.noony.app.timelinefx.drawings.FriezeView;
+import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.geometry.Pos;
@@ -54,6 +55,9 @@ public class PersonDrawing extends Drawing {
     private final Line nameSeparationLine;
     private final Group placesGroup;
     private final Rectangle placesGroupClip;
+    //
+    private long currentMinDate = 0L;
+    private double currentRatio = 1;
 
     public PersonDrawing(FriezeView aFriezeView, Person aPerson) {
         super();
@@ -111,20 +115,46 @@ public class PersonDrawing extends Drawing {
         //
         placesGroup.setTranslateX(DEFAULT_NAME_WIDTH + DEFAULT_SEPARATION);
         //
-        friezeView.getFrieze().getStayPeriods(person).stream().map(stay -> {
-            PlaceStayDrawing stayDrawing = new PlaceStayDrawing(stay);
-            staysAndDrawings.put(stay, stayDrawing);
-            return stayDrawing;
-        }).forEachOrdered(stayDrawing -> placesGroup.getChildren().add(stayDrawing.getNode()));
-
+        friezeView.getFrieze().getStayPeriods(person).stream().forEachOrdered(this::addStay);
+        //
         placesGroupClip.setWidth(getWidth() - DEFAULT_NAME_WIDTH - DEFAULT_SEPARATION);
         placesGroupClip.setHeight(newHeight);
+        //
+        person.addPropertyChangeListener(this::handlePersonEvents);
     }
 
-//    private void updateLayout() {
-//    }
     protected void updateDateRatio(long minDate, double ratio) {
-        staysAndDrawings.values().forEach(s -> s.updateDateRatio(minDate, ratio));
+        currentMinDate = minDate;
+        currentRatio = ratio;
+        staysAndDrawings.values().forEach(s -> s.updateDateRatio(currentMinDate, currentRatio));
+    }
+
+    protected void addStay(StayPeriod stay) {
+        PlaceStayDrawing stayDrawing = new PlaceStayDrawing(stay);
+        staysAndDrawings.put(stay, stayDrawing);
+        stayDrawing.updateDateRatio(currentMinDate, currentRatio);
+        placesGroup.getChildren().add(stayDrawing.getNode());
+    }
+
+    protected void removeStay(StayPeriod stay) {
+        PlaceStayDrawing stayDrawing = staysAndDrawings.remove(stay);
+        if (stayDrawing != null) {
+            placesGroup.getChildren().remove(stayDrawing.getNode());
+        }
+    }
+
+    private void handlePersonEvents(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case Person.VISIBILITY_CHANGED -> {
+                System.err.println(" TODO handle person visibility changed");
+            }
+            case Person.SELECTION_CHANGED ->
+                System.err.println(" Person.SELECTION_CHANGED :: TODO");
+            case Person.PICTURE_CHANGED ->
+                System.err.println(" Person.PICTURE_CHANGED :: TODO");
+            default ->
+                throw new UnsupportedOperationException(event.getPropertyName());
+        }
     }
 
     @Override

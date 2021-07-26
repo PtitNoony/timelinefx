@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.hmi.byperson;
 
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
+import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.drawings.FriezeView;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
@@ -94,6 +95,24 @@ public class FriezePeopleLinearDrawing implements FriezeView {
         personsAndDrawings.put(person, personDrawing);
         updateStaysWidth();
         updateStaysHeight();
+        setWidth(width);
+        setHeight(height);
+    }
+
+    private void removePersonDrawing(final Person person) {
+        visiblePersons.remove(person);
+        PersonDrawing personDrawing = personsAndDrawings.get(person);
+        person.removePropertyChangeListener(this::handlePersonChange);
+        if (personDrawing != null) {
+            if (person.isVisible()) {
+                personsGroup.getChildren().remove(personDrawing.getNode());
+            }
+            personsAndDrawings.remove(person);
+        }
+        updateStaysWidth();
+        updateStaysHeight();
+        setWidth(width);
+        setHeight(height);
     }
 
     public Node getNode() {
@@ -134,8 +153,6 @@ public class FriezePeopleLinearDrawing implements FriezeView {
         // simple for now
         double ratio = timeWindowWidth / (frieze.getMaxDateWindow() - frieze.getMinDateWindow());
         personsAndDrawings.values().forEach(personDrawing -> personDrawing.updateDateRatio(frieze.getMinDateWindow(), ratio));
-        //TODO
-//        staysAndDrawings.values().forEach(s -> s.updateDateRatio(frieze.getMinDateWindow(), ratio));
     }
 
     private void updateStaysHeight() {
@@ -148,39 +165,47 @@ public class FriezePeopleLinearDrawing implements FriezeView {
         }
     }
 
+    private void addStayPeriod(StayPeriod aStayPeriod) {
+        PersonDrawing personDrawing = personsAndDrawings.get(aStayPeriod.getPerson());
+        if (personDrawing != null) {
+            personDrawing.addStay(aStayPeriod);
+        }
+    }
+
+    private void removeStayPeriod(StayPeriod aStayPeriod) {
+        PersonDrawing personDrawing = personsAndDrawings.get(aStayPeriod.getPerson());
+        if (personDrawing != null) {
+            personDrawing.removeStay(aStayPeriod);
+        }
+    }
+
     private void handleFriezeChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Frieze.DATE_WINDOW_CHANGED:
+            case Frieze.DATE_WINDOW_CHANGED ->
                 updateStaysWidth();
-                break;
-            case Frieze.STAY_ADDED:
-                System.err.println("TODO :: handle STAY_ADDED in FriezePeopleLinearDrawing");
-
-                break;
-            case Frieze.PERSON_ADDED:
-                System.err.println("TODO :: handle PERSON_ADDED in FriezePeopleLinearDrawing");
-
-                break;
-            case Frieze.PLACE_ADDED:
-                System.err.println("TODO :: handle PERSON_ADDED in FriezePeopleLinearDrawing");
-                break;
-            case Frieze.STAY_REMOVED:
-                System.err.println("TODO :: handle STAY_REMOVED in FriezePeopleLinearDrawing");
-                break;
-            case Frieze.PERSON_REMOVED:
-                System.err.println("TODO :: handle PERSON_REMOVED in FriezePeopleLinearDrawing");
-                break;
-            case Frieze.PLACE_REMOVED:
-                System.err.println("TODO :: handle PLACE_REMOVED in FriezePeopleLinearDrawing");
-                break;
-            default:
+            case Frieze.STAY_ADDED -> {
+                StayPeriod stay = (StayPeriod) event.getNewValue();
+                addStayPeriod(stay);
+            }
+            case Frieze.PERSON_ADDED ->
+                addPersonDrawing((Person) event.getNewValue());
+            case Frieze.PLACE_ADDED,Frieze.PLACE_REMOVED -> {
+                // nothing to do, frieze handles stay add/remove
+            }
+            case Frieze.STAY_REMOVED -> {
+                StayPeriod stayToRemove = (StayPeriod) event.getNewValue();
+                removeStayPeriod(stayToRemove);
+            }
+            case Frieze.PERSON_REMOVED ->
+                removePersonDrawing((Person) event.getNewValue());
+            default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
         }
     }
 
     private void handlePersonChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Person.VISIBILITY_CHANGED:
+            case Person.VISIBILITY_CHANGED -> {
                 Person p = (Person) event.getOldValue();
                 PersonDrawing personDrawing = personsAndDrawings.get(p);
                 if (p.isVisible()) {
@@ -191,14 +216,12 @@ public class FriezePeopleLinearDrawing implements FriezeView {
                     personsGroup.getChildren().remove(personDrawing.getNode());
                 }
                 runLater(() -> updateStaysHeight());
-                break;
-            case Person.SELECTION_CHANGED:
+            }
+            case Person.SELECTION_CHANGED ->
                 System.err.println(" Person.SELECTION_CHANGED :: TODO in FriezePeopleLinearDrawing");
-                break;
-            case Person.PICTURE_CHANGED:
+            case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO in FriezePeopleLinearDrawing");
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }

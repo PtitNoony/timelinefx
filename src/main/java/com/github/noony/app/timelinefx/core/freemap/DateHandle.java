@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.core.freemap;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javafx.geometry.Point2D;
@@ -57,8 +58,14 @@ public class DateHandle {
         return date;
     }
 
+    public List<Plot> getPlots() {
+        return Collections.unmodifiableList(plots);
+    }
+
     public void addPlot(Plot plot) {
         plots.add(plot);
+        // TODO : check if really needed
+        plot.setX(xPos);
         plot.addPropertyChangeListener(this::handlePlotUpdate);
     }
 

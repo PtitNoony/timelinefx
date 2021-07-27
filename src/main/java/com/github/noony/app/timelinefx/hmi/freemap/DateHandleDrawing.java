@@ -42,23 +42,18 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
     private final Polygon handle;
     //
     private double lastXmouse;
-    private double lastYmouse;
     private double currentXmouse;
-    private double currentYmouse;
-    //
 
     public DateHandleDrawing(DateHandle aDateHandle, double aScale) {
         super();
         dateHandle = aDateHandle;
         dateHandle.addListener(DateHandleDrawing.this::handleUpdate);
         switch (dateHandle.getTimeType()) {
-            case START:
+            case START ->
                 orientation = ORIENTATION.DOWN;
-                break;
-            case END:
+            case END ->
                 orientation = ORIENTATION.UP;
-                break;
-            default:
+            default ->
                 throw new IllegalMonitorStateException();
         }
         handle = new Polygon();
@@ -84,7 +79,6 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
 
     public void setX(double xPos) {
         setNodeTranslateX(xPos * getScale());
-        dateHandle.setX(xPos);
     }
 
     public void setY(double yPos) {
@@ -100,43 +94,34 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         var size = SIZE * getScale();
         var halfSize = size / 2.0;
         Double[] points;
-        switch (orientation) {
-            case DOWN:
-                points = new Double[]{0.0, 0.0, -halfSize, -size, halfSize, -size};
-                break;
-            case UP:
-                points = new Double[]{0.0, 0.0, -halfSize, size, halfSize, size};
-                break;
-            default:
-                points = new Double[]{-halfSize, size, halfSize, size, halfSize, -size, -halfSize, -size};
-                break;
-        }
+        points = switch (orientation) {
+            case DOWN ->
+                new Double[]{0.0, 0.0, -halfSize, -size, halfSize, -size};
+            case UP ->
+                new Double[]{0.0, 0.0, -halfSize, size, halfSize, size};
+            default ->
+                new Double[]{-halfSize, size, halfSize, size, halfSize, -size, -halfSize, -size};
+        };
         return points;
     }
 
     private void initInteractivity() {
         handle.setOnMousePressed(e -> {
             lastXmouse = e.getSceneX();
-            lastYmouse = e.getSceneY();
         });
         handle.setOnMouseDragged(e -> {
             currentXmouse = e.getSceneX();
-            currentYmouse = e.getSceneY();
-            //
-//            System.err.println("todo fix");
-            setX(getNode().getTranslateX() + currentXmouse - lastXmouse);
+            dateHandle.setX(getNode().getTranslateX() + currentXmouse - lastXmouse);
             //
             lastXmouse = currentXmouse;
-            lastYmouse = currentYmouse;
         });
     }
 
     private void handleUpdate(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case DateHandle.POSITION_CHANGED:
+            case DateHandle.POSITION_CHANGED ->
                 setX((double) event.getOldValue());
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }

@@ -16,9 +16,12 @@
  */
 package com.github.noony.app.timelinefx.hmi.freemap;
 
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.PersonInitLink;
+import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.CubicCurve;
@@ -35,26 +38,29 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
 
     //TODO implement request replace in parent when shape is changed
     private final PersonInitLink link;
-    //
-    private final RectanglePlot plotDrawing;
-    private final PortraitDrawing portraitDrawing;
+    private final FriezeFreeFormDrawing friezeFreeFormDrawing;
+    private final PersonDrawing personDrawing;
     //
     private final CubicCurve cubicCurve;
     //
+    private PortraitDrawing portraitDrawing;
+    private Plot firstPlot;
+    private RectanglePlot plotDrawing;
     private double scale = 1.0;
 
-    public PersonInitLinkDrawing(PersonInitLink personInitLink, FriezeFreeFormDrawing freeFormDrawing) {
+    public PersonInitLinkDrawing(PersonInitLink personInitLink, FriezeFreeFormDrawing freeFormDrawing, PersonDrawing aPersonDrawing) {
         link = personInitLink;
+        link.addListener(PersonInitLinkDrawing.this::handlePersonLinkChange);
+        friezeFreeFormDrawing = freeFormDrawing;
+        personDrawing = aPersonDrawing;
         cubicCurve = new CubicCurve();
         cubicCurve.setStroke(link.getPerson().getColor());
-        plotDrawing = freeFormDrawing.getPlotDrawing(link.getFirstPlot());
-        plotDrawing.getPlot().addPropertyChangeListener(PersonInitLinkDrawing.this::handleChange);
-        portraitDrawing = freeFormDrawing.getPortrait(link.getPerson());
-        portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
+        updatePortraitConfiguration();
         cubicCurve.setStrokeType(StrokeType.CENTERED);
         cubicCurve.setStrokeWidth(3);
         cubicCurve.setFill(null);
-        updatePosition();
+        // no need to updatePosition(); since it is called in updateFirstPlotConfiguration
+        updateFirstPlotConfiguration(link.getFirstPlot());
     }
 
     @Override
@@ -67,6 +73,69 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
         updatePosition();
     }
 
+    private void handlePersonLinkChange(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case PersonInitLink.FIRST_PLOT_CHANGED -> {
+                updateFirstPlotConfiguration((Plot) event.getNewValue());
+            }
+            case PersonInitLink.FIRST_PLOT_POSITION_CHANGED -> {
+                updatePosition();
+            }
+            default ->
+                throw new UnsupportedOperationException("handlePersonLinkChange:: " + event);
+        }
+    }
+
+    private void updatePortraitConfiguration() {
+        if (portraitDrawing != null) {
+            portraitDrawing.getPortrait().removeListener(this::handleChange);
+        }
+        portraitDrawing = friezeFreeFormDrawing.getPortrait(link.getPerson());
+        if (portraitDrawing == null) {
+            waitPortraitDrawingCreation();
+        } else {
+            portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
+        }
+        updatePosition();
+    }
+
+    private void updateFirstPlotConfiguration(Plot newFirstPlot) {
+        if (firstPlot != null) {
+            firstPlot.removePropertyChangeListener(this::handleChange);
+        }
+        firstPlot = newFirstPlot;
+        if (firstPlot != null) {
+            plotDrawing = personDrawing.getPlotDrawing(firstPlot);
+            if (plotDrawing == null) {
+                // Depending on the property events, might not be created yet
+                Platform.runLater(this::waitPlotDrawingCreation);
+            }
+            firstPlot.addPropertyChangeListener(this::handleChange);
+        } else {
+            plotDrawing = null;
+        }
+        updatePosition();
+    }
+
+    private void waitPortraitDrawingCreation() {
+        portraitDrawing = friezeFreeFormDrawing.getPortrait(link.getPerson());
+        if (plotDrawing == null) {
+            Platform.runLater(this::waitPlotDrawingCreation);
+        } else {
+            portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
+            updatePosition();
+        }
+    }
+
+    private void waitPlotDrawingCreation() {
+        plotDrawing = personDrawing.getPlotDrawing(firstPlot);
+        if (plotDrawing == null) {
+            Platform.runLater(this::waitPlotDrawingCreation);
+        } else {
+            updatePosition();
+        }
+    }
+
     @Override
     public void updateScale(double newScale) {
         scale = newScale;
@@ -74,13 +143,22 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
     }
 
     public final void updatePosition() {
-        Point2D originInScene = portraitDrawing.getScenePosition();
-        Point2D targetInScene = plotDrawing.getScenePosition();
+        Point2D originInScene = Point2D.ZERO;
+        if (portraitDrawing != null) {
+            originInScene = portraitDrawing.getScenePosition();
+        }
         Point2D origin = cubicCurve.sceneToLocal(originInScene);
-        Point2D target = cubicCurve.sceneToLocal(targetInScene);
+        Point2D target;
+        if (plotDrawing == null) {
+            target = cubicCurve.sceneToLocal(originInScene);
+        } else {
+            Point2D targetInScene = plotDrawing.getScenePosition();
+            target = cubicCurve.sceneToLocal(targetInScene);
+        }
+        var curveRadius = portraitDrawing != null ? portraitDrawing.getPortrait().getRadius() : FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS;
         cubicCurve.setStartX(origin.getX());
         cubicCurve.setStartY(origin.getY());
-        cubicCurve.setControlX1(origin.getX() + 1.5 * portraitDrawing.getPortrait().getRadius() * scale);
+        cubicCurve.setControlX1(origin.getX() + 1.5 * curveRadius * scale);
         cubicCurve.setControlY1(origin.getY());
         cubicCurve.setControlX2(target.getX() - TANGEANT_LENGHT * scale);
         cubicCurve.setControlY2(target.getY());

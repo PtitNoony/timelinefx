@@ -40,6 +40,10 @@ public class FreeMapPlace {
 
     public static final double PLACE_NAME_HEIGHT = 18;
     public static final double DEFAULT_HEIGHT = 25;
+    public static final double DEFAULT_PLACE_PADDING = 8;
+
+    private static final double DEFAULT_MIN_X = 0;
+    private static final double DEFAULT_MAX_X = 0;
 
     private final PropertyChangeSupport propertyChangeSupport;
     //
@@ -51,11 +55,11 @@ public class FreeMapPlace {
     private double fullWidth;
     private double height = DEFAULT_HEIGHT;
     private double fontSize;
-    private double nameWidth;
+    private double placeNameWidth;
     private double plotSeparation;
     //
-    private double minX = Double.MAX_VALUE;
-    private double maxX = Double.MIN_VALUE;
+    private double minX = DEFAULT_MIN_X;
+    private double maxX = DEFAULT_MAX_X;
 
     public FreeMapPlace(Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPlace.this);
@@ -63,7 +67,7 @@ public class FreeMapPlace {
         plots = new LinkedList<>();
         persons = new LinkedList<>();
         plotSeparation = aPlotSeparation;
-        nameWidth = aNameWidth;
+        placeNameWidth = aNameWidth;
         fontSize = aFontSize;
     }
 
@@ -71,13 +75,13 @@ public class FreeMapPlace {
         return place;
     }
 
-    public void setNameWidtah(double newNameWidth) {
-        nameWidth = newNameWidth;
-        propertyChangeSupport.firePropertyChange(NAME_WIDTH_CHANGED, this, nameWidth);
-    }
-
-    public double getNameWidth() {
-        return nameWidth;
+    // TODO update layout
+//    public void setNameWidth(double newNameWidth) {
+//        placeNameWidth = newNameWidth;
+//        propertyChangeSupport.firePropertyChange(NAME_WIDTH_CHANGED, this, placeNameWidth);
+//    }
+    public double getPlaceNameWidth() {
+        return placeNameWidth;
     }
 
     public void setFontSize(double newFontSize) {
@@ -111,13 +115,7 @@ public class FreeMapPlace {
         var index = indexOf(person);
         plot.setY(yPos + (index + 1) * plotSeparation);
         plot.addPropertyChangeListener(this::handlePlotChange);
-        var oldMin = minX;
-        var oldMax = maxX;
-        minX = Math.min(minX, plot.getX());
-        maxX = Math.max(maxX, plot.getX());
-        if (Math.abs(oldMax - maxX) + Math.abs(oldMin - minX) > GridPositionable.EPSILON) {
-            propertyChangeSupport.firePropertyChange(MIN_MAX_X_CHANGED, minX, maxX);
-        }
+        updateMinMaxX();
         height = Math.max(PLACE_NAME_HEIGHT, plotSeparation * (persons.size() + 1));
     }
 
@@ -168,19 +166,25 @@ public class FreeMapPlace {
     private void handlePlotChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case Plot.POS_CHANGED -> {
-                var oldMin = minX;
-                var oldMax = maxX;
-                minX = plots.stream().mapToDouble(Plot::getX).min().orElse(0);
-                maxX = plots.stream().mapToDouble(Plot::getX).max().orElse(0);
-                if (Math.abs(oldMax - maxX) + Math.abs(oldMin - minX) > GridPositionable.EPSILON) {
-                    propertyChangeSupport.firePropertyChange(MIN_MAX_X_CHANGED, minX, maxX);
-                }
+                updateMinMaxX();
             }
             case Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
+        }
+    }
+
+    private void updateMinMaxX() {
+        var oldMin = minX;
+        var oldMax = maxX;
+        //
+        minX = plots.stream().mapToDouble(Plot::getX).min().orElse(DEFAULT_MIN_X) - DEFAULT_PLACE_PADDING;
+        maxX = plots.stream().mapToDouble(Plot::getX).max().orElse(DEFAULT_MAX_X) + DEFAULT_PLACE_PADDING;
+        //
+        if (Math.abs(oldMax - maxX) + Math.abs(oldMin - minX) > GridPositionable.EPSILON) {
+            propertyChangeSupport.firePropertyChange(MIN_MAX_X_CHANGED, minX, maxX);
         }
     }
 

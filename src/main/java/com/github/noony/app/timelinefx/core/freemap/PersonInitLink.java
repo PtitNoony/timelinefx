@@ -17,6 +17,9 @@
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.Person;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  *
@@ -24,15 +27,26 @@ import com.github.noony.app.timelinefx.core.Person;
  */
 public class PersonInitLink {
 
-    private final Person person;
-    private final Plot firstPlot;
+    public static final String FIRST_PLOT_CHANGED = "PersonInitLinkFirstPlotChanged";
+    public static final String FIRST_PLOT_POSITION_CHANGED = "PersonInitLinkFirstPlotPositionChanged";
 
-    public PersonInitLink(Person aPerson, FriezeFreeMap freeMap) {
+    private final Person person;
+    private final FreeMapPerson freeMapPerson;
+    //
+    private final PropertyChangeSupport propertyChangeSupport;
+    //
+    private Plot firstPlot;
+
+    public PersonInitLink(Person aPerson, FreeMapPerson aFreeMapPerson) {
+        propertyChangeSupport = new PropertyChangeSupport(PersonInitLink.this);
         person = aPerson;
-        firstPlot = freeMap.getPlots().stream().filter(plot -> plot.getPerson().equals(person)).sorted((p1, p2) -> Long.compare(p1.getDate(), p2.getDate())).findFirst().orElse(null);
-        if (firstPlot == null) {
-            throw new IllegalStateException();
-        }
+        freeMapPerson = aFreeMapPerson;
+        firstPlot = freeMapPerson.getFirstPlot();
+        freeMapPerson.addPropertyChangeListener(PersonInitLink.this::handleFreeMapPersonChanges);
+    }
+
+    public void addListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
     public Plot getFirstPlot() {
@@ -41,6 +55,26 @@ public class PersonInitLink {
 
     public Person getPerson() {
         return person;
+    }
+
+    private void handleFreeMapPersonChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case FreeMapPerson.FIRST_PLOT_CHANGED -> {
+                firstPlot = (Plot) event.getNewValue();
+                propertyChangeSupport.firePropertyChange(FIRST_PLOT_CHANGED, this, firstPlot);
+            }
+            case FreeMapPerson.TRAVEL_LINK_ADDED, FreeMapPerson.TRAVEL_LINK_REMOVED, FreeMapPerson.STAY_ADDED , FreeMapPerson.STAY_REMOVED -> {
+                // Nothing to do
+            }
+            case FreeMapPerson.LINK_ADDED, FreeMapPerson.LINK_REMOVED -> {
+                // Nothing to do
+            }
+            case FreeMapPerson.PLOTS_ADDED, FreeMapPerson.PLOTS_REMOVED -> {
+                // Nothing to do
+            }
+            default ->
+                throw new UnsupportedOperationException("handleFreeMapPersonChanges:: " + event);
+        }
     }
 
 }

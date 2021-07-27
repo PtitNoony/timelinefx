@@ -19,6 +19,8 @@ package com.github.noony.app.timelinefx.core.freemap;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
+import com.github.noony.app.timelinefx.core.StayPeriod;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -37,23 +39,34 @@ import javafx.geometry.Point2D;
  */
 public final class FriezeFreeMap {
 
+    // PropertyChangeEvent names
     public static final String LAYOUT_CHANGED = "layoutChanged";
     public static final String NAME_CHANGED = "nameChanged";
+    public static final String FREE_MAP_PLACE_ADDED = "freeMapPlaceAdded";
+    public static final String FREE_MAP_PLACE_REMOVED = "freeMapPlaceRemoved";
+    public static final String FREE_MAP_PERSON_ADDED = "freeMapPersonAdded";
+    public static final String FREE_MAP_PERSON_REMOVED = "freeMapPersonRemoved";
+    public static final String FREE_MAP_PORTRAIT_REMOVED = "freeMapPortraitRemoved";
+    public static final String FREE_MAP_PLOT_VISIBILITY_CHANGED = "freeMapPlotVisibilityChanged";
+    public static final String FREE_MAP_PLOT_SIZE_CHANGED = "freeMapPlotSizeChanged";
+    public static final String START_DATE_HANDLE_ADDED = "freeMapStartDateAdded";
+    public static final String START_DATE_HANDLE_REMOVED = "freeMapStartDateRemoved";
+    public static final String END_DATE_HANDLE_ADDED = "freeMapEndDateAdded";
+    public static final String END_DATE_HANDLE_REMOVED = "freeMapEndDateRemoved";
 
-    private static final double DEFAULT_WIDTH = 1600;
-    private static final double DEFAULT_HEIGHT = 1200;
+    // Default Values for layout
+    private static final double DEFAULT_WIDTH = 900;
+    private static final double DEFAULT_HEIGHT = 600;
     private static final double DEFAULT_PERSONS_WIDTH = 220;
     private static final double DEFAULT_PLACE_NAMES_WIDTH = 100;
+    //
+    public static final double DEFAULT_PORTRAIT_RADIUS = 50;
 
-    private static final double DEFAULT_TIME_HEIGHT = 25;
-    private static final double DEFAULT_TIME_PADDING = 8;
-    private static final double DEFAULT_PORTRAIT_WIDTH_RATIO = 0.9;
+    public static final double DEFAULT_TIME_HEIGHT = 25;
     private static final double DEFAULT_FONT_SIZE = 12;
     private static final double DEFAULT_PLOT_SEPARATION = 8.0;
     private static final boolean DEFAULT_PLOT_VISIBILITY = true;
     private static final double DEFAULT_PLOT_SIZE = 4;
-
-    private static final double DEFAULT_PADDING = 15;
 
     private static final String DEFAULT_NAME = "FreeMap";
 
@@ -61,15 +74,9 @@ public final class FriezeFreeMap {
 
     private final Frieze frieze;
     private final List<Person> persons;
-    private final List<Plot> plots;
-    private final List<Link> stayLinks;
-    private final List<Link> travelLinks;
     private final Map<Place, FreeMapPlace> places;
+    private final Map<Person, FreeMapPerson> freeMapPersons;
     private final Map<Person, Portrait> portraits;
-    private final List<Long> dates;
-    private final List<Long> startDates;
-    private final List<Long> endDates;
-    private final Map<Long, List<Plot>> plotsByDate;
     private final List<PersonInitLink> personInitLinks;
     private final Map<Long, DateHandle> startDateHandles;
     private final Map<Long, DateHandle> endDateHandles;
@@ -78,30 +85,32 @@ public final class FriezeFreeMap {
     //
     private double width;
     private double height;
-    //
+    //TODO : rename into portraitWidth
     private double personsWidth;
-    private double padding;
+//    private double padding;
     private double placeDrawingWidth;
     private double placeNamesWidth;
-    @Deprecated
+//    @Deprecated
     private double portraitRadius;
     private double fontSize;
     private double plotSeparation;
     private boolean plotVisibiltiy;
     private double plotSize;
     //
+    private long minDate;
+    private long maxDate;
+    private double availableWidth;
+    private double timeRatio;
+    //
     private TimeMode timeMode;
 
     public FriezeFreeMap(Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
         propertyChangeSupport = new PropertyChangeSupport(FriezeFreeMap.this);
         frieze = aFrieze;
-        persons = frieze.getPersons();
-        plots = new LinkedList<>();
+        persons = new LinkedList<>();
         personInitLinks = new LinkedList<>();
-        stayLinks = new LinkedList<>();
-        travelLinks = new LinkedList<>();
         places = new HashMap<>();
-        plotsByDate = new HashMap<>();
+        freeMapPersons = new HashMap<>();
         portraits = new HashMap<>();
         startDateHandles = new HashMap<>();
         endDateHandles = new HashMap<>();
@@ -109,32 +118,30 @@ public final class FriezeFreeMap {
         name = DEFAULT_NAME;
         width = aFriezeDimension.getWidth();
         height = aFriezeDimension.getHeight();
-        padding = DEFAULT_PADDING;
+//        padding = DEFAULT_PADDING;
         // TODO set in method
         personsWidth = aPersonWidth;
         placeNamesWidth = aPlaceNameWidth;
+        placeDrawingWidth = width - placeNamesWidth - personsWidth;
+        if (placeDrawingWidth < 0) {
+            throw new IllegalStateException("placeDrawingWidth cannot be negative");
+        }
         fontSize = aFontSize;
         plotSeparation = aPlotSeparation;
         plotVisibiltiy = aPlotVisibilty;
         plotSize = aPlotSize;
+        portraitRadius = DEFAULT_PORTRAIT_RADIUS;
         // TODO use a map for all relevant attributes
+        minDate = frieze.getMinDate();
+        maxDate = frieze.getMaxDate();
         //
-        frieze.getPlaces().forEach(this::createFreeMapPlace);
-        persons.forEach(this::createPerson);
-        persons.forEach(this::createPortrait);
-        linkPlacesAndPlots();
-        // to be created after plot creation
-        persons.forEach(this::createPersonInitLink);
+        frieze.getPlaces().stream().forEachOrdered(FriezeFreeMap.this::addFreeMapPlace);
+        frieze.getPersons().stream().forEachOrdered(FriezeFreeMap.this::addFreeMapPerson);
+        frieze.getStayPeriods().stream().forEachOrdered(FriezeFreeMap.this::addStay);
         //
-        dates = plotsByDate.keySet().stream().distinct().sorted().collect(Collectors.toList());
-        startDates = plots.stream().filter(p -> p.getType().equals(PlotType.START)).map(Plot::getDate).distinct().sorted().collect(Collectors.toList());
-        endDates = plots.stream().filter(p -> p.getType().equals(PlotType.END)).map(Plot::getDate).distinct().sorted().collect(Collectors.toList());
+        frieze.addListener(FriezeFreeMap.this::handleFriezeChanges);
         //
         updateLayout();
-        //
-        createStartDateHandles();
-        createEndDateHandles();
-        addPlotsToHandles();
         //
         distributePlaces();
         distributePortraits();
@@ -149,7 +156,7 @@ public final class FriezeFreeMap {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Getters">
+    //     <editor-fold defaultstate="collapsed" desc="Getters">
     public FreeMapPlace getFreeMapPlace(Place place) {
         return places.get(place);
     }
@@ -171,19 +178,19 @@ public final class FriezeFreeMap {
     }
 
     public double getPlaceDrawingX() {
-        return personsWidth + 2 * padding;
+        return personsWidth;
     }
 
     public double getPlaceDrawingY() {
-        return padding;
+        return 0.0;
     }
 
     public double getPersonsDrawingX() {
-        return padding;
+        return 0.0;
     }
 
     public double getPersonsDrawingY() {
-        return padding;
+        return 0.0;
     }
 
     public double getPersonWidth() {
@@ -191,7 +198,7 @@ public final class FriezeFreeMap {
     }
 
     public double getPersonHeight() {
-        return height - padding * 2;
+        return height;
     }
 
     public double getPlaceDrawingWidth() {
@@ -199,15 +206,11 @@ public final class FriezeFreeMap {
     }
 
     public double getPlaceDrawingHeight() {
-        return height - padding * 2;
+        return height;
     }
 
     public double getPlaceNamesWidth() {
         return placeNamesWidth;
-    }
-
-    public double getPadding() {
-        return padding;
     }
 
     public double getFontSize() {
@@ -227,11 +230,6 @@ public final class FriezeFreeMap {
         return DEFAULT_TIME_HEIGHT;
     }
 
-    public List<Long> getDates() {
-        // unnecessary unomodif ?
-        return Collections.unmodifiableList(dates.stream().sorted().collect(Collectors.toList()));
-    }
-
     public List<DateHandle> getStartDateHandles() {
         return Collections.unmodifiableList(startDateHandles.values().stream().collect(Collectors.toList()));
     }
@@ -240,16 +238,12 @@ public final class FriezeFreeMap {
         return Collections.unmodifiableList(endDateHandles.values().stream().collect(Collectors.toList()));
     }
 
-    public List<Link> getStayLinks() {
-        return Collections.unmodifiableList(stayLinks);
+    public DateHandle getStartDateHandle(long aDate) {
+        return startDateHandles.get(aDate);
     }
 
-    public List<Link> getTravelLinks() {
-        return Collections.unmodifiableList(travelLinks);
-    }
-
-    public List<Plot> getPlots() {
-        return Collections.unmodifiableList(plots);
+    public DateHandle getEndDateHandle(long aDate) {
+        return endDateHandles.get(aDate);
     }
 
     public List<PersonInitLink> getPersonInitLinks() {
@@ -260,8 +254,21 @@ public final class FriezeFreeMap {
         return Collections.unmodifiableList(places.values().stream().collect(Collectors.toList()));
     }
 
+    public List<FreeMapPerson> getPersons() {
+        return Collections.unmodifiableList(freeMapPersons.values().stream().collect(Collectors.toList()));
+    }
+
     public List<Portrait> getPortraits() {
         return Collections.unmodifiableList(portraits.values().stream().collect(Collectors.toList()));
+    }
+
+    // TODO :: usefull ?
+    public int getPersonIndexAtPlace(Person aPerson, Place aPlace) {
+        var freeMapPlace = places.get(aPlace);
+        if (freeMapPlace == null) {
+            return -1;
+        }
+        return freeMapPlace.indexOf(aPerson);
     }
 
     public double getPlotSize() {
@@ -276,24 +283,16 @@ public final class FriezeFreeMap {
         return height;
     }
 
-    public int getNbDates() {
-        return dates.size();
-    }
-
     public FreeMapPlace getFreeMapPlace(long placeID) {
         return places.values().stream().filter(p -> p.getPlace().getId() == placeID).findAny().orElse(null);
-    }
-
-    public Plot getFreeMapPlace(long stayId, PlotType type) {
-        return plots.stream().filter(p -> p.getType().equals(type) & p.getParentPeriodID() == stayId).findAny().orElse(null);
     }
 
     public Portrait getPortrait(long portraitID) {
         return portraits.values().stream().filter(p -> p.getPerson().getId() == portraitID).findAny().orElse(null);
     }
 
-    public Plot getPlot(long stayId, PlotType type) {
-        return plots.stream().filter(p -> p.getParentPeriodID() == stayId & p.getType().equals(type)).findAny().orElse(null);
+    public Portrait getPortrait(Person aPerson) {
+        return portraits.values().stream().filter(p -> p.getPerson() == aPerson).findAny().orElse(null);
     }
 
     @Deprecated
@@ -341,12 +340,12 @@ public final class FriezeFreeMap {
 
     public void setPlotVisibility(boolean plotVisible) {
         plotVisibiltiy = plotVisible;
-        plots.forEach(plot -> plot.setVisible(plotVisibiltiy));
+        propertyChangeSupport.firePropertyChange(FREE_MAP_PLOT_VISIBILITY_CHANGED, this, plotVisibiltiy);
     }
 
     public void setPlotSize(double newPlotSize) {
         plotSize = newPlotSize;
-        plots.forEach(plot -> plot.setPlotSize(plotSize));
+        propertyChangeSupport.firePropertyChange(FREE_MAP_PLOT_SIZE_CHANGED, this, plotSize);
     }
 
 // </editor-fold>
@@ -376,16 +375,18 @@ public final class FriezeFreeMap {
     }
 
     public final void displayTimeAsProportional() {
-        var minDate = dates.stream().mapToLong(l -> l).min().orElse(0);
-        var maxDate = dates.stream().mapToLong(l -> l).max().orElse(1);
-        var availableWidth = getPlaceDrawingWidth() - 2 * DEFAULT_TIME_PADDING;
-        var ratio = (maxDate - minDate) / availableWidth;
-        startDateHandles.forEach((d, h) -> h.setX(DEFAULT_TIME_PADDING + (d - minDate) / ratio));
-        endDateHandles.forEach((d, h) -> h.setX(DEFAULT_TIME_PADDING + (d - minDate) / ratio));
+        availableWidth = getPlaceDrawingWidth();
+        timeRatio = (maxDate - minDate) / availableWidth;
+        startDateHandles.forEach((d, h) -> h.setX((d - minDate) / timeRatio));
+        endDateHandles.forEach((d, h) -> h.setX((d - minDate) / timeRatio));
     }
 
     public void displayTimeAsEqualSplit() {
         throw new UnsupportedOperationException("displayTimeAsEqualSplit :: TODO");
+    }
+
+    public double getDateX(long aDate) {
+        return (aDate - minDate) / timeRatio;
     }
 
     public void setPortraitRadius(double newPortraitRadius) {
@@ -393,120 +394,179 @@ public final class FriezeFreeMap {
         portraits.values().forEach(portrait -> portrait.setRadius(newPortraitRadius));
     }
 
-    private void createPerson(Person person) {
-        var periods = frieze.getStayPeriods(person);
-        Map<Long, Plot> startPlots = new HashMap<>();
-        Map<Long, Plot> endPlots = new HashMap<>();
-        var y = 10 * persons.indexOf(person);
-        periods.stream().forEachOrdered(s -> {
-            var startPlot = new StartPlot(s, plotSize);
-            startPlots.put(startPlot.getDate(), startPlot);
-            var endPlot = new EndPlot(s, plotSize);
-            endPlots.put(endPlot.getDate(), endPlot);
-            var link = new StayLink(s, startPlot, endPlot);
-            stayLinks.add(link);
-            plots.add(startPlot);
-            plots.add(endPlot);
-            //
-            if (!plotsByDate.containsKey(startPlot.getDate())) {
-                plotsByDate.put(startPlot.getDate(), new LinkedList<>());
-            }
-            plotsByDate.get(startPlot.getDate()).add(startPlot);
-            //
-            if (!plotsByDate.containsKey(endPlot.getDate())) {
-                plotsByDate.put(endPlot.getDate(), new LinkedList<>());
-            }
-            plotsByDate.get(endPlot.getDate()).add(endPlot);
-            //
-        });
-        var plotList = plots.stream().collect(Collectors.toList());
-        for (int i = 0; i < plotList.size(); i++) {
-            var plot = plotList.get(i);
-            plot.setPosition(i * 10, y);
+    private void addFreeMapPerson(Person person) {
+        var freeMapPerson = new FreeMapPerson(person, this);
+        persons.add(person);
+        freeMapPersons.put(person, freeMapPerson);
+        portraits.put(person, freeMapPerson.getPortrait());
+        propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_ADDED, this, freeMapPerson);
+    }
+
+    private void addStay(StayPeriod stayPeriod) {
+        var person = stayPeriod.getPerson();
+        // TODO make sure the person is already added
+        var freeMapPerson = freeMapPersons.get(person);
+        if (freeMapPerson == null) {
+            System.err.println(" !! FAILED TO ADD STAY " + stayPeriod);
+            return;
         }
         //
-        for (int i = 0; i < periods.size() - 1; i++) {
-            var previousEndDate = periods.get(i).getEndDate();
-            var nextStartDate = periods.get(i + 1).getStartDate();
-            var previousPlot = endPlots.get(previousEndDate);
-            var nextPlort = startPlots.get(nextStartDate);
-            var link = new TravelLink(person, previousPlot, nextPlort);
-            travelLinks.add(link);
+        minDate = frieze.getMinDate();
+        maxDate = frieze.getMaxDate();
+
+        // This should be the responsability of the Frieze to propagate changes on these...
+        var startDate = stayPeriod.getStartDate();
+        if (!startDateHandles.containsKey(startDate)) {
+            var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
+            startDateHandles.put(startDate, startDateHandle);
+        }
+        var endDate = stayPeriod.getEndDate();
+        if (!endDateHandles.containsKey(endDate)) {
+            var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);
+            endDateHandles.put(endDate, endDateHandle);
+        }
+        freeMapPerson.addStay(stayPeriod);
+    }
+
+    private void removeStay(StayPeriod stayPeriod) {
+        var person = stayPeriod.getPerson();
+        // TODO make sure the person is already added
+        var freeMapPerson = freeMapPersons.get(person);
+        if (freeMapPerson == null) {
+            System.err.println(" !! FAILED TO REMOVE STAY (case 1) " + stayPeriod);
+            return;
+        }
+        freeMapPerson.removeStay(stayPeriod);
+        //
+        minDate = frieze.getMinDate();
+        maxDate = frieze.getMaxDate();
+        //
+        updateDateHandles();
+    }
+
+    private void removePerson(Person person) {
+        var periods = frieze.getStayPeriods(person);
+        persons.remove(person);
+        var freeMapPerson = freeMapPersons.remove(person);
+        periods.forEach(this::removeStay);
+        if (freeMapPerson == null) {
+            System.err.println("!!!!!! FAILED TO REMOVE PERSON:: " + person);
+            return;
+        }
+        //
+        propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_REMOVED, this, freeMapPerson);
+        var removedPortrait = portraits.remove(person);
+        if (removedPortrait != null) {
+            propertyChangeSupport.firePropertyChange(FREE_MAP_PORTRAIT_REMOVED, this, removedPortrait);
         }
     }
 
-    private void createPortrait(Person person) {
-        var portrait = new Portrait(person, portraitRadius);
-        portraits.put(person, portrait);
-    }
-
-    private void createPersonInitLink(Person person) {
-        var initLink = new PersonInitLink(person, this);
-        personInitLinks.add(initLink);
-    }
-
-    private void createFreeMapPlace(Place aPlace) {
+//    private void createPersonInitLink(Person person) {
+//        var initLink = new PersonInitLink(person, this);
+//        personInitLinks.add(initLink);
+//    }
+    private void addFreeMapPlace(Place aPlace) {
         var freeMapPlace = new FreeMapPlace(aPlace, plotSeparation, placeNamesWidth, fontSize);
         freeMapPlace.setWidth(getPlaceDrawingWidth());
         places.put(aPlace, freeMapPlace);
+        propertyChangeSupport.firePropertyChange(FREE_MAP_PLACE_ADDED, null, freeMapPlace);
     }
 
-    private void linkPlacesAndPlots() {
-        plots.forEach(plot -> {
-            var freeMapPlace = places.get(plot.getPlace());
-            if (freeMapPlace != null) {
-                freeMapPlace.addPlot(plot);
-            } else {
-                System.err.println("Could not find place " + plot.getPlace());
-            }
-        });
-    }
-
-    private void createStartDateHandles() {
-        int nbDates = dates.size();
+    private DateHandle createDateHandle(long date, DateHandle.TimeType type) {
+        var dates = frieze.getDates();
+        int nbDates = frieze.getNbDates();
         double separation = (getPlaceDrawingWidth()) / (1 + 2 * nbDates);
-        startDates.forEach(date -> {
-            int index = dates.indexOf(date);
-            var position = new Point2D((index * 2 + 1) * separation, DEFAULT_TIME_HEIGHT / 2.0);
-            var handle = new DateHandle(date, DateHandle.TimeType.START, position);
-            startDateHandles.put(date, handle);
-        });
+        int index = dates.indexOf(date);
+        var position = new Point2D((index * 2 + 1) * separation, DEFAULT_TIME_HEIGHT / 2.0);
+        var handle = new DateHandle(date, type, position);
+        return handle;
     }
 
-    private void createEndDateHandles() {
-        int nbDates = dates.size();
-        double separation = (getPlaceDrawingWidth()) / (1 + 2 * nbDates);
-        endDates.forEach(date -> {
-            int index = dates.indexOf(date);
-            var position = new Point2D((index * 2 + 1) * separation, DEFAULT_TIME_HEIGHT / 2.0);
-            var handle = new DateHandle(date, DateHandle.TimeType.END, position);
-            endDateHandles.put(date, handle);
-        });
-    }
-
-    private void addPlotsToHandles() {
-        plots.forEach(plot -> {
-            // add plot to dataHandle
-            switch (plot.getType()) {
-                case END:
-                    endDateHandles.get(plot.getDate()).addPlot(plot);
-                    break;
-                case START:
-                    startDateHandles.get(plot.getDate()).addPlot(plot);
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-        });
+    private void removeFreeMapPlace(Place aPlace) {
+        System.err.println(" FrizeFreeMap removeFreeMapPlace :: " + aPlace);
+        var freeMapPlace = places.remove(aPlace);
+        if (freeMapPlace != null) {
+            propertyChangeSupport.firePropertyChange(FREE_MAP_PLACE_REMOVED, null, freeMapPlace);
+        }
     }
 
     private void updateLayout() {
         var newDimension = new Dimension2D(width, height);
-        placeDrawingWidth = width - 4 * padding - personsWidth - placeNamesWidth;
+        placeDrawingWidth = width - personsWidth - placeNamesWidth;
         propertyChangeSupport.firePropertyChange(LAYOUT_CHANGED, this, newDimension);
         places.values().forEach(p -> p.setWidth(getPlaceDrawingWidth()));
         //
         displayTimeAsProportional();
+    }
+
+    private void updateDateHandles() {
+        List<Long> startDates = frieze.getStartDates();
+        List<Long> startDatesToBeRemoved = new LinkedList<>();
+        frieze.getStartDates().forEach(startDate -> {
+            if (!startDateHandles.containsKey(startDate)) {
+                createDateHandle(startDate, DateHandle.TimeType.START);
+                propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDate);
+            }
+        });
+        startDateHandles.forEach((startDate, handle) -> {
+            if (!startDates.contains(startDate)) {
+                startDatesToBeRemoved.add(startDate);
+            }
+        });
+        startDatesToBeRemoved.forEach(startDateToRemove -> {
+            startDateHandles.remove(startDateToRemove);
+            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_REMOVED, this, startDateToRemove);
+        });
+        //
+        List<Long> endDates = frieze.getEndDates();
+        List<Long> endDatesToBeRemoved = new LinkedList<>();
+        frieze.getEndDates().forEach(endDate -> {
+            if (!endDateHandles.containsKey(endDate)) {
+                createDateHandle(endDate, DateHandle.TimeType.END);
+                propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDate);
+            }
+        });
+        endDateHandles.forEach((endDate, handle) -> {
+            if (!endDates.contains(endDate)) {
+                endDatesToBeRemoved.add(endDate);
+            }
+        });
+        endDatesToBeRemoved.forEach(endDateToRemove -> {
+            endDateHandles.remove(endDateToRemove);
+            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_REMOVED, this, endDateToRemove);
+        });
+    }
+
+    private void handleFriezeChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case Frieze.DATE_WINDOW_CHANGED ->
+                System.err.println("FriezeFreeMap TODO DATE_WINDOW_CHANGED");
+            case Frieze.PERSON_ADDED -> {
+                var personAdded = (Person) event.getNewValue();
+                addFreeMapPerson(personAdded);
+            }
+            case Frieze.PERSON_REMOVED -> {
+                var personRemoved = (Person) event.getNewValue();
+                removePerson(personRemoved);
+            }
+            case Frieze.PLACE_ADDED -> {
+                var placeAdded = (Place) event.getNewValue();
+                System.err.println(" FREEMAP ADDING PLACE " + placeAdded);
+                addFreeMapPlace(placeAdded);
+            }
+            case Frieze.PLACE_REMOVED -> {
+                var placeRemoved = (Place) event.getNewValue();
+                removeFreeMapPlace(placeRemoved);
+            }
+            case Frieze.STAY_ADDED -> {
+                var stayPeriodAdded = (StayPeriod) event.getNewValue();
+                addStay(stayPeriodAdded);
+            }
+            case Frieze.STAY_REMOVED -> {
+                var stayPeriodRemoved = (StayPeriod) event.getNewValue();
+                removeStay(stayPeriodRemoved);
+            }
+        }
     }
 
 }

@@ -544,12 +544,13 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                 } else {
                     throw new UnsupportedOperationException();
                 }
-                plot = freeMap.getPlot(stayID, type);
-                if (plot == null) {
-                    throw new IllegalStateException("Cannot find plot with stayID=" + stayID + " and of type " + typeS);
-                }
-                plot.setX(xPos);
-                plot.setY(yPos);
+                System.err.println(" save plot");
+//                plot = freeMap.getPlot(stayID, type);
+//                if (plot == null) {
+//                    throw new IllegalStateException("Cannot find plot with stayID=" + stayID + " and of type " + typeS);
+//                }
+//                plot.setX(xPos);
+//                plot.setY(yPos);
             }
         }
     }
@@ -644,7 +645,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         friezeFreeMapElement.appendChild(portraitsGroupElement);
         //
         Element plotsGroupElement = doc.createElement(PLOTS_GROUP);
-        friezeFreeMap.getPlots().forEach(plot -> plotsGroupElement.appendChild(createPlotElement(doc, plot)));
+        System.err.println(" save plots");
+//        friezeFreeMap.getPlots().forEach(plot -> plotsGroupElement.appendChild(createPlotElement(doc, plot)));
         friezeFreeMapElement.appendChild(plotsGroupElement);
         //
         Element placesGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
@@ -652,8 +654,9 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         friezeFreeMapElement.appendChild(placesGroupElement);
         //
         Element linksGroupElement = doc.createElement(LINKS_GROUP);
-        friezeFreeMap.getStayLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
-        friezeFreeMap.getTravelLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
+        System.err.println(" save links");
+//        friezeFreeMap.getStayLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
+//        friezeFreeMap.getTravelLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
         friezeFreeMapElement.appendChild(linksGroupElement);
         //
         return friezeFreeMapElement;

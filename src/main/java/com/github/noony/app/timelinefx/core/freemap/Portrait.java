@@ -53,6 +53,10 @@ public class Portrait {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
     public void setX(double x) {
         xPos = x;
         propertyChangeSupport.firePropertyChange(POSITION_CHANGED, xPos, yPos);

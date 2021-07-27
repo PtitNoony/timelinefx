@@ -40,4 +40,9 @@ public class TravelLink extends Link {
         return "Travel of " + person.getName();
     }
 
+    @Override
+    public String toString() {
+        return "Travel of " + person.getName() + " from: " + getBeginPlot() + "  to:" + getEndPlot();
+    }
+
 }

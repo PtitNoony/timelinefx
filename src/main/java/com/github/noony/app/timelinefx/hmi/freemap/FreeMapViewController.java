@@ -213,7 +213,7 @@ public class FreeMapViewController implements Initializable {
         heightField.setText(Double.toString(friezeFreeMap.getHeight()));
         plotWidthField.setText(Double.toString(friezeFreeMap.getPlotSize()));
         fontSizeField.setText(Double.toString(friezeFreeMap.getFontSize()));
-
+        portraitRadiusField.setText(Double.toString(friezeFreeMap.getPortraitRadius()));
     }
 
     private void handleSelectedItemChange(PropertyChangeEvent event) {

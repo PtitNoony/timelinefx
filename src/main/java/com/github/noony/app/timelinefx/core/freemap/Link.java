@@ -65,6 +65,11 @@ public class Link implements Selectable {
     }
 
     @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    @Override
     public boolean isSelected() {
         return isSelected;
     }

@@ -28,6 +28,8 @@ public interface Selectable {
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 
+    void removePropertyChangeListener(PropertyChangeListener listener);
+
     void setSelected(boolean isSelected);
 
     boolean isSelected();

@@ -108,6 +108,11 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
     }
 
     @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    @Override
     public boolean isSelected() {
         return isSelected;
     }

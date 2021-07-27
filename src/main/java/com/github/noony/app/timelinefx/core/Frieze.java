@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import static javafx.application.Platform.runLater;
 
 /**
  *
@@ -41,6 +42,9 @@ public class Frieze {
     public static final String PLACE_ADDED = CLASS_NAME + "__placeAdded";
     public static final String PERSON_REMOVED = CLASS_NAME + "__personRemoved";
     public static final String PLACE_REMOVED = CLASS_NAME + "__placeRemoved";
+    // TODO : merge with other use
+    private static final long DEFAULT_MIN_DATE = 0;
+    private static final long DEFAULT_MAX_DATE = 500;
 
     private final TimeLineProject project;
     private final String name;
@@ -50,10 +54,14 @@ public class Frieze {
     private final Map<Place, List<Person>> personsAtPlaces;
     private final PropertyChangeSupport propertyChangeSupport;
     private final List<FriezeFreeMap> friezeFreeMaps;
+    //
+    private final List<Long> dates;
+    private final List<Long> startDates;
+    private final List<Long> endDates;
 
     //
-    private long minDate = Long.MAX_VALUE;
-    private long maxDate = Long.MIN_VALUE;
+    private long minDate = DEFAULT_MIN_DATE;
+    private long maxDate = DEFAULT_MAX_DATE;
     //
     private long minDateWindow = minDate;
     private long maxDateWindow = maxDate;
@@ -67,6 +75,11 @@ public class Frieze {
         persons = new LinkedList<>();
         friezeFreeMaps = new LinkedList<>();
         personsAtPlaces = new HashMap<>();
+        //
+        dates = new LinkedList<>();
+        startDates = new LinkedList<>();
+        endDates = new LinkedList<>();
+        //
         propertyChangeSupport = new PropertyChangeSupport(Frieze.this);
         //
         project.addFrieze(Frieze.this);
@@ -103,15 +116,13 @@ public class Frieze {
             // notify place added
             // may be needed before adding stays for some variable updates
             propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
-            stays.forEach(this::addStayPeriod);
+            runLater(() -> stays.forEach(this::addStayPeriod));
         }
     }
 
     public void addStayPeriod(StayPeriod stay) {
         if (!stayPeriods.contains(stay)) {
             stayPeriods.add(stay);
-            minDate = Math.min(minDate, stay.getStartDate());
-            maxDate = Math.max(maxDate, stay.getEndDate());
             // Should this code be in the TimeLineProject Class ??
             Place place = stay.getPlace();
             Person person = stay.getPerson();
@@ -132,6 +143,22 @@ public class Frieze {
             } else if (!personsAtPlaces.get(stay.getPlace()).contains(stay.getPerson())) {
                 personsAtPlaces.get(stay.getPlace()).add(stay.getPerson());
             }
+            // handle dates
+            if (!dates.contains(stay.getStartDate())) {
+                dates.add(stay.getStartDate());
+            }
+            if (!dates.contains(stay.getEndDate())) {
+                dates.add(stay.getEndDate());
+            }
+            if (!startDates.contains(stay.getStartDate())) {
+                startDates.add(stay.getStartDate());
+            }
+            if (!endDates.contains(stay.getEndDate())) {
+                endDates.add(stay.getEndDate());
+            }
+            minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            //
             propertyChangeSupport.firePropertyChange(STAY_ADDED, this, stay);
         }
     }
@@ -141,8 +168,8 @@ public class Frieze {
             stayPeriods.remove(stay);
             //TODO : check if person list and place list is unchanged
             //
-            minDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).min().orElse(0);
-            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(0);
+            minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             //
             propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stay);
         }
@@ -152,6 +179,7 @@ public class Frieze {
         if (selected) {
             if (!places.contains(aPlace)) {
                 places.add(aPlace);
+                propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
             }
             project.getStays().stream().filter(s -> s.getPlace() == aPlace & persons.contains(s.getPerson())).forEach(this::addStayPeriod);
         } else {
@@ -216,12 +244,28 @@ public class Frieze {
         return Collections.unmodifiableList(friezeFreeMaps);
     }
 
+    public List<Long> getDates() {
+        return Collections.unmodifiableList(dates);
+    }
+
+    public List<Long> getStartDates() {
+        return Collections.unmodifiableList(startDates);
+    }
+
+    public List<Long> getEndDates() {
+        return Collections.unmodifiableList(endDates);
+    }
+
     public long getMinDate() {
         return minDate;
     }
 
     public long getMaxDate() {
         return maxDate;
+    }
+
+    public int getNbDates() {
+        return dates.size();
     }
 
     public long getMinDateWindow() {

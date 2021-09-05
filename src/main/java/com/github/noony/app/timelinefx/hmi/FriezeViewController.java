@@ -37,15 +37,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.CheckTreeView;
@@ -55,9 +58,6 @@ public class FriezeViewController implements Initializable {
     private static final Logger LOG = Logger.getGlobal();
 
     @FXML
-    private TextField nameField;
-
-    @FXML
     private CheckListView<Person> personCheckListView;
     @FXML
     private CheckTreeView<Place> placesCheckTreeView;
@@ -65,6 +65,14 @@ public class FriezeViewController implements Initializable {
     @FXML
     private TabPane friezeTabPane;
 
+    @FXML
+    private Accordion leftAccordion;
+    //
+    @FXML
+    private TitledPane propertiesPane;
+    @FXML
+    private TextField nameField;
+    //
     private Frieze frieze;
     private TimeLineProject project;
     //
@@ -85,6 +93,14 @@ public class FriezeViewController implements Initializable {
         createPeopleView();
         projectListener = this::handleProjectChanges;
         placeCheckTreeItemChangeListener = this::handlePlaceCheckTreeItemChanges;
+        nameField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            if (frieze != null) {
+                frieze.setName(t1);
+                nameField.setText(frieze.getName());
+            }
+        });
+        //
+        leftAccordion.setExpandedPane(propertiesPane);
     }
 
     @FXML

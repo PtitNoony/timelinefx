@@ -182,6 +182,9 @@ public class FriezeSpaceLinearDrawing {
                 Place placeRemoved = (Place) event.getNewValue();
                 removePlaceDrawing(placeRemoved);
             }
+            case Frieze.NAME_CHANGED -> {
+                // Nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
         }

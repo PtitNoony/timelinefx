@@ -16,13 +16,13 @@
  */
 package com.github.noony.app.timelinefx.examples;
 
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
+import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
@@ -34,38 +34,35 @@ import javafx.scene.paint.Color;
  */
 public class TestExample {
 
-    public static final Place GALAXY = PlaceFactory.createPlace("Galaxy", PlaceLevel.GALAXY, null, Color.WHEAT);
-
-    public static final Place PLACE_A = PlaceFactory.createPlace("PLACE_A", PlaceLevel.INTER_SYSTEM_SPACE, GALAXY, Color.LIGHTSTEELBLUE);
-
-    public static final Place PLACE_B = PlaceFactory.createPlace("PLACE_B", PlaceLevel.SYSTEM, GALAXY, Color.LIGHTGREEN);
-    //
-    public static final Person PERSON_A = PersonFactory.createPerson("PERSON_A", Color.AQUAMARINE);
-    public static final Person PERSON_B = PersonFactory.createPerson("PERSON_B", Color.AQUA);
-    public static final Person PERSON_C = PersonFactory.createPerson("PERSON_C", Color.CHARTREUSE);
-
     public static TimeLineProject createExample() {
         TimeLineProject timeLineProject = ProjectConfiguration.createProject("Test Project");
+        //
+        Place galaxy = PlaceFactory.createPlace("Galaxy", PlaceLevel.GALAXY, null, Color.WHEAT);
+        Place placeA = PlaceFactory.createPlace("PLACE_A", PlaceLevel.INTER_SYSTEM_SPACE, galaxy, Color.LIGHTSTEELBLUE);
+        Place placeB = PlaceFactory.createPlace("PLACE_B", PlaceLevel.SYSTEM, galaxy, Color.LIGHTGREEN);
+        //
+        Person personA = PersonFactory.createPerson("PERSON_A", Color.RED);
+        Person personB = PersonFactory.createPerson("PERSON_B", Color.AQUA);
+        Person personC = PersonFactory.createPerson("PERSON_C", Color.CHARTREUSE);
         Frieze frieze = new Frieze(timeLineProject, "Test 1");
         //
-        StayPeriodSimpleTime stay1_A = StayFactory.createStayPeriodSimpleTime(PERSON_A, 0, 20, PLACE_A);
-        StayPeriodSimpleTime stay2_A = StayFactory.createStayPeriodSimpleTime(PERSON_A, 21, 40, PLACE_B);
-        frieze.addStayPeriod(stay1_A);
-        frieze.addStayPeriod(stay2_A);
+        StayPeriodSimpleTime stay1_A = StayFactory.createStayPeriodSimpleTime(personA, 0, 20, placeA);
+        StayPeriodSimpleTime stay2_A = StayFactory.createStayPeriodSimpleTime(personA, 21, 40, placeB);
+        timeLineProject.addStay(stay1_A);
+        timeLineProject.addStay(stay2_A);
         //
-        StayPeriodSimpleTime stay1_B = StayFactory.createStayPeriodSimpleTime(PERSON_B, 0, 25, PLACE_A);
-        StayPeriodSimpleTime stay2_B = StayFactory.createStayPeriodSimpleTime(PERSON_B, 26, 45, PLACE_B);
-//        frieze.addStayPeriod(stay1_B);
-//        frieze.addStayPeriod(stay2_B);
+        StayPeriodSimpleTime stay1_B = StayFactory.createStayPeriodSimpleTime(personB, 0, 25, placeA);
+        StayPeriodSimpleTime stay2_B = StayFactory.createStayPeriodSimpleTime(personB, 26, 45, placeB);
+        timeLineProject.addStay(stay1_B);
+        timeLineProject.addStay(stay2_B);
         //
-        StayPeriodSimpleTime stay1_C = StayFactory.createStayPeriodSimpleTime(PERSON_C, 0, 15, PLACE_B);
-        StayPeriodSimpleTime stay2_C = StayFactory.createStayPeriodSimpleTime(PERSON_C, 16, 30, PLACE_A);
-        StayPeriodSimpleTime stay3_C = StayFactory.createStayPeriodSimpleTime(PERSON_C, 31, 40, PLACE_B);
-//        frieze.addStayPeriod(stay1_C);
-//        frieze.addStayPeriod(stay2_C);
-//        frieze.addStayPeriod(stay3_C);
-
-//        timeLineProject.addFrieze(frieze);
+        StayPeriodSimpleTime stay1_C = StayFactory.createStayPeriodSimpleTime(personC, 0, 15, placeB);
+        StayPeriodSimpleTime stay2_C = StayFactory.createStayPeriodSimpleTime(personC, 16, 30, placeA);
+        StayPeriodSimpleTime stay3_C = StayFactory.createStayPeriodSimpleTime(personC, 31, 40, placeB);
+        timeLineProject.addStay(stay1_C);
+        timeLineProject.addStay(stay2_C);
+        timeLineProject.addStay(stay3_C);
+        //
         return timeLineProject;
     }
 

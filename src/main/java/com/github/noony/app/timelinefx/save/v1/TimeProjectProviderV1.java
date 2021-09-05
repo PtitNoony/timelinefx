@@ -330,13 +330,12 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
     private Frieze parseFrieze(TimeLineProject project, Element friezeElement) {
         // <frieze name="SW 1-2">
         String name = friezeElement.getAttribute(NAME_ATR);
-        Frieze frieze = new Frieze(project, name);
         NodeList stayGroups = friezeElement.getElementsByTagName(STAYS_REF_GROUP);
+        List<StayPeriod> stays = parseStaysInFreize((Element) stayGroups.item(0));
+        Frieze frieze = new Frieze(project, name,stays);
         if (stayGroups.getLength() != 1) {
             throw new IllegalStateException("Wrong number of STAYS_GROUP : " + stayGroups.getLength());
         }
-        List<StayPeriod> stays = parseStaysInFreize((Element) stayGroups.item(0));
-        stays.forEach(frieze::addStayPeriod);
         //
         NodeList freemapGroups = friezeElement.getElementsByTagName(FREEMAPS_GROUP);
         if (freemapGroups.getLength() != 1) {
@@ -545,16 +544,17 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                 } else {
                     throw new UnsupportedOperationException();
                 }
-                plot = freeMap.getPlot(stayID, type);
-                if (plot == null) {
-                    throw new IllegalStateException("Cannot find plot with stayID=" + stayID + " and of type " + typeS);
-                }
-                plot.setX(xPos);
-                plot.setY(yPos);
+                System.err.println(" save plot");
+//                plot = freeMap.getPlot(stayID, type);
+//                if (plot == null) {
+//                    throw new IllegalStateException("Cannot find plot with stayID=" + stayID + " and of type " + typeS);
+//                }
+//                plot.setX(xPos);
+//                plot.setY(yPos);
             }
         }
     }
-    
+
     private static Element createPlaceElement(Document doc, Place place, String fromPlace) {
         LOG.log(Level.FINE, "> Creating place {0} from {1}", new Object[]{place.getName(), fromPlace});
         Element placeElement = doc.createElement(PLACE_ELEMENT);
@@ -645,7 +645,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         friezeFreeMapElement.appendChild(portraitsGroupElement);
         //
         Element plotsGroupElement = doc.createElement(PLOTS_GROUP);
-        friezeFreeMap.getPlots().forEach(plot -> plotsGroupElement.appendChild(createPlotElement(doc, plot)));
+        System.err.println(" save plots");
+//        friezeFreeMap.getPlots().forEach(plot -> plotsGroupElement.appendChild(createPlotElement(doc, plot)));
         friezeFreeMapElement.appendChild(plotsGroupElement);
         //
         Element placesGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
@@ -653,8 +654,9 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         friezeFreeMapElement.appendChild(placesGroupElement);
         //
         Element linksGroupElement = doc.createElement(LINKS_GROUP);
-        friezeFreeMap.getStayLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
-        friezeFreeMap.getTravelLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
+        System.err.println(" save links");
+//        friezeFreeMap.getStayLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
+//        friezeFreeMap.getTravelLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
         friezeFreeMapElement.appendChild(linksGroupElement);
         //
         return friezeFreeMapElement;

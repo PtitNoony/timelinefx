@@ -82,7 +82,9 @@ public class PersonFactory {
     }
 
     public static List< Person> getPERSONS() {
-        return Collections.unmodifiableList(PERSONS.values().stream().collect(Collectors.toList()));
+        return Collections.unmodifiableList(
+                PERSONS.values().stream().sorted(Person.COMPARATOR).collect(Collectors.toList())
+        );
     }
 
 }

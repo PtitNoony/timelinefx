@@ -115,6 +115,11 @@ public class Plot implements GridPositionable, Selectable {
     }
 
     @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    @Override
     public boolean isSelected() {
         return isSelected;
     }
@@ -159,6 +164,11 @@ public class Plot implements GridPositionable, Selectable {
 
     public DoubleProperty getYProperty() {
         return yPos;
+    }
+
+    @Override
+    public String toString() {
+        return "[Plot t=" + date + "]";
     }
 
 }

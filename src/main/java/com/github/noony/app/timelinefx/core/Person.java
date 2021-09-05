@@ -84,6 +84,10 @@ public class Person extends FriezeObject {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
     public String getName() {
         return name;
     }

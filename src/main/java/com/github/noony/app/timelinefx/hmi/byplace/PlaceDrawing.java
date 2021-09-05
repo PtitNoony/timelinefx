@@ -42,7 +42,7 @@ import javafx.scene.text.TextAlignment;
  *
  * @author hamon
  */
-public class PlaceDrawing extends Drawing {
+public final class PlaceDrawing extends Drawing {
 
     public static final double DEFAULT_HEIGHT = 20;
     public static final double DEFAULT_WIDTH = 500;
@@ -62,6 +62,9 @@ public class PlaceDrawing extends Drawing {
     private final Line nameSeparationLine;
     private final Group stayGroup;
     private final Rectangle stayGroupClip;
+    //
+    private long currentMinDate = 0L;
+    private double currentRatio = 1;
 
     public PlaceDrawing(Place aPlace, Frieze aFrieze) {
         super();
@@ -78,6 +81,7 @@ public class PlaceDrawing extends Drawing {
         addNode(nameSeparationLine);
         addNode(stayGroup);
         stayGroup.setClip(stayGroupClip);
+        setWidth(DEFAULT_WIDTH);
         initLayout();
     }
 
@@ -105,44 +109,15 @@ public class PlaceDrawing extends Drawing {
             personsAndDrawings.put(p, new LinkedList<>());
         });
         //
-        stayPeriods.forEach(stay -> {
-            StayDrawing stayDrawing = new StayDrawing(stay);
-            staysAndDrawings.put(stay, stayDrawing);
-            personsAndDrawings.get(stay.getPerson()).add(stayDrawing);
-            if (stay.getPerson().isVisible()) {
-                stayGroup.getChildren().add(stayDrawing.getLine());
-            }
-        });
+        stayPeriods.forEach(this::addStayNoUpdate);
         //
-        double newHeight = DEFAULT_SEPARATION + visiblePersons.size() * (StayDrawing.DEFAULT_SEPARATION + StayDrawing.STROKE_WIDTH);
-        newHeight = Math.max(DEFAULT_HEIGHT, newHeight);
         setWidth(DEFAULT_WIDTH);
-        setHeight(newHeight);
         setBackgroundFill(Color.BLACK);
-        //
-        nameLabel.setTextFill(Color.WHITESMOKE);
-        double labelMargin = 2.0;
-        double labelWidth = DEFAULT_NAME_WIDTH - 2.0 * labelMargin;
-        double labelHeight = getHeight() - 2.0 * labelMargin;
-        nameLabel.setFont(new Font(14));
-        nameLabel.setTranslateX(labelMargin);
-        nameLabel.setTranslateY(labelMargin);
-        nameLabel.setMinSize(labelWidth, labelHeight);
-        nameLabel.setMaxSize(labelWidth, labelHeight);
-        nameLabel.setWrapText(true);
-        nameLabel.setTextAlignment(TextAlignment.CENTER);
-        nameLabel.setAlignment(Pos.CENTER);
-        //
-        nameSeparationLine.setStroke(Color.WHITESMOKE);
-        nameSeparationLine.setStartX(DEFAULT_NAME_WIDTH);
-        nameSeparationLine.setStartY(DEFAULT_SEPARATION);
-        nameSeparationLine.setEndX(DEFAULT_NAME_WIDTH);
-        nameSeparationLine.setEndY(getHeight() - DEFAULT_SEPARATION);
-        //
-        stayGroup.setTranslateX(DEFAULT_NAME_WIDTH + DEFAULT_SEPARATION);
-        stayGroupClip.setWidth(DEFAULT_WIDTH - DEFAULT_NAME_WIDTH - DEFAULT_SEPARATION);
-        stayGroupClip.setHeight(newHeight);
-        //
+        updateLayout();
+    }
+
+    protected void addStay(StayPeriod stayAdded) {
+        addStayNoUpdate(stayAdded);
         updateLayout();
     }
 
@@ -166,13 +141,15 @@ public class PlaceDrawing extends Drawing {
     }
 
     protected void updateDateRatio(long minDate, double ratio) {
-        staysAndDrawings.values().forEach(s -> s.updateDateRatio(minDate, ratio));
+        currentMinDate = minDate;
+        currentRatio = ratio;
+        staysAndDrawings.values().forEach(s -> s.updateDateRatio(currentMinDate, currentRatio));
     }
 
     private void handlePersonChange(PropertyChangeEvent event) {
         // Todo manage order
         switch (event.getPropertyName()) {
-            case Person.VISIBILITY_CHANGED:
+            case Person.VISIBILITY_CHANGED -> {
                 Person p = (Person) event.getOldValue();
                 List<StayDrawing> drawings = personsAndDrawings.get(p);
                 List<Node> nodes = drawings.stream().map(StayDrawing::getLine).collect(Collectors.toList());
@@ -184,25 +161,50 @@ public class PlaceDrawing extends Drawing {
                     stayGroup.getChildren().removeAll(nodes);
                 }
                 runLater(() -> updateLayout());
-                break;
-            case Person.SELECTION_CHANGED:
+            }
+            case Person.SELECTION_CHANGED ->
                 System.err.println(" Person.SELECTION_CHANGED :: TODO");
-                break;
-            case Person.PICTURE_CHANGED:
+            case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
+        }
+    }
+
+    private void addStayNoUpdate(StayPeriod stay) {
+        if (staysAndDrawings.get(stay) == null) {
+            StayDrawing stayDrawing = new StayDrawing(stay);
+            stayDrawing.updateDateRatio(currentMinDate, currentRatio);
+            staysAndDrawings.put(stay, stayDrawing);
+            var stayPerson = stay.getPerson();
+            var staysForPerson = personsAndDrawings.get(stayPerson);
+            if (staysForPerson == null) {
+                staysForPerson = new LinkedList<>();
+                personsAndDrawings.put(stay.getPerson(), staysForPerson);
+            }
+            staysForPerson.add(stayDrawing);
+            if (stay.getPerson().isVisible()) {
+                stayGroup.getChildren().add(stayDrawing.getLine());
+                if (!visiblePersons.contains(stay.getPerson())) {
+                    visiblePersons.add(stay.getPerson());
+                }
+            }
         }
     }
 
     private void updateLayout() {
         visiblePersons.sort(Person.COMPARATOR);
         //
+        double newHeight = DEFAULT_SEPARATION + visiblePersons.size() * (StayDrawing.DEFAULT_SEPARATION + StayDrawing.STROKE_WIDTH);
+        newHeight = Math.max(DEFAULT_HEIGHT, newHeight);
+        setHeight(newHeight);
+        //
+        nameLabel.setTextFill(Color.WHITESMOKE);
         double labelMargin = 2.0;
         double labelWidth = DEFAULT_NAME_WIDTH - 2.0 * labelMargin;
         double labelHeight = getHeight() - 2.0 * labelMargin;
         nameLabel.setFont(new Font(14));
+        nameLabel.setTranslateX(labelMargin);
         nameLabel.setTranslateY(labelMargin);
         nameLabel.setMinSize(labelWidth, labelHeight);
         nameLabel.setMaxSize(labelWidth, labelHeight);
@@ -211,20 +213,20 @@ public class PlaceDrawing extends Drawing {
         nameLabel.setAlignment(Pos.CENTER);
         //
         nameSeparationLine.setStroke(Color.WHITESMOKE);
+        nameSeparationLine.setStartX(DEFAULT_NAME_WIDTH);
         nameSeparationLine.setStartY(DEFAULT_SEPARATION);
+        nameSeparationLine.setEndX(DEFAULT_NAME_WIDTH);
         nameSeparationLine.setEndY(getHeight() - DEFAULT_SEPARATION);
         //
-        double newHeight = DEFAULT_SEPARATION + visiblePersons.size() * (StayDrawing.DEFAULT_SEPARATION + StayDrawing.STROKE_WIDTH);
-        newHeight = Math.max(DEFAULT_HEIGHT, newHeight);
-        setHeight(newHeight);
+        stayGroup.setTranslateX(DEFAULT_NAME_WIDTH + DEFAULT_SEPARATION);
+        stayGroupClip.setWidth(getWidth() - DEFAULT_NAME_WIDTH - DEFAULT_SEPARATION);
+        stayGroupClip.setHeight(newHeight);
+        //
         staysAndDrawings.forEach((s, sD) -> {
             int index = visiblePersons.indexOf(s.getPerson());
             double y = StayDrawing.DEFAULT_SEPARATION + index * (StayDrawing.STROKE_WIDTH + StayDrawing.DEFAULT_SEPARATION);
             sD.setY(y);
         });
-
-        stayGroupClip.setWidth(getWidth() - DEFAULT_NAME_WIDTH - DEFAULT_SEPARATION);
-        stayGroupClip.setHeight(newHeight);
     }
 
 }

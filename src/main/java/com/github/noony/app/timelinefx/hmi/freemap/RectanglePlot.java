@@ -84,20 +84,18 @@ public class RectanglePlot extends AbstractFxScalableNode {
 
     private void handlePropertyChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED:
+            case Plot.POS_CHANGED -> {
                 updateX();
                 updateY();
-                break;
-            case Plot.SELECTION_CHANGED:
+            }
+            case Plot.SELECTION_CHANGED -> {
                 // nothing to do
-                break;
-            case Plot.PLOT_SIZE_CHANGED:
+            }
+            case Plot.PLOT_SIZE_CHANGED ->
                 updateLayout();
-                break;
-            case Plot.PLOT_VISIBILITY_CHANGED:
+            case Plot.PLOT_VISIBILITY_CHANGED ->
                 setVisible((boolean) event.getNewValue());
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }

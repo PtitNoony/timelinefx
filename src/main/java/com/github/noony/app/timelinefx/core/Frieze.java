@@ -36,6 +36,7 @@ public class Frieze {
 
     public static final String CLASS_NAME = "Frieze";
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
+    public static final String NAME_CHANGED = CLASS_NAME + "__nameChanged";
     public static final String STAY_ADDED = CLASS_NAME + "__stayAdded";
     public static final String STAY_REMOVED = CLASS_NAME + "__stayRemoved";
     public static final String PERSON_ADDED = CLASS_NAME + "__personAdded";
@@ -47,7 +48,6 @@ public class Frieze {
     private static final long DEFAULT_MAX_DATE = 500;
 
     private final TimeLineProject project;
-    private final String name;
     private final List<StayPeriod> stayPeriods;
     private final List<Place> places;
     private final List<Person> persons;
@@ -58,7 +58,8 @@ public class Frieze {
     private final List<Long> dates;
     private final List<Long> startDates;
     private final List<Long> endDates;
-
+    //
+    private String name;
     //
     private long minDate = DEFAULT_MIN_DATE;
     private long maxDate = DEFAULT_MAX_DATE;
@@ -90,6 +91,11 @@ public class Frieze {
 
     public Frieze(TimeLineProject aProject, String friezeName) {
         this(aProject, friezeName, Collections.EMPTY_LIST);
+    }
+
+    public void setName(String aName) {
+        name = aName;
+        propertyChangeSupport.firePropertyChange(NAME_CHANGED, this, name);
     }
 
     public String getName() {
@@ -335,4 +341,5 @@ public class Frieze {
         impactedStays.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
     }
+
 }

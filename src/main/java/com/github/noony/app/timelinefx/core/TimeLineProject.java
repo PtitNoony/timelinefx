@@ -204,6 +204,8 @@ public class TimeLineProject {
             }
             case Frieze.PLACE_REMOVED -> {// ignoring
             }
+            case Frieze.NAME_CHANGED -> {// ignoring
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }

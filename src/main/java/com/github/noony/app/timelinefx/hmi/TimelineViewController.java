@@ -65,6 +65,14 @@ public class TimelineViewController implements Initializable {
         FriezeViewController controller = loader.getController();
         controller.setFrieze(frieze);
         var tab = new Tab(frieze.getName(), friezeRoot);
+        frieze.addListener(e -> {
+            switch (e.getPropertyName()) {
+                case Frieze.NAME_CHANGED:
+                    tab.setText(frieze.getName());
+                default:
+                //nothing to do
+            }
+        });
         return tab;
     }
 }

@@ -246,6 +246,10 @@ public class Frieze {
         return friezeFreeMap;
     }
 
+    public void removeFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
+        friezeFreeMaps.remove(aFriezeFreeMap);
+    }
+
     public List<FriezeFreeMap> getFriezeFreeMaps() {
         return Collections.unmodifiableList(friezeFreeMaps);
     }

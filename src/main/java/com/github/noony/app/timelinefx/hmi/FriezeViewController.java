@@ -27,16 +27,20 @@ import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.drawings.FriezePeopleViewController;
 import com.github.noony.app.timelinefx.drawings.FriezeView;
 import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
+import com.github.noony.app.timelinefx.hmi.freemap.FreeMapListCellImpl;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javafx.application.Platform.runLater;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -44,7 +48,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -72,6 +79,10 @@ public class FriezeViewController implements Initializable {
     private TitledPane propertiesPane;
     @FXML
     private TextField nameField;
+    @FXML
+    private ListView<FriezeFreeMap> freemapListView;
+    @FXML
+    private Button deleteFreemapButton;
     //
     private Frieze frieze;
     private TimeLineProject project;
@@ -86,9 +97,11 @@ public class FriezeViewController implements Initializable {
     private FriezePeopleViewController peopleViewController;
     //
     private List<CheckBoxTreeItem<Place>> allTreeItems = new LinkedList<>();
+    private Map<FriezeFreeMap, Tab> freemapTabs;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        freemapTabs = new HashMap<>();
         createSpatialView();
         createPeopleView();
         projectListener = this::handleProjectChanges;
@@ -101,6 +114,30 @@ public class FriezeViewController implements Initializable {
         });
         //
         leftAccordion.setExpandedPane(propertiesPane);
+        //
+        freemapListView.setEditable(true);
+        freemapListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        freemapListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FriezeFreeMap> ov, FriezeFreeMap t, FriezeFreeMap t1) -> {
+            deleteFreemapButton.setDisable(t1 == null);
+            if (t1 != null) {
+                friezeTabPane.getSelectionModel().select(freemapTabs.get(t1));
+            }
+        });
+        freemapListView.setCellFactory((ListView<FriezeFreeMap> p) -> {
+            return new FreeMapListCellImpl(this);
+        });
+        deleteFreemapButton.setDisable(true);
+        //
+        friezeTabPane.getSelectionModel().selectedItemProperty().addListener((var ov, var t, var t1) -> {
+            if (t1 != null) {
+                for (Map.Entry<FriezeFreeMap, Tab> entry : freemapTabs.entrySet()) {
+                    if (entry.getValue() == t1) {
+                        freemapListView.getSelectionModel().select(entry.getKey());
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     @FXML
@@ -108,6 +145,14 @@ public class FriezeViewController implements Initializable {
         LOG.log(Level.INFO, "handleFreeMapCreation {0}", event);
         var freeMap = frieze.createFriezeFreeMap();
         createFreeMapView(freeMap);
+        runLater(() -> freemapListView.getSelectionModel().select(freeMap));
+    }
+
+    @FXML
+    protected void handleDeleteFreeMap(ActionEvent event) {
+        LOG.log(Level.INFO, "handleDeleteFreeMap {0}", event);
+        var freeMap = freemapListView.getSelectionModel().getSelectedItem();
+        deleteFreeMap(freeMap);
     }
 
     protected void setFrieze(Frieze aFrieze) {
@@ -125,6 +170,10 @@ public class FriezeViewController implements Initializable {
         peopleViewController.setFrieze(frieze);
         //
         frieze.getFriezeFreeMaps().forEach(this::createFreeMapView);
+    }
+
+    public FriezeFreeMap getSelectedFreeMap() {
+        return freemapListView.getSelectionModel().getSelectedItem();
     }
 
     private void updatePropertiesTab() {
@@ -213,13 +262,27 @@ public class FriezeViewController implements Initializable {
 
     private void createFreeMapView(FriezeFreeMap aFreeMap) {
         var freeMapView = new FreeMapView(aFreeMap);
-        // TODO add to list
-        var tab = new Tab("FreeForm", freeMapView.getNode());
+        freemapListView.getItems().add(aFreeMap);
+        var tab = new Tab(aFreeMap.getName(), freeMapView.getNode());
         tab.setClosable(true);
         tab.setOnClosed(e -> {
-            System.err.println("TODO handle freemap closed");
+            LOG.log(Level.INFO, "Deleted FriezeFreeMap {0} on {1}", new Object[]{aFreeMap.getName(), e});
+            deleteFreeMap(aFreeMap);
         });
+        aFreeMap.addPropertyChangeListener(e -> {
+            if (FriezeFreeMap.NAME_CHANGED.equals(e.getPropertyName())) {
+                tab.setText(aFreeMap.getName());
+            }
+        });
+        freemapTabs.put(aFreeMap, tab);
         friezeTabPane.getTabs().add(tab);
+    }
+
+    private void deleteFreeMap(FriezeFreeMap aFreeMap) {
+        frieze.removeFriezeFreeMap(aFreeMap);
+        freemapListView.getItems().remove(aFreeMap);
+        var tab = freemapTabs.remove(aFreeMap);
+        friezeTabPane.getTabs().remove(tab);
     }
 
     private void handleProjectChanges(PropertyChangeEvent event) {

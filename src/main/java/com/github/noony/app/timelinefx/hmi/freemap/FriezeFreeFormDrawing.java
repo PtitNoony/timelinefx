@@ -361,6 +361,9 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
                 var freeMapPortraitRemoved = (Portrait) event.getNewValue();
                 removePortraitDrawing(freeMapPortraitRemoved);
             }
+            case FriezeFreeMap.NAME_CHANGED -> {
+                // nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

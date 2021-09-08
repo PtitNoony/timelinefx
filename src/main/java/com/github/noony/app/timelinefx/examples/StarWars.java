@@ -16,7 +16,7 @@
  */
 package com.github.noony.app.timelinefx.examples;
 
-import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
@@ -26,8 +26,6 @@ import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
-import java.util.HashMap;
-import java.util.Map;
 import javafx.scene.paint.Color;
 
 /**
@@ -64,8 +62,7 @@ public class StarWars {
         Person DARTH_MAUL = PersonFactory.createPerson("Darth Maul", Color.RED);
         Person DARTH_SIDIOUS = PersonFactory.createPerson("Darth Sidious", Color.DARKRED);
         //
-        Frieze frieze = new Frieze(timeLineProject, "SW 1-2");
-        Map<Integer, StayPeriodSimpleTime> times = new HashMap<>();
+        FriezeFactory.createFrieze(timeLineProject, "SW 1-2");
         //
         long startEpisode2 = 125;
         // Padme

@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.FriezeObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.StayPeriod;
@@ -37,7 +38,7 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public final class FriezeFreeMap {
+public final class FriezeFreeMap extends FriezeObject {
 
     // PropertyChangeEvent names
     public static final String LAYOUT_CHANGED = "layoutChanged";
@@ -104,7 +105,8 @@ public final class FriezeFreeMap {
     //
     private TimeMode timeMode;
 
-    public FriezeFreeMap(Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
+    protected FriezeFreeMap(long anID, Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
+        super(anID);
         propertyChangeSupport = new PropertyChangeSupport(FriezeFreeMap.this);
         frieze = aFrieze;
         persons = new LinkedList<>();
@@ -148,8 +150,8 @@ public final class FriezeFreeMap {
         displayTimeAsProportional();
     }
 
-    public FriezeFreeMap(Frieze aFrieze) {
-        this(aFrieze, new Dimension2D(DEFAULT_WIDTH, DEFAULT_HEIGHT), DEFAULT_PERSONS_WIDTH, DEFAULT_PLACE_NAMES_WIDTH, DEFAULT_FONT_SIZE, DEFAULT_PLOT_SEPARATION, DEFAULT_PLOT_VISIBILITY, DEFAULT_PLOT_SIZE);
+    protected FriezeFreeMap(long anID, Frieze aFrieze) {
+        this(anID, aFrieze, new Dimension2D(DEFAULT_WIDTH, DEFAULT_HEIGHT), DEFAULT_PERSONS_WIDTH, DEFAULT_PLACE_NAMES_WIDTH, DEFAULT_FONT_SIZE, DEFAULT_PLOT_SEPARATION, DEFAULT_PLOT_VISIBILITY, DEFAULT_PLOT_SIZE);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.save.v2;
 
 import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -33,6 +34,7 @@ import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import com.github.noony.app.timelinefx.core.freemap.Link;
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.core.freemap.PlotType;
@@ -180,12 +182,13 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                     case PICTURE_CHRONOLOGIES_GROUP -> {
                         parsePictureChronologies(project, element);
                     }
-                    default -> throw new UnsupportedOperationException("Unknown element :: " + element.getTagName());
+                    default ->
+                        throw new UnsupportedOperationException("Unknown element :: " + element.getTagName());
                 }
 //                            case CONFIGURATION_ELEMENT:
 //                                loadConfigurationAttributes(element);
 //                                break;
-                            }
+            }
         }
         return project;
     }
@@ -228,7 +231,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             // save picture chronologies
             Element pictureChronologiesGroupElement = doc.createElement(PICTURE_CHRONOLOGIES_GROUP);
             rootElement.appendChild(pictureChronologiesGroupElement);
-            project.getPictureChonologies().forEach(picChronology->pictureChronologiesGroupElement.appendChild(createPictureChronologyElement(doc,picChronology)));
+            project.getPictureChonologies().forEach(picChronology -> pictureChronologiesGroupElement.appendChild(createPictureChronologyElement(doc, picChronology)));
             //
             rootElement.normalize();
             // write the content into xml file
@@ -321,20 +324,22 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         for (int i = 0; i < pictureChildrenElements.getLength(); i++) {
             Node n = pictureChildrenElements.item(i);
             switch (n.getNodeName()) {
-                case PERSON_REF_ELEMENT ->  {
+                case PERSON_REF_ELEMENT -> {
                     Element e = (Element) n;
                     long personID = Long.parseLong(e.getAttribute(ID_ATR));
                     Person person = PersonFactory.getPerson(personID);
                     picture.addPerson(person);
                 }
-                case PLACE_REF_ELEMENT ->  {
+                case PLACE_REF_ELEMENT -> {
                     Element e = (Element) n;
                     long placeID = Long.parseLong(e.getAttribute(ID_ATR));
                     Place place = PlaceFactory.getPlace(placeID);
                     picture.addPlace(place);
                 }
-                case "#text" -> LOG.log(Level.FINE, "Ignoring text element");
-                default -> throw new UnsupportedOperationException("Could not parse child element of picture " + name + " :: " + n);
+                case "#text" ->
+                    LOG.log(Level.FINE, "Ignoring text element");
+                default ->
+                    throw new UnsupportedOperationException("Could not parse child element of picture " + name + " :: " + n);
             }
         }
         return picture;
@@ -353,14 +358,13 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return friezes;
     }
 
-
-
     private Frieze parseFrieze(TimeLineProject project, Element friezeElement) {
         // <frieze name="SW 1-2">
-        String name = friezeElement.getAttribute(NAME_ATR);
+        var name = friezeElement.getAttribute(NAME_ATR);
+        var id = Long.parseLong(friezeElement.getAttribute(ID_ATR));
         NodeList stayGroups = friezeElement.getElementsByTagName(STAYS_REF_GROUP);
         List<StayPeriod> stays = parseStaysInFreize((Element) stayGroups.item(0));
-        Frieze frieze = new Frieze(project, name,stays);
+        var frieze = FriezeFactory.createFrieze(id, project, name, stays);
         if (stayGroups.getLength() != 1) {
             throw new IllegalStateException("Wrong number of STAYS_GROUP : " + stayGroups.getLength());
         }
@@ -447,10 +451,10 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 throw new IllegalStateException();
             }
 
-        String startS = stayElement.getAttribute(START_DATE_ATR);
-        String endS = stayElement.getAttribute(END_DATE_ATR);
-        LocalDate start = LocalDate.parse(startS);
-        LocalDate end = LocalDate.parse(endS);
+            String startS = stayElement.getAttribute(START_DATE_ATR);
+            String endS = stayElement.getAttribute(END_DATE_ATR);
+            LocalDate start = LocalDate.parse(startS);
+            LocalDate end = LocalDate.parse(endS);
 //            long startLong = Long.parseLong(stayElement.getAttribute(START_DATE_ATR));
 //            long endLong = Long.parseLong(stayElement.getAttribute(END_DATE_ATR));
 //            LocalDate start = LocalDate.ofEpochDay(startLong);
@@ -515,7 +519,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private void parseFreeMap(Element freemapElement, Frieze frieze) {
-        FriezeFreeMap freeMap = frieze.createFriezeFreeMap();
+        long freeMapID = Long.parseLong(freemapElement.getAttribute(ID_ATR));
+        FriezeFreeMap freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze);
         //
         NodeList portraitsGroups = freemapElement.getElementsByTagName(PORTRAITS_GROUP);
         if (portraitsGroups.getLength() < 1) {
@@ -682,7 +687,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return pictureChronologys;
     }
 
-    private PictureChronology parsePictureChronology(TimeLineProject project, Element pictureChronologyElement){
+    private PictureChronology parsePictureChronology(TimeLineProject project, Element pictureChronologyElement) {
         long id = Long.parseLong(pictureChronologyElement.getAttribute(ID_ATR));
         String name = pictureChronologyElement.getAttribute(NAME_ATR);
         double width = Double.parseDouble(pictureChronologyElement.getAttribute(WIDTH_ATR));
@@ -704,7 +709,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return pictureChronology;
     }
 
-    private ChronologyPictureMiniature parseChronologyPictureMiniature(TimeLineProject project, Element miniatureElement){
+    private ChronologyPictureMiniature parseChronologyPictureMiniature(TimeLineProject project, Element miniatureElement) {
 //        <pictureChronologyMiniature id="138" pictureRef="125" xPos="897.0" yPos="329.0" scale="0.5"/>
         long id = Long.parseLong(miniatureElement.getAttribute(ID_ATR));
         long pictureRef = Long.parseLong(miniatureElement.getAttribute(PICTURE_REF_ELEMENT));
@@ -714,7 +719,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         var miniature = PictureChronologyFactory.createChronologyPictureMiniature(PictureFactory.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
         return miniature;
     }
-
 
     private static Element createPlaceElement(Document doc, Place place, String fromPlace) {
         LOG.log(Level.FINE, "> Creating place {0} from {1}", new Object[]{place.getName(), fromPlace});
@@ -761,6 +765,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         LOG.log(Level.INFO, "Saving Frieze {0}", new Object[]{frieze.getName()});
         Element friezeElement = doc.createElement(FRIEZE_ELEMENT);
         friezeElement.setAttribute(NAME_ATR, frieze.getName());
+        friezeElement.setAttribute(ID_ATR, Long.toString(frieze.getId()));
         // Stays
         Element staysElement = doc.createElement(STAYS_REF_GROUP);
         friezeElement.appendChild(staysElement);
@@ -771,7 +776,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         frieze.getFriezeFreeMaps().forEach(freeMap -> freemapsElement.appendChild(createFreeMapElement(doc, freeMap)));
         return friezeElement;
     }
-
 
     private static Element createStayElement(Document doc, StayPeriod stay) {
         Element stayElement = doc.createElement(STAY_ELEMENT);
@@ -805,6 +809,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     private static Element createFreeMapElement(Document doc, FriezeFreeMap friezeFreeMap) {
         Element friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
         friezeFreeMapElement.setAttribute(NAME_ATR, friezeFreeMap.getName());
+        friezeFreeMapElement.setAttribute(ID_ATR, Long.toString(friezeFreeMap.getId()));
         friezeFreeMapElement.setAttribute(WIDTH_ATR, Double.toString(friezeFreeMap.getFreeMapWidth()));
         friezeFreeMapElement.setAttribute(HEIGHT_ATR, Double.toString(friezeFreeMap.getFreeMapHeight()));
         friezeFreeMapElement.setAttribute(FREEMAP_PERSON_WIDTH_ATR, Double.toString(friezeFreeMap.getPersonWidth()));
@@ -859,7 +864,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         linkElement.setAttribute(TYPE_ATR, link.getType().name());
         linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginPlot().getParentPeriodID()));
         linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
-        if (link instanceof  StayLink stayLink) {
+        if (link instanceof StayLink stayLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(stayLink.getStayPeriod().getId()));
         } else if (link instanceof TravelLink travelLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(travelLink.getPerson().getId()));
@@ -877,26 +882,25 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return placeElement;
     }
 
-    private static Element createPictureChronologyElement(Document doc,  PictureChronology pictureChronology){
+    private static Element createPictureChronologyElement(Document doc, PictureChronology pictureChronology) {
         Element pictureChronologyElement = doc.createElement(PICTURE_CHRONOLOGY_ELEMENT);
         pictureChronologyElement.setAttribute(ID_ATR, Long.toString(pictureChronology.getId()));
         pictureChronologyElement.setAttribute(NAME_ATR, pictureChronology.getName());
         pictureChronologyElement.setAttribute(WIDTH_ATR, Double.toString(pictureChronology.getWidth()));
         pictureChronologyElement.setAttribute(HEIGHT_ATR, Double.toString(pictureChronology.getHeight()));
         //
-        pictureChronology.getChronologyPictures().forEach(miniature->pictureChronologyElement.appendChild(createPictureChronologyMiniature(doc, miniature)));
+        pictureChronology.getChronologyPictures().forEach(miniature -> pictureChronologyElement.appendChild(createPictureChronologyMiniature(doc, miniature)));
         return pictureChronologyElement;
     }
 
-
-    private static Element createPictureChronologyMiniature(Document doc,  ChronologyPictureMiniature miniature){
+    private static Element createPictureChronologyMiniature(Document doc, ChronologyPictureMiniature miniature) {
         Element pictureChronologyMiniatureElement = doc.createElement(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT);
         pictureChronologyMiniatureElement.setAttribute(ID_ATR, Long.toString(miniature.getId()));
         pictureChronologyMiniatureElement.setAttribute(X_POS_ATR, Double.toString(miniature.getPosition().getX()));
         pictureChronologyMiniatureElement.setAttribute(Y_POS_ATR, Double.toString(miniature.getPosition().getY()));
         pictureChronologyMiniatureElement.setAttribute(PICTURE_REF_ELEMENT, Long.toString(miniature.getPicture().getId()));
         pictureChronologyMiniatureElement.setAttribute(SCALE_ATR, Double.toString(miniature.getScale()));
-        return  pictureChronologyMiniatureElement;
+        return pictureChronologyMiniatureElement;
     }
 
     @Override

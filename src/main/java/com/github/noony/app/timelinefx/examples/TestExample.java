@@ -16,7 +16,7 @@
  */
 package com.github.noony.app.timelinefx.examples;
 
-import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
@@ -44,7 +44,7 @@ public class TestExample {
         Person personA = PersonFactory.createPerson("PERSON_A", Color.RED);
         Person personB = PersonFactory.createPerson("PERSON_B", Color.AQUA);
         Person personC = PersonFactory.createPerson("PERSON_C", Color.CHARTREUSE);
-        Frieze frieze = new Frieze(timeLineProject, "Test 1");
+        FriezeFactory.createFrieze(timeLineProject, "Test 1");
         //
         StayPeriodSimpleTime stay1_A = StayFactory.createStayPeriodSimpleTime(personA, 0, 20, placeA);
         StayPeriodSimpleTime stay2_A = StayFactory.createStayPeriodSimpleTime(personA, 21, 40, placeB);

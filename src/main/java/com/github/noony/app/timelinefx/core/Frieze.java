@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -32,7 +33,7 @@ import static javafx.application.Platform.runLater;
  *
  * @author hamon
  */
-public class Frieze {
+public class Frieze extends FriezeObject {
 
     public static final String CLASS_NAME = "Frieze";
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
@@ -67,8 +68,8 @@ public class Frieze {
     private long minDateWindow = minDate;
     private long maxDateWindow = maxDate;
 
-    public Frieze(TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
-//        TODO use factory
+    protected Frieze(long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+        super(anID);
         project = aProject;
         name = friezeName;
         stayPeriods = new LinkedList<>();
@@ -89,8 +90,8 @@ public class Frieze {
         staysToConsider.stream().forEachOrdered(Frieze.this::addStayPeriod);
     }
 
-    public Frieze(TimeLineProject aProject, String friezeName) {
-        this(aProject, friezeName, Collections.EMPTY_LIST);
+    public Frieze(long anID, TimeLineProject aProject, String friezeName) {
+        this(anID, aProject, friezeName, Collections.EMPTY_LIST);
     }
 
     public void setName(String aName) {
@@ -241,7 +242,7 @@ public class Frieze {
     }
 
     public FriezeFreeMap createFriezeFreeMap() {
-        var friezeFreeMap = new FriezeFreeMap(this);
+        var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this);
         friezeFreeMaps.add(friezeFreeMap);
         return friezeFreeMap;
     }

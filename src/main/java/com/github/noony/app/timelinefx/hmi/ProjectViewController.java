@@ -16,7 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
-import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.examples.StarWars;
@@ -181,7 +181,7 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleFriezeCreation(ActionEvent event) {
         LOG.log(Level.INFO, "handleFriezeCreation {0}", event);
-        Frieze frieze = new Frieze(timeLineProject, "New Frieze", timeLineProject.getStays());
+        var frieze = FriezeFactory.createFrieze(timeLineProject, "New Frieze", timeLineProject.getStays());
         System.err.println("TODO handle freize creation");
         // TODO use a property change instead ?
         timelineController.loadFreize(frieze);

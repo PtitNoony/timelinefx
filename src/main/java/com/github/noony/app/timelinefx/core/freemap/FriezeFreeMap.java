@@ -421,11 +421,14 @@ public final class FriezeFreeMap extends FriezeObject {
         if (!startDateHandles.containsKey(startDate)) {
             var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
             startDateHandles.put(startDate, startDateHandle);
+            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);
+
         }
         var endDate = stayPeriod.getEndDate();
         if (!endDateHandles.containsKey(endDate)) {
             var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);
             endDateHandles.put(endDate, endDateHandle);
+            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDateHandle);
         }
         freeMapPerson.addStay(stayPeriod);
     }
@@ -506,8 +509,8 @@ public final class FriezeFreeMap extends FriezeObject {
         List<Long> startDatesToBeRemoved = new LinkedList<>();
         frieze.getStartDates().forEach(startDate -> {
             if (!startDateHandles.containsKey(startDate)) {
-                createDateHandle(startDate, DateHandle.TimeType.START);
-                propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDate);
+                var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
+                propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);
             }
         });
         startDateHandles.forEach((startDate, handle) -> {
@@ -516,16 +519,16 @@ public final class FriezeFreeMap extends FriezeObject {
             }
         });
         startDatesToBeRemoved.forEach(startDateToRemove -> {
-            startDateHandles.remove(startDateToRemove);
-            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_REMOVED, this, startDateToRemove);
+            var startDateHandle = startDateHandles.remove(startDateToRemove);
+            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_REMOVED, this, startDateHandle);
         });
         //
         List<Long> endDates = frieze.getEndDates();
         List<Long> endDatesToBeRemoved = new LinkedList<>();
         frieze.getEndDates().forEach(endDate -> {
             if (!endDateHandles.containsKey(endDate)) {
-                createDateHandle(endDate, DateHandle.TimeType.END);
-                propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDate);
+                var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);
+                propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDateHandle);
             }
         });
         endDateHandles.forEach((endDate, handle) -> {
@@ -534,8 +537,8 @@ public final class FriezeFreeMap extends FriezeObject {
             }
         });
         endDatesToBeRemoved.forEach(endDateToRemove -> {
-            endDateHandles.remove(endDateToRemove);
-            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_REMOVED, this, endDateToRemove);
+            var endDateHandle = endDateHandles.remove(endDateToRemove);
+            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_REMOVED, this, endDateHandle);
         });
     }
 
@@ -553,7 +556,6 @@ public final class FriezeFreeMap extends FriezeObject {
             }
             case Frieze.PLACE_ADDED -> {
                 var placeAdded = (Place) event.getNewValue();
-                System.err.println(" FREEMAP ADDING PLACE " + placeAdded);
                 addFreeMapPlace(placeAdded);
             }
             case Frieze.PLACE_REMOVED -> {

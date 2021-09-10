@@ -178,6 +178,28 @@ public class Frieze extends FriezeObject {
             minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
             maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             //
+            var startDate = stay.getStartDate();
+            var endDate = stay.getEndDate();
+            var removeStart = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
+            var removeEnd = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
+            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            if (removeStart) {
+                startDates.remove(startDate);
+                // TODO fire ?
+            }
+            if (removeEnd) {
+                endDates.remove(endDate);
+                // TODO fire ?
+            }
+            if (stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == startDate)
+                    && stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == startDate)) {
+                dates.remove(startDate);
+            }
+            if (stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == endDate)
+                    && stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == endDate)) {
+                dates.remove(endDate);
+            }
+            //
             propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stay);
         }
     }

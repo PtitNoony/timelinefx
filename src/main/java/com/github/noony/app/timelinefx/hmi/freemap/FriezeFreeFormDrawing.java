@@ -188,18 +188,22 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         return portraitDrawings.get(person);
     }
 
-    private void createStartDateHandle(DateHandle date) {
-        var handle = new DateHandleDrawing(date, scale);
-        startDateHandleGroup.getChildren().add(handle.getNode());
-        startDatesHandles.put(date.getDate(), handle);
-        scalableNodes.add(handle);
+    private void addStartDateHandleDrawing(DateHandle date) {
+        if (!startDatesHandles.containsKey(date.getDate())) {
+            var handle = new DateHandleDrawing(date, scale);
+            startDateHandleGroup.getChildren().add(handle.getNode());
+            startDatesHandles.put(date.getDate(), handle);
+            scalableNodes.add(handle);
+        }
     }
 
-    private void createEndDateHandle(DateHandle date) {
-        var handle = new DateHandleDrawing(date, scale);
-        endDateHandleGroup.getChildren().add(handle.getNode());
-        endDatesHandles.put(date.getDate(), handle);
-        scalableNodes.add(handle);
+    private void addEndDateHandleDrawing(DateHandle date) {
+        if (!endDatesHandles.containsKey(date.getDate())) {
+            var handle = new DateHandleDrawing(date, scale);
+            endDateHandleGroup.getChildren().add(handle.getNode());
+            endDatesHandles.put(date.getDate(), handle);
+            scalableNodes.add(handle);
+        }
     }
 
     private void addPlaceDrawing(FreeMapPlace place) {
@@ -279,8 +283,8 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         placesGroup.getChildren().add(placesBackground);
         startDateHandleGroup.getChildren().addAll(startDatesBackground);
         endDateHandleGroup.getChildren().addAll(endDatesBackground);
-        friezeFreeMap.getStartDateHandles().forEach(this::createStartDateHandle);
-        friezeFreeMap.getEndDateHandles().forEach(this::createEndDateHandle);
+        friezeFreeMap.getStartDateHandles().forEach(this::addStartDateHandleDrawing);
+        friezeFreeMap.getEndDateHandles().forEach(this::addEndDateHandleDrawing);
         friezeFreeMap.getPlaces().forEach(this::addPlaceDrawing);
         friezeFreeMap.getPersons().forEach(this::addPersonDrawing);
         //
@@ -364,8 +368,35 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
             case FriezeFreeMap.NAME_CHANGED -> {
                 // nothing to do
             }
+            case FriezeFreeMap.START_DATE_HANDLE_ADDED -> {
+                addStartDateHandleDrawing((DateHandle) event.getNewValue());
+            }
+            case FriezeFreeMap.END_DATE_HANDLE_ADDED -> {
+                addEndDateHandleDrawing((DateHandle) event.getNewValue());
+            }
+            case FriezeFreeMap.START_DATE_HANDLE_REMOVED -> {
+                removeStartDateHandleDrawing((DateHandle) event.getNewValue());
+            }
+            case FriezeFreeMap.END_DATE_HANDLE_REMOVED -> {
+                removeEndDateHandleDrawing((DateHandle) event.getNewValue());
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
+        }
+    }
+
+    private void removeStartDateHandleDrawing(DateHandle aDateHandle) {
+        var handleDrawing = startDatesHandles.remove(aDateHandle.getDate());
+        if (handleDrawing != null) {
+            startDateHandleGroup.getChildren().remove(handleDrawing.getNode());
+        }
+
+    }
+
+    private void removeEndDateHandleDrawing(DateHandle aDateHandle) {
+        var handleDrawing = endDatesHandles.remove(aDateHandle.getDate());
+        if (handleDrawing != null) {
+            endDateHandleGroup.getChildren().remove(handleDrawing.getNode());
         }
     }
 }

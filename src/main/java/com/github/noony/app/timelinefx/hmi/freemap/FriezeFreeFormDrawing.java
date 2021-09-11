@@ -224,7 +224,6 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
     }
 
     private void addPersonDrawing(FreeMapPerson person) {
-        System.err.println("ADDING PERSON DRAWING !!: " + person);
         // create portrait first since needed int person drawings for the time beeing
         // next impr. merge classes ?
         createPortraitDrawing(friezeFreeMap.getPortrait(person.getPerson()));

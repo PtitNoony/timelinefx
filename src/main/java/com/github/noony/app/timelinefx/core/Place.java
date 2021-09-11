@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.paint.Color;
 
 /**
@@ -36,6 +38,8 @@ public class Place extends FriezeObject {
     public static final Color DEFAULT_COLOR = Color.GREY;
 
     public static final Comparator<Place> COMPARATOR = (p1, p2) -> p1.getName().compareTo(p2.getName());
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final List<Place> places;
     private String name;
@@ -101,8 +105,7 @@ public class Place extends FriezeObject {
     public boolean setLevel(PlaceLevel aLevel) {
         boolean placeConflitct = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
         if (placeConflitct) {
-            System.err.println("New level cannot be set because of children levels");
-            // todo better management and error message
+            LOG.log(Level.SEVERE, "New level cannot be set because of children levels : {0}", new Object[]{aLevel});
             return false;
         }
         level = aLevel;

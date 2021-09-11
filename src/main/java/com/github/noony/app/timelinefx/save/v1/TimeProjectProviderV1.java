@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.save.v1;
 
 import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -156,15 +157,17 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                         List<Person> persons = parsePersons(element);
                         persons.forEach(p -> project.addPerson(p));
                     }
-                    case PICTURES_GROUP -> parsePictures(element);
+                    case PICTURES_GROUP ->
+                        parsePictures(element);
                     case STAYS_GROUP -> {
                         List<StayPeriod> stays = parseStays(element);
                         stays.forEach(s -> project.addStay(s));
                     }
                     case FRIEZES_GROUP -> {
-                         parseFriezes(project, element);
+                        parseFriezes(project, element);
                     }
-                    default -> throw new UnsupportedOperationException("Unknown element :: " + element.getTagName());
+                    default ->
+                        throw new UnsupportedOperationException("Unknown element :: " + element.getTagName());
                 }
             }
         }
@@ -329,10 +332,11 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
 
     private Frieze parseFrieze(TimeLineProject project, Element friezeElement) {
         // <frieze name="SW 1-2">
-        String name = friezeElement.getAttribute(NAME_ATR);
+        var name = friezeElement.getAttribute(NAME_ATR);
+        var id = Long.parseLong(friezeElement.getAttribute(ID_ATR));
         NodeList stayGroups = friezeElement.getElementsByTagName(STAYS_REF_GROUP);
         List<StayPeriod> stays = parseStaysInFreize((Element) stayGroups.item(0));
-        Frieze frieze = new Frieze(project, name,stays);
+        var frieze = FriezeFactory.createFrieze(id, project, name, stays);
         if (stayGroups.getLength() != 1) {
             throw new IllegalStateException("Wrong number of STAYS_GROUP : " + stayGroups.getLength());
         }

@@ -198,6 +198,9 @@ public class FriezePeopleLinearDrawing implements FriezeView {
             }
             case Frieze.PERSON_REMOVED ->
                 removePersonDrawing((Person) event.getNewValue());
+            case Frieze.NAME_CHANGED -> {
+                // Nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
         }

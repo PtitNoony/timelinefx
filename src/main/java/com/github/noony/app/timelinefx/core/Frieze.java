@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -32,10 +33,11 @@ import static javafx.application.Platform.runLater;
  *
  * @author hamon
  */
-public class Frieze {
+public class Frieze extends FriezeObject {
 
     public static final String CLASS_NAME = "Frieze";
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
+    public static final String NAME_CHANGED = CLASS_NAME + "__nameChanged";
     public static final String STAY_ADDED = CLASS_NAME + "__stayAdded";
     public static final String STAY_REMOVED = CLASS_NAME + "__stayRemoved";
     public static final String PERSON_ADDED = CLASS_NAME + "__personAdded";
@@ -47,7 +49,6 @@ public class Frieze {
     private static final long DEFAULT_MAX_DATE = 500;
 
     private final TimeLineProject project;
-    private final String name;
     private final List<StayPeriod> stayPeriods;
     private final List<Place> places;
     private final List<Person> persons;
@@ -58,7 +59,8 @@ public class Frieze {
     private final List<Long> dates;
     private final List<Long> startDates;
     private final List<Long> endDates;
-
+    //
+    private String name;
     //
     private long minDate = DEFAULT_MIN_DATE;
     private long maxDate = DEFAULT_MAX_DATE;
@@ -66,8 +68,8 @@ public class Frieze {
     private long minDateWindow = minDate;
     private long maxDateWindow = maxDate;
 
-    public Frieze(TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
-//        TODO use factory
+    protected Frieze(long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+        super(anID);
         project = aProject;
         name = friezeName;
         stayPeriods = new LinkedList<>();
@@ -88,8 +90,13 @@ public class Frieze {
         staysToConsider.stream().forEachOrdered(Frieze.this::addStayPeriod);
     }
 
-    public Frieze(TimeLineProject aProject, String friezeName) {
-        this(aProject, friezeName, Collections.EMPTY_LIST);
+    public Frieze(long anID, TimeLineProject aProject, String friezeName) {
+        this(anID, aProject, friezeName, Collections.EMPTY_LIST);
+    }
+
+    public void setName(String aName) {
+        name = aName;
+        propertyChangeSupport.firePropertyChange(NAME_CHANGED, this, name);
     }
 
     public String getName() {
@@ -171,6 +178,28 @@ public class Frieze {
             minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
             maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             //
+            var startDate = stay.getStartDate();
+            var endDate = stay.getEndDate();
+            var removeStart = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
+            var removeEnd = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
+            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            if (removeStart) {
+                startDates.remove(startDate);
+                // TODO fire ?
+            }
+            if (removeEnd) {
+                endDates.remove(endDate);
+                // TODO fire ?
+            }
+            if (stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == startDate)
+                    && stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == startDate)) {
+                dates.remove(startDate);
+            }
+            if (stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == endDate)
+                    && stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == endDate)) {
+                dates.remove(endDate);
+            }
+            //
             propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stay);
         }
     }
@@ -235,9 +264,13 @@ public class Frieze {
     }
 
     public FriezeFreeMap createFriezeFreeMap() {
-        var friezeFreeMap = new FriezeFreeMap(this);
+        var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this);
         friezeFreeMaps.add(friezeFreeMap);
         return friezeFreeMap;
+    }
+
+    public void removeFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
+        friezeFreeMaps.remove(aFriezeFreeMap);
     }
 
     public List<FriezeFreeMap> getFriezeFreeMaps() {
@@ -335,4 +368,5 @@ public class Frieze {
         impactedStays.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
     }
+
 }

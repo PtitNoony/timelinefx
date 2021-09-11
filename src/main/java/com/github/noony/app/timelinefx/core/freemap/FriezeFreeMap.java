@@ -458,6 +458,7 @@ public final class FriezeFreeMap extends FriezeObject {
             System.err.println("!!!!!! FAILED TO REMOVE PERSON:: " + person);
             return;
         }
+        places.forEach((place, freemapPlace) -> freemapPlace.removePerson(person));
         //
         propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_REMOVED, this, freeMapPerson);
         var removedPortrait = portraits.remove(person);

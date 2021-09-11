@@ -116,7 +116,7 @@ public class FreeMapPlace {
         plot.setY(yPos + (index + 1) * plotSeparation);
         plot.addPropertyChangeListener(this::handlePlotChange);
         updateMinMaxX();
-        height = Math.max(PLACE_NAME_HEIGHT, plotSeparation * (persons.size() + 1));
+        setHeight(Math.max(PLACE_NAME_HEIGHT, plotSeparation * (persons.size() + 1)));
     }
 
     public double getMinX() {
@@ -161,6 +161,19 @@ public class FreeMapPlace {
             plot.setY(yPos + deltaY);
         });
         propertyChangeSupport.firePropertyChange(Y_POS_CHANGED, this, yPos);
+    }
+
+    protected void removePerson(Person aPerson) {
+        if (persons.remove(aPerson)) {
+            plots.stream().forEach(plot -> {
+                var personPlot = plot.getPerson();
+                var index = indexOf(personPlot);
+                plot.setY(yPos + (index + 1) * plotSeparation);
+                plot.addPropertyChangeListener(this::handlePlotChange);
+            });
+            updateMinMaxX();
+            setHeight(Math.max(PLACE_NAME_HEIGHT, plotSeparation * (persons.size() + 1)));
+        }
     }
 
     private void handlePlotChange(PropertyChangeEvent event) {

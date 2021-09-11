@@ -269,6 +269,12 @@ public class Frieze extends FriezeObject {
         return friezeFreeMap;
     }
 
+    public void addFriezeFreeMap(FriezeFreeMap friezeFreeMap) {
+        if (!friezeFreeMaps.contains(friezeFreeMap)) {
+            friezeFreeMaps.add(friezeFreeMap);
+        }
+    }
+
     public void removeFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
         friezeFreeMaps.remove(aFriezeFreeMap);
     }

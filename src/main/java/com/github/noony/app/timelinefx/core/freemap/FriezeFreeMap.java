@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static javafx.application.Platform.runLater;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
@@ -268,6 +267,33 @@ public final class FriezeFreeMap extends FriezeObject {
         return Collections.unmodifiableList(portraits.values().stream().collect(Collectors.toList()));
     }
 
+    /**
+     * Costly method
+     *
+     * @return
+     */
+    public List<Plot> getPlots() {
+        return places.values().stream().flatMap(x -> x.getPlots().stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Costly method
+     *
+     * @return
+     */
+    public List<Link> getStayLinks() {
+        return freeMapPersons.values().stream().flatMap(x -> x.getStayLinks().stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Costly method
+     *
+     * @return
+     */
+    public List<Link> getTravelLinks() {
+        return freeMapPersons.values().stream().flatMap(x -> x.getTravelLinks().stream()).collect(Collectors.toList());
+    }
+
     // TODO :: usefull ?
     public int getPersonIndexAtPlace(Person aPerson, Place aPlace) {
         var freeMapPlace = places.get(aPlace);
@@ -341,7 +367,7 @@ public final class FriezeFreeMap extends FriezeObject {
 
     public void setPlotSeparation(double plotSeparation) {
         places.values().forEach(place -> place.setPlotSeparation(plotSeparation));
-        runLater(this::distributePlaces);
+        distributePlaces();
     }
 
     public void setPlotVisibility(boolean plotVisible) {

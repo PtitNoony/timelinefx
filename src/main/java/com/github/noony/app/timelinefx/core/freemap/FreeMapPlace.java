@@ -21,6 +21,7 @@ import com.github.noony.app.timelinefx.core.Place;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -161,6 +162,10 @@ public class FreeMapPlace {
             plot.setY(yPos + deltaY);
         });
         propertyChangeSupport.firePropertyChange(Y_POS_CHANGED, this, yPos);
+    }
+
+    public List<Plot> getPlots() {
+        return Collections.unmodifiableList(plots);
     }
 
     protected void removePerson(Person aPerson) {

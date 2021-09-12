@@ -29,8 +29,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static javafx.application.Platform.runLater;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 
@@ -70,6 +71,8 @@ public final class FriezeFreeMap extends FriezeObject {
     private static final double DEFAULT_PLOT_SIZE = 4;
 
     private static final String DEFAULT_NAME = "FreeMap";
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
 
@@ -264,6 +267,33 @@ public final class FriezeFreeMap extends FriezeObject {
         return Collections.unmodifiableList(portraits.values().stream().collect(Collectors.toList()));
     }
 
+    /**
+     * Costly method
+     *
+     * @return
+     */
+    public List<Plot> getPlots() {
+        return places.values().stream().flatMap(x -> x.getPlots().stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Costly method
+     *
+     * @return
+     */
+    public List<Link> getStayLinks() {
+        return freeMapPersons.values().stream().flatMap(x -> x.getStayLinks().stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Costly method
+     *
+     * @return
+     */
+    public List<Link> getTravelLinks() {
+        return freeMapPersons.values().stream().flatMap(x -> x.getTravelLinks().stream()).collect(Collectors.toList());
+    }
+
     // TODO :: usefull ?
     public int getPersonIndexAtPlace(Person aPerson, Place aPlace) {
         var freeMapPlace = places.get(aPlace);
@@ -337,7 +367,7 @@ public final class FriezeFreeMap extends FriezeObject {
 
     public void setPlotSeparation(double plotSeparation) {
         places.values().forEach(place -> place.setPlotSeparation(plotSeparation));
-        runLater(this::distributePlaces);
+        distributePlaces();
     }
 
     public void setPlotVisibility(boolean plotVisible) {
@@ -409,7 +439,7 @@ public final class FriezeFreeMap extends FriezeObject {
         // TODO make sure the person is already added
         var freeMapPerson = freeMapPersons.get(person);
         if (freeMapPerson == null) {
-            System.err.println(" !! FAILED TO ADD STAY " + stayPeriod);
+            LOG.log(Level.SEVERE, "Could not add stayDrawing ({0}) since corresponding freemapPerson ({1}) does not exits.", new Object[]{stayPeriod, person});
             return;
         }
         //
@@ -438,7 +468,7 @@ public final class FriezeFreeMap extends FriezeObject {
         // TODO make sure the person is already added
         var freeMapPerson = freeMapPersons.get(person);
         if (freeMapPerson == null) {
-            System.err.println(" !! FAILED TO REMOVE STAY (case 1) " + stayPeriod);
+            LOG.log(Level.SEVERE, "Could not remove stayDrawing ({0}) since corresponding freemapPerson ({1}) does not exits.", new Object[]{stayPeriod, person});
             return;
         }
         freeMapPerson.removeStay(stayPeriod);
@@ -455,7 +485,7 @@ public final class FriezeFreeMap extends FriezeObject {
         var freeMapPerson = freeMapPersons.remove(person);
         periods.forEach(this::removeStay);
         if (freeMapPerson == null) {
-            System.err.println("!!!!!! FAILED TO REMOVE PERSON:: " + person);
+            LOG.log(Level.SEVERE, "Could not remove freemapPerson ({0}) which does not exits.", new Object[]{person});
             return;
         }
         places.forEach((place, freemapPlace) -> freemapPlace.removePerson(person));
@@ -489,7 +519,6 @@ public final class FriezeFreeMap extends FriezeObject {
     }
 
     private void removeFreeMapPlace(Place aPlace) {
-        System.err.println(" FrizeFreeMap removeFreeMapPlace :: " + aPlace);
         var freeMapPlace = places.remove(aPlace);
         if (freeMapPlace != null) {
             propertyChangeSupport.firePropertyChange(FREE_MAP_PLACE_REMOVED, null, freeMapPlace);

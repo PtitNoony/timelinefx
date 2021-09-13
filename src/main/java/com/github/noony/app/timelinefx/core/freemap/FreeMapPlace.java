@@ -183,7 +183,7 @@ public class FreeMapPlace {
 
     private void handlePlotChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED -> {
+            case Plot.POS_CHANGED, Plot.PLOT_DATE_CHANGED -> {
                 updateMinMaxX();
             }
             case Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {

@@ -162,6 +162,9 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
             case Plot.PLOT_VISIBILITY_CHANGED:
                 // nothing to do
                 break;
+            case Plot.PLOT_DATE_CHANGED:
+                // nothing to do since X position shall be updated when plot added in the new dateHandle
+                break;
             default:
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
@@ -177,6 +180,9 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
             case Plot.PLOT_SIZE_CHANGED:
             case Plot.PLOT_VISIBILITY_CHANGED:
                 // nothing to do
+                break;
+            case Plot.PLOT_DATE_CHANGED:
+                // nothing to do since X position shall be updated when plot added in the new dateHandle
                 break;
             default:
                 throw new UnsupportedOperationException(event.getPropertyName());

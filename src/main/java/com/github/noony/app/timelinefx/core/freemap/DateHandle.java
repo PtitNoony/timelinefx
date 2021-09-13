@@ -63,10 +63,11 @@ public class DateHandle {
     }
 
     public void addPlot(Plot plot) {
-        plots.add(plot);
-        // TODO : check if really needed
-        plot.setX(xPos);
-        plot.addPropertyChangeListener(this::handlePlotUpdate);
+        if (plot.getDate() == date && !plots.contains(plot)) {
+            plots.add(plot);
+            plot.setX(xPos);
+            plot.addPropertyChangeListener(this::handlePlotUpdate);
+        }
     }
 
     public void addListener(PropertyChangeListener listener) {
@@ -106,6 +107,13 @@ public class DateHandle {
                 setX((double) event.getOldValue());
             case Plot.SELECTION_CHANGED, Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
+            }
+            case Plot.PLOT_DATE_CHANGED -> {
+                var plot = (Plot) event.getOldValue();
+                if (plot.getDate() != date) {
+                    plots.remove(plot);
+                    plot.removePropertyChangeListener(this::handlePlotUpdate);
+                }
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());

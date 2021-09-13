@@ -172,6 +172,13 @@ public class FriezePeopleLinearDrawing implements FriezeView {
         }
     }
 
+    private void updateStayPeriod(StayPeriod aStayPeriod) {
+        PersonDrawing personDrawing = personsAndDrawings.get(aStayPeriod.getPerson());
+        if (personDrawing != null) {
+            personDrawing.updateStay(aStayPeriod);
+        }
+    }
+
     private void removeStayPeriod(StayPeriod aStayPeriod) {
         PersonDrawing personDrawing = personsAndDrawings.get(aStayPeriod.getPerson());
         if (personDrawing != null) {
@@ -200,6 +207,14 @@ public class FriezePeopleLinearDrawing implements FriezeView {
                 removePersonDrawing((Person) event.getNewValue());
             case Frieze.NAME_CHANGED -> {
                 // Nothing to do
+            }
+            case Frieze.STAY_UPDATED -> {
+                var stay = (StayPeriod) event.getNewValue();
+                updateStayPeriod(stay);
+            }
+            case Frieze.START_DATE_ADDED,Frieze.START_DATE_REMOVED -> {// ignore : taken care of in STAY_UPDATED
+            }
+            case Frieze.END_DATE_ADDED,Frieze.END_DATE_REMOVED -> {// ignore : taken care of in STAY_UPDATED
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());

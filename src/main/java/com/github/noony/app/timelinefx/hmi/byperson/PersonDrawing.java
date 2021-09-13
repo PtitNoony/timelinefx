@@ -136,6 +136,13 @@ public class PersonDrawing extends Drawing {
         placesGroup.getChildren().add(stayDrawing.getNode());
     }
 
+    protected void updateStay(StayPeriod stay) {
+        PlaceStayDrawing stayDrawing = staysAndDrawings.get(stay);
+        if (stayDrawing != null) {
+            stayDrawing.updateDateRatio(currentMinDate, currentRatio);
+        }
+    }
+
     protected void removeStay(StayPeriod stay) {
         PlaceStayDrawing stayDrawing = staysAndDrawings.remove(stay);
         if (stayDrawing != null) {

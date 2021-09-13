@@ -52,11 +52,25 @@ public class StayPeriodLocalDate extends StayPeriod {
     }
 
     public void setStartDate(LocalDate aStartDate) {
-        startDate = aStartDate;
+        if (aStartDate == null) {
+            return;
+        }
+        if (!startDate.isEqual(aStartDate)) {
+            var oldStartDate = startDate;
+            startDate = aStartDate;
+            firePropertyChange(START_DATE_CHANGED, oldStartDate.toEpochDay(), startDate.toEpochDay());
+        }
     }
 
     public void setEndDate(LocalDate aEndDate) {
-        endDate = aEndDate;
+        if (aEndDate == null) {
+            return;
+        }
+        if (!endDate.isEqual(aEndDate)) {
+            var oldEndDate = endDate;
+            endDate = aEndDate;
+            firePropertyChange(END_DATE_CHANGED, oldEndDate.toEpochDay(), endDate.toEpochDay());
+        }
     }
 
     @Override

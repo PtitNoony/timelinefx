@@ -95,6 +95,9 @@ public class RectanglePlot extends AbstractFxScalableNode {
                 updateLayout();
             case Plot.PLOT_VISIBILITY_CHANGED ->
                 setVisible((boolean) event.getNewValue());
+            case Plot.PLOT_DATE_CHANGED -> {
+                // nothing to do since X position shall be updated when plot added in the new dateHandle
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

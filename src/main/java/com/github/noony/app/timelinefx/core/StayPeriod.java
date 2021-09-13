@@ -16,6 +16,8 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Comparator;
 
 /**
@@ -26,13 +28,28 @@ public abstract class StayPeriod extends FriezeObject {
 
     public static final Comparator<? super StayPeriod> STAY_COMPARATOR = (s1, s2) -> Long.compare(s1.getStartDate(), s2.getStartDate());
 
+    public static final String PERSON_CHANGED = "StayPeriod__personChanged";
+    public static final String PLACE_CHANGED = "StayPeriod__placeChanged";
+    public static final String START_DATE_CHANGED = "StayPeriod__startDateChanged";
+    public static final String END_DATE_CHANGED = "StayPeriod__endDateChanged";
+
+    private final PropertyChangeSupport propertyChangeSupport;
     private Person person;
     private Place place;
 
     public StayPeriod(long id, Person aPerson, Place aPlace) {
         super(id);
+        propertyChangeSupport = new PropertyChangeSupport(StayPeriod.this);
         person = aPerson;
         place = aPlace;
+    }
+
+    public void addListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public Person getPerson() {
@@ -44,11 +61,23 @@ public abstract class StayPeriod extends FriezeObject {
     }
 
     public void setPerson(Person aPerson) {
-        person = aPerson;
+        if (aPerson == null) {
+            return;
+        }
+        if (aPerson != person) {
+            person = aPerson;
+            propertyChangeSupport.firePropertyChange(PERSON_CHANGED, this, person);
+        }
     }
 
     public void setPlace(Place aPlace) {
-        place = aPlace;
+        if (aPlace == null) {
+            return;
+        }
+        if (aPlace != place) {
+            place = aPlace;
+            propertyChangeSupport.firePropertyChange(PLACE_CHANGED, this, place);
+        }
     }
 
     public abstract long getStartDate();
@@ -58,4 +87,8 @@ public abstract class StayPeriod extends FriezeObject {
     public abstract TimeFormat getTimeFormat();
 
     public abstract String getDisplayString();
+
+    protected void firePropertyChange(String eventName, Object oldValue, Object newValue) {
+        propertyChangeSupport.firePropertyChange(eventName, oldValue, newValue);
+    }
 }

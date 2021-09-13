@@ -206,6 +206,12 @@ public class TimeLineProject {
             }
             case Frieze.NAME_CHANGED -> {// ignoring
             }
+            case Frieze.STAY_UPDATED -> {// ignoring
+            }
+            case Frieze.START_DATE_ADDED,Frieze.START_DATE_REMOVED -> {// ignoring
+            }
+            case Frieze.END_DATE_ADDED,Frieze.END_DATE_REMOVED -> {// ignoring
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }

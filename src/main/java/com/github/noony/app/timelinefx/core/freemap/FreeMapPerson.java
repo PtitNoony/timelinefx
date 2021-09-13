@@ -51,8 +51,8 @@ public class FreeMapPerson {
     //
     private final List<StayPeriod> stays;
     private final Map<StayPeriod, Link> stayLinks;
-    private final Map<Long, Plot> startPlots = new HashMap<>();
-    private final Map<Long, Plot> endPlots = new HashMap<>();
+//    private final List< Plot> startPlots = new LinkedList<>();
+//    private final List< Plot> endPlots = new LinkedList<>();
     private final List<Plot> plots;
     private final Map<StayPeriod, Pair<Plot, Plot>> plotsByPeriod;
     private final List<TravelLink> travelLinks;
@@ -118,9 +118,11 @@ public class FreeMapPerson {
         stays.add(stayPeriod);
         stays.sort(StayPeriod.STAY_COMPARATOR);
         var startPlot = new StartPlot(stayPeriod, freeMap.getPlotSize());
-        startPlots.put(startPlot.getDate(), startPlot);
+//        startPlots.put(startPlot.getDate(), startPlot);
+//        startPlots.add(startPlot);
         var endPlot = new EndPlot(stayPeriod, freeMap.getPlotSize());
-        endPlots.put(endPlot.getDate(), endPlot);
+//        endPlots.put(endPlot.getDate(), endPlot);
+//        endPlots.add(endPlot);
         var link = new StayLink(stayPeriod, startPlot, endPlot);
         propertyChangeSupport.firePropertyChange(LINK_ADDED, this, link);
         stayLinks.put(stayPeriod, link);
@@ -151,8 +153,8 @@ public class FreeMapPerson {
         stays.remove(stayPeriod);
         stays.sort(StayPeriod.STAY_COMPARATOR);
         //
-        startPlots.remove(stayPeriod.getStartDate());
-        endPlots.remove(stayPeriod.getEndDate());
+//        startPlots.remove(stayPeriod.getStartDate());
+//        endPlots.remove(stayPeriod.getEndDate());
         propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stayPeriod);
         //
         var removedLink = stayLinks.get(stayPeriod);
@@ -166,6 +168,26 @@ public class FreeMapPerson {
         }
         updateFirstPlot();
         recalculateTravelLinks();
+    }
+
+    protected void updateStay(StayPeriod stayPeriod) {
+        var updatedLink = stayLinks.get(stayPeriod);
+        //
+        var startEndPlots = plotsByPeriod.get(stayPeriod);
+        if (startEndPlots != null) {
+            var startPlot = startEndPlots.getKey();
+            var endPlot = startEndPlots.getValue();
+            //
+            startPlot.setDate(stayPeriod.getStartDate());
+            endPlot.setDate(stayPeriod.getEndDate());
+            //
+            freeMap.getStartDateHandle(startPlot.getDate()).addPlot(startPlot);
+            freeMap.getEndDateHandle(endPlot.getDate()).addPlot(endPlot);
+            //
+            System.err.println("IN PROGRESS HERE update value and handles");
+        }
+//        updateFirstPlot();
+//        recalculateTravelLinks();
     }
 
     protected Portrait getPortrait() {
@@ -193,10 +215,12 @@ public class FreeMapPerson {
             linksToBeRemoved.addAll(travelLinks);
         }
         for (int i = 0; i < nbStays - 1; i++) {
-            var previousEndDate = stays.get(i).getEndDate();
-            var nextStartDate = stays.get(i + 1).getStartDate();
-            var previousPlot = endPlots.get(previousEndDate);
-            var nextPlot = startPlots.get(nextStartDate);
+            var previousStay = stays.get(i);
+            var nextStay = stays.get(i + 1);
+            var previousStartEndPlots = plotsByPeriod.get(previousStay);
+            var nextStartEndPlots = plotsByPeriod.get(nextStay);
+            var previousPlot = previousStartEndPlots.getValue();
+            var nextPlot = nextStartEndPlots.getKey();
             if (findLink(previousPlot, nextPlot) == null) {
                 final var travelLink = new TravelLink(person, previousPlot, nextPlot);
                 linksToBeAdded.add(travelLink);
@@ -212,10 +236,12 @@ public class FreeMapPerson {
         for (TravelLink trL : travelLinks) {
             boolean needed = false;
             for (int i = 0; i < nbStays - 1; i++) {
-                var previousEndDate = stays.get(i).getEndDate();
-                var nextStartDate = stays.get(i + 1).getStartDate();
-                var previousPlot = endPlots.get(previousEndDate);
-                var nextPlot = startPlots.get(nextStartDate);
+                var previousStay = stays.get(i);
+                var nextStay = stays.get(i + 1);
+                var previousStartEndPlots = plotsByPeriod.get(previousStay);
+                var nextStartEndPlots = plotsByPeriod.get(nextStay);
+                var previousPlot = previousStartEndPlots.getValue();
+                var nextPlot = nextStartEndPlots.getKey();
                 if (trL.getEndPlot().getDate() == nextPlot.getDate() && trL.getBeginPlot().getDate() == previousPlot.getDate()) {
                     needed = true;
                     break;

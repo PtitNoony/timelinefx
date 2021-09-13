@@ -40,10 +40,15 @@ public class Frieze extends FriezeObject {
     public static final String NAME_CHANGED = CLASS_NAME + "__nameChanged";
     public static final String STAY_ADDED = CLASS_NAME + "__stayAdded";
     public static final String STAY_REMOVED = CLASS_NAME + "__stayRemoved";
+    public static final String STAY_UPDATED = CLASS_NAME + "__stayUpdated";
     public static final String PERSON_ADDED = CLASS_NAME + "__personAdded";
     public static final String PLACE_ADDED = CLASS_NAME + "__placeAdded";
     public static final String PERSON_REMOVED = CLASS_NAME + "__personRemoved";
     public static final String PLACE_REMOVED = CLASS_NAME + "__placeRemoved";
+    public static final String START_DATE_ADDED = CLASS_NAME + "__startDateAdded";
+    public static final String START_DATE_REMOVED = CLASS_NAME + "__startDateRemoved";
+    public static final String END_DATE_ADDED = CLASS_NAME + "__endDateAdded";
+    public static final String END_DATE_REMOVED = CLASS_NAME + "__endDateRemoved";
     // TODO : merge with other use
     private static final long DEFAULT_MIN_DATE = 0;
     private static final long DEFAULT_MAX_DATE = 500;
@@ -59,6 +64,8 @@ public class Frieze extends FriezeObject {
     private final List<Long> dates;
     private final List<Long> startDates;
     private final List<Long> endDates;
+    //
+    private final PropertyChangeListener stayChangesListener;
     //
     private String name;
     //
@@ -81,6 +88,8 @@ public class Frieze extends FriezeObject {
         dates = new LinkedList<>();
         startDates = new LinkedList<>();
         endDates = new LinkedList<>();
+        //
+        stayChangesListener = e -> handleStayPeriodChanges(e);
         //
         propertyChangeSupport = new PropertyChangeSupport(Frieze.this);
         //
@@ -127,10 +136,17 @@ public class Frieze extends FriezeObject {
         }
     }
 
+    /**
+     * Stays lists are managed at frieze level.
+     *
+     * @param stay a stay to be represented in this Frieze
+     */
     public void addStayPeriod(StayPeriod stay) {
         if (!stayPeriods.contains(stay)) {
             stayPeriods.add(stay);
-            // Should this code be in the TimeLineProject Class ??
+            //
+            stay.addListener(stayChangesListener);
+            //
             Place place = stay.getPlace();
             Person person = stay.getPerson();
             // add place
@@ -173,6 +189,7 @@ public class Frieze extends FriezeObject {
     public void removeStay(StayPeriod stay) {
         if (stayPeriods.contains(stay)) {
             stayPeriods.remove(stay);
+            stay.removeListener(stayChangesListener);
             //TODO : check if person list and place list is unchanged
             //
             minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
@@ -357,6 +374,27 @@ public class Frieze extends FriezeObject {
         }
     }
 
+    private void handleStayPeriodChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case StayPeriod.START_DATE_CHANGED -> {
+                // First update the relevant dates before notifying of the stay change
+                updateDatesOnRemoval((long) event.getOldValue(), true);
+                updateDatesOnCreation((long) event.getNewValue(), true);
+                var stay = (StayPeriod) event.getSource();
+                propertyChangeSupport.firePropertyChange(STAY_UPDATED, this, stay);
+            }
+            case StayPeriod.END_DATE_CHANGED -> {
+                // First update the relevant dates before notifying of the stay change
+                updateDatesOnRemoval((long) event.getOldValue(), false);
+                updateDatesOnCreation((long) event.getNewValue(), false);
+                var stay = (StayPeriod) event.getSource();
+                propertyChangeSupport.firePropertyChange(STAY_UPDATED, this, stay);
+            }
+            default ->
+                throw new UnsupportedOperationException("Property not supported in handleStayPeriodChanges :: " + event.getPropertyName());
+        }
+    }
+
     private void removePlace(Place placeRemoved) {
         places.remove(placeRemoved);
         personsAtPlaces.remove(placeRemoved);
@@ -373,6 +411,48 @@ public class Frieze extends FriezeObject {
         List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPerson() == personRemoved).collect(Collectors.toList());
         impactedStays.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
+    }
+
+    private void updateDatesOnRemoval(long dateRemoved, boolean isStartDate) {
+        var notInStartDates = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
+        var notInEndDates = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
+        if (isStartDate && notInStartDates) {
+            startDates.remove(dateRemoved);
+            propertyChangeSupport.firePropertyChange(START_DATE_REMOVED, this, dateRemoved);
+        } else if (!isStartDate && notInEndDates) {
+            endDates.remove(dateRemoved);
+            propertyChangeSupport.firePropertyChange(END_DATE_REMOVED, this, dateRemoved);
+        }
+        if (notInStartDates && notInEndDates) {
+            dates.remove(dateRemoved);
+        }
+    }
+
+    private void updateDatesOnCreation(long dateAdded, boolean isStartDate) {
+        // start by updating min max
+        var minWindowsAtMinDate = minDate == minDateWindow;
+        var maxWindowsAtMaxDate = maxDate == maxDateWindow;
+        var oldMinDate = minDate;
+        var oldMaxDate = maxDate;
+        minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+        maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+        //
+        if (!dates.contains(dateAdded)) {
+            dates.add(dateAdded);
+        }
+        if (isStartDate && !startDates.contains(dateAdded)) {
+            startDates.add(dateAdded);
+            propertyChangeSupport.firePropertyChange(START_DATE_ADDED, this, dateAdded);
+        } else if (!isStartDate && !endDates.contains(dateAdded)) {
+            endDates.add(dateAdded);
+            propertyChangeSupport.firePropertyChange(END_DATE_ADDED, this, dateAdded);
+        }
+        if (minWindowsAtMinDate && oldMinDate != minDate) {
+            setMinDateWindow(minDate);
+        }
+        if (maxWindowsAtMaxDate && oldMaxDate != maxDate) {
+            setMaxDateWindow(maxDate);
+        }
     }
 
 }

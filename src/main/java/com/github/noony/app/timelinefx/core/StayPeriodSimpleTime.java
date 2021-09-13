@@ -42,11 +42,19 @@ public class StayPeriodSimpleTime extends StayPeriod {
     }
 
     public void setStartDate(long aStartDate) {
-        startTime = aStartDate;
+        if (startTime != aStartDate) {
+            var oldStartTime = startTime;
+            startTime = aStartDate;
+            firePropertyChange(START_DATE_CHANGED, oldStartTime, startTime);
+        }
     }
 
     public void setEndDate(long aEndDate) {
-        endTime = aEndDate;
+        if (endTime != aEndDate) {
+            var oldEndTime = endTime;
+            endTime = aEndDate;
+            firePropertyChange(END_DATE_CHANGED, oldEndTime, endTime);
+        }
     }
 
     @Override

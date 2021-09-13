@@ -116,6 +116,14 @@ public class FriezeSpaceLinearDrawing {
         updateStaysHeight();
     }
 
+    private void updateStayDrawing(StayPeriod stayUpdated) {
+        Place place = stayUpdated.getPlace();
+        PlaceDrawing placeDrawing = placesAndDrawings.get(place);
+        if (placeDrawing != null) {
+            placeDrawing.updateStay(stayUpdated);
+        }
+    }
+
     private void removeStayDrawing(StayPeriod stayRemoved) {
         Place place = stayRemoved.getPlace();
         PlaceDrawing placeDrawing = placesAndDrawings.get(place);
@@ -184,6 +192,14 @@ public class FriezeSpaceLinearDrawing {
             }
             case Frieze.NAME_CHANGED -> {
                 // Nothing to do
+            }
+            case Frieze.STAY_UPDATED -> {
+                var stay = (StayPeriod) event.getNewValue();
+                updateStayDrawing(stay);
+            }
+            case Frieze.START_DATE_ADDED,Frieze.START_DATE_REMOVED -> {// ignore : taken care of in STAY_UPDATED
+            }
+            case Frieze.END_DATE_ADDED,Frieze.END_DATE_REMOVED -> {// ignore : taken care of in STAY_UPDATED
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());

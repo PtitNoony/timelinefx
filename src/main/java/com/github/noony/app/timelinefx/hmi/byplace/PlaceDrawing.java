@@ -121,6 +121,14 @@ public final class PlaceDrawing extends Drawing {
         updateLayout();
     }
 
+    protected void updateStay(StayPeriod stayUpdated) {
+        StayDrawing stayUpdatedDrawing = staysAndDrawings.get(stayUpdated);
+        if (stayUpdatedDrawing != null) {
+            stayUpdatedDrawing.updateDateRatio(currentMinDate, currentRatio);
+            updateLayout();
+        }
+    }
+
     protected void removeStay(StayPeriod stayRemoved) {
         StayDrawing stayRemovedDrawing = staysAndDrawings.get(stayRemoved);
         if (stayRemovedDrawing != null) {

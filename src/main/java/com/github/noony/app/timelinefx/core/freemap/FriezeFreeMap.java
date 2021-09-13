@@ -448,19 +448,34 @@ public final class FriezeFreeMap extends FriezeObject {
 
         // This should be the responsability of the Frieze to propagate changes on these...
         var startDate = stayPeriod.getStartDate();
-        if (!startDateHandles.containsKey(startDate)) {
-            var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
-            startDateHandles.put(startDate, startDateHandle);
-            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);
-
-        }
+        createDateHandle(startDate, DateHandle.TimeType.START);
+//        if (!startDateHandles.containsKey(startDate)) {
+//            var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
+//            startDateHandles.put(startDate, startDateHandle);
+//            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);
+//
+//        }
         var endDate = stayPeriod.getEndDate();
-        if (!endDateHandles.containsKey(endDate)) {
-            var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);
-            endDateHandles.put(endDate, endDateHandle);
-            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDateHandle);
-        }
+        createDateHandle(endDate, DateHandle.TimeType.END);
+//        if (!endDateHandles.containsKey(endDate)) {
+//            var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);
+//            endDateHandles.put(endDate, endDateHandle);
+//            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDateHandle);
+//        }
         freeMapPerson.addStay(stayPeriod);
+    }
+
+    private void updateStay(StayPeriod stayPeriod) {
+        var person = stayPeriod.getPerson();
+        var freeMapPerson = freeMapPersons.get(person);
+        if (freeMapPerson == null) {
+            LOG.log(Level.SEVERE, "Could not updated stayDrawing ({0}) since corresponding freemapPerson ({1}) does not exits.", new Object[]{stayPeriod, person});
+            return;
+        }
+        //
+        updateDateHandles(); // SHOULD HAVE BEEN TAKEN CARE BEFORE
+        //
+        freeMapPerson.updateStay(stayPeriod);
     }
 
     private void removeStay(StayPeriod stayPeriod) {
@@ -514,8 +529,28 @@ public final class FriezeFreeMap extends FriezeObject {
         double separation = (getPlaceDrawingWidth()) / (1 + 2 * nbDates);
         int index = dates.indexOf(date);
         var position = new Point2D((index * 2 + 1) * separation, DEFAULT_TIME_HEIGHT / 2.0);
-        var handle = new DateHandle(date, type, position);
-        return handle;
+        switch (type) {
+            case START -> {
+                if (!startDateHandles.containsKey(date)) {
+                    var startDateHandle = new DateHandle(date, type, position);
+                    startDateHandles.put(date, startDateHandle);
+                    propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);
+                    return startDateHandle;
+                }
+            }
+            case END -> {
+                if (!endDateHandles.containsKey(date)) {
+                    var endDateHandle = new DateHandle(date, type, position);
+                    endDateHandles.put(date, endDateHandle);
+                    propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDateHandle);
+                    return endDateHandle;
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Unknown TimeType: " + type);
+        }
+        return null;
+//        return handle;
     }
 
     private void removeFreeMapPlace(Place aPlace) {
@@ -600,6 +635,26 @@ public final class FriezeFreeMap extends FriezeObject {
                 var stayPeriodRemoved = (StayPeriod) event.getNewValue();
                 removeStay(stayPeriodRemoved);
             }
+            case Frieze.STAY_UPDATED -> {
+                var stayPeriodUpdated = (StayPeriod) event.getNewValue();
+                updateStay(stayPeriodUpdated);
+            }
+            case Frieze.START_DATE_ADDED -> {
+                updateDateHandles();
+            }
+            case Frieze.START_DATE_REMOVED -> {
+                updateDateHandles();
+            }
+            case Frieze.END_DATE_ADDED -> {
+                updateDateHandles();
+            }
+            case Frieze.END_DATE_REMOVED -> {// TODO ?
+//                System.err.println("REMOVED END DATE :: " + event.getNewValue());
+//                removeDateHandle((long) event.getNewValue(), DateHandle.TimeType.END);
+                updateDateHandles();
+            }
+            default ->
+                throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
         }
     }
 

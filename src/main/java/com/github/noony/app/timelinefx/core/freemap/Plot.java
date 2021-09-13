@@ -32,14 +32,15 @@ public class Plot implements GridPositionable, Selectable {
     public static final String POS_CHANGED = "posChanged";
     public static final String PLOT_SIZE_CHANGED = "plotSizeChanged";
     public static final String PLOT_VISIBILITY_CHANGED = "plotVisibilityChanged";
+    public static final String PLOT_DATE_CHANGED = "plotDateChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final long date;
     private final Person person;
     private final Place place;
     private final long parentPeriodID;
 
+    private long date;
     private final PlotType type;
     private final DoubleProperty xPos;
     private final DoubleProperty yPos;
@@ -164,6 +165,11 @@ public class Plot implements GridPositionable, Selectable {
 
     public DoubleProperty getYProperty() {
         return yPos;
+    }
+
+    public void setDate(long aDate) {
+        date = aDate;
+        propertyChangeSupport.firePropertyChange(PLOT_DATE_CHANGED, this, date);
     }
 
     @Override

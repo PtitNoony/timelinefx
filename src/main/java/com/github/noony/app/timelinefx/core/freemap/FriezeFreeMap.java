@@ -449,19 +449,8 @@ public final class FriezeFreeMap extends FriezeObject {
         // This should be the responsability of the Frieze to propagate changes on these...
         var startDate = stayPeriod.getStartDate();
         createDateHandle(startDate, DateHandle.TimeType.START);
-//        if (!startDateHandles.containsKey(startDate)) {
-//            var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
-//            startDateHandles.put(startDate, startDateHandle);
-//            propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);
-//
-//        }
         var endDate = stayPeriod.getEndDate();
         createDateHandle(endDate, DateHandle.TimeType.END);
-//        if (!endDateHandles.containsKey(endDate)) {
-//            var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);
-//            endDateHandles.put(endDate, endDateHandle);
-//            propertyChangeSupport.firePropertyChange(END_DATE_HANDLE_ADDED, this, endDateHandle);
-//        }
         freeMapPerson.addStay(stayPeriod);
     }
 
@@ -550,7 +539,6 @@ public final class FriezeFreeMap extends FriezeObject {
                 throw new UnsupportedOperationException("Unknown TimeType: " + type);
         }
         return null;
-//        return handle;
     }
 
     private void removeFreeMapPlace(Place aPlace) {
@@ -648,9 +636,7 @@ public final class FriezeFreeMap extends FriezeObject {
             case Frieze.END_DATE_ADDED -> {
                 updateDateHandles();
             }
-            case Frieze.END_DATE_REMOVED -> {// TODO ?
-//                System.err.println("REMOVED END DATE :: " + event.getNewValue());
-//                removeDateHandle((long) event.getNewValue(), DateHandle.TimeType.END);
+            case Frieze.END_DATE_REMOVED -> {
                 updateDateHandles();
             }
             default ->

@@ -62,6 +62,7 @@ public class PersonDrawing extends AbstractFxScalableNode {
         plotGroup = new Group();
         //
         personInitLink = new PersonInitLinkDrawing(freeMapPerson.getPersonInitLink(), freeFormDrawing, PersonDrawing.this);
+        scalableNodes.add(personInitLink);
         initLayout();
         //
         List<Link> links = new LinkedList<>();
@@ -77,6 +78,8 @@ public class PersonDrawing extends AbstractFxScalableNode {
     @Override
     protected void updateLayout() {
         scalableNodes.forEach(node -> node.updateScale(getScale()));
+        linkGroup.setTranslateX(freeMap.getPersonWidth() * getScale());
+        plotGroup.setTranslateX(freeMap.getPersonWidth() * getScale());
     }
 
     @Override
@@ -92,9 +95,9 @@ public class PersonDrawing extends AbstractFxScalableNode {
     private void initLayout() {
         addNode(personInitLink.getNode());
         addNode(linkGroup);
-        linkGroup.setTranslateX(freeMap.getPersonWidth());
+        linkGroup.setTranslateX(freeMap.getPersonWidth() * getScale());
         addNode(plotGroup);
-        plotGroup.setTranslateX(freeMap.getPersonWidth());
+        plotGroup.setTranslateX(freeMap.getPersonWidth() * getScale());
     }
 
     private void createLink(Link link) {

@@ -111,7 +111,7 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         });
         handle.setOnMouseDragged(e -> {
             currentXmouse = e.getSceneX();
-            dateHandle.setX(getNode().getTranslateX() + currentXmouse - lastXmouse);
+            dateHandle.setX((getNode().getTranslateX() + currentXmouse - lastXmouse) / getScale());
             //
             lastXmouse = currentXmouse;
         });

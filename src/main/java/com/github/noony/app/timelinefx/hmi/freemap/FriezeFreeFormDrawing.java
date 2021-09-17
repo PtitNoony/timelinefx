@@ -160,8 +160,8 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         placesBackground.setWidth(friezeFreeMap.getPlaceDrawingWidth() * scale);
         startDatesBackground.setWidth(friezeFreeMap.getPlaceDrawingWidth() * scale);
         endDatesBackground.setWidth(friezeFreeMap.getPlaceDrawingWidth() * scale);
-        startDateHandleGroup.setTranslateX(friezeFreeMap.getPersonWidth());
-        endDateHandleGroup.setTranslateX(friezeFreeMap.getPersonWidth());
+        startDateHandleGroup.setTranslateX(friezeFreeMap.getPersonWidth() * scale);
+        endDateHandleGroup.setTranslateX(friezeFreeMap.getPersonWidth() * scale);
     }
 
     private void updateHeight() {
@@ -263,7 +263,7 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         background.setArcWidth(MAP_PADDING);
         background.setArcHeight(MAP_PADDING);
         //
-        innerBackground.setFill(Color.BLACK);
+        innerBackground.setFill(Color.GOLD);
         innerBackground.setArcWidth(MAP_PADDING);
         innerBackground.setArcHeight(MAP_PADDING);
         innerBackground.setStroke(Color.DARKGREY);
@@ -271,7 +271,7 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         personsBackground.setFill(Color.ANTIQUEWHITE);
         //
         placesBackground.setFill(Color.FIREBRICK);
-        placesBackground.setOpacity(0);
+        placesBackground.setOpacity(1.0);
         //
         startDatesBackground.setFill(Color.CRIMSON);
         //
@@ -294,7 +294,7 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         // TODO
         startDatesBackground.setVisible(false);
         endDatesBackground.setVisible(false);
-        personsBackground.setVisible(false);
+//        personsBackground.setVisible(false);
         //
         updateLayout();
     }

@@ -18,7 +18,9 @@ package com.github.noony.app.timelinefx.hmi;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javafx.application.Platform.runLater;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -84,5 +86,12 @@ public class StageFactory {
 
     public static JMetro getJMetro(Scene aScene) {
         return SCENE_STYLES.get(aScene);
+    }
+
+    public static void reApplyTheme() {
+        runLater(() -> {
+            LOG.log(Level.INFO, "Re-applying styles.");
+            SCENE_STYLES.values().forEach(JMetro::reApplyTheme);
+        });
     }
 }

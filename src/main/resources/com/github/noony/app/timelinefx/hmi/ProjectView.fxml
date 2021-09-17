@@ -6,46 +6,53 @@
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectViewController">
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectViewController">
     <top>
-        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleConfigurationAction" text="Configuration" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleNewProject" text="New" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleProjectLoad" text="Load" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleProjectSave" text="Save" />
-                        <MenuItem mnemonicParsing="false" text="Close" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleFriezeCreation" text="Create New Frieze" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="View">
-                    <items>
-                        <RadioMenuItem fx:id="contentViewMI" mnemonicParsing="false" text="Content Edition View" />
-                        <RadioMenuItem fx:id="timelineViewMI" mnemonicParsing="false" text="Timelines View" />
-                  <RadioMenuItem fx:id="galleryViewMI" mnemonicParsing="false" text="Gallery View" />
-                  <RadioMenuItem fx:id="picturesChronologyViewMI" mnemonicParsing="false" text="Pictures Chronology View" />
-                    </items>
-                </Menu>                
-                <Menu mnemonicParsing="false" text="Examples">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleCreateBasicExample" text="Basic Example" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleCreateStarWars" text="Star Wars" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+              <MenuBar fx:id="menuBar">
+                  <menus>
+                      <Menu mnemonicParsing="false" text="File">
+                          <items>
+                              <MenuItem mnemonicParsing="false" onAction="#handleConfigurationAction" text="Configuration" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleNewProject" text="New" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleProjectLoad" text="Load" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleProjectSave" text="Save" />
+                              <MenuItem mnemonicParsing="false" text="Close" />
+                          </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Edit">
+                          <items>
+                              <MenuItem mnemonicParsing="false" onAction="#handleFriezeCreation" text="Create New Frieze" />
+                          </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="View">
+                          <items>
+                              <RadioMenuItem fx:id="contentViewMI" mnemonicParsing="false" text="Content Edition View" />
+                              <RadioMenuItem fx:id="timelineViewMI" mnemonicParsing="false" text="Timelines View" />
+                        <RadioMenuItem fx:id="galleryViewMI" mnemonicParsing="false" text="Gallery View" />
+                        <RadioMenuItem fx:id="picturesChronologyViewMI" mnemonicParsing="false" text="Pictures Chronology View" />
+                          </items>
+                      </Menu>                
+                      <Menu mnemonicParsing="false" text="Examples">
+                          <items>
+                              <MenuItem mnemonicParsing="false" onAction="#handleCreateBasicExample" text="Basic Example" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleCreateStarWars" text="Star Wars" />
+                          </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Help">
+                          <items>
+                              <MenuItem mnemonicParsing="false" text="About" />
+                          </items>
+                      </Menu>
+                  </menus>
+              </MenuBar>
+            <HBox fx:id="toolbarHBox" spacing="4.0" />
+         </children>
+      </VBox>
     </top>
     <center>
         <AnchorPane fx:id="mainAnchorPane" BorderPane.alignment="CENTER" />

@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,10 +40,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 /**
  *
@@ -61,6 +67,9 @@ public final class ProjectViewController implements Initializable {
 
     @FXML
     private MenuBar menuBar;
+
+    @FXML
+    private HBox toolbarHBox;
 
     @FXML
     private RadioMenuItem contentViewMI;
@@ -94,14 +103,22 @@ public final class ProjectViewController implements Initializable {
     private PicturesChronologyViewController pictureChronologyViewController = null;
     //
     private SaveWindow saveWindow = null;
-    //
+    // toolbarToggleGroup does not seem to work : TODO: fix
+    private ToggleGroup toolbarToggleGroup;
     private ToggleGroup viewToggleGroup;
     private ACTION_ON_HOLD actionOnHold = ACTION_ON_HOLD.NONE;
+    //
+    private ToggleButton contentEditionToggle;
+    private ToggleButton timeLineToggle;
+    private ToggleButton galleryToggle;
+    private ToggleButton picturesChronologyToggle;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Loading ProjectViewController");
         fileChooser = new FileChooser();
+        //
+        createToolbar();
         //
         loadContentEditionView();
         loadTimelineView();
@@ -111,6 +128,20 @@ public final class ProjectViewController implements Initializable {
         timelineViewMI.setToggleGroup(viewToggleGroup);
         galleryViewMI.setToggleGroup(viewToggleGroup);
         picturesChronologyViewMI.setToggleGroup(viewToggleGroup);
+        //
+        toolbarToggleGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
+            if (t1 == contentEditionToggle) {
+                displayContentEditionView();
+            } else if (t1 == timeLineToggle) {
+                displayTimelineView();
+            } else if (t1 == galleryToggle) {
+                displayGalleryView();
+            } else if (t1 == picturesChronologyToggle) {
+                displayEventChronologyView();
+            } else {
+//                throw new UnsupportedOperationException("View not supported, action on " + t1);
+            }
+        });
         //
         viewToggleGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
             if (t1 == contentViewMI) {
@@ -126,9 +157,10 @@ public final class ProjectViewController implements Initializable {
             }
         });
         //
-        contentViewMI.setSelected(true);
-        contentEditionView.setDisable(true);
-        timelineView.setDisable(true);
+        StageFactory.reApplyTheme();
+        //
+//        contentViewMI.setSelected(true);
+        displayContentEditionView();
     }
 
     @FXML
@@ -266,6 +298,13 @@ public final class ProjectViewController implements Initializable {
             contentEditionView.setDisable(true);
         }
         setMainPaneContent(contentEditionView);
+        toolbarToggleGroup.selectToggle(contentEditionToggle);
+        viewToggleGroup.selectToggle(contentViewMI);
+        //
+        contentEditionToggle.setSelected(true);
+        timeLineToggle.setSelected(false);
+        galleryToggle.setSelected(false);
+        picturesChronologyToggle.setSelected(false);
     }
 
     private void displayTimelineView() {
@@ -274,6 +313,13 @@ public final class ProjectViewController implements Initializable {
             timelineView.setDisable(true);
         }
         setMainPaneContent(timelineView);
+        toolbarToggleGroup.selectToggle(timeLineToggle);
+        viewToggleGroup.selectToggle(timelineViewMI);
+        //
+        contentEditionToggle.setSelected(false);
+        timeLineToggle.setSelected(true);
+        galleryToggle.setSelected(false);
+        picturesChronologyToggle.setSelected(false);
     }
 
     private void displayGalleryView() {
@@ -281,6 +327,13 @@ public final class ProjectViewController implements Initializable {
             loadGalleryView();
         }
         setMainPaneContent(galleryView);
+        toolbarToggleGroup.selectToggle(galleryToggle);
+        viewToggleGroup.selectToggle(galleryViewMI);
+        //
+        contentEditionToggle.setSelected(false);
+        timeLineToggle.setSelected(false);
+        galleryToggle.setSelected(true);
+        picturesChronologyToggle.setSelected(false);
     }
 
     private void displayEventChronologyView() {
@@ -288,6 +341,13 @@ public final class ProjectViewController implements Initializable {
             loadEventChronologyView();
         }
         setMainPaneContent(picturesChronologyView);
+        toolbarToggleGroup.selectToggle(picturesChronologyToggle);
+        viewToggleGroup.selectToggle(picturesChronologyViewMI);
+        //
+        contentEditionToggle.setSelected(false);
+        timeLineToggle.setSelected(false);
+        galleryToggle.setSelected(false);
+        picturesChronologyToggle.setSelected(true);
     }
 
     private void loadContentEditionView() {
@@ -461,4 +521,78 @@ public final class ProjectViewController implements Initializable {
                 throw new UnsupportedOperationException("" + event);
         }
     }
+
+    private void createToolbar() {
+        toolbarToggleGroup = new ToggleGroup();
+        toolbarHBox.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        createContentEditionToggle();
+        createTimelineToggle();
+        createGalleryToggle();
+        createPicturesChronologyToggleToggle();
+    }
+
+    private void createContentEditionToggle() {
+        // https://iconarchive.com/show/outline-icons-by-iconsmind/Pencil-icon.html
+        contentEditionToggle = new ToggleButton();
+        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Pencil-icon.png"));
+        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Pencil-icon_selected.png"));
+        final ImageView toggleImage = new ImageView();
+        contentEditionToggle.setGraphic(toggleImage);
+        toggleImage.imageProperty().bind(Bindings
+                .when(contentEditionToggle.selectedProperty())
+                .then(selected)
+                .otherwise(unselected)
+        );
+        toolbarHBox.getChildren().add(contentEditionToggle);
+        contentEditionToggle.setOnAction(e -> contentViewMI.setSelected(true));
+    }
+
+    private void createTimelineToggle() {
+        // https://iconarchive.com/show/windows-8-icons-by-icons8/Data-Timeline-icon.html
+        timeLineToggle = new ToggleButton();
+        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Data-Timeline-icon.png"));
+        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Data-Timeline-icon_selected.png"));
+        final ImageView toggleImage = new ImageView();
+        timeLineToggle.setGraphic(toggleImage);
+        toggleImage.imageProperty().bind(Bindings
+                .when(timeLineToggle.selectedProperty())
+                .then(selected)
+                .otherwise(unselected)
+        );
+        timeLineToggle.setToggleGroup(toolbarToggleGroup);
+        toolbarHBox.getChildren().add(timeLineToggle);
+    }
+
+    private void createGalleryToggle() {
+        https://iconarchive.com/show/windows-8-icons-by-icons8/Photo-Video-Gallery-icon.html
+        galleryToggle = new ToggleButton();
+        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Video-Gallery-icon.png"));
+        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Video-Gallery-icon_selected.png"));
+        final ImageView toggleImage = new ImageView();
+        galleryToggle.setGraphic(toggleImage);
+        toggleImage.imageProperty().bind(Bindings
+                .when(galleryToggle.selectedProperty())
+                .then(selected)
+                .otherwise(unselected)
+        );
+        galleryToggle.setToggleGroup(toolbarToggleGroup);
+        toolbarHBox.getChildren().add(galleryToggle);
+    }
+
+    private void createPicturesChronologyToggleToggle() {
+        // https://iconarchive.com/show/outline-icons-by-iconsmind/Photo-Album-icon.html
+        picturesChronologyToggle = new ToggleButton();
+        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Album-icon.png"));
+        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Album-icon_selected.png"));
+        final ImageView toggleImage = new ImageView();
+        picturesChronologyToggle.setGraphic(toggleImage);
+        toggleImage.imageProperty().bind(Bindings
+                .when(picturesChronologyToggle.selectedProperty())
+                .then(selected)
+                .otherwise(unselected)
+        );
+        picturesChronologyToggle.setToggleGroup(toolbarToggleGroup);
+        toolbarHBox.getChildren().add(picturesChronologyToggle);
+    }
+
 }

@@ -16,6 +16,9 @@
  */
 package com.github.noony.app.timelinefx;
 
+import com.github.noony.app.timelinefx.hmi.ConfigurationViewController;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,6 +37,8 @@ import java.util.logging.Logger;
  */
 public class Configuration {
 
+    public static final String TIMELINES_FOLDER_LOCATION_CHANGED = "timelinesFolderLocationChanged";
+
     private static final String DEFAULT_PROJECTS_FOLDER_NAME = "Timelines";
     private static final String PREFERENCE_FILE_NAME = ".timelines";
     private static final String TIMELINES_FOLDER_PROPERTY_NAME = "TimelinesFolder";
@@ -41,9 +46,14 @@ public class Configuration {
     private static final String DEFAULT_TIMELINES_FOLDER_PATH = System.getProperty("user.home") + File.separator + DEFAULT_PROJECTS_FOLDER_NAME;
     //
     private static final Logger LOG = Logger.getGlobal();
-
+    private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(ConfigurationViewController.class);
+    //
     private static File preferenceFile = null;
     private static Properties properties = null;
+
+    public static void addPropertyChangeListener(PropertyChangeListener listener) {
+        PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
+    }
 
     public static final void loadPreferences() {
         File userDirFile = new File(DEFAULT_TIMELINES_FOLDER_PATH + File.separator + PREFERENCE_FILE_NAME);
@@ -133,5 +143,13 @@ public class Configuration {
 
     public static String getProjectsParentFolder() {
         return properties.getProperty(TIMELINES_FOLDER_PROPERTY_NAME);
+    }
+
+    public static void setProjectsParentFolder(String newValue) {
+        if (newValue != null && newValue != getProjectsParentFolder()) {
+            properties.setProperty(TIMELINES_FOLDER_PROPERTY_NAME, newValue);
+            savePreferences();
+            PROPERTY_CHANGE_SUPPORT.firePropertyChange(TIMELINES_FOLDER_LOCATION_CHANGED, null, newValue);
+        }
     }
 }

@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
@@ -23,6 +24,7 @@ import com.github.noony.app.timelinefx.examples.StarWars;
 import com.github.noony.app.timelinefx.examples.TestExample;
 import com.github.noony.app.timelinefx.save.XMLHandler;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -198,6 +200,8 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleProjectLoad(ActionEvent event) {
         LOG.log(Level.INFO, "handleProjectLoad {0}", event);
+        var initialFolder = new File(Configuration.getProjectsParentFolder());
+        fileChooser.setInitialDirectory(initialFolder);
         var inputFile = fileChooser.showOpenDialog(mainAnchorPane.getScene().getWindow());
         if (inputFile != null) {
             LOG.log(Level.INFO, "Loading project {0}", inputFile);
@@ -388,7 +392,7 @@ public final class ProjectViewController implements Initializable {
         try {
             configurationView = loader.load();
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Could not load PlaceCreationView ::  {0}", new Object[]{ex});
+            LOG.log(Level.SEVERE, "Could not load ConfigurationView ::  {0}", new Object[]{ex});
         }
         configurationController = loader.getController();
         configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);

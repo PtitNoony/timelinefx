@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.ProjectConfiguration;
@@ -105,7 +106,7 @@ public class PersonCreationViewController implements Initializable {
         // setting initial directory for fileChooser
         File projectFolder = ProjectConfiguration.getProjectFolder();
         if (projectFolder == null) {
-            fileChooser.setInitialDirectory(new File(ProjectConfiguration.USER_HOME));
+            fileChooser.setInitialDirectory(new File(Configuration.getProjectsParentFolder()));
         } else {
             fileChooser.setInitialDirectory(new File(ProjectConfiguration.getProjectLocation()));
         }

@@ -38,17 +38,13 @@ import java.util.logging.Logger;
  */
 public class ProjectConfiguration {
 
-    public static final String PICTURES_LOCATION_CHANGED = "pictureLocationChanged";
-    public static final String USER_HOME = System.getProperty("user.home");
     public static final String DEFAULT_PORTRAITS_FOLDER = "portraits";
     public static final String DEFAULT_PICTURES_FOLDER = "pictures";
     public static final String DEFAULT_MINIATURES_FOLDER = "miniatures";
 
     private static final Logger LOG = Logger.getGlobal();
 
-//    private static String PROJECTS_FOLDER = DEFAULT_PROJECTS_FOLDER;
     private static File PROJECT_FOLDER = null;
-    private static File PROJECT_FILE = null;
     private static File PORTRAITS_FOLDER = null;
     private static File PICTURES_FOLDER = null;
     private static File MINIATURES_FOLDER = null;
@@ -121,7 +117,6 @@ public class ProjectConfiguration {
         }
         //
         savePortraitRessources();
-        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURES_LOCATION_CHANGED, null, PROJECT_LOCATION);
         //
         return TimeLineProjectFactory.createTimeline(projectName);
     }
@@ -166,7 +161,6 @@ public class ProjectConfiguration {
             }
         }
         //
-        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURES_LOCATION_CHANGED, null, PROJECT_LOCATION);
         return XMLHandler.loadFile(TIMELINE_FILE);
     }
 

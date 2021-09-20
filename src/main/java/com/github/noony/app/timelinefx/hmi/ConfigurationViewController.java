@@ -16,10 +16,11 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
+import com.github.noony.app.timelinefx.Configuration;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import static javafx.application.Platform.runLater;
@@ -38,26 +39,26 @@ public class ConfigurationViewController implements Initializable {
     public static final String CLOSE_REQUESTED = "closeRequested1";
 
     @FXML
-    private TextField picsLocationField;
+    private TextField timelinesLocationField;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(ConfigurationViewController.this);
     private final DirectoryChooser directoryChooser = new DirectoryChooser();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        ProjectConfiguration.addPropertyChangeListener(this::handleGlobalConfigurationChanged);
-        picsLocationField.setText(ProjectConfiguration.getProjectLocation());
+        Configuration.addPropertyChangeListener(this::handleGlobalConfigurationChanged);
+        timelinesLocationField.setText(Configuration.getProjectsParentFolder());
     }
 
     @FXML
     private void handlePicLocationAction(ActionEvent event) {
-//        directoryChooser.setInitialDirectory(new File(ProjectConfiguration.getPicturesLocation()));
-//        directoryChooser.setTitle("Select Picture Location Directory");
-//        File directory = directoryChooser.showDialog(picsLocationField.getScene().getWindow());
-//        if (directory != null) {
-//            String newPicLocation = directory.getAbsolutePath();
-//            ProjectConfiguration.setPicturesLocation(newPicLocation);
-//        }
+        directoryChooser.setInitialDirectory(new File(Configuration.getProjectsParentFolder()));
+        directoryChooser.setTitle("Select Timelines Parent Directory");
+        File directory = directoryChooser.showDialog(timelinesLocationField.getScene().getWindow());
+        if (directory != null) {
+            String newLocation = directory.getAbsolutePath();
+            Configuration.setProjectsParentFolder(newLocation);
+        }
     }
 
     @FXML
@@ -71,8 +72,8 @@ public class ConfigurationViewController implements Initializable {
 
     private void handleGlobalConfigurationChanged(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case ProjectConfiguration.PICTURES_LOCATION_CHANGED:
-                runLater(() -> picsLocationField.setText((String) event.getNewValue()));
+            case Configuration.TIMELINES_FOLDER_LOCATION_CHANGED:
+                runLater(() -> timelinesLocationField.setText((String) event.getNewValue()));
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupported configuration change : " + event);

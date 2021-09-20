@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi.freemap;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.Selectable;
@@ -187,6 +188,8 @@ public class FreeMapViewController implements Initializable {
     @FXML
     protected void handleSaveAsPicture(ActionEvent event) {
         if (friezeFreeFormDrawing != null) {
+            var initFolder = new File(Configuration.getProjectsParentFolder());
+            fileChooser.setInitialDirectory(initFolder);
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png"));
             File pngFile = fileChooser.showSaveDialog(linearTimeButton.getScene().getWindow());
             if (pngFile != null) {

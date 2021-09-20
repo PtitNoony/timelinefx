@@ -38,7 +38,6 @@ import java.util.logging.Logger;
  */
 public class ProjectConfiguration {
 
-    public static final String DEFAULT_PORTRAITS_FOLDER = "portraits";
     public static final String DEFAULT_PICTURES_FOLDER = "pictures";
     public static final String DEFAULT_MINIATURES_FOLDER = "miniatures";
 
@@ -83,7 +82,7 @@ public class ProjectConfiguration {
         PROJECT_LOCATION = PROJECT_FOLDER.getAbsolutePath();
         TIMELINE_FILE = new File(PROJECT_LOCATION + File.separator + projectName + ".xml");
         //
-        String portraitsRoot = PROJECT_FOLDER + File.separator + DEFAULT_PORTRAITS_FOLDER;
+        String portraitsRoot = PROJECT_FOLDER + File.separator + Configuration.DEFAULT_PORTRAITS_FOLDER;
         PORTRAITS_FOLDER = new File(portraitsRoot);
         if (!PORTRAITS_FOLDER.exists()) {
             try {
@@ -166,6 +165,10 @@ public class ProjectConfiguration {
 
     public static File getProjectFolder() {
         return PROJECT_FOLDER;
+    }
+
+    public static File getPortraitsFolder() {
+        return PORTRAITS_FOLDER;
     }
 
     public static File getTimelineFile() {

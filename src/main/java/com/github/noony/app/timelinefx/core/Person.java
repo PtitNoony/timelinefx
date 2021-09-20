@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import com.github.noony.app.timelinefx.Configuration;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -55,7 +56,7 @@ public class Person extends FriezeObject {
         propertyChangeSupport = new PropertyChangeSupport(Person.this);
         selected = false;
         visible = true;
-        pictureName = ProjectConfiguration.DEFAULT_PORTRAITS_FOLDER + File.separator + DEFAULT_PICTURE_NAME;
+        pictureName = Configuration.getPortraitsFolder() + File.separator + DEFAULT_PICTURE_NAME;
     }
 
     protected Person(Long personId, String personName) {

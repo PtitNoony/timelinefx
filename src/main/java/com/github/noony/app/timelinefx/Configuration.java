@@ -38,13 +38,17 @@ import java.util.logging.Logger;
 public class Configuration {
 
     public static final String TIMELINES_FOLDER_LOCATION_CHANGED = "timelinesFolderLocationChanged";
+    public static final String PORTRAITS_FOLDER_LOCATION_CHANGED = "portraitsFolderLocationChanged";
 
     private static final String DEFAULT_PROJECTS_FOLDER_NAME = "Timelines";
     private static final String PREFERENCE_FILE_NAME = ".timelines";
     private static final String TIMELINES_FOLDER_PROPERTY_NAME = "TimelinesFolder";
+    private static final String PORTRAITS_FOLDER_PROPERTY_NAME = "PortraitsFolder";
     //
     private static final String DEFAULT_TIMELINES_FOLDER_PATH = System.getProperty("user.home") + File.separator + DEFAULT_PROJECTS_FOLDER_NAME;
+    private static final String DEFAULT_PORTRAITS_FOLDER_NAME = "portraits";
     //
+    public static final String DEFAULT_PORTRAITS_FOLDER = "portraits";
     private static final Logger LOG = Logger.getGlobal();
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(ConfigurationViewController.class);
     //
@@ -113,6 +117,10 @@ public class Configuration {
             propertiesChanged = true;
             properties.setProperty(TIMELINES_FOLDER_PROPERTY_NAME, DEFAULT_TIMELINES_FOLDER_PATH);
         }
+        if (!properties.containsKey(PORTRAITS_FOLDER_PROPERTY_NAME)) {
+            propertiesChanged = true;
+            properties.setProperty(PORTRAITS_FOLDER_PROPERTY_NAME, DEFAULT_PORTRAITS_FOLDER_NAME);
+        }
         //
         if (propertiesChanged) {
             savePreferences();
@@ -145,11 +153,23 @@ public class Configuration {
         return properties.getProperty(TIMELINES_FOLDER_PROPERTY_NAME);
     }
 
+    public static String getPortraitsFolder() {
+        return properties.getProperty(PORTRAITS_FOLDER_PROPERTY_NAME);
+    }
+
     public static void setProjectsParentFolder(String newValue) {
         if (newValue != null && newValue != getProjectsParentFolder()) {
             properties.setProperty(TIMELINES_FOLDER_PROPERTY_NAME, newValue);
             savePreferences();
             PROPERTY_CHANGE_SUPPORT.firePropertyChange(TIMELINES_FOLDER_LOCATION_CHANGED, null, newValue);
+        }
+    }
+
+    public static void setPortraitsFolder(String newValue) {
+        if (newValue != null && newValue != getPortraitsFolder()) {
+            properties.setProperty(PORTRAITS_FOLDER_PROPERTY_NAME, newValue);
+            savePreferences();
+            PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAITS_FOLDER_LOCATION_CHANGED, null, newValue);
         }
     }
 }

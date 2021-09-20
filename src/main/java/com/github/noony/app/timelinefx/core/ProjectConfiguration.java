@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.hmi.ConfigurationViewController;
 import com.github.noony.app.timelinefx.save.XMLHandler;
 import java.beans.PropertyChangeListener;
@@ -43,11 +44,9 @@ public class ProjectConfiguration {
     public static final String DEFAULT_PICTURES_FOLDER = "pictures";
     public static final String DEFAULT_MINIATURES_FOLDER = "miniatures";
 
-    private static final String DEFAULT_PROJECTS_FOLDER = USER_HOME + File.separator + "Timelines";
     private static final Logger LOG = Logger.getGlobal();
 
-    private static String PROJECTS_FOLDER = DEFAULT_PROJECTS_FOLDER;
-
+//    private static String PROJECTS_FOLDER = DEFAULT_PROJECTS_FOLDER;
     private static File PROJECT_FOLDER = null;
     private static File PROJECT_FILE = null;
     private static File PORTRAITS_FOLDER = null;
@@ -64,7 +63,7 @@ public class ProjectConfiguration {
 
     public static TimeLineProject createProject(String projectName) {
         LOG.log(Level.INFO, "Creating project :: {0}", projectName);
-        File projectsFolder = new File(PROJECTS_FOLDER);
+        File projectsFolder = new File(Configuration.getProjectsParentFolder());
         if (!projectsFolder.exists()) {
             try {
                 Path path = projectsFolder.toPath();
@@ -74,7 +73,7 @@ public class ProjectConfiguration {
                 return null;
             }
         }
-        String projectRoot = PROJECTS_FOLDER + File.separator + projectName;
+        String projectRoot = Configuration.getProjectsParentFolder() + File.separator + projectName;
         PROJECT_FOLDER = new File(projectRoot);
         if (!PROJECT_FOLDER.exists()) {
             try {
@@ -133,7 +132,7 @@ public class ProjectConfiguration {
         } else if (aFile.isFile()) {
             TIMELINE_FILE = aFile;
             PROJECT_FOLDER = TIMELINE_FILE.getParentFile();
-            LOG.log(Level.INFO, "Project Folder:: {0}", new Object[]{PROJECTS_FOLDER});
+            LOG.log(Level.INFO, "Project Folder:: {0}", new Object[]{Configuration.getProjectsParentFolder()});
         } else {
             PROJECT_FOLDER = aFile;
             File fileFound = Arrays.asList(PROJECT_FOLDER.listFiles()).stream().filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
@@ -198,7 +197,7 @@ public class ProjectConfiguration {
     private static void savePortraitRessources() {
         try {
             FileOutputStream outputStream;
-            try ( InputStream inputstream = ProjectConfiguration.class.getResourceAsStream(Person.DEFAULT_PICTURE_NAME)) {
+            try (InputStream inputstream = ProjectConfiguration.class.getResourceAsStream(Person.DEFAULT_PICTURE_NAME)) {
                 String outputPath = PORTRAITS_FOLDER + File.separator + Person.DEFAULT_PICTURE_NAME;
                 File outputFile = new File(outputPath);
                 LOG.log(Level.INFO, "> savePortraitRessources :: {0}", outputPath);

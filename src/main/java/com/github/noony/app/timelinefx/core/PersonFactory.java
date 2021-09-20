@@ -63,6 +63,15 @@ public class PersonFactory {
         return person;
     }
 
+    public static Person createPerson(String personName, Color color, String pictureName) {
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} pictureName={2}", new Object[]{personName, color, pictureName});
+        var person = new Person(FriezeObjectFactory.getNextID(), personName, color);
+        person.setPictureName(pictureName);
+        PERSONS.put(person.getId(), person);
+        FriezeObjectFactory.addObject(person);
+        return person;
+    }
+
     public static Person createPerson(long id, String personName, Color color, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2} pictureName={3}", new Object[]{id, personName, color, pictureName});
         var person = createPerson(id, personName, color);

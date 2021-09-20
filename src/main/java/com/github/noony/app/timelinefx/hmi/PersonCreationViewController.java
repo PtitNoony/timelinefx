@@ -150,8 +150,9 @@ public class PersonCreationViewController implements Initializable {
 
     protected void setPerson(Person aPerson) {
         currentEditedPerson = aPerson;
-        nameField.setText(currentEditedPerson.getName());
+        personPictureName = currentEditedPerson.getPictureName();
         pictureField.setText(currentEditedPerson.getPictureName());
+        nameField.setText(currentEditedPerson.getName());
         colorPicker.setValue(currentEditedPerson.getColor());
         updateStatus();
     }
@@ -208,8 +209,13 @@ public class PersonCreationViewController implements Initializable {
     }
 
     private void updateImage() {
+        if (currentEditedPerson == null) {
+            image = new Image(File.separatorChar + Person.DEFAULT_PICTURE_NAME);
+            imageView.setImage(image);
+            return;
+        }
         // TODO improve to only update on change
-        String picturePath = ProjectConfiguration.getProjectLocation() + File.separatorChar + personPictureName;
+        String picturePath = ProjectConfiguration.getProjectFolder().getAbsolutePath() + File.separatorChar + personPictureName;
         File pictureFile = new File(picturePath);
         if (Files.exists(pictureFile.toPath())) {
             FileInputStream inputstream;
@@ -219,6 +225,7 @@ public class PersonCreationViewController implements Initializable {
                 imageView.setImage(image);
             } catch (FileNotFoundException ex) {
                 LOG.log(Level.SEVERE, "Exception while updating image for {0} : {1}", new Object[]{personPictureName, ex});
+                LOG.log(Level.SEVERE, "> file name was: {0}", new Object[]{picturePath});
             }
         } else {
             image = new Image(File.separatorChar + Person.DEFAULT_PICTURE_NAME);

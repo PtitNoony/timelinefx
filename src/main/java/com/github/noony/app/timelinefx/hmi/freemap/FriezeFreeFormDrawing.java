@@ -269,12 +269,8 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         innerBackground.setStroke(Color.DARKGREY);
         //
         personsBackground.setFill(Color.ANTIQUEWHITE);
-        //
         placesBackground.setFill(Color.FIREBRICK);
-        placesBackground.setOpacity(1.0);
-        //
         startDatesBackground.setFill(Color.CRIMSON);
-        //
         endDatesBackground.setFill(Color.CRIMSON);
         //
         //
@@ -291,10 +287,11 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         freeMapGroup.getChildren().addAll(background, freeMapInnerGroup, startDateHandleGroup, endDateHandleGroup);
         freeMapInnerGroup.getChildren().addAll(innerBackground, placesGroup, personLinksGroup, personsGroup, portraitsGroup);
         //
-        // TODO
+        innerBackground.setVisible(false);
         startDatesBackground.setVisible(false);
         endDatesBackground.setVisible(false);
-//        personsBackground.setVisible(false);
+        personsBackground.setVisible(false);
+        placesBackground.setVisible(false);
         //
         updateLayout();
     }

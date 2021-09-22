@@ -501,10 +501,6 @@ public final class FriezeFreeMap extends FriezeObject {
         }
     }
 
-//    private void createPersonInitLink(Person person) {
-//        var initLink = new PersonInitLink(person, this);
-//        personInitLinks.add(initLink);
-//    }
     private void addFreeMapPlace(Place aPlace) {
         var freeMapPlace = new FreeMapPlace(aPlace, plotSeparation, placeNamesWidth, fontSize);
         freeMapPlace.setWidth(getPlaceDrawingWidth());
@@ -513,11 +509,8 @@ public final class FriezeFreeMap extends FriezeObject {
     }
 
     private DateHandle createDateHandle(long date, DateHandle.TimeType type) {
-        var dates = frieze.getDates();
-        int nbDates = frieze.getNbDates();
-        double separation = (getPlaceDrawingWidth()) / (1 + 2 * nbDates);
-        int index = dates.indexOf(date);
-        var position = new Point2D((index * 2 + 1) * separation, DEFAULT_TIME_HEIGHT / 2.0);
+        var calculatedX = getPlaceDrawingWidth() * (date - minDate) / (maxDate - minDate);
+        var position = new Point2D(calculatedX, DEFAULT_TIME_HEIGHT / 2.0);
         switch (type) {
             case START -> {
                 if (!startDateHandles.containsKey(date)) {
@@ -560,7 +553,7 @@ public final class FriezeFreeMap extends FriezeObject {
     private void updateDateHandles() {
         List<Long> startDates = frieze.getStartDates();
         List<Long> startDatesToBeRemoved = new LinkedList<>();
-        frieze.getStartDates().forEach(startDate -> {
+        startDates.forEach(startDate -> {
             if (!startDateHandles.containsKey(startDate)) {
                 var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
                 propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_ADDED, this, startDateHandle);

@@ -34,9 +34,11 @@ public class DateHandle {
         START, END
     }
 
+    public static final String PLOT_REMOVED = "plotRemoved";
     public static final String POSITION_CHANGED = "datePositionChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
+    private final PropertyChangeListener propertyChangeListener;
     private final TimeType timeType;
     private final long date;
     //
@@ -47,6 +49,7 @@ public class DateHandle {
 
     public DateHandle(long aDate, TimeType aTimeType, Point2D aPosition) {
         propertyChangeSupport = new PropertyChangeSupport(DateHandle.this);
+        propertyChangeListener = e -> DateHandle.this.handlePlotUpdate(e);
         date = aDate;
         timeType = aTimeType;
         plots = new LinkedList<>();
@@ -65,8 +68,8 @@ public class DateHandle {
     public void addPlot(Plot plot) {
         if (plot.getDate() == date && !plots.contains(plot)) {
             plots.add(plot);
+            plot.addPropertyChangeListener(propertyChangeListener);
             plot.setX(xPos);
-            plot.addPropertyChangeListener(this::handlePlotUpdate);
         }
     }
 
@@ -103,8 +106,10 @@ public class DateHandle {
 
     private void handlePlotUpdate(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED ->
+            case Plot.POS_CHANGED -> {
+                // TODO add an uncessary protection ?
                 setX((double) event.getOldValue());
+            }
             case Plot.SELECTION_CHANGED, Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
             }
@@ -112,11 +117,18 @@ public class DateHandle {
                 var plot = (Plot) event.getOldValue();
                 if (plot.getDate() != date) {
                     plots.remove(plot);
-                    plot.removePropertyChangeListener(this::handlePlotUpdate);
+                    plot.removePropertyChangeListener(propertyChangeListener);
+                    propertyChangeSupport.firePropertyChange(PLOT_REMOVED, this, plot);
                 }
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
+
+    @Override
+    public String toString() {
+        return "[t=" + date + "  " + timeType + "  x=" + xPos + "]";
+    }
+
 }

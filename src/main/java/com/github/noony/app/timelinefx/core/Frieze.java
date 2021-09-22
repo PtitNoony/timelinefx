@@ -377,10 +377,10 @@ public class Frieze extends FriezeObject {
     private void handleStayPeriodChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case StayPeriod.START_DATE_CHANGED -> {
+                var stay = (StayPeriod) event.getSource();
                 // First update the relevant dates before notifying of the stay change
                 updateDatesOnRemoval((long) event.getOldValue(), true);
                 updateDatesOnCreation((long) event.getNewValue(), true);
-                var stay = (StayPeriod) event.getSource();
                 propertyChangeSupport.firePropertyChange(STAY_UPDATED, this, stay);
             }
             case StayPeriod.END_DATE_CHANGED -> {
@@ -426,6 +426,7 @@ public class Frieze extends FriezeObject {
         if (notInStartDates && notInEndDates) {
             dates.remove(dateRemoved);
         }
+
     }
 
     private void updateDatesOnCreation(long dateAdded, boolean isStartDate) {

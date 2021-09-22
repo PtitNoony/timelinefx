@@ -22,13 +22,27 @@ package com.github.noony.app.timelinefx.core;
  */
 public class StayPeriodSimpleTime extends StayPeriod {
 
+    private long previousStartTime;
+    private long previousEndTime;
     private long startTime;
     private long endTime;
 
     protected StayPeriodSimpleTime(Long anId, Person aPerson, long aStartTime, long anEndTime, Place aPlace) {
         super(anId, aPerson, aPlace);
+        previousStartTime = aStartTime;
+        previousEndTime = anEndTime;
         startTime = aStartTime;
         endTime = anEndTime;
+    }
+
+    @Override
+    public long getPreviousStartDate() {
+        return previousStartTime;
+    }
+
+    @Override
+    public long getPreviousEndDate() {
+        return previousEndTime;
     }
 
     @Override
@@ -43,17 +57,17 @@ public class StayPeriodSimpleTime extends StayPeriod {
 
     public void setStartDate(long aStartDate) {
         if (startTime != aStartDate) {
-            var oldStartTime = startTime;
+            previousStartTime = startTime;
             startTime = aStartDate;
-            firePropertyChange(START_DATE_CHANGED, oldStartTime, startTime);
+            firePropertyChange(START_DATE_CHANGED, previousStartTime, startTime);
         }
     }
 
     public void setEndDate(long aEndDate) {
         if (endTime != aEndDate) {
-            var oldEndTime = endTime;
+            previousEndTime = endTime;
             endTime = aEndDate;
-            firePropertyChange(END_DATE_CHANGED, oldEndTime, endTime);
+            firePropertyChange(END_DATE_CHANGED, previousEndTime, endTime);
         }
     }
 

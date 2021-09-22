@@ -68,6 +68,7 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         setNodeTranslateX(dateHandle.getXPos());
         setNodeTranslateY(dateHandle.getYPos());
         //
+        updateScale(aScale);
     }
 
     @Override
@@ -75,6 +76,11 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         Double[] points = createPoints();
         handle.getPoints().setAll(points);
         setNodeTranslateX(dateHandle.getXPos() * getScale());
+    }
+
+    @Override
+    public final void updateScale(double newScale) {
+        super.updateScale(newScale);
     }
 
     public void setX(double xPos) {
@@ -121,8 +127,16 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         switch (event.getPropertyName()) {
             case DateHandle.POSITION_CHANGED ->
                 setX((double) event.getOldValue());
+            case DateHandle.PLOT_REMOVED -> { // nothin to do
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
+
+    @Override
+    public String toString() {
+        return "[DateHandleDrawing:  t=" + dateHandle.getDate() + "  x=" + getNode().getTranslateX() + "]";
+    }
+
 }

@@ -199,10 +199,11 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
 
     private void addEndDateHandleDrawing(DateHandle date) {
         if (!endDatesHandles.containsKey(date.getDate())) {
-            var handle = new DateHandleDrawing(date, scale);
+            final var handle = new DateHandleDrawing(date, scale);
             endDateHandleGroup.getChildren().add(handle.getNode());
             endDatesHandles.put(date.getDate(), handle);
             scalableNodes.add(handle);
+            handle.updateScale(scale);
         }
     }
 

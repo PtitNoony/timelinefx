@@ -133,7 +133,7 @@ public class Plot implements GridPositionable, Selectable {
 
     @Override
     public String getInfo() {
-        return "Plot [" + xPos.doubleValue() + ", " + yPos.doubleValue() + "]";
+        return "Plot [t=" + date + "  x=" + xPos.doubleValue() + ", y=" + yPos.doubleValue() + "]";
     }
 
     public void setX(double newX) {
@@ -168,8 +168,10 @@ public class Plot implements GridPositionable, Selectable {
     }
 
     public void setDate(long aDate) {
-        date = aDate;
-        propertyChangeSupport.firePropertyChange(PLOT_DATE_CHANGED, this, date);
+        if (aDate != date) {
+            date = aDate;
+            propertyChangeSupport.firePropertyChange(PLOT_DATE_CHANGED, this, date);
+        }
     }
 
     @Override

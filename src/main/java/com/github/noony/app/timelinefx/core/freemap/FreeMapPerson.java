@@ -118,11 +118,7 @@ public class FreeMapPerson {
         stays.add(stayPeriod);
         stays.sort(StayPeriod.STAY_COMPARATOR);
         var startPlot = new StartPlot(stayPeriod, freeMap.getPlotSize());
-//        startPlots.put(startPlot.getDate(), startPlot);
-//        startPlots.add(startPlot);
         var endPlot = new EndPlot(stayPeriod, freeMap.getPlotSize());
-//        endPlots.put(endPlot.getDate(), endPlot);
-//        endPlots.add(endPlot);
         var link = new StayLink(stayPeriod, startPlot, endPlot);
         propertyChangeSupport.firePropertyChange(LINK_ADDED, this, link);
         stayLinks.put(stayPeriod, link);
@@ -153,8 +149,6 @@ public class FreeMapPerson {
         stays.remove(stayPeriod);
         stays.sort(StayPeriod.STAY_COMPARATOR);
         //
-//        startPlots.remove(stayPeriod.getStartDate());
-//        endPlots.remove(stayPeriod.getEndDate());
         propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stayPeriod);
         //
         var removedLink = stayLinks.get(stayPeriod);
@@ -171,8 +165,6 @@ public class FreeMapPerson {
     }
 
     protected void updateStay(StayPeriod stayPeriod) {
-        var updatedLink = stayLinks.get(stayPeriod);
-        //
         var startEndPlots = plotsByPeriod.get(stayPeriod);
         if (startEndPlots != null) {
             var startPlot = startEndPlots.getKey();
@@ -183,21 +175,13 @@ public class FreeMapPerson {
             //
             freeMap.getStartDateHandle(startPlot.getDate()).addPlot(startPlot);
             freeMap.getEndDateHandle(endPlot.getDate()).addPlot(endPlot);
-            //
-            System.err.println("IN PROGRESS HERE update value and handles");
         }
-//        updateFirstPlot();
-//        recalculateTravelLinks();
     }
 
     protected Portrait getPortrait() {
         return portrait;
     }
 
-//    private void createPortrait(Person person) {
-//        portrait = new Portrait(person, freeMap.getPortraitRadius());
-////        portraits.put(person, portrait);
-//    }
     private void updateFirstPlot() {
         var oldFirstPlot = firstPlot;
         firstPlot = plots.stream().filter(plot -> plot.getPerson().equals(person)).sorted((p1, p2) -> Long.compare(p1.getDate(), p2.getDate())).findFirst().orElse(null);

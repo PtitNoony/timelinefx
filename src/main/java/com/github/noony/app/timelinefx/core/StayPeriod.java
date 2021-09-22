@@ -32,7 +32,6 @@ public abstract class StayPeriod extends FriezeObject {
     public static final String PLACE_CHANGED = "StayPeriod__placeChanged";
     public static final String START_DATE_CHANGED = "StayPeriod__startDateChanged";
     public static final String END_DATE_CHANGED = "StayPeriod__endDateChanged";
-
     private final PropertyChangeSupport propertyChangeSupport;
     private Person person;
     private Place place;
@@ -79,6 +78,10 @@ public abstract class StayPeriod extends FriezeObject {
             propertyChangeSupport.firePropertyChange(PLACE_CHANGED, this, place);
         }
     }
+
+    public abstract long getPreviousStartDate();
+
+    public abstract long getPreviousEndDate();
 
     public abstract long getStartDate();
 

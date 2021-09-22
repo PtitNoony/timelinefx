@@ -27,13 +27,27 @@ public class StayPeriodLocalDate extends StayPeriod {
 
     public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
+    private LocalDate previousStartDate;
+    private LocalDate previousEndDate;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    protected StayPeriodLocalDate(long id, Person aPerson, LocalDate startDate, LocalDate endDate, Place aPlace) {
+    protected StayPeriodLocalDate(long id, Person aPerson, LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
         super(id, aPerson, aPlace);
-        this.startDate = startDate;
-        this.endDate = endDate;
+        previousStartDate = aStartDate;
+        previousEndDate = anEndDate;
+        startDate = aStartDate;
+        endDate = anEndDate;
+    }
+
+    @Override
+    public long getPreviousStartDate() {
+        return previousStartDate.toEpochDay();
+    }
+
+    @Override
+    public long getPreviousEndDate() {
+        return previousEndDate.toEpochDay();
     }
 
     @Override
@@ -56,9 +70,9 @@ public class StayPeriodLocalDate extends StayPeriod {
             return;
         }
         if (!startDate.isEqual(aStartDate)) {
-            var oldStartDate = startDate;
+            previousStartDate = startDate;
             startDate = aStartDate;
-            firePropertyChange(START_DATE_CHANGED, oldStartDate.toEpochDay(), startDate.toEpochDay());
+            firePropertyChange(START_DATE_CHANGED, previousStartDate.toEpochDay(), startDate.toEpochDay());
         }
     }
 
@@ -67,9 +81,9 @@ public class StayPeriodLocalDate extends StayPeriod {
             return;
         }
         if (!endDate.isEqual(aEndDate)) {
-            var oldEndDate = endDate;
+            previousEndDate = endDate;
             endDate = aEndDate;
-            firePropertyChange(END_DATE_CHANGED, oldEndDate.toEpochDay(), endDate.toEpochDay());
+            firePropertyChange(END_DATE_CHANGED, previousEndDate.toEpochDay(), endDate.toEpochDay());
         }
     }
 

@@ -251,7 +251,6 @@ public class StaysCreationViewController implements Initializable {
                 var stay = (StayPeriodSimpleTime) selectedStayPeriod;
                 stay.setStartDate(startTime);
                 stay.setEndDate(endTime);
-                StayFactory.createStayPeriodSimpleTime(personCB.getValue(), startTime, endTime, placesSearchCB.getValue());
             }
             default ->
                 throw new UnsupportedOperationException("Trying to create a Stay of unsupported type :: " + timeFormat);

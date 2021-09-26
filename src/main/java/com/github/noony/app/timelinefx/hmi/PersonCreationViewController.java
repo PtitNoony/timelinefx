@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -65,6 +67,10 @@ public class PersonCreationViewController implements Initializable {
     private ColorPicker colorPicker;
     @FXML
     private ImageView imageView;
+    @FXML
+    private DatePicker birthDatePicker;
+    @FXML
+    private DatePicker deathDatePicker;
     //
     private Image image;
     private FileChooser fileChooser;
@@ -76,6 +82,8 @@ public class PersonCreationViewController implements Initializable {
     private String personName = "";
     private String personPictureName = "";
     private Color personColor = null;
+    private LocalDate dateOfBirth = null;
+    private LocalDate dateOfDeath = null;
 
     //
     private boolean nameOK = false;
@@ -91,13 +99,17 @@ public class PersonCreationViewController implements Initializable {
         nameField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             updatePersonName(t1.trim());
         });
-        //
         pictureField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             updatePersonPictureName(t1.trim());
         });
-        //
         colorPicker.valueProperty().addListener((ObservableValue<? extends Color> ov, Color t, Color t1) -> {
             updateColor(t1);
+        });
+        birthDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
+            updateDateOfBith(t1);
+        });
+        deathDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
+            updateDateOfDeath(t1);
         });
     }
 
@@ -130,12 +142,16 @@ public class PersonCreationViewController implements Initializable {
             case CREATION:
                 Person person = PersonFactory.createPerson(personName, personColor);
                 person.setPictureName("".equals(personPictureName) ? Person.DEFAULT_PICTURE_NAME : personPictureName);
+                person.setDateOfBirth(dateOfBirth);
+                person.setDateOfDeath(dateOfDeath);
                 propertyChangeSupport.firePropertyChange(PERSON_CREATED, null, person);
                 break;
             case EDITION:
                 currentEditedPerson.setName(personName);
                 currentEditedPerson.setPictureName("".equals(personPictureName) ? Person.DEFAULT_PICTURE_NAME : personPictureName);
                 currentEditedPerson.setColor(personColor);
+                currentEditedPerson.setDateOfBirth(dateOfBirth);
+                currentEditedPerson.setDateOfDeath(dateOfDeath);
                 propertyChangeSupport.firePropertyChange(PERSON_EDITIED, null, currentEditedPerson);
                 reset();
                 break;
@@ -154,6 +170,8 @@ public class PersonCreationViewController implements Initializable {
         pictureField.setText(currentEditedPerson.getPictureName());
         nameField.setText(currentEditedPerson.getName());
         colorPicker.setValue(currentEditedPerson.getColor());
+        birthDatePicker.setValue(currentEditedPerson.getDateOfBirth());
+        deathDatePicker.setValue(currentEditedPerson.getDateOfDeath());
         updateStatus();
     }
 
@@ -167,6 +185,8 @@ public class PersonCreationViewController implements Initializable {
         nameField.setText("");
         pictureField.setText("");
         colorPicker.setValue(null);
+        birthDatePicker.setValue(null);
+        deathDatePicker.setValue(null);
         setEditionMode(EditionMode.CREATION);
         //
         updateStatus();
@@ -203,7 +223,18 @@ public class PersonCreationViewController implements Initializable {
         updateStatus();
     }
 
+    private void updateDateOfBith(LocalDate newDate) {
+        dateOfBirth = newDate;
+        updateStatus();
+    }
+
+    private void updateDateOfDeath(LocalDate newDate) {
+        dateOfDeath = newDate;
+        updateStatus();
+    }
+
     private void updateStatus() {
+        // we are not forcing birth and death dates to be set
         createButton.setDisable(!(nameOK & colorOK));
         updateImage();
     }

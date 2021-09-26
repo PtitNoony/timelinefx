@@ -174,6 +174,9 @@ public final class PlaceDrawing extends Drawing {
                 System.err.println(" Person.SELECTION_CHANGED :: TODO");
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
+                // nothin to do
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

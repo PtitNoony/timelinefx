@@ -20,6 +20,7 @@ import com.github.noony.app.timelinefx.Configuration;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Comparator;
 import javafx.scene.paint.Color;
 
@@ -35,6 +36,8 @@ public class Person extends FriezeObject {
     public static final String VISIBILITY_CHANGED = "visibilityChanged";
     public static final String NAME_CHANGED = "nameChanged";
     public static final String PICTURE_CHANGED = "pictureChanged";
+    public static final String DATE_OF_BIRTH_CHANGED = "dateOfBirthChanged";
+    public static final String DATE_OF_DEATH_CHANGED = "dateOfDeathChanged";
     public static final String COLOR_CHANGED = "colorChanged";
 
     public static final Comparator<Person> COMPARATOR = (p1, p2) -> p1.getName().compareTo(p2.getName());
@@ -46,13 +49,18 @@ public class Person extends FriezeObject {
     private String name;
     private String pictureName;
     private Color color;
+    private LocalDate dateOfBirth;
+    private LocalDate dateOfDeath;
+    //
     private boolean selected;
     private boolean visible;
 
-    protected Person(Long personId, String personName, Color aColor) {
+    protected Person(Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
         super(personId);
         name = personName;
         color = aColor;
+        dateOfBirth = aDoB;
+        dateOfDeath = aDoD;
         propertyChangeSupport = new PropertyChangeSupport(Person.this);
         selected = false;
         visible = true;
@@ -60,7 +68,7 @@ public class Person extends FriezeObject {
     }
 
     protected Person(Long personId, String personName) {
-        this(personId, personName, DEFAULT_COLOR);
+        this(personId, personName, DEFAULT_COLOR, null, null);
     }
 
     public String getPictureName() {
@@ -102,6 +110,38 @@ public class Person extends FriezeObject {
 
     public Color getColor() {
         return color;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate newDoB) {
+        if (newDoB == null) {
+            // for the time beeing we do not support clearing date of birth
+        } else if (dateOfBirth == null) {
+            dateOfBirth = newDoB;
+            propertyChangeSupport.firePropertyChange(DATE_OF_BIRTH_CHANGED, null, dateOfBirth);
+        } else if (!dateOfBirth.isEqual(newDoB)) {
+            dateOfBirth = newDoB;
+            propertyChangeSupport.firePropertyChange(DATE_OF_BIRTH_CHANGED, null, dateOfBirth);
+        }
+    }
+
+    public LocalDate getDateOfDeath() {
+        return dateOfDeath;
+    }
+
+    public void setDateOfDeath(LocalDate newDoD) {
+        if (newDoD == null) {
+            // for the time beeing we do not support clearing date of death
+        } else if (dateOfDeath == null) {
+            dateOfDeath = newDoD;
+            propertyChangeSupport.firePropertyChange(DATE_OF_DEATH_CHANGED, null, dateOfDeath);
+        } else if (!dateOfDeath.isEqual(newDoD)) {
+            dateOfDeath = newDoD;
+            propertyChangeSupport.firePropertyChange(DATE_OF_DEATH_CHANGED, null, dateOfDeath);
+        }
     }
 
     public void setSelected(boolean isSelected) {

@@ -239,6 +239,9 @@ public class FriezePeopleLinearDrawing implements FriezeView {
                 System.err.println(" Person.SELECTION_CHANGED :: TODO in FriezePeopleLinearDrawing");
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO in FriezePeopleLinearDrawing");
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
+                // nothin to do
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

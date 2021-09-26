@@ -57,7 +57,7 @@ public class PersonFactory {
 
     public static Person createPerson(String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
-        var person = new Person(FriezeObjectFactory.getNextID(), personName, color);
+        var person = new Person(FriezeObjectFactory.getNextID(), personName, color, null, null);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
         return person;
@@ -65,7 +65,7 @@ public class PersonFactory {
 
     public static Person createPerson(String personName, Color color, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} pictureName={2}", new Object[]{personName, color, pictureName});
-        var person = new Person(FriezeObjectFactory.getNextID(), personName, color);
+        var person = new Person(FriezeObjectFactory.getNextID(), personName, color, null, null);
         person.setPictureName(pictureName);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
@@ -84,7 +84,7 @@ public class PersonFactory {
         if (!FriezeObjectFactory.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + PERSONS.get(id) + "[" + PERSONS.get(id).getId() + "])");
         }
-        var person = new Person(id, personName, color);
+        var person = new Person(id, personName, color, null, null);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
         return person;

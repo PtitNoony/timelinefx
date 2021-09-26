@@ -4,7 +4,7 @@
 
     <groupId>com.github.noony.app</groupId>
     <artifactId>timelinefx</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Timeline FX</name>

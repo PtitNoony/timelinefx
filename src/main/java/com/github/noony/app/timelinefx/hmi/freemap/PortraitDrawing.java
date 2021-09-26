@@ -130,6 +130,9 @@ public class PortraitDrawing extends AbstractFxScalableNode {
             case Person.PICTURE_CHANGED:
                 updateImage();
                 break;
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED:
+                // nothin to do
+                break;
             default:
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

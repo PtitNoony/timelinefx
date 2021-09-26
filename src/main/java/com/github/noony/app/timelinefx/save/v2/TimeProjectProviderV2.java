@@ -121,6 +121,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     public static final String COLOR_ATR = "color";
     public static final String PERSON_ATR = "person";
     public static final String PICTURE_ATR = "picture";
+    public static final String DATE_OF_BIRTH_ATR = "dateOfBirth";
+    public static final String DATE_OF_DEATH_ATR = "dateOfDeath";
     public static final String START_DATE_ATR = "startDate";
     public static final String END_DATE_ATR = "endDate";
     public static final String TIME_FORMAT_ATR = "timeFormat";
@@ -294,6 +296,16 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         String pictureName = personElement.getAttribute(PICTURE_ATR);
         Person person = PersonFactory.createPerson(id, name, color);
         person.setPictureName(pictureName);
+        if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
+            var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+            var dateOfBirth = LocalDate.parse(dateOfBirthS);
+            person.setDateOfBirth(dateOfBirth);
+        }
+        if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
+            var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+            var dateOfDeath = LocalDate.parse(dateOfDeathS);
+            person.setDateOfDeath(dateOfDeath);
+        }
         return person;
     }
 
@@ -736,11 +748,18 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createPersonElement(Document doc, Person person) {
+        LOG.log(Level.FINE, "> Creating person {0}", new Object[]{person.getName()});
         Element personElement = doc.createElement(PERSON_ELEMENT);
         personElement.setAttribute(ID_ATR, Long.toString(person.getId()));
         personElement.setAttribute(NAME_ATR, person.getName());
         personElement.setAttribute(PICTURE_ATR, person.getPictureName());
         personElement.setAttribute(COLOR_ATR, person.getColor().toString());
+        if (person.getDateOfBirth() != null) {
+            personElement.setAttribute(DATE_OF_BIRTH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfBirth()));
+        }
+        if (person.getDateOfDeath() != null) {
+            personElement.setAttribute(DATE_OF_DEATH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfDeath()));
+        }
         return personElement;
     }
 

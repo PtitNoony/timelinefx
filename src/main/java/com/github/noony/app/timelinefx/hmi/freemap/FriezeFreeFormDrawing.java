@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.DEFAULT_TIME_HEIGHT;
 import com.github.noony.app.timelinefx.core.freemap.Portrait;
+import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -139,20 +140,20 @@ public class FriezeFreeFormDrawing {
     }
 
     public void zoomIn() {
-        scale = Math.max(FriezeFreeMap.MIN_SCALE, scale - FriezeFreeMap.SCALE_STEP);
+        scale = Math.max(FxScalableParent.MIN_SCALE, scale - FxScalableParent.SCALE_STEP);
         updateLayout();
     }
 
     public void zoomOut() {
-        scale = Math.min(FriezeFreeMap.MAX_SCALE, scale + FriezeFreeMap.SCALE_STEP);
+        scale = Math.min(FxScalableParent.MAX_SCALE, scale + FxScalableParent.SCALE_STEP);
         updateLayout();
     }
 
     public void setZoomLevel(double newScale) {
-        if (newScale > FriezeFreeMap.MAX_SCALE) {
-            scale = FriezeFreeMap.MAX_SCALE;
-        } else if (newScale < FriezeFreeMap.MIN_SCALE) {
-            scale = FriezeFreeMap.MIN_SCALE;
+        if (newScale > FxScalableParent.MAX_SCALE) {
+            scale = FxScalableParent.MAX_SCALE;
+        } else if (newScale < FxScalableParent.MIN_SCALE) {
+            scale = FxScalableParent.MIN_SCALE;
         } else {
             scale = newScale;
         }

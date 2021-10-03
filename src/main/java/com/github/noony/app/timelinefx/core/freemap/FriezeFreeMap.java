@@ -632,6 +632,9 @@ public final class FriezeFreeMap extends FriezeObject {
             case Frieze.END_DATE_REMOVED -> {
                 updateDateHandles();
             }
+            case Frieze.NAME_CHANGED -> {
+                // nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
         }

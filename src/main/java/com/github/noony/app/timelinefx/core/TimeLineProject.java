@@ -165,6 +165,7 @@ public class TimeLineProject {
     public boolean addPerson(Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
+            persons.sort(Person.COMPARATOR);
             propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
             return true;
         }

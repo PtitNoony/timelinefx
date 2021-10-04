@@ -25,6 +25,8 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,6 +48,8 @@ import javafx.stage.FileChooser;
  */
 public class FreeMapViewController implements Initializable {
 
+    private static final Logger LOG = Logger.getGlobal();
+
     @FXML
     private ScrollPane viewScrollPane;
 
@@ -55,6 +59,8 @@ public class FreeMapViewController implements Initializable {
     private CheckBox timeHandleVisibilityCB;
     @FXML
     private CheckBox plotsVisibilityCB;
+    @FXML
+    private TextField zoomField;
     @FXML
     private TextField widthField;
     @FXML
@@ -78,7 +84,6 @@ public class FreeMapViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         timeHandleVisibilityCB.setSelected(true);
         timeHandleVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             if (friezeFreeFormDrawing != null) {
@@ -153,6 +158,16 @@ public class FreeMapViewController implements Initializable {
             friezeFreeFormDrawing.setDateHandlesColor(handleColorPicker.getValue());
         });
         fileChooser = new FileChooser();
+        zoomField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            try {
+                var newScale = Double.parseDouble(t1);
+                if (newScale != friezeFreeFormDrawing.getScale()) {
+                    friezeFreeFormDrawing.setZoomLevel(newScale);
+                }
+            } catch (NumberFormatException e) {
+                LOG.log(Level.FINEST, "The following value is not a valid zoom level {0}. {1}", new Object[]{t1, e});
+            }
+        });
     }
 
     @FXML
@@ -201,11 +216,13 @@ public class FreeMapViewController implements Initializable {
     @FXML
     protected void handleZoomInAction(ActionEvent event) {
         friezeFreeFormDrawing.zoomIn();
+        zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 
     @FXML
     protected void handleZoomOutAction(ActionEvent event) {
         friezeFreeFormDrawing.zoomOut();
+        zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 
     public void setFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
@@ -217,6 +234,7 @@ public class FreeMapViewController implements Initializable {
         plotWidthField.setText(Double.toString(friezeFreeMap.getPlotSize()));
         fontSizeField.setText(Double.toString(friezeFreeMap.getFontSize()));
         portraitRadiusField.setText(Double.toString(friezeFreeMap.getPortraitRadius()));
+        zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 
     private void handleSelectedItemChange(PropertyChangeEvent event) {

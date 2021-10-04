@@ -63,6 +63,10 @@ public final class FriezeFreeMap extends FriezeObject {
     private static final double DEFAULT_PLACE_NAMES_WIDTH = 100;
     //
     public static final double DEFAULT_PORTRAIT_RADIUS = 50;
+    //
+    public static final double MIN_SCALE = 0.2;
+    public static final double MAX_SCALE = 20;
+    public static final double SCALE_STEP = 0.1;
 
     public static final double DEFAULT_TIME_HEIGHT = 25;
     private static final double DEFAULT_FONT_SIZE = 12;

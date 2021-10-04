@@ -234,11 +234,6 @@ public final class FriezeFreeMap extends FriezeObject {
         return plotVisibiltiy;
     }
 
-    public double getTimeHeight() {
-        // todo make it variable
-        return DEFAULT_TIME_HEIGHT;
-    }
-
     public List<DateHandle> getStartDateHandles() {
         return Collections.unmodifiableList(startDateHandles.values().stream().collect(Collectors.toList()));
     }

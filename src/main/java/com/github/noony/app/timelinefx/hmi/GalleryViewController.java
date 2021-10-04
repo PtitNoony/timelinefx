@@ -91,6 +91,7 @@ public class GalleryViewController implements Initializable, ViewController {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Loading GalleryViewController");
+        PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         init();
     }
 
@@ -227,5 +228,18 @@ public class GalleryViewController implements Initializable, ViewController {
 
     private void displayPictureInfos(Picture picture) {
         picturePersonsList.setItems(FXCollections.observableArrayList(picture.getPersons()));
+    }
+
+    private void handlePictureFactoryChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case PictureFactory.PICTURE_ADDED -> {
+                var picture = (Picture) event.getNewValue();
+                if (!picturesTableView.getItems().contains(picture)) {
+                    picturesTableView.getItems().add(picture);
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
+        }
     }
 }

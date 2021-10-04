@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.drawings;
 
 import com.github.noony.app.timelinefx.MainApp;
 import com.github.noony.app.timelinefx.core.Picture;
+import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import eu.hansolo.tilesfx.Tile;
@@ -25,6 +26,7 @@ import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -78,6 +80,8 @@ public class GalleryTiles {
                 .sorted((p1, p2) -> p1.getCreationDate().compareTo(p2.getCreationDate()))
                 .collect(Collectors.toList());
         propertyChangeSupport = new PropertyChangeSupport(GalleryTiles.this);
+        PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
+        //
         init();
     }
 
@@ -111,7 +115,6 @@ public class GalleryTiles {
     }
 
     private Tile createSetTile(Picture picture) {
-
         String smallImageFilePath = ProjectConfiguration.getMiniaturesFolder() + File.separator + picture.getId() + "_small.jpg";
         File imageFile = new File(smallImageFilePath);
         InputStream imageStream;
@@ -163,6 +166,22 @@ public class GalleryTiles {
             }
         });
         return result;
+    }
+
+    private void handlePictureFactoryChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case PictureFactory.PICTURE_ADDED -> {
+                var picture = (Picture) event.getNewValue();
+                if (!pictures.contains(picture)) {
+                    pictures.add(picture);
+                    var pictureTile = createSetTile(picture);
+                    tiles.add(pictureTile);
+                    tilesPane.getChildren().add(pictureTile);
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
+        }
     }
 
 }

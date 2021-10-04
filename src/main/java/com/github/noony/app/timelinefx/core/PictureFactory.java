@@ -18,6 +18,8 @@ package com.github.noony.app.timelinefx.core;
 
 import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -35,9 +37,12 @@ import org.apache.commons.io.FileUtils;
  */
 public class PictureFactory {
 
+    public static final String PICTURE_ADDED = "pictureAdded";
+
     private static final Logger LOG = Logger.getGlobal();
 
     private static final Map<Long, Picture> PICTURES = new HashMap<>();
+    private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(PICTURES);
 
     private PictureFactory() {
         // private utility constructor
@@ -71,6 +76,7 @@ public class PictureFactory {
         var picture = new Picture(FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
+        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
     }
 
@@ -82,7 +88,16 @@ public class PictureFactory {
         var picture = new Picture(id, pictureName, pictureCreationDate, picturePath, pictureWidth, pictureHeight);
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
+        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
+    }
+
+    public static final void addPropertyChangeListener(PropertyChangeListener listener) {
+        PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
+    }
+
+    public static final void removePropertyChangeListener(PropertyChangeListener listener) {
+        PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
     }
 
 }

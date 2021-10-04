@@ -35,7 +35,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javafx.application.Platform;
 import static javafx.application.Platform.runLater;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -44,7 +43,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -52,7 +50,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
 
@@ -65,13 +62,12 @@ public class StaysCreationViewController implements Initializable {
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(StaysCreationViewController.this);
-    @FXML
-    private GridPane grid;
+    //
     @FXML
     private RadioButton timeRB, dateRB;
     //
     @FXML
-    private ChoiceBox<Person> personCB;
+    private SearchableComboBox<Person> personCB;
     //
     @FXML
     private SearchableComboBox<Place> placesSearchCB;
@@ -226,14 +222,6 @@ public class StaysCreationViewController implements Initializable {
             }
         });
         //
-        Platform.runLater(() -> {
-//            System.err.println("SETTING PLACES :: ");
-//            placesSearchCB = new SearchableComboBox<>();
-//            ObservableList<Place> myPlaces = FXCollections.observableList(PlaceFactory.getPlaces());
-//            placesSearchCB.setItems(myPlaces);
-//            grid.add(placesSearchCB, 0, 4);
-//            placesSearchCB.
-        });
         updateCreateStatus();
     }
 
@@ -293,6 +281,7 @@ public class StaysCreationViewController implements Initializable {
                 chronologyListView.getItems().setAll(timeline.getStays());
                 ObservableList<Place> myPlaces = FXCollections.observableList(PlaceFactory.getPlaces());
                 placesSearchCB.setItems(myPlaces);
+                placesSearchCB.getItems().sorted(Place.COMPARATOR);
             });
         }
     }
@@ -331,8 +320,10 @@ public class StaysCreationViewController implements Initializable {
 
     private void handleTimelineChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED ->
+            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED -> {
                 placesSearchCB.getItems().setAll(timeline.getAllPlaces());
+                placesSearchCB.getItems().sorted(Place.COMPARATOR);
+            }
             case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED ->
                 personCB.getItems().setAll(timeline.getPersons());
             case TimeLineProject.STAY_ADDED ->

@@ -30,7 +30,7 @@
                </children>
             </HBox>
             <Separator prefWidth="200.0" />
-            <GridPane fx:id="grid" hgap="8.0" vgap="8.0">
+            <GridPane hgap="8.0" vgap="8.0">
               <columnConstraints>
                 <ColumnConstraints />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -54,7 +54,7 @@
                   <Label fx:id="endTimeL" text="End Time:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <Label fx:id="startDateL" text="Start Date:" GridPane.rowIndex="2" />
                   <Label fx:id="endDateL" text="End Date:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                  <ChoiceBox fx:id="personCB" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <SearchableComboBox fx:id="personCB" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" />
                   <DatePicker fx:id="startDateP" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <DatePicker fx:id="endDateP" GridPane.columnIndex="4" GridPane.rowIndex="2" />
                   <TextField fx:id="startTimeTF" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />

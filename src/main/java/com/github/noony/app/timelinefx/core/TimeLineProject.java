@@ -76,9 +76,26 @@ public class TimeLineProject {
         return name;
     }
 
+    public boolean addPlace(Place aPlace) {
+        if (aPlace == null) {
+            return false;
+        } else if (aPlace.isRootPlace()) {
+            addHighLevelPlace(aPlace);
+            return true;
+        } else {
+            addPlace(aPlace.getParent());
+            if (!allPlaces.containsKey(aPlace.getName())) {
+                allPlaces.put(aPlace.getName(), aPlace);
+                propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
+            }
+            return true;
+        }
+    }
+
     public boolean addHighLevelPlace(Place aPlace) {
         if (!hightLevelPlaces.contains(aPlace)) {
             hightLevelPlaces.add(aPlace);
+            hightLevelPlaces.sort(Place.COMPARATOR);
             if (!allPlaces.containsKey(aPlace.getName())) {
                 allPlaces.put(aPlace.getName(), aPlace);
                 propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
@@ -159,7 +176,7 @@ public class TimeLineProject {
      * @return all the places present in the project.
      */
     public List<Place> getAllPlaces() {
-        return allPlaces.values().stream().collect(Collectors.toList());
+        return allPlaces.values().stream().sorted(Place.COMPARATOR).collect(Collectors.toList());
     }
 
     public boolean addPerson(Person aPerson) {
@@ -167,23 +184,6 @@ public class TimeLineProject {
             persons.add(aPerson);
             persons.sort(Person.COMPARATOR);
             propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean addPlace(Place aPlace) {
-        if (aPlace == null) {
-            // nothing to do
-        } else if (aPlace.isRootPlace()) {
-            addHighLevelPlace(aPlace);
-            return true;
-        } else {
-            addPlace(aPlace.getParent());
-            if (!allPlaces.containsKey(aPlace.getName())) {
-                allPlaces.put(aPlace.getName(), aPlace);
-                propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
-            }
             return true;
         }
         return false;

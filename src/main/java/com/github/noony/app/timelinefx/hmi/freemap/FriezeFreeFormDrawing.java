@@ -21,6 +21,7 @@ import com.github.noony.app.timelinefx.core.freemap.DateHandle;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.DEFAULT_TIME_HEIGHT;
 import com.github.noony.app.timelinefx.core.freemap.Portrait;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
@@ -33,6 +34,7 @@ import java.util.Map;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -46,7 +48,7 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final Pane mainNode;
+    private final VBox mainNode;
     // Group which contains all the graphical elements necessary for the free map display
     private final Group freeMapGroup;
     //
@@ -64,8 +66,8 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
     private final Rectangle innerBackground;
     private final Rectangle personsBackground;
     private final Rectangle placesBackground;
-    private final Rectangle startDatesBackground;
-    private final Rectangle endDatesBackground;
+    private final Pane startDatesPane;
+    private final Pane endDatesPane;
 
     private final FriezeFreeMap friezeFreeMap;
     //
@@ -96,11 +98,13 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         scalableNodes = new LinkedList<>();
         //
         drawingWidth = friezeFreeMap.getFreeMapWidth() + 2 * (MAP_PADDING);
-        drawingHeight = friezeFreeMap.getFreeMapHeight() + friezeFreeMap.getTimeHeight() + 2 * (MAP_PADDING);
+        drawingHeight = friezeFreeMap.getFreeMapHeight() + DEFAULT_TIME_HEIGHT + 2 * (MAP_PADDING);
         //
         propertyChangeSupport = new PropertyChangeSupport(FriezeFreeFormDrawing.this);
         //
-        mainNode = new Pane();
+        mainNode = new VBox();
+        mainNode.setSpacing(MAP_PADDING);
+        //
         freeMapGroup = new Group();
         freeMapInnerGroup = new Group();
         portraitsGroup = new Group();
@@ -114,10 +118,8 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         innerBackground = new Rectangle(500, 500);
         placesBackground = new Rectangle(500, 500);
         personsBackground = new Rectangle(500, 500);
-        startDatesBackground = new Rectangle(500, 500);
-        startDatesBackground.setOpacity(1);
-        endDatesBackground = new Rectangle(500, 500);
-        endDatesBackground.setOpacity(1);
+        startDatesPane = new Pane();
+        endDatesPane = new Pane();
         //
         initFx();
         //
@@ -167,28 +169,27 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
     }
 
     private void updateWidth() {
-        drawingWidth = (friezeFreeMap.getFreeMapWidth() + 2 * (MAP_PADDING)) * scale;
+        drawingWidth = friezeFreeMap.getFreeMapWidth() * scale;
         mainNode.setMaxWidth(drawingWidth);
         background.setWidth(drawingWidth);
+        //
         innerBackground.setWidth(friezeFreeMap.getFreeMapWidth() * scale);
         personsBackground.setWidth(friezeFreeMap.getPersonWidth() * scale);
         placesBackground.setWidth(friezeFreeMap.getPlaceDrawingWidth() * scale);
-        startDatesBackground.setWidth(friezeFreeMap.getPlaceDrawingWidth() * scale);
-        endDatesBackground.setWidth(friezeFreeMap.getPlaceDrawingWidth() * scale);
+        startDatesPane.setMinWidth(drawingWidth);
+        endDatesPane.setMinWidth(drawingWidth);
+        //
         startDateHandleGroup.setTranslateX(friezeFreeMap.getPersonWidth() * scale);
         endDateHandleGroup.setTranslateX(friezeFreeMap.getPersonWidth() * scale);
     }
 
     private void updateHeight() {
-        drawingHeight = (friezeFreeMap.getFreeMapHeight() + 2 * (MAP_PADDING + friezeFreeMap.getTimeHeight())) * scale;
+        drawingHeight = (friezeFreeMap.getFreeMapHeight()) * scale + 2 * (MAP_PADDING + DEFAULT_TIME_HEIGHT);
         mainNode.setMaxHeight(drawingHeight);
         background.setHeight(drawingHeight);
         innerBackground.setHeight(friezeFreeMap.getFreeMapHeight() * scale);
         personsBackground.setHeight(friezeFreeMap.getPersonHeight() * scale);
         placesBackground.setHeight(friezeFreeMap.getPlaceDrawingHeight() * scale);
-        endDateHandleGroup.setTranslateY((drawingHeight - friezeFreeMap.getTimeHeight() - MAP_PADDING) * scale);
-        startDatesBackground.setHeight(friezeFreeMap.getTimeHeight() * scale);
-        endDatesBackground.setHeight(friezeFreeMap.getTimeHeight() * scale);
     }
 
     public double getWidth() {
@@ -286,26 +287,28 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         //
         personsBackground.setFill(Color.ANTIQUEWHITE);
         placesBackground.setFill(Color.FIREBRICK);
-        startDatesBackground.setFill(Color.CRIMSON);
-        endDatesBackground.setFill(Color.CRIMSON);
         //
+        startDatesPane.setMinHeight(DEFAULT_TIME_HEIGHT);
+        startDatesPane.setMaxHeight(DEFAULT_TIME_HEIGHT);
+        endDatesPane.setMinHeight(DEFAULT_TIME_HEIGHT);
+        endDatesPane.setMaxHeight(DEFAULT_TIME_HEIGHT);
         //
         personsGroup.getChildren().add(personsBackground);
         placesGroup.getChildren().add(placesBackground);
-        startDateHandleGroup.getChildren().addAll(startDatesBackground);
-        endDateHandleGroup.getChildren().addAll(endDatesBackground);
+        //
+        startDatesPane.getChildren().addAll(startDateHandleGroup);
+        endDatesPane.getChildren().addAll(endDateHandleGroup);
+        //
         friezeFreeMap.getStartDateHandles().forEach(this::addStartDateHandleDrawing);
         friezeFreeMap.getEndDateHandles().forEach(this::addEndDateHandleDrawing);
         friezeFreeMap.getPlaces().forEach(this::addPlaceDrawing);
         friezeFreeMap.getPersons().forEach(this::addPersonDrawing);
         //
-        mainNode.getChildren().addAll(freeMapGroup);
-        freeMapGroup.getChildren().addAll(background, freeMapInnerGroup, startDateHandleGroup, endDateHandleGroup);
+        mainNode.getChildren().addAll(startDatesPane, freeMapGroup, endDatesPane);
+        freeMapGroup.getChildren().addAll(background, freeMapInnerGroup);
         freeMapInnerGroup.getChildren().addAll(innerBackground, placesGroup, personLinksGroup, personsGroup, portraitsGroup);
         //
         innerBackground.setVisible(false);
-        startDatesBackground.setVisible(false);
-        endDatesBackground.setVisible(false);
         personsBackground.setVisible(false);
         placesBackground.setVisible(false);
         //
@@ -330,16 +333,6 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         updateWidth();
         updateHeight();
         scalableNodes.forEach(node -> node.updateScale(scale));
-        //
-        startDatesBackground.setArcWidth(scale * MAP_PADDING / 2.0);
-        startDatesBackground.setArcHeight(scale * MAP_PADDING / 2.0);
-        endDatesBackground.setArcWidth(scale * MAP_PADDING / 2.0);
-        endDatesBackground.setArcHeight(scale * MAP_PADDING / 2.0);
-        //
-        startDatesBackground.setHeight(friezeFreeMap.getTimeHeight() * scale);
-        endDatesBackground.setHeight(friezeFreeMap.getTimeHeight() * scale);
-        //
-        freeMapInnerGroup.setTranslateY((friezeFreeMap.getTimeHeight()) * scale);
         //
         personsGroup.setTranslateX(friezeFreeMap.getPersonsDrawingX() * scale);
         personsGroup.setTranslateY(friezeFreeMap.getPersonsDrawingY() * scale);
@@ -402,7 +395,6 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
         if (handleDrawing != null) {
             startDateHandleGroup.getChildren().remove(handleDrawing.getNode());
         }
-
     }
 
     private void removeEndDateHandleDrawing(DateHandle aDateHandle) {

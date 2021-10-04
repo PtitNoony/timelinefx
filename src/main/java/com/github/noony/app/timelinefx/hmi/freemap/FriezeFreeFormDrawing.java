@@ -142,13 +142,28 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
     }
 
     public void zoomIn() {
-        scale = Math.max(0.2, scale - 0.1);
+        scale = Math.max(FriezeFreeMap.MIN_SCALE, scale - FriezeFreeMap.SCALE_STEP);
         updateLayout();
     }
 
     public void zoomOut() {
-        scale = Math.min(10, scale + 0.1);
+        scale = Math.min(FriezeFreeMap.MAX_SCALE, scale + FriezeFreeMap.SCALE_STEP);
         updateLayout();
+    }
+
+    public void setZoomLevel(double newScale) {
+        if (newScale > FriezeFreeMap.MAX_SCALE) {
+            scale = FriezeFreeMap.MAX_SCALE;
+        } else if (newScale < FriezeFreeMap.MIN_SCALE) {
+            scale = FriezeFreeMap.MIN_SCALE;
+        } else {
+            scale = newScale;
+        }
+        updateLayout();
+    }
+
+    public double getScale() {
+        return scale;
     }
 
     private void updateWidth() {

@@ -340,9 +340,7 @@ public final class ContentEditionViewController implements Initializable {
             case PlaceCreationViewController.PLACE_CREATED:
                 place = (Place) event.getNewValue();
                 customModalWindow.hide();
-                if (place.isRootPlace()) {
-                    timeLineProject.addHighLevelPlace(place);
-                }
+                timeLineProject.addPlace(place);
                 updatePlacesTab();
                 break;
 

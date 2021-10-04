@@ -49,7 +49,7 @@ public class PlaceFactory {
     }
 
     public static List<Place> getPlaces() {
-        return PLACES.values().stream().collect(Collectors.toList());
+        return PLACES.values().stream().sorted(Place.COMPARATOR).collect(Collectors.toList());
     }
 
     public static List<Place> getRootPlaces() {

@@ -33,6 +33,11 @@ import javafx.scene.shape.Rectangle;
  * @author hamon
  */
 public class FxScalableParent implements ZoomProvider {
+    
+    
+    public static final double MIN_SCALE = 0.2;
+    public static final double MAX_SCALE = 20;
+    public static final double SCALE_STEP = 0.1;
 
     public static final double BORDER = 0;//todo investigate why size does not take this into account
     public static final double PADDING = 8;
@@ -97,14 +102,25 @@ public class FxScalableParent implements ZoomProvider {
     public double getViewingScale() {
         return viewingScale;
     }
+    
+    public void setViewingScale(double newScale) {
+        if (newScale > MAX_SCALE) {
+            viewingScale = MAX_SCALE;
+        } else if (newScale < MIN_SCALE) {
+            viewingScale = MIN_SCALE;
+        } else {
+            viewingScale = newScale;
+        }
+        updateLayout();
+    }
 
     public void zoomIn() {
-        viewingScale = Math.min(10, viewingScale + 0.1);
+        viewingScale = Math.min(MAX_SCALE, viewingScale + SCALE_STEP);
         updateLayout();
     }
 
     public void zoomOut() {
-        viewingScale = Math.max(0.2, viewingScale - 0.1);
+        viewingScale = Math.max(MIN_SCALE, viewingScale - SCALE_STEP);
         updateLayout();
     }
 

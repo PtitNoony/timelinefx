@@ -20,6 +20,8 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,13 +35,16 @@ import javafx.scene.layout.AnchorPane;
  */
 public class PicturesChronologyConfiguratorController implements Initializable {
 
+    private static final Logger LOG = Logger.getGlobal();
+
     @FXML
     private AnchorPane configuratorRoot;
     @FXML
     private TextField widthField;
-
     @FXML
     private TextField heightField;
+    @FXML
+    private TextField zoomField;
     //
     private PictureChronology pictureChronology;
     private PictureChronologyDrawing pictureChronologyDrawing;
@@ -69,6 +74,16 @@ public class PicturesChronologyConfiguratorController implements Initializable {
                 }
             }
         });
+        zoomField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            try {
+                var newScale = Double.parseDouble(t1);
+                if (pictureChronologyDrawing != null && newScale != pictureChronologyDrawing.getViewingScale()) {
+                    pictureChronologyDrawing.setViewingScale(newScale);
+                }
+            } catch (NumberFormatException e) {
+                LOG.log(Level.FINEST, "The following value is not a valid zoom level {0}. {1}", new Object[]{t1, e});
+            }
+        });
     }
 
     @FXML
@@ -86,8 +101,9 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         pictureChronology = aPictureChronology;
         pictureChronologyDrawing = aPictureChronologyDrawing;
         if (pictureChronology != null) {
-            widthField.setText("" + pictureChronology.getWidth());
-            heightField.setText("" + pictureChronology.getHeight());
+            widthField.setText(Double.toString(pictureChronology.getWidth()));
+            heightField.setText(Double.toString(pictureChronology.getHeight()));
+            zoomField.setText(Double.toString(pictureChronologyDrawing.getViewingScale()));
         }
         configuratorRoot.setDisable(pictureChronology == null);
     }
@@ -95,5 +111,6 @@ public class PicturesChronologyConfiguratorController implements Initializable {
     private void clear() {
         widthField.setText("");
         heightField.setText("");
+        zoomField.setText("");
     }
 }

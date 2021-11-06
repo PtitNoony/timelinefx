@@ -24,7 +24,6 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.drawings.FriezePeopleViewController;
 import com.github.noony.app.timelinefx.drawings.FriezeView;
 import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapListCellImpl;

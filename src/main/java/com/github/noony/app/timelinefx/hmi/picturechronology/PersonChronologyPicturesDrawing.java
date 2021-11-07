@@ -66,6 +66,11 @@ public class PersonChronologyPicturesDrawing implements IFxScalableNode {
     }
 
     @Override
+    public double getScale() {
+        return viewingScale;
+    }
+
+    @Override
     public void updateScale(double newScale) {
         viewingScale = newScale;
         updateLayout();

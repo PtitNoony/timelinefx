@@ -71,6 +71,11 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
     }
 
     @Override
+    public double getScale() {
+        return viewingScale;
+    }
+
+    @Override
     public void updateScale(double newScale) {
         viewingScale = newScale;
         update();

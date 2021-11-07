@@ -117,6 +117,11 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
         return mainNode;
     }
 
+    @Override
+    public double getScale() {
+        return scale;
+    }
+
     private void initInteractivity() {
         frontGlass.setOnMousePressed(event -> {
             oldScreenX = event.getScreenX();

@@ -58,7 +58,8 @@ public abstract class AbstractFxScalableNode implements IFxScalableNode {
         mainNode.setTranslateY(trY);
     }
 
-    protected double getScale() {
+    @Override
+    public double getScale() {
         return scale;
     }
 

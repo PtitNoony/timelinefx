@@ -16,15 +16,13 @@
  */
 package com.github.noony.app.timelinefx.drawings;
 
-import javafx.scene.Node;
-
 /**
  *
  * @author hamon
  */
-public interface IFxScalableNode {
-
-    Node getNode();
+public interface IFxScalableNode extends IFxNode {
 
     void updateScale(double newScale);
+
+    double getScale();
 }

@@ -24,7 +24,6 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.drawings.FriezeView;
 import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapListCellImpl;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapView;
@@ -58,6 +57,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.CheckTreeView;
+import com.github.noony.app.timelinefx.drawings.IFriezeView;
 
 public class FriezeViewController implements Initializable {
 
@@ -248,7 +248,7 @@ public class FriezeViewController implements Initializable {
 
     private void createPeopleView() {
         try {
-            var loader = new FXMLLoader(FriezeView.class.getResource("/fxml/FriezePeopleView.fxml"));
+            var loader = new FXMLLoader(IFriezeView.class.getResource("/fxml/FriezePeopleView.fxml"));
             peopleViewRootPane = loader.load();
             peopleViewController = loader.getController();
             var tab = new Tab("People", peopleViewRootPane);

@@ -19,7 +19,6 @@ package com.github.noony.app.timelinefx.hmi.byperson;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.StayPeriod;
-import com.github.noony.app.timelinefx.drawings.FriezeView;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,12 +29,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import com.github.noony.app.timelinefx.drawings.IFriezeView;
 
 /**
  *
  * @author hamon
  */
-public class FriezePeopleLinearDrawing implements FriezeView {
+public class FriezePeopleLinearDrawing implements IFriezeView {
 
     private final Frieze frieze;
 

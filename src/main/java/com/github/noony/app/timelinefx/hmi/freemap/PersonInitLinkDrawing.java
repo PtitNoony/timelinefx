@@ -68,6 +68,12 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
         return cubicCurve;
     }
 
+    @Override
+    public double getScale() {
+        return scale;
+    }
+
+
     private void handleChange(PropertyChangeEvent event) {
         // TODO
         updatePosition();

@@ -98,8 +98,6 @@ public final class FriezeFreeMap extends FriezeObject {
 //    private double padding;
     private double placeDrawingWidth;
     private double placeNamesWidth;
-//    @Deprecated
-    private double portraitRadius;
     private double fontSize;
     private double plotSeparation;
     private boolean plotVisibiltiy;
@@ -139,7 +137,6 @@ public final class FriezeFreeMap extends FriezeObject {
         plotSeparation = aPlotSeparation;
         plotVisibiltiy = aPlotVisibilty;
         plotSize = aPlotSize;
-        portraitRadius = DEFAULT_PORTRAIT_RADIUS;
         // TODO use a map for all relevant attributes
         minDate = frieze.getMinDate();
         maxDate = frieze.getMaxDate();
@@ -326,10 +323,6 @@ public final class FriezeFreeMap extends FriezeObject {
         return portraits.values().stream().filter(p -> p.getPerson() == aPerson).findAny().orElse(null);
     }
 
-    @Deprecated
-    public double getPortraitRadius() {
-        return portraitRadius;
-    }
 
 // </editor-fold>
     //
@@ -382,13 +375,14 @@ public final class FriezeFreeMap extends FriezeObject {
 // </editor-fold>
     //
     public void distributePortraits() {
+        // TODO : improve spacing by calculating the positions correctly
         var nbPortraits = portraits.size();
-        var separation = (getPersonHeight() - nbPortraits * portraitRadius * 2.0) / (1 + 2 * nbPortraits);
+        var separation = (getPersonHeight() - nbPortraits * DEFAULT_PORTRAIT_RADIUS * 2.0) / (1 + 2 * nbPortraits);
         var portraitList = portraits.values().stream().collect(Collectors.toList());
         for (var index = 0; index < nbPortraits; index++) {
             Portrait portrait = portraitList.get(index);
             portrait.setX(getPersonWidth() / 2.0);
-            portrait.setY(separation * (index + 1) + (index + 0.5) * portraitRadius * 2.0);
+            portrait.setY(separation * (index + 1) + (index + 0.5) * DEFAULT_PORTRAIT_RADIUS * 2.0);
         }
     }
 
@@ -421,7 +415,6 @@ public final class FriezeFreeMap extends FriezeObject {
     }
 
     public void setPortraitRadius(double newPortraitRadius) {
-        portraitRadius = newPortraitRadius;
         portraits.values().forEach(portrait -> portrait.setRadius(newPortraitRadius));
     }
 

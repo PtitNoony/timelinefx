@@ -74,7 +74,7 @@ public class FreeMapPerson {
         plotsByPeriod = new HashMap<>();
         travelLinks = new LinkedList<>();
         //
-        portrait = new Portrait(person, freeMap.getPortraitRadius());
+        portrait = new Portrait(person, FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
         //
         initLink = new PersonInitLink(person, FreeMapPerson.this);
     }

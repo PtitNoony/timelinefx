@@ -22,7 +22,8 @@ import javafx.scene.Node;
  *
  * @author hamon
  */
-public interface FxNode {
+public interface IFxNode {
 
     Node getNode();
+
 }

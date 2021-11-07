@@ -17,7 +17,6 @@
 package com.github.noony.app.timelinefx.drawings;
 
 import com.github.noony.app.timelinefx.core.DrawableObject;
-import com.github.noony.app.timelinefx.hmi.freemap.ZoomProvider;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
@@ -32,7 +31,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author hamon
  */
-public class FxScalableParent implements ZoomProvider {
+public class FxScalableParent implements IFxScalableNode {
     
     
     public static final double MIN_SCALE = 0.2;
@@ -99,11 +98,12 @@ public class FxScalableParent implements ZoomProvider {
     }
 
     @Override
-    public double getViewingScale() {
+    public double getScale() {
         return viewingScale;
     }
-    
-    public void setViewingScale(double newScale) {
+
+    @Override
+    public void updateScale(double newScale) {
         if (newScale > MAX_SCALE) {
             viewingScale = MAX_SCALE;
         } else if (newScale < MIN_SCALE) {

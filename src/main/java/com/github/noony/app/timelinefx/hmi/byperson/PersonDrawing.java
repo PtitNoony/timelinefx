@@ -18,8 +18,7 @@ package com.github.noony.app.timelinefx.hmi.byperson;
 
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.StayPeriod;
-import com.github.noony.app.timelinefx.drawings.Drawing;
-import com.github.noony.app.timelinefx.drawings.FriezeView;
+import com.github.noony.app.timelinefx.drawings.FXDrawing;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +30,13 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import com.github.noony.app.timelinefx.drawings.IFriezeView;
 
 /**
  *
  * @author hamon
  */
-public class PersonDrawing extends Drawing {
+public class PersonDrawing extends FXDrawing {
 
     public static final double DEFAULT_HEIGHT = 24;
     public static final double DEFAULT_WIDTH = 500;
@@ -47,7 +47,7 @@ public class PersonDrawing extends Drawing {
     public static final double DEFAULT_NAME_WIDTH = 140;
 
     private final Person person;
-    private final FriezeView friezeView;
+    private final IFriezeView friezeView;
     private final Map<StayPeriod, PlaceStayDrawing> staysAndDrawings;
 
     //
@@ -59,7 +59,7 @@ public class PersonDrawing extends Drawing {
     private long currentMinDate = 0L;
     private double currentRatio = 1;
 
-    public PersonDrawing(FriezeView aFriezeView, Person aPerson) {
+    public PersonDrawing(IFriezeView aFriezeView, Person aPerson) {
         super();
         person = aPerson;
         friezeView = aFriezeView;

@@ -105,10 +105,10 @@ public class PictureChronologyDrawing extends FxScalableParent {
     @Override
     public void updateLayout() {
         super.updateLayout();
-        drawingBackground.setWidth(pictureChronology.getWidth() * getViewingScale());
-        drawingBackground.setHeight(pictureChronology.getHeight() * getViewingScale());
-        drawingGroup.setTranslateX(PADDING * getViewingScale());
-        drawingGroup.setTranslateY(PADDING * getViewingScale());
+        drawingBackground.setWidth(pictureChronology.getWidth() * getScale());
+        drawingBackground.setHeight(pictureChronology.getHeight() * getScale());
+        drawingGroup.setTranslateX(PADDING * getScale());
+        drawingGroup.setTranslateY(PADDING * getScale());
     }
 
     private void handlePictureChronologyChanges(PropertyChangeEvent event) {

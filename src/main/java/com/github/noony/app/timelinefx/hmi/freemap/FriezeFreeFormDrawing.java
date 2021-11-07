@@ -42,7 +42,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author hamon
  */
-public class FriezeFreeFormDrawing implements ZoomProvider {
+public class FriezeFreeFormDrawing {
 
     public static final double MAP_PADDING = 8;
 
@@ -136,11 +136,6 @@ public class FriezeFreeFormDrawing implements ZoomProvider {
 
     public Node getNode() {
         return mainNode;
-    }
-
-    @Override
-    public double getViewingScale() {
-        return scale;
     }
 
     public void zoomIn() {

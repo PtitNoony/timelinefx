@@ -14,13 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.hmi.freemap;
+package com.github.noony.app.timelinefx.drawings;
+
+import com.github.noony.app.timelinefx.core.Frieze;
 
 /**
  *
  * @author hamon
  */
-public interface ZoomProvider {
+public interface IFriezeView {
 
-    double getViewingScale();
+    void setFrieze(Frieze f);
+
+    Frieze getFrieze();
 }

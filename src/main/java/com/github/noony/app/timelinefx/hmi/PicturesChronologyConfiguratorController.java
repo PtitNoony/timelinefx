@@ -77,8 +77,8 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         zoomField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             try {
                 var newScale = Double.parseDouble(t1);
-                if (pictureChronologyDrawing != null && newScale != pictureChronologyDrawing.getViewingScale()) {
-                    pictureChronologyDrawing.setViewingScale(newScale);
+                if (pictureChronologyDrawing != null && newScale != pictureChronologyDrawing.getScale()) {
+                    pictureChronologyDrawing.updateScale(newScale);
                 }
             } catch (NumberFormatException e) {
                 LOG.log(Level.FINEST, "The following value is not a valid zoom level {0}. {1}", new Object[]{t1, e});
@@ -103,7 +103,7 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         if (pictureChronology != null) {
             widthField.setText(Double.toString(pictureChronology.getWidth()));
             heightField.setText(Double.toString(pictureChronology.getHeight()));
-            zoomField.setText(Double.toString(pictureChronologyDrawing.getViewingScale()));
+            zoomField.setText(Double.toString(pictureChronologyDrawing.getScale()));
         }
         configuratorRoot.setDisable(pictureChronology == null);
     }

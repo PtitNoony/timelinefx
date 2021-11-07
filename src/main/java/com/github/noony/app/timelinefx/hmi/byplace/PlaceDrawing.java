@@ -20,7 +20,7 @@ import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.StayPeriod;
-import com.github.noony.app.timelinefx.drawings.Drawing;
+import com.github.noony.app.timelinefx.drawings.FXDrawing;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,7 +42,7 @@ import javafx.scene.text.TextAlignment;
  *
  * @author hamon
  */
-public final class PlaceDrawing extends Drawing {
+public final class PlaceDrawing extends FXDrawing {
 
     public static final double DEFAULT_HEIGHT = 20;
     public static final double DEFAULT_WIDTH = 500;

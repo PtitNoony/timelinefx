@@ -147,6 +147,11 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
     }
 
     @Override
+    public double getScale() {
+        return scale;
+    }
+
+    @Override
     public String getInfo() {
         return "Link for " + link.getInfo();
     }

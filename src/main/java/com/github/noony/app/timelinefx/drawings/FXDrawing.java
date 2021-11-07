@@ -25,9 +25,8 @@ import javafx.scene.shape.Rectangle;
  *
  * @author hamon
  */
-public class Drawing {
+public class FXDrawing implements IFxNode {
 
-    //
     private final Group mainNode;
     private final Rectangle background;
     //
@@ -36,7 +35,7 @@ public class Drawing {
     private double width;
     private double height;
 
-    public Drawing() {
+    public FXDrawing() {
         mainNode = new Group();
         //
         width = 50;
@@ -51,6 +50,7 @@ public class Drawing {
         mainNode.getChildren().add(background);
     }
 
+    @Override
     public Node getNode() {
         return mainNode;
     }

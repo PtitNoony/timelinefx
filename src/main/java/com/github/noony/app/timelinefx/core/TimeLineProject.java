@@ -16,15 +16,25 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -40,10 +50,27 @@ public class TimeLineProject {
     public static final String PERSON_REMOVED = "personRemoved";
     public static final String PLACE_REMOVED = "placeRemoved";
     public static final String STAY_REMOVED = "stayRemoved";
+    //
+    public static final String PROJECT_FOLDER_KEY = "projectFolderKey";
+    public static final String PICTURES_FOLDER_KEY = "picturesFolderKey";
+    public static final String MINIATURES_FOLDER_KEY = "miniaturesFolderKey";
+    public static final String PORTRAIT_FOLDER_KEY = "portraitsFolderKey";
+    public static final String DEFAULT_PORTRAIT_FOLDER = "portraits";
+    public static final String DEFAULT_PICTURES_FOLDER = "pictures";
+    public static final String DEFAULT_MINIATURES_FOLDER = "miniatures";
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final String name;
+
+    // Reference files
+    private File projectFolder = null;
+    private File portraitsFolder = null;
+    private File picturesFolder = null;
+    private File miniaturesFolder = null;
+    private File projectFile = null;
 
     private final List<Place> hightLevelPlaces;
     private final Map<String, Place> allPlaces;
@@ -53,15 +80,120 @@ public class TimeLineProject {
     private final List<Frieze> friezes;
     private final List<PictureChronology> pictureChronologies;
 
-    protected TimeLineProject(String projectName) {
-        propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
+    protected TimeLineProject(String projectName, Map<String, String> configParams) {
         name = projectName;
+        initFolders(configParams);
+        propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
         hightLevelPlaces = new LinkedList<>();
         allPlaces = new HashMap<>();
         persons = new LinkedList<>();
         stays = new LinkedList<>();
         friezes = new LinkedList<>();
         pictureChronologies = new LinkedList<>();
+    }
+
+
+    private void initFolders(Map<String, String> configParams) {
+        var projectFolderLocation = configParams.getOrDefault(PROJECT_FOLDER_KEY, Configuration.getProjectsParentFolder() + File.separator + name);
+        var portraitsFolderLocation = configParams.getOrDefault(PORTRAIT_FOLDER_KEY, DEFAULT_PORTRAIT_FOLDER);
+        var picturesFolderLocation = configParams.getOrDefault(PICTURES_FOLDER_KEY, DEFAULT_PICTURES_FOLDER);
+        var miniaturesFolderLocation = configParams.getOrDefault(MINIATURES_FOLDER_KEY, DEFAULT_MINIATURES_FOLDER);
+        //
+        File projectsFolder = new File(Configuration.getProjectsParentFolder());
+        if (!projectsFolder.exists()) {
+            try {
+                Path path = projectsFolder.toPath();
+                Files.createDirectories(path);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Could not create projects folder : {0}", ex);
+            }
+        }
+        projectFolder = new File(projectFolderLocation);
+        if (!projectFolder.exists()) {
+            try {
+                Path path = projectFolder.toPath();
+                Files.createDirectories(path);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Could not create project folder : {0}", ex);
+            }
+        }
+        projectFile = new File(projectFolderLocation + File.separator + name + ".xml");
+        //
+        String portraitsRoot = projectFolderLocation + File.separator + portraitsFolderLocation;
+        portraitsFolder = new File(portraitsRoot);
+        if (!portraitsFolder.exists()) {
+            try {
+                Path path = portraitsFolder.toPath();
+                Files.createDirectories(path);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Could not create portrait folder : {0}", ex);
+            }
+        }
+        String picturesRoot = projectFolderLocation + File.separator + picturesFolderLocation;
+        picturesFolder = new File(picturesRoot);
+        if (!picturesFolder.exists()) {
+            try {
+                Path path = picturesFolder.toPath();
+                Files.createDirectories(path);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Could not create pictures folder : {0}", ex);
+            }
+        }
+        miniaturesFolder = new File(projectFolderLocation + File.separator + miniaturesFolderLocation);
+        if (!miniaturesFolder.exists()) {
+            try {
+                Path path = miniaturesFolder.toPath();
+                Files.createDirectories(path);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, "Could not create miniature folder : {0}", ex);
+            }
+        }
+        //
+        saveDefaultPortraitRessources();
+    }
+
+    private void saveDefaultPortraitRessources() {
+        try {
+            FileOutputStream outputStream;
+            try (InputStream inputstream = getClass().getResourceAsStream(Person.DEFAULT_PICTURE_NAME)) {
+                String outputPath = portraitsFolder + File.separator + Person.DEFAULT_PICTURE_NAME;
+                File outputFile = new File(outputPath);
+                LOG.log(Level.INFO, "> savePortraitRessources :: {0}", outputPath);
+                outputStream = new FileOutputStream(outputFile);
+                outputStream.write(inputstream.readAllBytes());
+            }
+            outputStream.close();
+        } catch (FileNotFoundException ex) {
+            LOG.log(Level.SEVERE, "Ressource file not found :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
+            LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Exception while saving ressource :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
+            LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});
+        }
+    }
+
+    public File getProjectFolder() {
+        return projectFolder;
+    }
+
+    public File getPortraitsFolder() {
+        return portraitsFolder;
+    }
+
+    public File getTimelineFile() {
+        return projectFile;
+    }
+
+    public File getPicturesFolder() {
+        return picturesFolder;
+    }
+
+    public File getMiniaturesFolder() {
+        return miniaturesFolder;
+    }
+
+    public String getProjectLocation() {
+        return projectFile.getAbsolutePath();
     }
 
     public void addListener(PropertyChangeListener listener) {

@@ -16,7 +16,7 @@
  */
 package com.github.noony.app.timelinefx.utils;
 
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
+import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.io.File;
 import java.nio.file.Path;
 
@@ -30,8 +30,8 @@ public class FileUtils {
         //private utility constructor
     }
 
-    public static String fromAbsoluteToProjectRelative(File file) {
-        File projectFolder = ProjectConfiguration.getProjectFolder();
+    public static String fromAbsoluteToProjectRelative(TimeLineProject project, File file) {
+        File projectFolder = project.getProjectFolder();
         if (projectFolder != null) {
             Path projectPath = projectFolder.toPath();
             Path selectedFilePath = file.toPath();
@@ -42,12 +42,13 @@ public class FileUtils {
         }
     }
 
-    public static String fromProjectRelativeToAbsolute(String relavivePath) {
-        File projectFolder = ProjectConfiguration.getProjectFolder();
+    public static String fromProjectRelativeToAbsolute(TimeLineProject project, String relavivePath) {
+        File projectFolder = project.getProjectFolder();
         if (projectFolder != null) {
             return projectFolder.getAbsolutePath() + File.separator + relavivePath;
         } else {
             return relavivePath;
         }
     }
+
 }

@@ -31,7 +31,7 @@ public interface TimelineProjectProvider {
 
     List<String> getSupportedVersions();
 
-    TimeLineProject load(Element e);
+    TimeLineProject load(File projectFile, Element e);
 
     boolean save(TimeLineProject project, File file);
 }

@@ -6,6 +6,7 @@
 package com.github.noony.app.timelinefx.utils;
 
 import com.github.noony.app.timelinefx.core.PictureInfo;
+import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,10 +38,10 @@ public class MetadataParser {
     private static final LocalDateTime DEFAULT_DATE = LocalDateTime.MIN;
     private static final int DEFAULT_RESOLUTION = -1;
 
-    public static PictureInfo parseMetadata(File file) {
+    public static PictureInfo parseMetadata(TimeLineProject project, File file) {
         String fileName = file.getName();
         String filePath = file.getAbsolutePath();
-        String projectRelativePath = FileUtils.fromAbsoluteToProjectRelative(file);
+        String projectRelativePath = FileUtils.fromAbsoluteToProjectRelative(project, file);
         LocalDateTime creationDate = DEFAULT_DATE;
         int xRes = DEFAULT_RESOLUTION;
         int yRes = DEFAULT_RESOLUTION;
@@ -62,7 +63,7 @@ public class MetadataParser {
                 final PictureInfo picInfo = new PictureInfo(fileName, projectRelativePath, creationDate, xRes, yRes);
                 return picInfo;
             } else {
-                LOG.log(Level.WARNING, "Could not parse file :: {0} \n > {1}",new Object[]{file,metadata});
+                LOG.log(Level.WARNING, "Could not parse file :: {0} \n > {1}", new Object[]{file, metadata});
                 final PictureInfo picInfo = new PictureInfo(fileName, projectRelativePath, creationDate, xRes, yRes);
                 return picInfo;
             }

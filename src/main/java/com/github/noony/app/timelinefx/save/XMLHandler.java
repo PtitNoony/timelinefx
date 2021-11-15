@@ -118,7 +118,7 @@ public final class XMLHandler {
             return 0;
         }
         String[] v1Split = v1.split(".");
-        String[] v2Split = v1.split(".");
+        String[] v2Split = v2.split(".");
         int l1 = v1Split.length;
         int l2 = v2Split.length;
         int maxSplit = Math.max(l1, l2);

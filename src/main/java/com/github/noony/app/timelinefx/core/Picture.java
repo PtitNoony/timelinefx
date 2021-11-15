@@ -42,6 +42,7 @@ public class Picture extends FriezeObject {
     private final List<Person> persons;
     private final List<Place> places;
     //
+    private final TimeLineProject project;
     private final String path;
     private final int width;
     private final int height;
@@ -49,8 +50,9 @@ public class Picture extends FriezeObject {
     private String name;
     private LocalDateTime creationDate;
 
-    protected Picture(long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    protected Picture(TimeLineProject aProject, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         super(id);
+        project = aProject;
         propertyChangeSupport = new PropertyChangeSupport(Picture.this);
         name = pictureName;
         creationDate = pictureCreationDate;
@@ -59,6 +61,10 @@ public class Picture extends FriezeObject {
         places = new ArrayList<>();
         width = pictureWidth;
         height = pictureHeight;
+    }
+
+    public TimeLineProject getProject() {
+        return project;
     }
 
     public void addListener(PropertyChangeListener listener) {
@@ -140,7 +146,7 @@ public class Picture extends FriezeObject {
     }
 
     public String getAbsolutePath() {
-        return ProjectConfiguration.getProjectFolder() + File.separator + path;
+        return project.getProjectFolder().getAbsolutePath() + File.separator + path;
     }
 
     public LocalDateTime getCreationDate() {

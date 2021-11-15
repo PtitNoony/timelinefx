@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.PictureInfo;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
+import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.save.XMLHandler;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
@@ -79,6 +80,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
 
     private EditionMode editionMode;
 
+    private TimeLineProject project = null;
     private File pictureFile = null;
     private String pictureName = null;
 
@@ -106,6 +108,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         peopleCheckListView.getCheckModel().clearChecks();
         placesCheckListView.getCheckModel().clearChecks();
         // Todo; create a dummy Picture
+        project = null;
         pictureFile = null;
         pictureName = null;
         picture = null;
@@ -113,6 +116,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         pictureNameField.setText("");
         updateActions();
     }
+
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -147,9 +151,14 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         editionMode = mode;
     }
 
+    protected void setProject(TimeLineProject aProject) {
+        project = aProject;
+    }
+
     protected void setPicture(Picture aPicture) {
         reset();
         picture = aPicture;
+        project = aPicture.getProject();
         picture.getPersons().forEach(person -> peopleCheckListView.getCheckModel().check(person));
         picture.getPlaces().forEach(place -> placesCheckListView.getCheckModel().check(place));
         pictureFile = new File(picture.getPath());
@@ -163,7 +172,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
     protected void setFile(File file) {
         if (file != null) {
             pictureFile = file;
-            PictureInfo info = MetadataParser.parseMetadata(file);
+            PictureInfo info = MetadataParser.parseMetadata(project, file);
             pictureNameField.setText(pictureFile.getName());
             pictureDateField.setText(info.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));
             fileField.setText(pictureFile.getAbsolutePath());
@@ -176,7 +185,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         pictureFile = new File(fileField.getText());
         pictureName = pictureNameField.getText();
         //
-        picture = PictureFactory.createPicture(pictureFile, pictureName);
+        picture = PictureFactory.createPicture(project, pictureFile, pictureName);
         peopleCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPerson(p));
         placesCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPlace(p));
         try {

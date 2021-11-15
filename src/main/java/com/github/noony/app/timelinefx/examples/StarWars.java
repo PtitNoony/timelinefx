@@ -23,14 +23,16 @@ import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
@@ -48,9 +50,13 @@ public class StarWars {
         "darth_maul.png", "gunray.png", "padme.png", "yoda.png"};
 
     public static TimeLineProject createStartWars() {
-        TimeLineProject timeLineProject = ProjectConfiguration.createProject("Star Wars");
+        var projectFolderPath = Configuration.getProjectsParentFolder() + File.separator + "Star Wars " + LocalDate.now();
+        Map<String, String> configParams = Map.of(
+                TimeLineProject.PROJECT_FOLDER_KEY, projectFolderPath
+        );
+        TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Star Wars", configParams);
         //
-        File pictureFolder = ProjectConfiguration.getPortraitsFolder();
+        File pictureFolder = timeLineProject.getPortraitsFolder();
         for (var picName : RESOURCES) {
             var picExportPath = pictureFolder.getAbsolutePath() + File.separator + picName;
             File file = new File(picExportPath);
@@ -75,18 +81,18 @@ public class StarWars {
         Place GEONOSIS = PlaceFactory.createPlace("Geonosis", PlaceLevel.PLANET, GALAXY, Color.CHOCOLATE);
         //
         var portraitFolder = Configuration.getPortraitsFolder() + File.separator;
-        Person OBI_WAN = PersonFactory.createPerson("Obi Wan Kenobi", Color.AQUAMARINE, portraitFolder + "obi_wan.png");
-        Person QUI_GON = PersonFactory.createPerson("Qui_Gon Jinn", Color.AQUA, portraitFolder + "quigon.png");
-        Person YODA = PersonFactory.createPerson("Yoda", Color.CHARTREUSE, portraitFolder + "yoda.png");
-        Person MACE_WINDU = PersonFactory.createPerson("Mace Windu", Color.DARKMAGENTA, portraitFolder + "mace_windu.png");
-        Person PADME = PersonFactory.createPerson("Padmé Amidala", Color.FORESTGREEN, portraitFolder + "padme.png");
-        Person ANAKIN = PersonFactory.createPerson("Anakin S. / Darth Vador", Color.ORANGE, portraitFolder + "darth_vader.png");
-        Person R2_D2 = PersonFactory.createPerson("R2-D2", Color.WHITESMOKE, portraitFolder + "r2d2.png");
-        Person C_3PO = PersonFactory.createPerson("C_3PO", Color.GOLD, portraitFolder + "c3po.png");
-        Person PANAKA = PersonFactory.createPerson("Cap. Panaki", Color.AZURE, portraitFolder + "cpt_panaka.png");
-        Person GUNRAY = PersonFactory.createPerson("Nute Gunray", Color.DARKSLATEGRAY, portraitFolder + "gunray.png");
-        Person DARTH_MAUL = PersonFactory.createPerson("Darth Maul", Color.RED, portraitFolder + "darth_maul.png");
-        Person DARTH_SIDIOUS = PersonFactory.createPerson("Darth Sidious", Color.DARKRED, portraitFolder + "darth_sidius.png");
+        Person OBI_WAN = PersonFactory.createPerson(timeLineProject, "Obi Wan Kenobi", Color.AQUAMARINE, portraitFolder + "obi_wan.png");
+        Person QUI_GON = PersonFactory.createPerson(timeLineProject, "Qui_Gon Jinn", Color.AQUA, portraitFolder + "quigon.png");
+        Person YODA = PersonFactory.createPerson(timeLineProject, "Yoda", Color.CHARTREUSE, portraitFolder + "yoda.png");
+        Person MACE_WINDU = PersonFactory.createPerson(timeLineProject, "Mace Windu", Color.DARKMAGENTA, portraitFolder + "mace_windu.png");
+        Person PADME = PersonFactory.createPerson(timeLineProject, "Padmé Amidala", Color.FORESTGREEN, portraitFolder + "padme.png");
+        Person ANAKIN = PersonFactory.createPerson(timeLineProject, "Anakin S. / Darth Vador", Color.ORANGE, portraitFolder + "darth_vader.png");
+        Person R2_D2 = PersonFactory.createPerson(timeLineProject, "R2-D2", Color.WHITESMOKE, portraitFolder + "r2d2.png");
+        Person C_3PO = PersonFactory.createPerson(timeLineProject, "C_3PO", Color.GOLD, portraitFolder + "c3po.png");
+        Person PANAKA = PersonFactory.createPerson(timeLineProject, "Cap. Panaki", Color.AZURE, portraitFolder + "cpt_panaka.png");
+        Person GUNRAY = PersonFactory.createPerson(timeLineProject, "Nute Gunray", Color.DARKSLATEGRAY, portraitFolder + "gunray.png");
+        Person DARTH_MAUL = PersonFactory.createPerson(timeLineProject, "Darth Maul", Color.RED, portraitFolder + "darth_maul.png");
+        Person DARTH_SIDIOUS = PersonFactory.createPerson(timeLineProject, "Darth Sidious", Color.DARKRED, portraitFolder + "darth_sidius.png");
         //
         FriezeFactory.createFrieze(timeLineProject, "SW 1-2");
         //

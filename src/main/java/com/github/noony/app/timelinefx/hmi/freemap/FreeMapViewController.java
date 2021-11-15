@@ -17,7 +17,6 @@
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.Configuration;
-import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.Selectable;
 import com.github.noony.app.timelinefx.utils.PngExporter;
@@ -31,7 +30,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
@@ -77,7 +75,6 @@ public class FreeMapViewController implements Initializable {
     private Button linearTimeButton, constantTimeButton;
 
     private FriezeFreeFormDrawing friezeFreeFormDrawing;
-    private Frieze frieze;
     private FriezeFreeMap friezeFreeMap;
     //
     private FileChooser fileChooser;
@@ -203,7 +200,12 @@ public class FreeMapViewController implements Initializable {
     @FXML
     protected void handleSaveAsPicture(ActionEvent event) {
         if (friezeFreeFormDrawing != null) {
-            var initFolder = new File(Configuration.getProjectsParentFolder());
+            File initFolder;
+            if (friezeFreeMap != null) {
+                initFolder = new File(friezeFreeMap.getFrieze().getProject().getPicturesFolder().getAbsolutePath());
+            } else {
+                initFolder = new File(Configuration.getProjectsParentFolder());
+            }
             fileChooser.setInitialDirectory(initFolder);
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png"));
             File pngFile = fileChooser.showSaveDialog(linearTimeButton.getScene().getWindow());
@@ -227,7 +229,6 @@ public class FreeMapViewController implements Initializable {
 
     public void setFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
         friezeFreeMap = aFriezeFreeMap;
-        frieze = friezeFreeMap.getFrieze();
         createDrawing();
         widthField.setText(Double.toString(friezeFreeMap.getWidth()));
         heightField.setText(Double.toString(friezeFreeMap.getHeight()));
@@ -245,8 +246,7 @@ public class FreeMapViewController implements Initializable {
     private void createDrawing() {
         friezeFreeFormDrawing = new FriezeFreeFormDrawing(friezeFreeMap);
         friezeFreeFormDrawing.addPropertyChangeListener(this::handleSelectedItemChange);
-        Node node = friezeFreeFormDrawing.getNode();
-        viewScrollPane.setContent(node);
+        viewScrollPane.setContent(friezeFreeFormDrawing.getNode());
     }
 
 }

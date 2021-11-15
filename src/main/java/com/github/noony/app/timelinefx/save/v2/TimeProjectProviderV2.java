@@ -46,12 +46,14 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
 import com.github.noony.app.timelinefx.save.XMLHandler;
+import com.github.noony.app.timelinefx.utils.FileUtils;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,6 +114,10 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     //
     public static final String PICTURES_LOCATION_ATR = "picsLoc";
     //
+    public static final String PORTRAIT_FOLDER_ATR = "portraitsFolder";
+    public static final String PICTURES_FOLDER_ATR = "picturesFolder";
+    public static final String MINIATURES_FOLDER_ATR = "miniaturesFolder";
+    //
     public static final String ID_ATR = "id";
     public static final String NAME_ATR = "name";
     public static final String TYPE_ATR = "type";
@@ -154,10 +160,20 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     @Override
-    public TimeLineProject load(Element e) {
+    public TimeLineProject load(File projectFile, Element e) {
         String projectName = e.getAttribute(NAME_ATR);
+        // Load project properties
+        var portraitsFolderValue = e.hasAttribute(PORTRAIT_FOLDER_ATR) ? e.getAttribute(PORTRAIT_FOLDER_ATR) : TimeLineProject.DEFAULT_PORTRAIT_FOLDER;
+        var picturesFolderValue = e.hasAttribute(PICTURES_FOLDER_ATR) ? e.getAttribute(PICTURES_FOLDER_ATR) : TimeLineProject.DEFAULT_PICTURES_FOLDER;
+        var miniaturesFolderValue = e.hasAttribute(MINIATURES_FOLDER_ATR) ? e.getAttribute(MINIATURES_FOLDER_ATR) : TimeLineProject.DEFAULT_MINIATURES_FOLDER;
         //
-        TimeLineProject project = TimeLineProjectFactory.createTimeline(projectName);
+        Map<String, String> configParams = Map.of(
+                TimeLineProject.PROJECT_FOLDER_KEY, projectFile.getParent(),
+                TimeLineProject.PORTRAIT_FOLDER_KEY, portraitsFolderValue,
+                TimeLineProject.PICTURES_FOLDER_KEY, picturesFolderValue,
+                TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
+        );
+        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
         NodeList rootChildren = e.getChildNodes();
         for (int i = 0; i < rootChildren.getLength(); i++) {
             Node node = rootChildren.item(i);
@@ -168,11 +184,11 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                         places.stream().filter(p -> p.getParent() == null).forEach(p -> project.addHighLevelPlace(p));
                     }
                     case PERSONS_GROUP -> {
-                        List<Person> persons = parsePersons(element);
+                        List<Person> persons = parsePersons(element, project);
                         persons.forEach(p -> project.addPerson(p));
                     }
                     case PICTURES_GROUP -> {
-                        parsePictures(element);
+                        parsePictures(element, project);
                     }
                     case STAYS_GROUP -> {
                         List<StayPeriod> stays = parseStays(element);
@@ -205,6 +221,12 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             Element rootElement = doc.createElement(PROJECT_GROUP);
             rootElement.setAttribute(NAME_ATR, project.getName());
             rootElement.setAttribute(PROJECT_VERSION_ATR, TARGET_VERSION);
+            var portraitsFolderName = FileUtils.fromAbsoluteToProjectRelative(project, project.getPortraitsFolder());
+            var picturesFolderName = FileUtils.fromAbsoluteToProjectRelative(project, project.getPicturesFolder());
+            var miniaturesFolderName = FileUtils.fromAbsoluteToProjectRelative(project, project.getMiniaturesFolder());
+            rootElement.setAttribute(PORTRAIT_FOLDER_ATR, portraitsFolderName);
+            rootElement.setAttribute(PICTURES_LOCATION_ATR, picturesFolderName);
+            rootElement.setAttribute(MINIATURES_FOLDER_ATR, miniaturesFolderName);
             doc.appendChild(rootElement);
             // save configuration
 //            Element configurationElement = doc.createElement(CONFIGURATION_ELEMENT);
@@ -275,26 +297,26 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return place;
     }
 
-    private static List<Person> parsePersons(Element personsRootElement) {
+    private static List<Person> parsePersons(Element personsRootElement, TimeLineProject project) {
         List<Person> persons = new LinkedList<>();
         NodeList personElements = personsRootElement.getChildNodes();
         for (int i = 0; i < personElements.getLength(); i++) {
             if (personElements.item(i).getNodeName().equals(PERSON_ELEMENT)) {
                 Element e = (Element) personElements.item(i);
-                Person p = parsePerson(e);
+                Person p = parsePerson(e, project);
                 persons.add(p);
             }
         }
         return persons;
     }
 
-    private static Person parsePerson(Element personElement) {
+    private static Person parsePerson(Element personElement, TimeLineProject project) {
         // <person color="0x7fffd4ff" id="1" name="Obi Wan Kenobi"/>
         Color color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
         long id = Long.parseLong(personElement.getAttribute(ID_ATR));
         String name = personElement.getAttribute(NAME_ATR);
         String pictureName = personElement.getAttribute(PICTURE_ATR);
-        Person person = PersonFactory.createPerson(id, name, color);
+        Person person = PersonFactory.createPerson(project, id, name, color);
         person.setPictureName(pictureName);
         if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
             var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
@@ -309,20 +331,20 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return person;
     }
 
-    private static List<Picture> parsePictures(Element picturesRootElement) {
+    private static List<Picture> parsePictures(Element picturesRootElement, TimeLineProject project) {
         List<Picture> pictures = new LinkedList<>();
         NodeList picturesElements = picturesRootElement.getChildNodes();
         for (int i = 0; i < picturesElements.getLength(); i++) {
             if (picturesElements.item(i).getNodeName().equals(PICTURE_ELEMENT)) {
                 Element e = (Element) picturesElements.item(i);
-                Picture p = parsePicture(e);
+                Picture p = parsePicture(e, project);
                 pictures.add(p);
             }
         }
         return pictures;
     }
 
-    private static Picture parsePicture(Element pictureElement) {
+    private static Picture parsePicture(Element pictureElement, TimeLineProject project) {
         var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
         var name = pictureElement.getAttribute(NAME_ATR);
         var path = pictureElement.getAttribute(PATH_ATR);
@@ -330,7 +352,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
         var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));
         //
-        Picture picture = PictureFactory.createPicture(id, name, dateTime, path, width, height);
+        Picture picture = PictureFactory.createPicture(project, id, name, dateTime, path, width, height);
         //
         var pictureChildrenElements = pictureElement.getChildNodes();
         for (int i = 0; i < pictureChildrenElements.getLength(); i++) {

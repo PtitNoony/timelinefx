@@ -60,10 +60,10 @@ public class PictureFactory {
         return PICTURES.get(pictureID);
     }
 
-    public static Picture createPicture(File orignialPictureFile, String pictureName) {
+    public static Picture createPicture(TimeLineProject project, File orignialPictureFile, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, orignialPictureFile});
         File pictureFile;
-        pictureFile = new File(ProjectConfiguration.getPicturesFolder(), orignialPictureFile.getName());
+        pictureFile = new File(project.getPicturesFolder(), orignialPictureFile.getName());
         if (!pictureFile.exists()) {
             try {
                 FileUtils.copyFile(orignialPictureFile, pictureFile);
@@ -72,20 +72,20 @@ public class PictureFactory {
                 LOG.log(Level.SEVERE, "Error while copying picture file to: {0} : {1}", new Object[]{pictureFile, ex});
             }
         }
-        var picInfo = MetadataParser.parseMetadata(pictureFile);
-        var picture = new Picture(FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
+        var picInfo = MetadataParser.parseMetadata(project, pictureFile);
+        var picture = new Picture(project, FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
     }
 
-    public static Picture createPicture(long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    public static Picture createPicture(TimeLineProject project, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
         if (!FriezeObjectFactory.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FriezeObjectFactory.get(id));
         }
-        var picture = new Picture(id, pictureName, pictureCreationDate, picturePath, pictureWidth, pictureHeight);
+        var picture = new Picture(project, id, pictureName, pictureCreationDate, picturePath, pictureWidth, pictureHeight);
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);

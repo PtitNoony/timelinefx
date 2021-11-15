@@ -46,6 +46,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -140,10 +141,10 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
     }
 
     @Override
-    public TimeLineProject load(Element e) {
+    public TimeLineProject load(File projectFile, Element e) {
         String projectName = e.getAttribute(NAME_ATR);
-        //
-        TimeLineProject project = TimeLineProjectFactory.createTimeline(projectName);
+        // This version does not support configuration properties
+        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, Collections.EMPTY_MAP);
         NodeList rootChildren = e.getChildNodes();
         for (int i = 0; i < rootChildren.getLength(); i++) {
             Node node = rootChildren.item(i);
@@ -154,11 +155,11 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                         places.stream().filter(p -> p.getParent() == null).forEach(p -> project.addHighLevelPlace(p));
                     }
                     case PERSONS_GROUP -> {
-                        List<Person> persons = parsePersons(element);
+                        List<Person> persons = parsePersons(element, project);
                         persons.forEach(p -> project.addPerson(p));
                     }
                     case PICTURES_GROUP ->
-                        parsePictures(element);
+                        parsePictures(element, project);
                     case STAYS_GROUP -> {
                         List<StayPeriod> stays = parseStays(element);
                         stays.forEach(s -> project.addStay(s));
@@ -245,44 +246,44 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         return place;
     }
 
-    private static List<Person> parsePersons(Element personsRootElement) {
+    private static List<Person> parsePersons(Element personsRootElement, TimeLineProject project) {
         List<Person> persons = new LinkedList<>();
         NodeList personElements = personsRootElement.getChildNodes();
         for (int i = 0; i < personElements.getLength(); i++) {
             if (personElements.item(i).getNodeName().equals(PERSON_ELEMENT)) {
                 Element e = (Element) personElements.item(i);
-                Person p = parsePerson(e);
+                Person p = parsePerson(e, project);
                 persons.add(p);
             }
         }
         return persons;
     }
 
-    private static Person parsePerson(Element personElement) {
+    private static Person parsePerson(Element personElement, TimeLineProject project) {
         // <person color="0x7fffd4ff" id="1" name="Obi Wan Kenobi"/>
         Color color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
         long id = Long.parseLong(personElement.getAttribute(ID_ATR));
         String name = personElement.getAttribute(NAME_ATR);
         String pictureName = personElement.getAttribute(PICTURE_ATR);
-        Person person = PersonFactory.createPerson(id, name, color);
+        Person person = PersonFactory.createPerson(project, id, name, color);
         person.setPictureName(pictureName);
         return person;
     }
 
-    private static List<Picture> parsePictures(Element picturesRootElement) {
+    private static List<Picture> parsePictures(Element picturesRootElement, TimeLineProject project) {
         List<Picture> pictures = new LinkedList<>();
         NodeList picturesElements = picturesRootElement.getChildNodes();
         for (int i = 0; i < picturesElements.getLength(); i++) {
             if (picturesElements.item(i).getNodeName().equals(PICTURE_ELEMENT)) {
                 Element e = (Element) picturesElements.item(i);
-                Picture p = parsePicture(e);
+                Picture p = parsePicture(e, project);
                 pictures.add(p);
             }
         }
         return pictures;
     }
 
-    private static Picture parsePicture(Element pictureElement) {
+    private static Picture parsePicture(Element pictureElement, TimeLineProject project) {
         var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
         var name = pictureElement.getAttribute(NAME_ATR);
         var path = pictureElement.getAttribute(PATH_ATR);
@@ -290,7 +291,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
         var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));
         //
-        Picture picture = PictureFactory.createPicture(id, name, dateTime, path, width, height);
+        Picture picture = PictureFactory.createPicture(project, id, name, dateTime, path, width, height);
         //
         var pictureChildrenElements = pictureElement.getChildNodes();
         for (int i = 0; i < pictureChildrenElements.getLength(); i++) {

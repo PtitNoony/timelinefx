@@ -182,7 +182,12 @@ public final class ContentEditionViewController implements Initializable {
         timeLineProject = aTimeLineProject;
         timeLineProject.addListener(timelineChangeListener);
         //
-        staysCreationViewController.setTimelineProject(aTimeLineProject);
+        if (staysCreationViewController != null) {
+            staysCreationViewController.setTimelineProject(aTimeLineProject);
+        }
+        if (personCreationController != null) {
+            personCreationController.setTimelineProject(aTimeLineProject);
+        }
         //
         updatePersonTab();
         updatePlacesTab();

@@ -72,6 +72,7 @@ public final class XMLHandler {
     }
 
     public static TimeLineProject loadFile(File file) {
+        TimeLineProject project = null;
         if (file != null) {
             FriezeObjectFactory.reset();
             //
@@ -87,7 +88,8 @@ public final class XMLHandler {
                 //
                 for (TimelineProjectProvider candidateprovider : INSTANCE.providers) {
                     if (candidateprovider.getSupportedVersions().contains(version)) {
-                        return candidateprovider.load(e);
+                        project = candidateprovider.load(file, e);
+                        break;
                     }
                 }
                 //
@@ -95,7 +97,8 @@ public final class XMLHandler {
                 LOG.log(Level.SEVERE, "Exception while loading file {0} :: {1}", new Object[]{file, ex});
             }
         }
-        return null;
+        //
+        return project;
     }
 
     public static boolean save(TimeLineProject project, File file) {

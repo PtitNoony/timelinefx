@@ -16,16 +16,20 @@
  */
 package com.github.noony.app.timelinefx.examples;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
+import java.io.File;
+import java.time.LocalDate;
+import java.util.Map;
 import javafx.scene.paint.Color;
 
 /**
@@ -35,15 +39,19 @@ import javafx.scene.paint.Color;
 public class TestExample {
 
     public static TimeLineProject createExample() {
-        TimeLineProject timeLineProject = ProjectConfiguration.createProject("Test Project");
+        var projectFolderPath = Configuration.getProjectsParentFolder() + File.separator + "Test Project " + LocalDate.now();
+        Map<String, String> configParams = Map.of(
+                TimeLineProject.PROJECT_FOLDER_KEY, projectFolderPath
+        );
+        TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Test Project", configParams);
         //
         Place galaxy = PlaceFactory.createPlace("Galaxy", PlaceLevel.GALAXY, null, Color.WHEAT);
         Place placeA = PlaceFactory.createPlace("PLACE_A", PlaceLevel.INTER_SYSTEM_SPACE, galaxy, Color.LIGHTSTEELBLUE);
         Place placeB = PlaceFactory.createPlace("PLACE_B", PlaceLevel.SYSTEM, galaxy, Color.LIGHTGREEN);
         //
-        Person personA = PersonFactory.createPerson("PERSON_A", Color.RED);
-        Person personB = PersonFactory.createPerson("PERSON_B", Color.AQUA);
-        Person personC = PersonFactory.createPerson("PERSON_C", Color.CHARTREUSE);
+        Person personA = PersonFactory.createPerson(timeLineProject, "PERSON_A", Color.RED);
+        Person personB = PersonFactory.createPerson(timeLineProject, "PERSON_B", Color.AQUA);
+        Person personC = PersonFactory.createPerson(timeLineProject, "PERSON_C", Color.CHARTREUSE);
         FriezeFactory.createFrieze(timeLineProject, "Test 1");
         //
         StayPeriodSimpleTime stay1_A = StayFactory.createStayPeriodSimpleTime(personA, 0, 20, placeA);

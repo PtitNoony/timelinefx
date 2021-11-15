@@ -20,6 +20,7 @@ import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.Place;
+import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.utils.FileUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -66,6 +67,8 @@ public class GalleryViewController implements Initializable, ViewController {
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(GalleryViewController.this);
+
+    private TimeLineProject project = null;
 
     private Parent pictureLoaderView = null;
     private PictureLoaderViewController pictureLoaderController = null;
@@ -124,6 +127,11 @@ public class GalleryViewController implements Initializable, ViewController {
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    protected void setProject(TimeLineProject aProject) {
+        project = aProject;
+        pictureLoaderController.setProject(project);
     }
 
     protected void reset() {
@@ -217,7 +225,7 @@ public class GalleryViewController implements Initializable, ViewController {
     private void displayImage(Picture picture) {
         String localUrl;
         try {
-            var pictureFile = new File(FileUtils.fromProjectRelativeToAbsolute(picture.getPath()));
+            var pictureFile = new File(FileUtils.fromProjectRelativeToAbsolute(picture.getProject(), picture.getPath()));
             localUrl = pictureFile.toURI().toURL().toString();
             Image image = new Image(localUrl);
             imageView.setImage(image);

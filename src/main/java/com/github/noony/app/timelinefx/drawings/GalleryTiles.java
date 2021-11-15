@@ -19,7 +19,6 @@ package com.github.noony.app.timelinefx.drawings;
 import com.github.noony.app.timelinefx.MainApp;
 import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.Tile.SkinType;
@@ -116,7 +115,7 @@ public class GalleryTiles implements IFxNode {
     }
 
     private Tile createSetTile(Picture picture) {
-        String smallImageFilePath = ProjectConfiguration.getMiniaturesFolder() + File.separator + picture.getId() + "_small.jpg";
+        String smallImageFilePath = picture.getProject().getMiniaturesFolder() + File.separator + picture.getId() + "_small.jpg";
         File imageFile = new File(smallImageFilePath);
         InputStream imageStream;
         Image smallImage = null;

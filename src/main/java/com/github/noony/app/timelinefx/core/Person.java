@@ -46,6 +46,8 @@ public class Person extends FriezeObject {
 
     private final PropertyChangeSupport propertyChangeSupport;
     //
+    private final TimeLineProject project;
+    //
     private String name;
     private String pictureName;
     private Color color;
@@ -55,8 +57,9 @@ public class Person extends FriezeObject {
     private boolean selected;
     private boolean visible;
 
-    protected Person(Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
+    protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
         super(personId);
+        project = aProject;
         name = personName;
         color = aColor;
         dateOfBirth = aDoB;
@@ -67,8 +70,12 @@ public class Person extends FriezeObject {
         pictureName = Configuration.getPortraitsFolder() + File.separator + DEFAULT_PICTURE_NAME;
     }
 
-    protected Person(Long personId, String personName) {
-        this(personId, personName, DEFAULT_COLOR, null, null);
+    protected Person(TimeLineProject aProject, Long personId, String personName) {
+        this(aProject, personId, personName, DEFAULT_COLOR, null, null);
+    }
+
+    public TimeLineProject getProject() {
+        return project;
     }
 
     public String getPictureName() {

@@ -47,44 +47,44 @@ public class PersonFactory {
         return PERSONS.get(id);
     }
 
-    public static Person createPerson(String personName) {
+    public static Person createPerson(TimeLineProject project, String personName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0}  ", new Object[]{personName});
-        var person = new Person(FriezeObjectFactory.getNextID(), personName);
+        var person = new Person(project, FriezeObjectFactory.getNextID(), personName);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
         return person;
     }
 
-    public static Person createPerson(String personName, Color color) {
+    public static Person createPerson(TimeLineProject project, String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
-        var person = new Person(FriezeObjectFactory.getNextID(), personName, color, null, null);
+        var person = new Person(project, FriezeObjectFactory.getNextID(), personName, color, null, null);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
         return person;
     }
 
-    public static Person createPerson(String personName, Color color, String pictureName) {
+    public static Person createPerson(TimeLineProject project, String personName, Color color, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} pictureName={2}", new Object[]{personName, color, pictureName});
-        var person = new Person(FriezeObjectFactory.getNextID(), personName, color, null, null);
+        var person = new Person(project, FriezeObjectFactory.getNextID(), personName, color, null, null);
         person.setPictureName(pictureName);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
         return person;
     }
 
-    public static Person createPerson(long id, String personName, Color color, String pictureName) {
+    public static Person createPerson(TimeLineProject project, long id, String personName, Color color, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2} pictureName={3}", new Object[]{id, personName, color, pictureName});
-        var person = createPerson(id, personName, color);
+        var person = createPerson(project, id, personName, color);
         person.setPictureName(pictureName);
         return person;
     }
 
-    public static Person createPerson(long id, String personName, Color color) {
+    public static Person createPerson(TimeLineProject project, long id, String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
         if (!FriezeObjectFactory.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + PERSONS.get(id) + "[" + PERSONS.get(id).getId() + "])");
         }
-        var person = new Person(id, personName, color, null, null);
+        var person = new Person(project, id, personName, color, null, null);
         PERSONS.put(person.getId(), person);
         FriezeObjectFactory.addObject(person);
         return person;

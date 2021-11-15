@@ -19,7 +19,7 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
+import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.utils.FileUtils;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -77,6 +77,7 @@ public class PersonCreationViewController implements Initializable {
     //
     private EditionMode editionMode;
     //
+    private TimeLineProject currentProject = null;
     private Person currentEditedPerson = null;
     //
     private String personName = "";
@@ -116,16 +117,16 @@ public class PersonCreationViewController implements Initializable {
     @FXML
     protected void handlePicturePathAction(ActionEvent event) {
         // setting initial directory for fileChooser
-        File projectFolder = ProjectConfiguration.getProjectFolder();
+        File projectFolder = currentProject.getProjectFolder();
         if (projectFolder == null) {
             fileChooser.setInitialDirectory(new File(Configuration.getProjectsParentFolder()));
         } else {
-            fileChooser.setInitialDirectory(new File(ProjectConfiguration.getProjectLocation()));
+            fileChooser.setInitialDirectory(new File(currentProject.getProjectLocation()));
         }
         File selectedFile = fileChooser.showOpenDialog(nameField.getScene().getWindow());
         //
         if (selectedFile != null) {
-            pictureField.setText(FileUtils.fromAbsoluteToProjectRelative(selectedFile));
+            pictureField.setText(FileUtils.fromAbsoluteToProjectRelative(currentProject, selectedFile));
         } else {
             pictureField.setText("");
         }
@@ -140,7 +141,7 @@ public class PersonCreationViewController implements Initializable {
     protected void handleCreateAction(ActionEvent event) {
         switch (editionMode) {
             case CREATION:
-                Person person = PersonFactory.createPerson(personName, personColor);
+                Person person = PersonFactory.createPerson(currentProject, personName, personColor);
                 person.setPictureName("".equals(personPictureName) ? Person.DEFAULT_PICTURE_NAME : personPictureName);
                 person.setDateOfBirth(dateOfBirth);
                 person.setDateOfDeath(dateOfDeath);
@@ -158,6 +159,10 @@ public class PersonCreationViewController implements Initializable {
             default:
                 throw new UnsupportedOperationException("handleCreateAction in mode " + editionMode);
         }
+    }
+
+    protected void setTimelineProject(TimeLineProject aProject) {
+        currentProject = aProject;
     }
 
     protected void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -246,7 +251,7 @@ public class PersonCreationViewController implements Initializable {
             return;
         }
         // TODO improve to only update on change
-        String picturePath = ProjectConfiguration.getProjectFolder().getAbsolutePath() + File.separatorChar + personPictureName;
+        String picturePath = currentProject.getProjectFolder().getAbsolutePath() + File.separatorChar + personPictureName;
         File pictureFile = new File(picturePath);
         if (Files.exists(pictureFile.toPath())) {
             FileInputStream inputstream;

@@ -18,8 +18,8 @@ package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.examples.StarWars;
 import com.github.noony.app.timelinefx.examples.TestExample;
 import com.github.noony.app.timelinefx.save.XMLHandler;
@@ -27,6 +27,7 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -188,10 +189,10 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleProjectSave(ActionEvent event) {
         LOG.log(Level.INFO, "handleProjectSave {0}", event);
-        var targetFile = ProjectConfiguration.getTimelineFile();
+        var targetFile = timeLineProject.getTimelineFile();
         if (targetFile != null) {
             LOG.log(Level.INFO, "> Saving to file {0}", targetFile);
-            XMLHandler.save(timeLineProject, ProjectConfiguration.getTimelineFile());
+            XMLHandler.save(timeLineProject, timeLineProject.getTimelineFile());
         } else {
             LOG.log(Level.SEVERE, "> Could not save file : project file not set");
         }
@@ -205,7 +206,7 @@ public final class ProjectViewController implements Initializable {
         var inputFile = fileChooser.showOpenDialog(mainAnchorPane.getScene().getWindow());
         if (inputFile != null) {
             LOG.log(Level.INFO, "Loading project {0}", inputFile);
-            TimeLineProject timeline = ProjectConfiguration.loadProject(inputFile);
+            TimeLineProject timeline = TimeLineProjectFactory.loadProject(inputFile);
             if (timeline != null) {
                 loadProject(timeline);
             } else {
@@ -248,6 +249,9 @@ public final class ProjectViewController implements Initializable {
         contentController.setTimeLineProject(timeLineProject);
         if (pictureLoaderViewController != null) {
             pictureChronologyViewController.setProject(timeLineProject);
+        }
+        if (galleryController != null) {
+            galleryController.setProject(timeLineProject);
         }
         timelineController.reset();
         timeLineProject.getFriezes().forEach(timelineController::loadFreize);
@@ -458,7 +462,8 @@ public final class ProjectViewController implements Initializable {
             case ProjectCreationWizardController.CREATE:
                 hideModalStage();
                 String projectName = (String) event.getNewValue();
-                TimeLineProject project = ProjectConfiguration.createProject(projectName);
+                System.err.println("TODO RETREIVE PARAMS");
+                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, Collections.EMPTY_MAP);
                 loadProject(project);
                 contentEditionView.setDisable(false);
                 timelineView.setDisable(false);

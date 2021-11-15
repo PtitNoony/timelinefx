@@ -17,7 +17,6 @@
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.ProjectConfiguration;
 import com.github.noony.app.timelinefx.core.freemap.Portrait;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import java.beans.PropertyChangeEvent;
@@ -150,7 +149,8 @@ public class PortraitDrawing extends AbstractFxScalableNode {
 
     private void updateImage() {
         try {
-            var filePathS = ProjectConfiguration.getProjectLocation() + File.separatorChar + portrait.getPerson().getPictureName();
+            // the file path shall always be relative to the project Folder
+            var filePathS = portrait.getPerson().getProject().getProjectFolder().getAbsolutePath() + File.separatorChar + portrait.getPerson().getPictureName();
             LOG.log(Level.FINE, "Trying to load file {0}", new Object[]{filePathS});
             FileInputStream inputstream = new FileInputStream(filePathS);
             image = new Image(inputstream);

@@ -14,7 +14,9 @@
         <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>16</maven.compiler.release>
-        <javafx.version>16</javafx.version>
+        <javafx.version>17</javafx.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     
@@ -51,7 +53,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>16</version>
+            <version>17.0.1</version>
             <!--<classifier>win</classifier>-->
         </dependency>
         <!--        <dependency>
@@ -70,7 +72,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>16</version>
+            <version>17.0.1</version>
             <!--<classifier>win</classifier>-->
         </dependency>
         <!--        <dependency>
@@ -89,7 +91,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>16</version>
+            <version>17.0.1</version>
             <!--<classifier>win</classifier>-->
         </dependency>
         <!--        <dependency>
@@ -108,7 +110,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>16</version>
+            <version>17.0.1</version>
             <!--<classifier>win</classifier>-->
         </dependency>
         <!--        <dependency>
@@ -127,7 +129,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>16</version>
+            <version>17.0.1</version>
             <!--<classifier>win</classifier>-->
         </dependency>
         <!--        <dependency>
@@ -180,12 +182,20 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
-            <version>16.0.3</version>
+            <version>17.0.4</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+            <scope>provided</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
-            <version>RELEASE124</version>
+            <version>RELEASE125</version>
             <!--<type>jar</type>-->
         </dependency>
         
@@ -204,19 +214,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.2</version>
+            <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.7.2</version>
+            <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.2</version>
+            <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -267,7 +277,7 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.6</version>
+                <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
                 </configuration>
@@ -305,6 +315,7 @@
                     <compilerArgs>
                         <!--<arg>- -enable-preview</arg>-->
                     </compilerArgs>
+                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>    
             <plugin>

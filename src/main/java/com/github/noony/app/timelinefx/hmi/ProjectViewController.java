@@ -27,7 +27,7 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -461,9 +461,9 @@ public final class ProjectViewController implements Initializable {
                 break;
             case ProjectCreationWizardController.CREATE:
                 hideModalStage();
-                String projectName = (String) event.getNewValue();
-                System.err.println("TODO RETREIVE PARAMS");
-                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, Collections.EMPTY_MAP);
+                var configParams = (Map<String, String>) event.getNewValue();
+                String projectName = configParams.get(TimeLineProject.PROJECT_NAME_KEY);
+                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
                 loadProject(project);
                 contentEditionView.setDisable(false);
                 timelineView.setDisable(false);

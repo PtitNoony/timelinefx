@@ -51,6 +51,7 @@ public class TimeLineProject {
     public static final String PLACE_REMOVED = "placeRemoved";
     public static final String STAY_REMOVED = "stayRemoved";
     //
+    public static final String PROJECT_NAME_KEY = "projectNameKey";
     public static final String PROJECT_FOLDER_KEY = "projectFolderKey";
     public static final String PICTURES_FOLDER_KEY = "picturesFolderKey";
     public static final String MINIATURES_FOLDER_KEY = "miniaturesFolderKey";
@@ -99,16 +100,8 @@ public class TimeLineProject {
         var picturesFolderLocation = configParams.getOrDefault(PICTURES_FOLDER_KEY, DEFAULT_PICTURES_FOLDER);
         var miniaturesFolderLocation = configParams.getOrDefault(MINIATURES_FOLDER_KEY, DEFAULT_MINIATURES_FOLDER);
         //
-        File projectsFolder = new File(Configuration.getProjectsParentFolder());
-        if (!projectsFolder.exists()) {
-            try {
-                Path path = projectsFolder.toPath();
-                Files.createDirectories(path);
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create projects folder : {0}", ex);
-            }
-        }
         projectFolder = new File(projectFolderLocation);
+        LOG.log(Level.INFO, "Creating Project {0} in folder: {1}.", new Object[]{name, projectFolder});
         if (!projectFolder.exists()) {
             try {
                 Path path = projectFolder.toPath();

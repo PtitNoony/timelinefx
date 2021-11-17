@@ -41,7 +41,7 @@ public class MetadataParser {
     public static PictureInfo parseMetadata(TimeLineProject project, File file) {
         String fileName = file.getName();
         String filePath = file.getAbsolutePath();
-        String projectRelativePath = FileUtils.fromAbsoluteToProjectRelative(project, file);
+        String projectRelativePath = CustomFileUtils.fromAbsoluteToProjectRelative(project, file);
         LocalDateTime creationDate = DEFAULT_DATE;
         int xRes = DEFAULT_RESOLUTION;
         int yRes = DEFAULT_RESOLUTION;

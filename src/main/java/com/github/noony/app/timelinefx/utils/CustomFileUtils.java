@@ -24,9 +24,9 @@ import java.nio.file.Path;
  *
  * @author hamon
  */
-public class FileUtils {
+public class CustomFileUtils {
 
-    private FileUtils() {
+    private CustomFileUtils() {
         //private utility constructor
     }
 

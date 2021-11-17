@@ -46,8 +46,10 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
 import com.github.noony.app.timelinefx.save.XMLHandler;
-import com.github.noony.app.timelinefx.utils.FileUtils;
+import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -57,6 +59,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javax.xml.parsers.DocumentBuilder;
@@ -68,6 +71,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.openide.util.lookup.ServiceProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -174,6 +180,9 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
         );
         TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
+        //
+        List<String> relativePathLoaded = new LinkedList<>();
+        //
         NodeList rootChildren = e.getChildNodes();
         for (int i = 0; i < rootChildren.getLength(); i++) {
             Node node = rootChildren.item(i);
@@ -184,11 +193,11 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                         places.stream().filter(p -> p.getParent() == null).forEach(p -> project.addHighLevelPlace(p));
                     }
                     case PERSONS_GROUP -> {
-                        List<Person> persons = parsePersons(element, project);
+                        List<Person> persons = parsePersons(element, project, relativePathLoaded);
                         persons.forEach(p -> project.addPerson(p));
                     }
                     case PICTURES_GROUP -> {
-                        parsePictures(element, project);
+                        parsePictures(element, project, relativePathLoaded);
                     }
                     case STAYS_GROUP -> {
                         List<StayPeriod> stays = parseStays(element);
@@ -208,6 +217,44 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
 //                                break;
             }
         }
+        // check every file exists
+        relativePathLoaded.forEach(path -> {
+            var absolutePath = CustomFileUtils.fromProjectRelativeToAbsolute(project, path);
+            // not optimal ...
+            File file = new File(absolutePath);
+            if (!file.exists()) {
+                LOG.log(Level.SEVERE, "The file {0} does not exists. (saved as '{1}')", new Object[]{absolutePath, path});
+            }
+        });
+        //
+        List<Path> absolutePathsLoaded = relativePathLoaded
+                .stream()
+                .map(p -> Paths.get(CustomFileUtils.fromProjectRelativeToAbsolute(project, p)))
+                .map(p -> p.normalize())
+                .collect(Collectors.toList());
+        // * Portraits
+        File portraitFolder = project.getPortraitsFolder();
+        FileUtils.listFiles(portraitFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
+                .stream()
+                .map(portraitFile -> Paths.get(portraitFile.toURI()))
+                .filter(portraitAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> portraitAbsolutePath.compareTo(loaded) == 0))
+                .forEach(portraitAbsolutePath -> {
+            // FUTURE IMPROVMENT : create actions;
+                    LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath});
+                });
+        // * Pictures
+        File picturesFolder = project.getPicturesFolder();
+        FileUtils.listFiles(picturesFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
+                .stream()
+                .map(pictureFile -> Paths.get(pictureFile.toURI()))
+                .filter(pictureAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> pictureAbsolutePath.compareTo(loaded) == 0))
+                .forEach(pictureAbsolutePath -> {
+            // FUTURE IMPROVMENT : create actions;
+                    LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath});
+                });
+        //
+        // FUTURE IMPROVMENT : ENABLE AUTO IMPORT => in config
+        //
         return project;
     }
 
@@ -221,9 +268,9 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             Element rootElement = doc.createElement(PROJECT_GROUP);
             rootElement.setAttribute(NAME_ATR, project.getName());
             rootElement.setAttribute(PROJECT_VERSION_ATR, TARGET_VERSION);
-            var portraitsFolderName = FileUtils.fromAbsoluteToProjectRelative(project, project.getPortraitsFolder());
-            var picturesFolderName = FileUtils.fromAbsoluteToProjectRelative(project, project.getPicturesFolder());
-            var miniaturesFolderName = FileUtils.fromAbsoluteToProjectRelative(project, project.getMiniaturesFolder());
+            var portraitsFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getPortraitsFolder());
+            var picturesFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getPicturesFolder());
+            var miniaturesFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getMiniaturesFolder());
             rootElement.setAttribute(PORTRAIT_FOLDER_ATR, portraitsFolderName);
             rootElement.setAttribute(PICTURES_LOCATION_ATR, picturesFolderName);
             rootElement.setAttribute(MINIATURES_FOLDER_ATR, miniaturesFolderName);
@@ -297,25 +344,26 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return place;
     }
 
-    private static List<Person> parsePersons(Element personsRootElement, TimeLineProject project) {
+    private static List<Person> parsePersons(Element personsRootElement, TimeLineProject project, List<String> relativePathLoaded) {
         List<Person> persons = new LinkedList<>();
         NodeList personElements = personsRootElement.getChildNodes();
         for (int i = 0; i < personElements.getLength(); i++) {
             if (personElements.item(i).getNodeName().equals(PERSON_ELEMENT)) {
                 Element e = (Element) personElements.item(i);
-                Person p = parsePerson(e, project);
+                Person p = parsePerson(e, project, relativePathLoaded);
                 persons.add(p);
             }
         }
         return persons;
     }
 
-    private static Person parsePerson(Element personElement, TimeLineProject project) {
+    private static Person parsePerson(Element personElement, TimeLineProject project, List<String> relativePathLoaded) {
         // <person color="0x7fffd4ff" id="1" name="Obi Wan Kenobi"/>
         Color color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
         long id = Long.parseLong(personElement.getAttribute(ID_ATR));
         String name = personElement.getAttribute(NAME_ATR);
         String pictureName = personElement.getAttribute(PICTURE_ATR);
+        relativePathLoaded.add(pictureName);
         Person person = PersonFactory.createPerson(project, id, name, color);
         person.setPictureName(pictureName);
         if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
@@ -331,23 +379,24 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return person;
     }
 
-    private static List<Picture> parsePictures(Element picturesRootElement, TimeLineProject project) {
+    private static List<Picture> parsePictures(Element picturesRootElement, TimeLineProject project, List<String> relativePathLoaded) {
         List<Picture> pictures = new LinkedList<>();
         NodeList picturesElements = picturesRootElement.getChildNodes();
         for (int i = 0; i < picturesElements.getLength(); i++) {
             if (picturesElements.item(i).getNodeName().equals(PICTURE_ELEMENT)) {
                 Element e = (Element) picturesElements.item(i);
-                Picture p = parsePicture(e, project);
+                Picture p = parsePicture(e, project, relativePathLoaded);
                 pictures.add(p);
             }
         }
         return pictures;
     }
 
-    private static Picture parsePicture(Element pictureElement, TimeLineProject project) {
+    private static Picture parsePicture(Element pictureElement, TimeLineProject project, List<String> relativePathLoaded) {
         var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
         var name = pictureElement.getAttribute(NAME_ATR);
         var path = pictureElement.getAttribute(PATH_ATR);
+        relativePathLoaded.add(path);
         var dateTime = LocalDateTime.parse(pictureElement.getAttribute(DATE_ATR), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
         var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
         var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));

@@ -21,7 +21,7 @@ import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
-import com.github.noony.app.timelinefx.utils.FileUtils;
+import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -225,7 +225,7 @@ public class GalleryViewController implements Initializable, ViewController {
     private void displayImage(Picture picture) {
         String localUrl;
         try {
-            var pictureFile = new File(FileUtils.fromProjectRelativeToAbsolute(picture.getProject(), picture.getPath()));
+            var pictureFile = new File(CustomFileUtils.fromProjectRelativeToAbsolute(picture.getProject(), picture.getPath()));
             localUrl = pictureFile.toURI().toURL().toString();
             Image image = new Image(localUrl);
             imageView.setImage(image);

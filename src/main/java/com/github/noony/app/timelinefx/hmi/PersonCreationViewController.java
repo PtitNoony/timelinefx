@@ -20,7 +20,7 @@ import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
-import com.github.noony.app.timelinefx.utils.FileUtils;
+import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -126,7 +126,7 @@ public class PersonCreationViewController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(nameField.getScene().getWindow());
         //
         if (selectedFile != null) {
-            pictureField.setText(FileUtils.fromAbsoluteToProjectRelative(currentProject, selectedFile));
+            pictureField.setText(CustomFileUtils.fromAbsoluteToProjectRelative(currentProject, selectedFile));
         } else {
             pictureField.setText("");
         }

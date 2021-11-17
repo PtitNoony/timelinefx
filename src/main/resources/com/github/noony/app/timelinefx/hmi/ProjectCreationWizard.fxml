@@ -8,25 +8,37 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<AnchorPane id="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectCreationWizardController">
+<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectCreationWizardController">
    <children>
       <GridPane hgap="8.0" layoutX="108.0" layoutY="128.0" vgap="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
         <columnConstraints>
           <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
             <ColumnConstraints hgrow="SOMETIMES" />
-          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
           <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
           <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Button fx:id="createB" mnemonicParsing="false" onAction="#handleCreate" text="Create" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Button cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" GridPane.rowIndex="2" />
+            <Button fx:id="createB" mnemonicParsing="false" onAction="#handleCreate" text="Create" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <Button cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" GridPane.rowIndex="6" />
             <Label text="Project Name:" />
             <TextField fx:id="nameField" prefWidth="250.0" GridPane.columnIndex="1" />
+            <Label text="Project Directory:" GridPane.rowIndex="1" />
+            <Label text="Portraits SubFolder:" GridPane.rowIndex="2" />
+            <Label text="Pictures SubFolder:" GridPane.rowIndex="3" />
+            <Label text="Miniatures SubFolder:" GridPane.rowIndex="4" />
+            <TextField fx:id="directoryField" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="portraitsField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="picturesField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="miniaturesField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleDirectoryButton" text="..." textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

@@ -39,16 +39,23 @@ public class Configuration {
 
     public static final String TIMELINES_FOLDER_LOCATION_CHANGED = "timelinesFolderLocationChanged";
     public static final String PORTRAITS_FOLDER_LOCATION_CHANGED = "portraitsFolderLocationChanged";
+    public static final String PICTURES_FOLDER_LOCATION_CHANGED = "picturesFolderLocationChanged";
+    public static final String MINIATURES_FOLDER_LOCATION_CHANGED = "miniaturesFolderLocationChanged";
+    //
+    private static final String DEFAULT_PORTRAITS_FOLDER_NAME = "portraits";
+    private static final String DEFAULT_PICTURES_FOLDER_NAME = "pictures";
+    private static final String DEFAULT_MINIATURES_FOLDER_NAME = "miniatures";
 
     private static final String DEFAULT_PROJECTS_FOLDER_NAME = "Timelines";
     private static final String PREFERENCE_FILE_NAME = ".timelines";
     private static final String TIMELINES_FOLDER_PROPERTY_NAME = "TimelinesFolder";
     private static final String PORTRAITS_FOLDER_PROPERTY_NAME = "PortraitsFolder";
+    private static final String PICTURES_FOLDER_PROPERTY_NAME = "PicturesFolder";
+    private static final String MINIATURES_FOLDER_PROPERTY_NAME = "MiniaturesFolder";
     //
     private static final String DEFAULT_TIMELINES_FOLDER_PATH = System.getProperty("user.home") + File.separator + DEFAULT_PROJECTS_FOLDER_NAME;
-    private static final String DEFAULT_PORTRAITS_FOLDER_NAME = "portraits";
+
     //
-    public static final String DEFAULT_PORTRAITS_FOLDER = "portraits";
     private static final Logger LOG = Logger.getGlobal();
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(ConfigurationViewController.class);
     //
@@ -121,6 +128,14 @@ public class Configuration {
             propertiesChanged = true;
             properties.setProperty(PORTRAITS_FOLDER_PROPERTY_NAME, DEFAULT_PORTRAITS_FOLDER_NAME);
         }
+        if (!properties.containsKey(PICTURES_FOLDER_PROPERTY_NAME)) {
+            propertiesChanged = true;
+            properties.setProperty(PICTURES_FOLDER_PROPERTY_NAME, DEFAULT_PICTURES_FOLDER_NAME);
+        }
+        if (!properties.containsKey(MINIATURES_FOLDER_PROPERTY_NAME)) {
+            propertiesChanged = true;
+            properties.setProperty(MINIATURES_FOLDER_PROPERTY_NAME, DEFAULT_MINIATURES_FOLDER_NAME);
+        }
         //
         if (propertiesChanged) {
             savePreferences();
@@ -157,8 +172,16 @@ public class Configuration {
         return properties.getProperty(PORTRAITS_FOLDER_PROPERTY_NAME);
     }
 
+    public static String getPicturesFolder() {
+        return properties.getProperty(PICTURES_FOLDER_PROPERTY_NAME);
+    }
+
+    public static String getMiniaturesFolder() {
+        return properties.getProperty(MINIATURES_FOLDER_PROPERTY_NAME);
+    }
+
     public static void setProjectsParentFolder(String newValue) {
-        if (newValue != null && newValue != getProjectsParentFolder()) {
+        if (newValue != null && !newValue.equals(getProjectsParentFolder())) {
             properties.setProperty(TIMELINES_FOLDER_PROPERTY_NAME, newValue);
             savePreferences();
             PROPERTY_CHANGE_SUPPORT.firePropertyChange(TIMELINES_FOLDER_LOCATION_CHANGED, null, newValue);
@@ -166,10 +189,26 @@ public class Configuration {
     }
 
     public static void setPortraitsFolder(String newValue) {
-        if (newValue != null && newValue != getPortraitsFolder()) {
+        if (newValue != null && !newValue.equals(getPortraitsFolder())) {
             properties.setProperty(PORTRAITS_FOLDER_PROPERTY_NAME, newValue);
             savePreferences();
             PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAITS_FOLDER_LOCATION_CHANGED, null, newValue);
+        }
+    }
+
+    public static void setPicturesFolder(String newValue) {
+        if (newValue != null && !newValue.equals(getPicturesFolder())) {
+            properties.setProperty(PICTURES_FOLDER_PROPERTY_NAME, newValue);
+            savePreferences();
+            PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURES_FOLDER_LOCATION_CHANGED, null, newValue);
+        }
+    }
+
+    public static void setMiniaturesFolder(String newValue) {
+        if (newValue != null && !newValue.equals(getMiniaturesFolder())) {
+            properties.setProperty(MINIATURES_FOLDER_PROPERTY_NAME, newValue);
+            savePreferences();
+            PROPERTY_CHANGE_SUPPORT.firePropertyChange(MINIATURES_FOLDER_LOCATION_CHANGED, null, newValue);
         }
     }
 }

@@ -18,13 +18,10 @@ package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
-import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -36,9 +33,7 @@ import javafx.scene.Node;
 public class PersonChronologyPicturesDrawing implements IFxScalableNode {
 
     private final PictureChronology chronology;
-    private final Person person;
     private final Map<ChronologyLink, ChronologyLinkDrawing> linkDrawings;
-    private final List<ChronologyPictureMiniature> miniatures;
     //
     private final Group mainGroup;
     //
@@ -47,17 +42,11 @@ public class PersonChronologyPicturesDrawing implements IFxScalableNode {
     public PersonChronologyPicturesDrawing(PictureChronology aChronology, Person aPerson) {
         chronology = aChronology;
         chronology.addListener(PersonChronologyPicturesDrawing.this::handleChronologyChange);
-        person = aPerson;
-        miniatures = new LinkedList<>();
         linkDrawings = new HashMap<>();
         mainGroup = new Group();
-        chronology.getChronologyPictures().forEach(PersonChronologyPicturesDrawing.this::addChronologyPictureMiniature);
-        chronology.getLinks().forEach(PersonChronologyPicturesDrawing.this::addLinkDrawing);
-    }
-
-    public void addChronologyPictureMiniature(ChronologyPictureMiniature aPictureMiniature) {
-        miniatures.add(aPictureMiniature);
-        updateLayout();
+        chronology.getLinks().stream()
+                .filter(s -> s.getPerson() == aPerson)
+                .forEach(PersonChronologyPicturesDrawing.this::addLinkDrawing);
     }
 
     @Override

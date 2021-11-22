@@ -51,11 +51,12 @@ public class MainApp extends Application {
         var controller = loader.getController();
         LOG.log(Level.FINE, "ProjectViewController {0}", controller);
         //
-        var scene = StageFactory.createScene(stage, root, "Timeline", StageFactory.DEFAULT_SCENE_WIDTH, StageFactory.DEFAULT_SCENE_HEIGHT);
+        StageFactory.createScene(stage, root, "Timeline", StageFactory.DEFAULT_SCENE_WIDTH, StageFactory.DEFAULT_SCENE_HEIGHT);
         //
         stage.initStyle(StageStyle.DECORATED);
         stage.getIcons().add(new Image("icon.png"));
         stage.show();
+        stage.setMaximized(true);
         //
         LOG.log(Level.INFO, "java.version: {0}", System.getProperty("java.version"));
         LOG.log(Level.INFO, "javafx.version: {0}", System.getProperty("javafx.version"));

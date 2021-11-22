@@ -22,7 +22,6 @@ import static com.github.noony.app.timelinefx.core.picturechronology.PictureChro
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
@@ -31,6 +30,8 @@ import javafx.scene.shape.StrokeType;
  * @author hamon
  */
 public class ContourDrawing implements IFxScalableNode {
+
+    private static final double DEFAULT_STROKE_WIDTH = 2.5;
 
     private final ChronologyPictureMiniature miniature;
     private final Person person;
@@ -63,34 +64,29 @@ public class ContourDrawing implements IFxScalableNode {
 
     private void createMiniatureContour() {
         contourDrawing = new Rectangle();
-        contourDrawing.setFill(person.getColor());
+        contourDrawing.setFill(null);
         contourDrawing.setStroke(person.getColor());
-        contourDrawing.setStroke(Color.WHITESMOKE);
-        contourDrawing.setStrokeType(StrokeType.CENTERED.CENTERED);
+        contourDrawing.setStrokeType(StrokeType.CENTERED);
         update();
     }
 
     private void update() {
         double scale = miniature.getScale();
         int index = miniature.getPersonIndex(person);
-//        var deltaSize = (1 + index * 2) * PERSON_CONTOUR_WIDTH;
         var deltaPos = -(1 + index) * PERSON_CONTOUR_WIDTH;
         var deltaSize = - 2 * deltaPos;
         double width = (miniature.getPicture().getWidth() * scale + deltaSize) * viewingScale;
         double height = (miniature.getPicture().getHeight() * scale + deltaSize) * viewingScale;
-//        double centerX = miniature.getPosition().getX() - width / 2.0;
-//        double centerY = miniature.getPosition().getY() - height / 2.0;
         double centerX = deltaPos * viewingScale;
         double centerY = deltaPos * viewingScale;
         contourDrawing.setWidth(width);
         contourDrawing.setHeight(height);
         contourDrawing.setX(centerX);
         contourDrawing.setY(centerY);
-//            contourDrawing.setArcWidth(ChronologyPictureMiniatureDrawing.ARC_WIDTH * index * 0.8);
-//            contourDrawing.setArcHeight(ChronologyPictureMiniatureDrawing.ARC_WIDTH * index * 0.8);
-        contourDrawing.setArcWidth(ChronologyPictureMiniatureDrawing.ARC_WIDTH * viewingScale);
-        contourDrawing.setArcHeight(ChronologyPictureMiniatureDrawing.ARC_WIDTH * viewingScale);
-        contourDrawing.setStrokeWidth(1.5 * viewingScale);
+        var arcRadius = ChronologyPictureMiniatureDrawing.ARC_WIDTH * viewingScale;
+        contourDrawing.setArcWidth(arcRadius);
+        contourDrawing.setArcHeight(arcRadius);
+        contourDrawing.setStrokeWidth(DEFAULT_STROKE_WIDTH * viewingScale);
     }
 
     private void handlePictureMiniatureChanges(PropertyChangeEvent event) {

@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
 import com.github.noony.app.timelinefx.core.Person;
+import static com.github.noony.app.timelinefx.core.picturechronology.PictureChronology.PERSON_CONTOUR_WIDTH;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -33,7 +34,7 @@ public class ChronologyLink extends FriezeObject {
 
     public static final String PLOTS_UPDATED = "plotUpdated";
 
-    private static final double PLOT_SEPARATION = 25;
+    private static final double PLOT_SEPARATION = 15;
 
     private final PropertyChangeSupport propertyChangeSupport;
 
@@ -97,16 +98,16 @@ public class ChronologyLink extends FriezeObject {
     private void updateStartPosition() {
         var startMiniaturePosition = startMiniature.getPosition();
         startPosition = new Point2D(
-                startMiniaturePosition.getX() + startMiniature.getWidth() / 2.0,
-                startMiniaturePosition.getY() - startMiniature.getHeight() / 2.0 + (startIndex + 1) * PLOT_SEPARATION);
+                startMiniaturePosition.getX() + calculateDeltaXPosition(startMiniature, startIndex),
+                calculateYPosition(startMiniature, startIndex));
         propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, startMiniaturePosition);
     }
 
     private void updateEndPosition() {
         var endMiniaturePosition = endMiniature.getPosition();
         endPosition = new Point2D(
-                endMiniaturePosition.getX() - endMiniature.getWidth() / 2.0,
-                endMiniaturePosition.getY() - endMiniature.getHeight() / 2.0 + (endIndex + 1) * PLOT_SEPARATION);
+                endMiniaturePosition.getX() - calculateDeltaXPosition(endMiniature, endIndex),
+                calculateYPosition(endMiniature, endIndex));
         propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, endMiniaturePosition);
     }
 
@@ -124,7 +125,17 @@ public class ChronologyLink extends FriezeObject {
                 updateEndPosition();
             }
         }
+    }
 
+    private static double calculateYPosition(ChronologyPictureMiniature aMiniature, int anIndex) {
+        return aMiniature.getPosition().getY() - aMiniature.getHeight() / 3.0 * aMiniature.getScale() + (anIndex + 1) * PLOT_SEPARATION;
+    }
+
+    private static double calculateDeltaXPosition(ChronologyPictureMiniature aMiniature, int anIndex) {
+        double scale = aMiniature.getScale();
+        var deltaPos = -(1 + anIndex) * PERSON_CONTOUR_WIDTH;
+        var deltaSize = - 2 * deltaPos;
+        return (aMiniature.getPicture().getWidth() * scale + deltaSize) / 2.0;
     }
 
 }

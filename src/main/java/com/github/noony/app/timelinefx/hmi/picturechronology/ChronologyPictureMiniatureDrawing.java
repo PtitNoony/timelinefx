@@ -142,14 +142,16 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
             chronologyPictureMiniature.setPosition(new Point2D(translateXScaled / viewingScale, translateYScaled / viewingScale));
         });
         frontGlass.setOnScroll(event -> {
-            double newScale;
-            if (event.getDeltaY() < 0) {
-                newScale = Math.max(MIN_SCALE, scale - SCALE_STEP);
-            } else {
-                newScale = scale + SCALE_STEP;
+            if (event.isControlDown()) {
+                double newScale;
+                if (event.getDeltaY() < 0) {
+                    newScale = Math.max(MIN_SCALE, scale - SCALE_STEP);
+                } else {
+                    newScale = scale + SCALE_STEP;
+                }
+                chronologyPictureMiniature.setScale(newScale);
+                event.consume();
             }
-            chronologyPictureMiniature.setScale(newScale);
-            event.consume();
         });
     }
 

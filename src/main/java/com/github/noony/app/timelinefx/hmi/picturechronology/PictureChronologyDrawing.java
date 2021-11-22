@@ -59,6 +59,16 @@ public class PictureChronologyDrawing extends FxScalableParent {
         //
         drawingBackground = new Rectangle();
         drawingBackground.setFill(Color.BLACK);
+        drawingBackground.setOnScroll(event -> {
+            if (event.isAltDown()) {
+                if (event.getDeltaY() < 0) {
+                    zoomOut();
+                } else {
+                    zoomIn();
+                }
+                event.consume();
+            }
+        });
         //
         picturesGroup = new Group();
         personsGroup = new Group();
@@ -87,19 +97,16 @@ public class PictureChronologyDrawing extends FxScalableParent {
                         registerScalableNode(personDrawing);
                         personsDrawings.put(p, personDrawing);
                         personsGroup.getChildren().add(personDrawing.getNode());
-                    } else {
-                        personDrawing = personsDrawings.get(p);
-                    }
-                    personDrawing.addChronologyPictureMiniature(aChronologyPictureMiniature);
+            }
                 });
     }
 
     private void addChronologyLink(ChronologyLink aChronologyLink) {
-        System.err.println(" addChronologyLink ::");
+        System.err.println(" addChronologyLink ::" + aChronologyLink);
     }
 
     private void removeChronologyLink(ChronologyLink aChronologyLink) {
-        System.err.println(" removeChronologyLink ::");
+        System.err.println(" removeChronologyLink ::" + aChronologyLink);
     }
 
     @Override

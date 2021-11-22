@@ -93,6 +93,7 @@ public class FxScalableParent implements IFxScalableNode {
         scalableNodes.add(scalableNode);
     }
 
+    @Override
     public Node getNode() {
         return mainNode;
     }

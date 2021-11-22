@@ -522,6 +522,7 @@ public final class ProjectViewController implements Initializable {
                 if (pictureLoaderView == null) {
                     pictureLoaderView = (Parent) event.getNewValue();
                     pictureLoaderViewController = (PictureLoaderViewController) event.getOldValue();
+                    pictureLoaderViewController.setProject(timeLineProject);
                     pictureLoaderViewController.addPropertyChangeListener(this::handlePictureLoaderWindowEvents);
                 }
                 showModalStage(pictureLoaderView);

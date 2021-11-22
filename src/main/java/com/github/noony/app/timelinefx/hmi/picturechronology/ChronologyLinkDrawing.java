@@ -63,6 +63,9 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
         chronologyLink.addListener(ChronologyLinkDrawing.this::handleLinkChanges);
         //
         mainNode.getChildren().addAll(startNode, endNode, linkShape);
+        // IMPR: In the future toggle visibility to override position
+        startNode.setVisible(false);
+        endNode.setVisible(false);
     }
 
     @Override
@@ -101,9 +104,10 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
     }
 
     private void update() {
-        var sX = chronologyLink.getStartPosition().getX() * viewingScale;
+        var scaledStrokeWidth = DEFAULT_STROKE * viewingScale;
+        var sX = chronologyLink.getStartPosition().getX() * viewingScale + scaledStrokeWidth;
         var sY = chronologyLink.getStartPosition().getY() * viewingScale;
-        var eX = chronologyLink.getEndPosition().getX() * viewingScale;
+        var eX = chronologyLink.getEndPosition().getX() * viewingScale - scaledStrokeWidth;
         var eY = chronologyLink.getEndPosition().getY() * viewingScale;
         switch (chronologyLink.getLinkType()) {
             case LINE -> {
@@ -130,7 +134,7 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
         startNode.setCenterY(sY);
         endNode.setCenterX(eX);
         endNode.setCenterY(eY);
-        linkShape.setStrokeWidth(DEFAULT_STROKE * viewingScale);
+        linkShape.setStrokeWidth(scaledStrokeWidth);
     }
 
     private void handleLinkChanges(PropertyChangeEvent event) {

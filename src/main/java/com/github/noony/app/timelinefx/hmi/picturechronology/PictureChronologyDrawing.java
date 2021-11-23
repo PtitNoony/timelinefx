@@ -17,15 +17,13 @@
 package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -38,7 +36,7 @@ import javafx.scene.shape.Rectangle;
 public class PictureChronologyDrawing extends FxScalableParent {
 
     private final PictureChronology pictureChronology;
-    private final List<ChronologyPictureMiniatureDrawing> miniatureDrawings;
+    private final Map<ChronologyPictureMiniature, ChronologyPictureMiniatureDrawing> miniatureDrawings;
     private final Map<Person, PersonChronologyPicturesDrawing> personsDrawings;
     //
     private final Group drawingGroup;
@@ -50,7 +48,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
     public PictureChronologyDrawing(PictureChronology aPictureChronology) {
         super(aPictureChronology);
         pictureChronology = aPictureChronology;
-        miniatureDrawings = new LinkedList<>();
+        miniatureDrawings = new HashMap<>();
         personsDrawings = new HashMap<>();
         //
         pictureChronology.addListener(PictureChronologyDrawing.this::handlePictureChronologyChanges);
@@ -84,9 +82,9 @@ public class PictureChronologyDrawing extends FxScalableParent {
     }
 
     private void addChronologyPictureMiniature(ChronologyPictureMiniature aChronologyPictureMiniature) {
-        ChronologyPictureMiniatureDrawing miniatureDrawing = new ChronologyPictureMiniatureDrawing(aChronologyPictureMiniature);
+        ChronologyPictureMiniatureDrawing miniatureDrawing = new ChronologyPictureMiniatureDrawing(aChronologyPictureMiniature, this);
         registerScalableNode(miniatureDrawing);
-        miniatureDrawings.add(miniatureDrawing);
+        miniatureDrawings.put(aChronologyPictureMiniature, miniatureDrawing);
         picturesGroup.getChildren().add(miniatureDrawing.getNode());
         //
         aChronologyPictureMiniature.getPicture().getPersons().stream()
@@ -101,12 +99,22 @@ public class PictureChronologyDrawing extends FxScalableParent {
                 });
     }
 
-    private void addChronologyLink(ChronologyLink aChronologyLink) {
-        System.err.println(" addChronologyLink ::" + aChronologyLink);
-    }
-
-    private void removeChronologyLink(ChronologyLink aChronologyLink) {
-        System.err.println(" removeChronologyLink ::" + aChronologyLink);
+    private void removeChronologyPictureMiniature(ChronologyPictureMiniature aChronologyPictureMiniature) {
+        var miniatureDrawing = miniatureDrawings.remove(aChronologyPictureMiniature);
+        unregisterScalableNode(miniatureDrawing);
+        picturesGroup.getChildren().remove(miniatureDrawing.getNode());
+        // IMPR in the future, rely on the PictureChronology calculations?
+        var existingPersons = miniatureDrawings.keySet().stream()
+                .flatMap(c -> c.getPersons().stream())
+                .collect(Collectors.toList());
+        var personInExcedent = personsDrawings.keySet().stream()
+                .filter(p -> !existingPersons.contains(p))
+                .collect(Collectors.toList());
+        personInExcedent.forEach(p -> {
+            var personDrawing = personsDrawings.remove(p);
+            unregisterScalableNode(personDrawing);
+            personsGroup.getChildren().remove(personDrawing.getNode());
+        });
     }
 
     @Override
@@ -118,6 +126,10 @@ public class PictureChronologyDrawing extends FxScalableParent {
         drawingGroup.setTranslateY(PADDING * getScale());
     }
 
+    protected PictureChronology getPictureChronology() {
+        return pictureChronology;
+    }
+
     private void handlePictureChronologyChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case PictureChronology.NAME_CHANGED -> {
@@ -125,12 +137,13 @@ public class PictureChronologyDrawing extends FxScalableParent {
             }
             case PictureChronology.PICTURE_ADDED ->
                 addChronologyPictureMiniature((ChronologyPictureMiniature) event.getNewValue());
+            case PictureChronology.PICTURE_REMOVED ->
+                removeChronologyPictureMiniature((ChronologyPictureMiniature) event.getNewValue());
             case PictureChronology.LAYOUT_CHANGED ->
                 updateLayout();
-            case PictureChronology.LINK_ADDED ->
-                addChronologyLink((ChronologyLink) event.getNewValue());
-            case PictureChronology.LINK_REMOVED ->
-                removeChronologyLink((ChronologyLink) event.getNewValue());
+            case PictureChronology.LINK_ADDED, PictureChronology.LINK_REMOVED -> {
+                // nothing to do links are managed by the PersonChronologyPictureDrawing class
+            }
             default ->
                 throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
         }

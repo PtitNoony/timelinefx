@@ -32,8 +32,7 @@ import javafx.scene.shape.Rectangle;
  * @author hamon
  */
 public class FxScalableParent implements IFxScalableNode {
-    
-    
+
     public static final double MIN_SCALE = 0.2;
     public static final double MAX_SCALE = 20;
     public static final double SCALE_STEP = 0.1;
@@ -80,17 +79,22 @@ public class FxScalableParent implements IFxScalableNode {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    protected final void addNode(Object anObject){
-        if (anObject instanceof Node node){
+    protected final void addNode(Object anObject) {
+        if (anObject instanceof Node node) {
             mainGroup.getChildren().add(node);
-        }else if(anObject instanceof IFxScalableNode scalableNode){
+        } else if (anObject instanceof IFxScalableNode scalableNode) {
             registerScalableNode(scalableNode);
             mainGroup.getChildren().add(scalableNode.getNode());
         }
     }
 
-    protected void registerScalableNode(IFxScalableNode scalableNode){
+    protected void registerScalableNode(IFxScalableNode scalableNode) {
         scalableNodes.add(scalableNode);
+        scalableNode.updateScale(viewingScale);
+    }
+
+    protected void unregisterScalableNode(IFxScalableNode scalableNode) {
+        scalableNodes.remove(scalableNode);
     }
 
     @Override

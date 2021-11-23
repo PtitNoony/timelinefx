@@ -44,6 +44,7 @@ public class PictureChronology extends FriezeObject implements DrawableObject {
     public static final String LAYOUT_CHANGED = "layoutChanged";
     public static final String NAME_CHANGED = "nameChanged";
     public static final String PICTURE_ADDED = "pictureAdded";
+    public static final String PICTURE_REMOVED = "pictureRemoved";
     public static final String LINK_ADDED = "linkedAdded";
     public static final String LINK_REMOVED = "linkedRemoved";
 
@@ -124,6 +125,54 @@ public class PictureChronology extends FriezeObject implements DrawableObject {
     public void addPicture(Picture aPicture, Point2D aPosition, double aScale) {
         var chronologyPicture = PictureChronologyFactory.createChronologyPictureMiniature(aPicture, aPosition, aScale);
         addChronologyPicture(chronologyPicture);
+    }
+
+    public void removeChronologyPicture(ChronologyPictureMiniature aChronologyPicture) {
+        var removed = chronologyPictures.remove(aChronologyPicture);
+        if (removed) {
+            chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
+            propertyChangeSupport.firePropertyChange(PICTURE_REMOVED, this, aChronologyPicture);
+            //
+//            persons.addAll(aChronologyPicture.getPersons().stream().filter(p -> !persons.contains(p)).toList());
+
+            //
+            var existingPersons = chronologyPictures.stream()
+                    .flatMap(c -> c.getPersons().stream())
+                    .collect(Collectors.toList());
+            var personInExcedent = persons.stream()
+                    .filter(p -> !existingPersons.contains(p))
+                    .collect(Collectors.toList());
+            persons.removeAll(personInExcedent);
+            //
+            List<String> existingLinkKeys = chronologyLinks.keySet().stream().collect(Collectors.toList());
+            Map<String, Pair<ChronologyPictureMiniature, ChronologyPictureMiniature>> linksNeeded = new HashMap<>();
+            // looping all persons and miniatures to calculate all the links needed
+            persons.forEach(person -> {
+                List<ChronologyPictureMiniature> personMiniatures = chronologyPictures.stream().filter(pic -> pic.getPersonIndex(person) >= 0).toList();
+                for (int i = 0; i < personMiniatures.size() - 1; i++) {
+                    var startMiniature = personMiniatures.get(i);
+                    var endMiniature = personMiniatures.get(i + 1);
+                    var linkKey = person.getId() + "__" + startMiniature.getId() + "__" + endMiniature.getId();
+                    linksNeeded.put(linkKey, new Pair(startMiniature, endMiniature));
+                }
+            });
+            // remove useless links
+            existingLinkKeys.stream().filter(existingKey -> (!linksNeeded.containsKey(existingKey))).forEachOrdered(existingKey -> {
+                var removedLink = chronologyLinks.get(existingKey);
+                chronologyLinks.remove(existingKey);
+                propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
+            });
+            // create new links
+            linksNeeded.forEach((neededKey, miniatures) -> {
+                if (!existingLinkKeys.contains(neededKey)) {
+                    int personID = Integer.parseInt(neededKey.split("__")[0]);
+                    var person = PersonFactory.getPerson(personID);
+                    var chronologyLink = PictureChronologyFactory.createChronologyLink(person, miniatures.getKey(), miniatures.getValue(), chronologyLinkType);
+                    chronologyLinks.put(neededKey, chronologyLink);
+                    propertyChangeSupport.firePropertyChange(LINK_ADDED, this, chronologyLink);
+                }
+            });
+        }
     }
 
     public void setName(String aName) {

@@ -345,7 +345,7 @@ public class TimeLineProject {
 
     private void handlePicturesChronologyChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case PictureChronology.PICTURE_ADDED -> {
+            case PictureChronology.PICTURE_ADDED, PictureChronology.PICTURE_REMOVED -> {
                 // nothing to do
             }
             case PictureChronology.NAME_CHANGED -> {

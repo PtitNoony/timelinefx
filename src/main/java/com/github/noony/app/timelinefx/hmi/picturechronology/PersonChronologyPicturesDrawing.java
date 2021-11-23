@@ -67,6 +67,7 @@ public class PersonChronologyPicturesDrawing implements IFxScalableNode {
 
     private void addLinkDrawing(ChronologyLink aLink) {
         var linkDrawing = new ChronologyLinkDrawing(aLink);
+        linkDrawing.updateScale(viewingScale);
         linkDrawings.put(aLink, linkDrawing);
         mainGroup.getChildren().add(linkDrawing.getNode());
     }

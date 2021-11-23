@@ -182,7 +182,7 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
-            <version>17.0.4</version>
+            <version>17.0.11</version>
         </dependency>
         
         <dependency>

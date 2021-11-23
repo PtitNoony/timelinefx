@@ -31,6 +31,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -47,6 +48,7 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
     private static final double SCALE_STEP = 0.05;
     //
     private final ChronologyPictureMiniature chronologyPictureMiniature;
+    private final PictureChronologyDrawing pictureChronologyDrawing;
     private final List<ContourDrawing> contours;
     //
     private final Group mainNode;
@@ -68,8 +70,9 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
     private double oldTranslateX;
     private double oldTranslateY;
 
-    public ChronologyPictureMiniatureDrawing(ChronologyPictureMiniature aChronologyPictureMiniature) {
+    public ChronologyPictureMiniatureDrawing(ChronologyPictureMiniature aChronologyPictureMiniature, PictureChronologyDrawing aPictureChronologyDrawing) {
         chronologyPictureMiniature = aChronologyPictureMiniature;
+        pictureChronologyDrawing = aPictureChronologyDrawing;
         contours = new LinkedList<>();
         scale = chronologyPictureMiniature.getScale();
         //
@@ -151,6 +154,11 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
                 }
                 chronologyPictureMiniature.setScale(newScale);
                 event.consume();
+            }
+        });
+        frontGlass.setOnMouseClicked(event -> {
+            if (event.getClickCount() >= 2 && event.getButton().equals(MouseButton.SECONDARY)) {
+                pictureChronologyDrawing.getPictureChronology().removeChronologyPicture(chronologyPictureMiniature);
             }
         });
     }

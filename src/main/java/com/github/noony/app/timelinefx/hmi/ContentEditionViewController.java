@@ -333,6 +333,9 @@ public final class ContentEditionViewController implements Initializable {
         }
         personCreationController = loader.getController();
         personCreationController.addPropertyChangeListener(this::handlePersonCreationControllerChanges);
+        if (timeLineProject != null) {
+            personCreationController.setTimelineProject(timeLineProject);
+        }
     }
 
     private void handleStaysCreationControllerChanges(PropertyChangeEvent event) {

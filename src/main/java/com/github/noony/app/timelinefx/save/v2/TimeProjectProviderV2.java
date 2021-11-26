@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.save.v2;
 
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
+import com.github.noony.app.timelinefx.core.IDateObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -25,6 +26,7 @@ import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
+import com.github.noony.app.timelinefx.core.PortraitFactory;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.core.StayPeriodLocalDate;
@@ -33,12 +35,12 @@ import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import com.github.noony.app.timelinefx.core.freemap.Link;
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.core.freemap.PlotType;
-import com.github.noony.app.timelinefx.core.freemap.Portrait;
 import com.github.noony.app.timelinefx.core.freemap.StayLink;
 import com.github.noony.app.timelinefx.core.freemap.TravelLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
@@ -132,7 +134,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     public static final String PLACE_LEVEL_ATR = "level";
     public static final String COLOR_ATR = "color";
     public static final String PERSON_ATR = "person";
-    public static final String PICTURE_ATR = "picture";
+    public static final String DEFAULT_PORTRAIT_REF_ATR = "defaultPortraitRef";
     public static final String DATE_OF_BIRTH_ATR = "dateOfBirth";
     public static final String DATE_OF_DEATH_ATR = "dateOfDeath";
     public static final String START_DATE_ATR = "startDate";
@@ -359,24 +361,90 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
 
     private static Person parsePerson(Element personElement, TimeLineProject project, List<String> relativePathLoaded) {
         // <person color="0x7fffd4ff" id="1" name="Obi Wan Kenobi"/>
-        Color color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
-        long id = Long.parseLong(personElement.getAttribute(ID_ATR));
-        String name = personElement.getAttribute(NAME_ATR);
-        String pictureName = personElement.getAttribute(PICTURE_ATR);
-        relativePathLoaded.add(pictureName);
-        Person person = PersonFactory.createPerson(project, id, name, color);
-        person.setPictureName(pictureName);
-        if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
-            var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
-            var dateOfBirth = LocalDate.parse(dateOfBirthS);
-            person.setDateOfBirth(dateOfBirth);
+        var color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
+        var id = Long.parseLong(personElement.getAttribute(ID_ATR));
+        var name = personElement.getAttribute(NAME_ATR);
+        var defaultPortraitRef = Long.MIN_VALUE;
+        if (personElement.hasAttribute(DEFAULT_PORTRAIT_REF_ATR)) {
+            defaultPortraitRef = Long.parseLong(personElement.getAttribute(DEFAULT_PORTRAIT_REF_ATR));
         }
-        if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
-            var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
-            var dateOfDeath = LocalDate.parse(dateOfDeathS);
-            person.setDateOfDeath(dateOfDeath);
+        var person = PersonFactory.createPerson(project, id, name, color);
+        var childrenElements = personElement.getChildNodes();
+        for (int i = 0; i < childrenElements.getLength(); i++) {
+            if (childrenElements.item(i).getNodeName().equals(PORTRAIT_ELEMENT)) {
+                // <portrait id="147" path="portraits\obi_wan.png"/>
+                var portraitElement = (Element) childrenElements.item(i);
+                var portraitID = Long.parseLong(portraitElement.getAttribute(ID_ATR));
+                var portraitPath = portraitElement.getAttribute(PATH_ATR);
+                var portrait = PortraitFactory.createPortrait(portraitID, person, portraitPath);
+                if (portrait.getId() == defaultPortraitRef) {
+                    person.setDefaultPortrait(portrait);
+                } else {
+                    person.addPortrait(portrait);
+                }
+                parseObjectTimeValue(portraitElement, portrait);
+                relativePathLoaded.add(portraitPath);
+            }
+        }
+        //
+        if (personElement.hasAttribute(TIME_FORMAT_ATR)) {
+            var timeFormat = TimeFormat.valueOf(personElement.getAttribute(TIME_FORMAT_ATR));
+            person.setTimeFormat(timeFormat);
+            switch (timeFormat) {
+                case LOCAL_TIME -> {
+                    if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
+                        var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+                        var dateOfBirth = LocalDate.parse(dateOfBirthS);
+                        person.setDateOfBirth(dateOfBirth);
+                    }
+                    if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
+                        var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+                        var dateOfDeath = LocalDate.parse(dateOfDeathS);
+                        person.setDateOfDeath(dateOfDeath);
+                    }
+                }
+                case TIME_MIN -> {
+                    if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
+                        var timeOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+                        var timeOfBirth = Long.parseLong(timeOfBirthS);
+                        person.setTimeOfBirth(timeOfBirth);
+                    }
+                    if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
+                        var timeOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+                        var timeOfDeath = Long.parseLong(timeOfDeathS);
+                        person.setTimeOfDeath(timeOfDeath);
+                    }
+                }
+                default ->
+                    throw new UnsupportedOperationException("Unsupported timefomat : " + timeFormat);
+            }
         }
         return person;
+    }
+
+    private static void parseObjectTimeValue(Element sourceElement, IDateObject aDateObject) {
+        if (sourceElement.hasAttribute(TIME_FORMAT_ATR)) {
+            var timeFormat = TimeFormat.valueOf(sourceElement.getAttribute(TIME_FORMAT_ATR));
+            aDateObject.setTimeFormat(timeFormat);
+            switch (timeFormat) {
+                case LOCAL_TIME -> {
+                    if (sourceElement.hasAttribute(DATE_ATR)) {
+                        var dateS = sourceElement.getAttribute(DATE_ATR);
+                        var date = LocalDate.parse(dateS);
+                        aDateObject.setDate(date);
+                    }
+                }
+                case TIME_MIN -> {
+                    if (sourceElement.hasAttribute(DATE_ATR)) {
+                        var timeS = sourceElement.getAttribute(DATE_ATR);
+                        var time = Long.parseLong(timeS);
+                        aDateObject.setTimestamp(time);
+                    }
+                }
+                default ->
+                    throw new UnsupportedOperationException("Unsupported timefomat : " + timeFormat);
+            }
+        }
     }
 
     private static List<Picture> parsePictures(Element picturesRootElement, TimeLineProject project, List<String> relativePathLoaded) {
@@ -663,7 +731,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 double xPos = Double.parseDouble(e.getAttribute(X_POS_ATR));
                 double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
                 double radius = Double.parseDouble(e.getAttribute(RADIUS_ATR));
-                Portrait portrait = freeMap.getPortrait(personID);
+                FreeMapPortrait portrait = freeMap.getPortrait(personID);
                 if (portrait == null) {
                     throw new IllegalStateException("Cannot find portrait with personID=" + personID);
                 }
@@ -820,25 +888,61 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
 
     private static Element createPersonElement(Document doc, Person person) {
         LOG.log(Level.FINE, "> Creating person {0}", new Object[]{person.getName()});
-        Element personElement = doc.createElement(PERSON_ELEMENT);
+        var personElement = doc.createElement(PERSON_ELEMENT);
         personElement.setAttribute(ID_ATR, Long.toString(person.getId()));
         personElement.setAttribute(NAME_ATR, person.getName());
-        personElement.setAttribute(PICTURE_ATR, person.getPictureName());
+        if (person.getDefaultPortrait() != null) {
+            personElement.setAttribute(DEFAULT_PORTRAIT_REF_ATR, Long.toString(person.getDefaultPortrait().getId()));
+        }
         personElement.setAttribute(COLOR_ATR, person.getColor().toString());
-        if (person.getDateOfBirth() != null) {
-            personElement.setAttribute(DATE_OF_BIRTH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfBirth()));
+        personElement.setAttribute(TIME_FORMAT_ATR, person.getTimeFormat().name());
+        switch (person.getTimeFormat()) {
+            case LOCAL_TIME -> {
+                if (person.getDateOfBirth() != null) {
+                    personElement.setAttribute(DATE_OF_BIRTH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfBirth()));
+                }
+                if (person.getDateOfDeath() != null) {
+                    personElement.setAttribute(DATE_OF_DEATH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfDeath()));
+                }
+            }
+            case TIME_MIN -> {
+                personElement.setAttribute(DATE_OF_BIRTH_ATR, Long.toString(person.getTimeOfBirth()));
+                personElement.setAttribute(DATE_OF_DEATH_ATR, Long.toString(person.getTimeOfDeath()));
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported timefomat : " + person.getTimeFormat());
         }
-        if (person.getDateOfDeath() != null) {
-            personElement.setAttribute(DATE_OF_DEATH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfDeath()));
-        }
+        person.getPortraits().forEach(portrait -> {
+            var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
+            portraitElement.setAttribute(ID_ATR, Long.toString(portrait.getId()));
+            portraitElement.setAttribute(PATH_ATR, portrait.getProjectRelativePath());
+            saveObjectTime(portraitElement, portrait);
+            personElement.appendChild(portraitElement);
+        });
         return personElement;
+    }
+
+    private static void saveObjectTime(Element targetElement, IDateObject aDateObject) {
+        targetElement.setAttribute(TIME_FORMAT_ATR, aDateObject.getTimeFormat().name());
+        switch (aDateObject.getTimeFormat()) {
+            case LOCAL_TIME -> {
+                if (aDateObject.getDate() != null) {
+                    targetElement.setAttribute(DATE_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(aDateObject.getDate()));
+                }
+            }
+            case TIME_MIN -> {
+                targetElement.setAttribute(DATE_ATR, Long.toString(aDateObject.getTimestamp()));
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported timefomat : " + aDateObject.getTimeFormat());
+        }
     }
 
     private static Element createPictureElement(Document doc, Picture picture) {
         Element pictureElement = doc.createElement(PICTURE_ELEMENT);
         pictureElement.setAttribute(ID_ATR, Long.toString(picture.getId()));
         pictureElement.setAttribute(NAME_ATR, picture.getName());
-        pictureElement.setAttribute(PATH_ATR, picture.getPath());
+        pictureElement.setAttribute(PATH_ATR, picture.getProjectRelativePath());
         pictureElement.setAttribute(DATE_ATR, picture.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));
         pictureElement.setAttribute(WIDTH_ATR, Integer.toString(picture.getWidth()));
         pictureElement.setAttribute(HEIGHT_ATR, Integer.toString(picture.getHeight()));
@@ -914,7 +1018,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         friezeFreeMapElement.setAttribute(FREEMAP_PLOT_SIZE_ATR, Double.toString(friezeFreeMap.getPlotSize()));
         //
         Element portraitsGroupElement = doc.createElement(PORTRAITS_GROUP);
-        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createPortraitElement(doc, portrait)));
+        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createFreeMapPortraitElement(doc, portrait)));
         friezeFreeMapElement.appendChild(portraitsGroupElement);
         //
         Element plotsGroupElement = doc.createElement(PLOTS_GROUP);
@@ -933,7 +1037,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return friezeFreeMapElement;
     }
 
-    private static Element createPortraitElement(Document doc, Portrait portrait) {
+    private static Element createFreeMapPortraitElement(Document doc, FreeMapPortrait portrait) {
         Element portraitElement = doc.createElement(PORTRAIT_ELEMENT);
         portraitElement.setAttribute(PERSON_ATR, Long.toString(portrait.getPerson().getId()));
         portraitElement.setAttribute(X_POS_ATR, Double.toString(portrait.getX()));

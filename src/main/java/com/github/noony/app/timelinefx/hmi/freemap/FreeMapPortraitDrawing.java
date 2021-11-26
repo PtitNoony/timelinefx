@@ -17,7 +17,7 @@
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.freemap.Portrait;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
@@ -35,11 +35,11 @@ import javafx.scene.shape.Circle;
  *
  * @author hamon
  */
-public class PortraitDrawing extends AbstractFxScalableNode {
+public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
 
     private static final Logger LOG = Logger.getGlobal();
 
-    private final Portrait portrait;
+    private final FreeMapPortrait freeMapPortrait;
     private final Circle circle;
     private final Circle smallerCircle;
     private final Circle imageClip;
@@ -55,9 +55,9 @@ public class PortraitDrawing extends AbstractFxScalableNode {
     private double oldTranslateX;
     private double oldTranslateY;
 
-    public PortraitDrawing(Portrait aPortrait) {
+    public FreeMapPortraitDrawing(FreeMapPortrait aPortrait) {
         super();
-        portrait = aPortrait;
+        freeMapPortrait = aPortrait;
         circle = new Circle();
         smallerCircle = new Circle();
         imageClip = new Circle();
@@ -66,7 +66,7 @@ public class PortraitDrawing extends AbstractFxScalableNode {
         updateImage();
         initLayout();
         initInteractivity();
-        portrait.addListener(PortraitDrawing.this::handlePropertyChange);
+        freeMapPortrait.addListener(FreeMapPortraitDrawing.this::handlePropertyChange);
         //
     }
 
@@ -78,15 +78,15 @@ public class PortraitDrawing extends AbstractFxScalableNode {
         return getNode().localToScreen(0, 0);
     }
 
-    public Portrait getPortrait() {
-        return portrait;
+    public FreeMapPortrait getPortrait() {
+        return freeMapPortrait;
     }
 
     private void initLayout() {
-        updateX(portrait.getX());
-        updateY(portrait.getY());
+        updateX(freeMapPortrait.getX());
+        updateY(freeMapPortrait.getY());
         circle.setFill(null);
-        circle.setStroke(portrait.getPerson().getColor());
+        circle.setStroke(freeMapPortrait.getPerson().getColor());
         //
         smallerCircle.setFill(null);
         smallerCircle.setStroke(Color.BLACK);
@@ -112,18 +112,18 @@ public class PortraitDrawing extends AbstractFxScalableNode {
             var translateXScaled = oldTranslateX + event.getScreenX() - oldScreenX;
             var translateYScaled = oldTranslateY + event.getScreenY() - oldScreenY;
             //
-            portrait.setX(translateXScaled / getScale());
-            portrait.setY(translateYScaled / getScale());
+            freeMapPortrait.setX(translateXScaled / getScale());
+            freeMapPortrait.setY(translateYScaled / getScale());
         });
     }
 
     private void handlePropertyChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Portrait.POSITION_CHANGED:
+            case FreeMapPortrait.POSITION_CHANGED:
                 updateX((double) event.getOldValue());
                 updateY((double) event.getNewValue());
                 break;
-            case Portrait.RADIUS_CHANGED:
+            case FreeMapPortrait.RADIUS_CHANGED:
                 updateLayout();
                 break;
             case Person.PICTURE_CHANGED:
@@ -150,7 +150,9 @@ public class PortraitDrawing extends AbstractFxScalableNode {
     private void updateImage() {
         try {
             // the file path shall always be relative to the project Folder
-            var filePathS = portrait.getPerson().getProject().getProjectFolder().getAbsolutePath() + File.separatorChar + portrait.getPerson().getPictureName();
+            var portrait = freeMapPortrait.getPortrait();
+            var project = portrait.getPerson().getProject();
+            var filePathS = project.getProjectFolder().getAbsolutePath() + File.separatorChar + portrait.getProjectRelativePath();
             LOG.log(Level.FINE, "Trying to load file {0}", new Object[]{filePathS});
             FileInputStream inputstream = new FileInputStream(filePathS);
             image = new Image(inputstream);
@@ -168,16 +170,16 @@ public class PortraitDrawing extends AbstractFxScalableNode {
         setNodeTranslateY(yPos * getScale());
         //
         circle.setStrokeWidth(4 * getScale());
-        circle.setRadius(portrait.getRadius() * getScale());
+        circle.setRadius(freeMapPortrait.getRadius() * getScale());
         //
         smallerCircle.setStrokeWidth(6 * getScale());
-        smallerCircle.setRadius((portrait.getRadius() - 2) * getScale());
+        smallerCircle.setRadius((freeMapPortrait.getRadius() - 2) * getScale());
         //
-        imageView.setX(-portrait.getRadius() * getScale());
-        imageView.setY(-portrait.getRadius() * getScale());
-        imageView.setFitWidth(portrait.getRadius() * 2.0 * getScale());
-        imageView.setFitHeight(portrait.getRadius() * 2.0 * getScale());
+        imageView.setX(-freeMapPortrait.getRadius() * getScale());
+        imageView.setY(-freeMapPortrait.getRadius() * getScale());
+        imageView.setFitWidth(freeMapPortrait.getRadius() * 2.0 * getScale());
+        imageView.setFitHeight(freeMapPortrait.getRadius() * 2.0 * getScale());
         //
-        imageClip.setRadius(portrait.getRadius() * getScale());
+        imageClip.setRadius(freeMapPortrait.getRadius() * getScale());
     }
 }

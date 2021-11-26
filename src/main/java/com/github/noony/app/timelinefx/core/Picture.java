@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author hamon
  */
-public class Picture extends FriezeObject {
+public class Picture extends FriezeObject implements IFileObject {
 
     public static final String NAME_CHANGED = "pictureNameChanged";
     public static final String DATE_CHANGED = "pictureDateChanged";
@@ -63,6 +63,7 @@ public class Picture extends FriezeObject {
         height = pictureHeight;
     }
 
+    @Override
     public TimeLineProject getProject() {
         return project;
     }
@@ -85,6 +86,7 @@ public class Picture extends FriezeObject {
         propertyChangeSupport.firePropertyChange(DATE_CHANGED, this, creationDate);
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -141,10 +143,12 @@ public class Picture extends FriezeObject {
         return Collections.unmodifiableList(places);
     }
 
-    public String getPath() {
+    @Override
+    public String getProjectRelativePath() {
         return path;
     }
 
+    @Override
     public String getAbsolutePath() {
         return project.getProjectFolder().getAbsolutePath() + File.separator + path;
     }
@@ -164,6 +168,16 @@ public class Picture extends FriezeObject {
     @Override
     public String toString() {
         return "Pic[" + name + "]";
+    }
+
+    @Override
+    public int compareTo(IFileObject other) {
+        if (other == null) {
+            return 1;
+        } else if (other instanceof Picture picture) {
+            return creationDate.compareTo(picture.creationDate);
+        }
+        return getAbsolutePath().compareTo(other.getAbsolutePath());
     }
 
 }

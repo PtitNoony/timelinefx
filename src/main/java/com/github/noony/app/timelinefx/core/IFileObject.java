@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 NoOnY
+ * Copyright (C) 2021 NoOnY
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,17 @@ package com.github.noony.app.timelinefx.core;
 
 /**
  *
- * @author arnaud
+ * @author hamon
  */
-public class FriezeObject implements IFriezeObject {
+public interface IFileObject extends IFriezeObject {
 
-    private final long id;
+    String getName();
 
-    protected FriezeObject(long anIdd) {
-        id = anIdd;
-    }
+    TimeLineProject getProject();
 
-    @Override
-    public long getId() {
-        return id;
-    }
+    String getProjectRelativePath();
 
+    String getAbsolutePath();
+
+    int compareTo(IFileObject other);
 }

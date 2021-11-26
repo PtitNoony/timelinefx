@@ -43,7 +43,7 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
     //
     private final CubicCurve cubicCurve;
     //
-    private PortraitDrawing portraitDrawing;
+    private FreeMapPortraitDrawing portraitDrawing;
     private Plot firstPlot;
     private RectanglePlot plotDrawing;
     private double scale = 1.0;

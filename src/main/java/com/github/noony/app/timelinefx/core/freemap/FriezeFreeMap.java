@@ -80,7 +80,7 @@ public final class FriezeFreeMap extends FriezeObject {
     private final List<Person> persons;
     private final Map<Place, FreeMapPlace> places;
     private final Map<Person, FreeMapPerson> freeMapPersons;
-    private final Map<Person, Portrait> portraits;
+    private final Map<Person, FreeMapPortrait> portraits;
     private final List<PersonInitLink> personInitLinks;
     private final Map<Long, DateHandle> startDateHandles;
     private final Map<Long, DateHandle> endDateHandles;
@@ -263,7 +263,7 @@ public final class FriezeFreeMap extends FriezeObject {
         return Collections.unmodifiableList(freeMapPersons.values().stream().collect(Collectors.toList()));
     }
 
-    public List<Portrait> getPortraits() {
+    public List<FreeMapPortrait> getPortraits() {
         return Collections.unmodifiableList(portraits.values().stream().collect(Collectors.toList()));
     }
 
@@ -319,11 +319,11 @@ public final class FriezeFreeMap extends FriezeObject {
         return places.values().stream().filter(p -> p.getPlace().getId() == placeID).findAny().orElse(null);
     }
 
-    public Portrait getPortrait(long portraitID) {
+    public FreeMapPortrait getPortrait(long portraitID) {
         return portraits.values().stream().filter(p -> p.getPerson().getId() == portraitID).findAny().orElse(null);
     }
 
-    public Portrait getPortrait(Person aPerson) {
+    public FreeMapPortrait getPortrait(Person aPerson) {
         return portraits.values().stream().filter(p -> p.getPerson() == aPerson).findAny().orElse(null);
     }
 
@@ -387,7 +387,7 @@ public final class FriezeFreeMap extends FriezeObject {
         var separation = (getPersonHeight() - nbPortraits * portraitRadius * 2.0) / (1 + 2 * nbPortraits);
         var portraitList = portraits.values().stream().collect(Collectors.toList());
         for (var index = 0; index < nbPortraits; index++) {
-            Portrait portrait = portraitList.get(index);
+            FreeMapPortrait portrait = portraitList.get(index);
             portrait.setX(getPersonWidth() / 2.0);
             portrait.setY(separation * (index + 1) + (index + 0.5) * portraitRadius * 2.0);
         }

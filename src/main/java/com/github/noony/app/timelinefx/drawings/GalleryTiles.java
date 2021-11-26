@@ -17,15 +17,13 @@
 package com.github.noony.app.timelinefx.drawings;
 
 import com.github.noony.app.timelinefx.MainApp;
-import com.github.noony.app.timelinefx.core.Picture;
-import com.github.noony.app.timelinefx.core.PictureFactory;
+import com.github.noony.app.timelinefx.core.IFileObject;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.Tile.SkinType;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.tools.FlowGridPane;
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -33,7 +31,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -58,9 +59,11 @@ public class GalleryTiles implements IFxNode {
     public static final double TILE_HEIGHT = 200;
 
     public static final String TILE_CLICKED = "tileClicked";
+    public static final String TILE_SELECTED = "tileSelected";
 
     private static final Logger LOG = Logger.getGlobal();
 
+    private static final int DEFAULT_NUMBER_OF_TILES = 6;
     private static final double IMAGE_RATIO = 0.9;
     private static final double IMAGE_WIDTH = TILE_WIDTH * IMAGE_RATIO;
     private static final double IMAGE_HEIGHT = TILE_HEIGHT * IMAGE_RATIO;
@@ -68,25 +71,51 @@ public class GalleryTiles implements IFxNode {
 
     private FlowGridPane tilesPane;
 
-    private final List<Picture> pictures;
     private final PropertyChangeSupport propertyChangeSupport;
     //
-    private List<Tile> tiles;
+    private final Map<IFileObject, Tile> content;
+    private Tile activeTile = null;
 
-    public GalleryTiles(List<Picture> pictureList) {
-        pictures = pictureList;
-        pictures.stream()
-                .sorted((p1, p2) -> p1.getCreationDate().compareTo(p2.getCreationDate()))
-                .collect(Collectors.toList());
+    public GalleryTiles(List<IFileObject> objectList) {
+        content = new HashMap<>();
         propertyChangeSupport = new PropertyChangeSupport(GalleryTiles.this);
-        PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
-        //
-        init();
+        var nbItems = objectList.isEmpty() ? DEFAULT_NUMBER_OF_TILES : Math.max(DEFAULT_NUMBER_OF_TILES, objectList.size());
+        init(nbItems);
+        objectList.stream()
+                .sorted((p1, p2) -> p1.compareTo(p2))
+                .collect(Collectors.toList());
+        objectList.forEach(GalleryTiles.this::createSetTile);
+    }
+
+    public GalleryTiles() {
+        this(Collections.EMPTY_LIST);
     }
 
     @Override
     public Node getNode() {
         return tilesPane;
+    }
+
+    public void addFileObject(IFileObject iFileObject) {
+        if (!content.containsKey(iFileObject)) {
+            var tile = createSetTile(iFileObject);
+            content.put(iFileObject, tile);
+            tilesPane.getChildren().add(tile);
+        }
+    }
+
+    public boolean removeFileObject(IFileObject iFileObject) {
+        var removedTile = content.remove(iFileObject);
+        if (removedTile != null) {
+            tilesPane.getChildren().remove(removedTile);
+            return true;
+        }
+        return false;
+    }
+
+    public void removeAllFileObjects() {
+        content.clear();
+        tilesPane.getChildren().clear();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -97,11 +126,9 @@ public class GalleryTiles implements IFxNode {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    private void init() {
-        //
-        tiles = pictures.stream().map(s -> createSetTile(s)).collect(Collectors.toList());
+    private void init(int nbItems) {
         int nbColumns = 2;
-        int nbRows = tiles.size() / nbColumns + 1;
+        int nbRows = nbItems / nbColumns + 1;
         tilesPane = new FlowGridPane(nbRows, nbColumns);
         tilesPane.setHgap(16);
         tilesPane.setVgap(16);
@@ -109,13 +136,11 @@ public class GalleryTiles implements IFxNode {
         tilesPane.setCenterShape(true);
         tilesPane.setPadding(new Insets(16));
         tilesPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
-        tilesPane.getChildren().setAll(tiles);
         tilesPane.setPrefSize(TILE_WIDTH * 2.5, TILE_HEIGHT * 2.5);
-
     }
 
-    private Tile createSetTile(Picture picture) {
-        String smallImageFilePath = picture.getProject().getMiniaturesFolder() + File.separator + picture.getId() + "_small.jpg";
+    private Tile createSetTile(IFileObject fileObject) {
+        String smallImageFilePath = fileObject.getProject().getMiniaturesFolder() + File.separator + fileObject.getId() + "_small.jpg";
         File imageFile = new File(smallImageFilePath);
         InputStream imageStream;
         Image smallImage = null;
@@ -127,7 +152,7 @@ public class GalleryTiles implements IFxNode {
                 LOG.log(Level.SEVERE, null, ex);
             }
         } else {
-            String largeImagePath = picture.getAbsolutePath();
+            String largeImagePath = fileObject.getAbsolutePath();
             File pictureFile = new File(largeImagePath);
             // TODO nice excpetion handling
             String localUrl = "";
@@ -145,14 +170,15 @@ public class GalleryTiles implements IFxNode {
 
         Tile result = TileBuilder.create()
                 .skinType(SkinType.IMAGE)
-                .title(picture.getName())
+                .title(fileObject.getName())
                 .image(smallImage != null ? smallImage : new Image(MainApp.class.getResourceAsStream("LegoHead.png")))
                 .prefSize(TILE_WIDTH, TILE_HEIGHT)
-                .imageMask(Tile.ImageMask.NONE)
-                .text(picture.getName())
+                .imageMask(Tile.ImageMask.RECTANGULAR)
+                .text(fileObject.getName())
                 .backgroundColor(Color.DARKGREY)
                 .foregroundBaseColor(Color.BLACK)
                 .foregroundColor(Color.BLACK)
+                .activeColor(Color.BLACK)
                 .textAlignment(TextAlignment.CENTER)
                 .textColor(Color.BLACK)
                 .borderColor(Color.DARKGRAY)
@@ -160,28 +186,29 @@ public class GalleryTiles implements IFxNode {
                 .build();
         result.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
-                propertyChangeSupport.firePropertyChange(TILE_CLICKED, e, picture);
+                propertyChangeSupport.firePropertyChange(TILE_CLICKED, e, fileObject);
             } else if (e.getClickCount() == 2) {
-                propertyChangeSupport.firePropertyChange(TILE_CLICKED, e, picture);
+                propertyChangeSupport.firePropertyChange(TILE_CLICKED, e, fileObject);
+            } else if (e.getClickCount() == 1) {
+                handleTileClickedOnce(result, fileObject);
             }
         });
         return result;
     }
 
-    private void handlePictureFactoryChanges(PropertyChangeEvent event) {
-        switch (event.getPropertyName()) {
-            case PictureFactory.PICTURE_ADDED -> {
-                var picture = (Picture) event.getNewValue();
-                if (!pictures.contains(picture)) {
-                    pictures.add(picture);
-                    var pictureTile = createSetTile(picture);
-                    tiles.add(pictureTile);
-                    tilesPane.getChildren().add(pictureTile);
-                }
-            }
-            default ->
-                throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
+    private void handleTileClickedOnce(Tile aTile, IFileObject fileObject) {
+        if (activeTile == null) {
+            activeTile = aTile;
+            activeTile.setTextColor(Color.DEEPSKYBLUE);
+        } else if (aTile == activeTile) {
+            activeTile = null;
+            aTile.setTextColor(Color.BLACK);
+        } else {
+            activeTile.setTextColor(Color.BLACK);
+            activeTile = aTile;
+            activeTile.setTextColor(Color.DEEPSKYBLUE);
         }
+        propertyChangeSupport.firePropertyChange(TILE_SELECTED, fileObject, activeTile);
     }
 
 }

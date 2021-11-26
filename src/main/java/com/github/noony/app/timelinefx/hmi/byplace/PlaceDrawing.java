@@ -177,6 +177,9 @@ public final class PlaceDrawing extends FXDrawing {
             case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
                 // nothin to do
             }
+            case Person.DEFAULT_PORTRAIT_CHANGED, Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
+                // nothin to do
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

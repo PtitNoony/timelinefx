@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.hmi.byperson;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.drawings.FXDrawing;
+import com.github.noony.app.timelinefx.drawings.IFriezeView;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import com.github.noony.app.timelinefx.drawings.IFriezeView;
 
 /**
  *
@@ -161,6 +161,12 @@ public class PersonDrawing extends FXDrawing {
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
             case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
                 // nothin to do
+            }
+            case Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
+                // nothin to do
+            }
+            case Person.DEFAULT_PORTRAIT_CHANGED -> {
+                System.err.println(" Person.DEFAULT_PORTRAIT_CHANGED :: TODO");
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());

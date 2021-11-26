@@ -33,11 +33,11 @@ import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.Link;
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.core.freemap.PlotType;
-import com.github.noony.app.timelinefx.core.freemap.Portrait;
 import com.github.noony.app.timelinefx.core.freemap.StayLink;
 import com.github.noony.app.timelinefx.core.freemap.TravelLink;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
@@ -266,7 +266,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         String name = personElement.getAttribute(NAME_ATR);
         String pictureName = personElement.getAttribute(PICTURE_ATR);
         Person person = PersonFactory.createPerson(project, id, name, color);
-        person.setPictureName(pictureName);
+        LOG.log(Level.WARNING, "Portraits are not supported in this file format..");
+//        person.setPictureName(pictureName);
         return person;
     }
 
@@ -495,7 +496,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                 double xPos = Double.parseDouble(e.getAttribute(X_POS_ATR));
                 double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
                 double radius = Double.parseDouble(e.getAttribute(RADIUS_ATR));
-                Portrait portrait = freeMap.getPortrait(personID);
+                FreeMapPortrait portrait = freeMap.getPortrait(personID);
                 if (portrait == null) {
                     throw new IllegalStateException("Cannot find portrait with personID=" + personID);
                 }
@@ -575,7 +576,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         Element personElement = doc.createElement(PERSON_ELEMENT);
         personElement.setAttribute(ID_ATR, Long.toString(person.getId()));
         personElement.setAttribute(NAME_ATR, person.getName());
-        personElement.setAttribute(PICTURE_ATR, person.getPictureName());
+//        personElement.setAttribute(PICTURE_ATR, person.getPictureName());
+        LOG.log(Level.WARNING, "Portraits are not supported in this file format..");
         personElement.setAttribute(COLOR_ATR, person.getColor().toString());
         return personElement;
     }
@@ -584,7 +586,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         Element pictureElement = doc.createElement(PICTURE_ELEMENT);
         pictureElement.setAttribute(ID_ATR, Long.toString(picture.getId()));
         pictureElement.setAttribute(NAME_ATR, picture.getName());
-        pictureElement.setAttribute(PATH_ATR, picture.getPath());
+        pictureElement.setAttribute(PATH_ATR, picture.getProjectRelativePath());
         pictureElement.setAttribute(DATE_ATR, picture.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));
         pictureElement.setAttribute(WIDTH_ATR, Integer.toString(picture.getWidth()));
         pictureElement.setAttribute(HEIGHT_ATR, Integer.toString(picture.getHeight()));
@@ -667,7 +669,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         return friezeFreeMapElement;
     }
 
-    private static Element createPortraitElement(Document doc, Portrait portrait) {
+    private static Element createPortraitElement(Document doc, FreeMapPortrait portrait) {
         Element portraitElement = doc.createElement(PORTRAIT_ELEMENT);
         portraitElement.setAttribute(PERSON_ATR, Long.toString(portrait.getPerson().getId()));
         portraitElement.setAttribute(X_POS_ATR, Double.toString(portrait.getX()));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 NoOnY
+ * Copyright (C) 2021 NoOnY
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,25 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import java.time.LocalDate;
+
 /**
  *
- * @author arnaud
+ * @author hamon
  */
-public class FriezeObject implements IFriezeObject {
+public interface IDateObject {
 
-    private final long id;
+    TimeFormat getTimeFormat();
 
-    protected FriezeObject(long anIdd) {
-        id = anIdd;
-    }
+    void setTimeFormat(TimeFormat aTimeFormat);
 
-    @Override
-    public long getId() {
-        return id;
-    }
+    LocalDate getDate();
 
+    long getTimestamp();
+
+    void setDate(LocalDate aDate);
+
+    void setTimestamp(long aTimestamp);
+
+    long getAbsoluteTime();
 }

@@ -225,7 +225,7 @@ public class GalleryViewController implements Initializable, ViewController {
     private void displayImage(Picture picture) {
         String localUrl;
         try {
-            var pictureFile = new File(CustomFileUtils.fromProjectRelativeToAbsolute(picture.getProject(), picture.getPath()));
+            var pictureFile = new File(CustomFileUtils.fromProjectRelativeToAbsolute(picture.getProject(), picture.getProjectRelativePath()));
             localUrl = pictureFile.toURI().toURL().toString();
             Image image = new Image(localUrl);
             imageView.setImage(image);

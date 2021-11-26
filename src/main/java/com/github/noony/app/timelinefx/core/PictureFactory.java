@@ -35,7 +35,7 @@ import org.apache.commons.io.FileUtils;
  *
  * @author hamon
  */
-public class PictureFactory {
+public class PictureFactory implements IFactory {
 
     public static final String PICTURE_ADDED = "pictureAdded";
 

@@ -41,7 +41,8 @@ public class CustomModalWindow {
         if (content != null) {
             content.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         }
-        modalStage = StageFactory.createStage(parentWindow, StageStyle.TRANSPARENT);
+        modalStage = StageFactory.createStage(parentWindow, StageStyle.UTILITY);
+        modalStage.setResizable(true);
         modalScene = StageFactory.createScene(modalStage, content, "");
         jMetro = StageFactory.getJMetro(modalScene);
     }

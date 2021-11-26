@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.core.IFileObject;
 import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
@@ -29,6 +30,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +82,7 @@ public class PicturesChronologyViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         loadPictureChronologyConfiguratorView();
         //
         projectListener = this::handleProjectChanges;
@@ -111,7 +115,9 @@ public class PicturesChronologyViewController implements Initializable {
         if (galleryTiles != null) {
             galleryTiles.removePropertyChangeListener(galleryTilesListener);
         }
-        galleryTiles = new GalleryTiles(PictureFactory.getPictures());
+        List<IFileObject> pictures = new LinkedList<>();
+        pictures.addAll(PictureFactory.getPictures());
+        galleryTiles = new GalleryTiles(pictures);
         galleryTiles.addPropertyChangeListener(galleryTilesListener);
         picturesPane.setContent(galleryTiles.getNode());
     }
@@ -162,11 +168,27 @@ public class PicturesChronologyViewController implements Initializable {
         }
     }
 
+    private void handlePictureFactoryChanges(PropertyChangeEvent event) {
+        if (galleryTiles != null) {
+            switch (event.getPropertyName()) {
+                case PictureFactory.PICTURE_ADDED -> {
+                    var picture = (Picture) event.getNewValue();
+                    galleryTiles.addFileObject(picture);
+                }
+                default ->
+                    throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
+            }
+        }
+    }
+
     private void handleGalleryTilesChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case GalleryTiles.TILE_CLICKED:
                 Picture pic = (Picture) event.getNewValue();
                 ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(pic);
+                break;
+            case GalleryTiles.TILE_SELECTED:
+                // nothing to do for now
                 break;
             default:
                 throw new UnsupportedOperationException("While handleGalleryTilesChanges :: " + event.getPropertyName());

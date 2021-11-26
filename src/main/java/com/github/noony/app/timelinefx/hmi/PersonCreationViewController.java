@@ -19,8 +19,13 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
+import com.github.noony.app.timelinefx.core.Portrait;
+import com.github.noony.app.timelinefx.core.PortraitFactory;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.drawings.GalleryTiles;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -29,19 +34,28 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
@@ -60,7 +74,9 @@ public class PersonCreationViewController implements Initializable {
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(PersonCreationViewController.this);
 
     @FXML
-    private TextField nameField, pictureField;
+    private GridPane propertiesGrid;
+    @FXML
+    private TextField nameField;
     @FXML
     private Button createButton;
     @FXML
@@ -68,23 +84,38 @@ public class PersonCreationViewController implements Initializable {
     @FXML
     private ImageView imageView;
     @FXML
-    private DatePicker birthDatePicker;
+    private ChoiceBox<TimeFormat> timeFormatCB;
     @FXML
-    private DatePicker deathDatePicker;
+    private ChoiceBox<Portrait> defaultPortraitCB;
+    @FXML
+    private ScrollPane galleryScrollPane;
+    @FXML
+    private Button addPortraitButton, removePortraitButton;
+    @FXML
+    private HBox portraitTimeHB;
+    //
+    private DatePicker birthDatePicker, deathDatePicker, portraitDatePicker;
+    private TextField birthTimeField, deathTimeField, portraitTimeField;
     //
     private Image image;
+    private GalleryTiles galleryTiles;
     private FileChooser fileChooser;
     //
     private EditionMode editionMode;
     //
     private TimeLineProject currentProject = null;
     private Person currentEditedPerson = null;
+    private List<Portrait> currentPortaitsList = null;
     //
     private String personName = "";
-    private String personPictureName = "";
+    private Portrait defaultPortrait = null;
     private Color personColor = null;
     private LocalDate dateOfBirth = null;
     private LocalDate dateOfDeath = null;
+    //
+    private Portrait portraitSelected = null;
+    private Map<Portrait, LocalDate> updatedPortraitDates;
+    private Map<Portrait, String> updatedPortraitTimes;
 
     //
     private boolean nameOK = false;
@@ -92,44 +123,79 @@ public class PersonCreationViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        galleryTiles = new GalleryTiles();
         fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Image files", "*.png", "*.jpeg", "*.jpg"));
+        birthDatePicker = new DatePicker();
+        deathDatePicker = new DatePicker();
+        portraitDatePicker = new DatePicker();
+        birthTimeField = new TextField();
+        deathTimeField = new TextField();
+        portraitTimeField = new TextField();
+        galleryScrollPane.setContent(galleryTiles.getNode());
+        galleryTiles.addPropertyChangeListener(this::handleGalleryTilesChanges);
+        // TODO ? check if size is OK
         //
         reset();
         //
         nameField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             updatePersonName(t1.trim());
         });
-        pictureField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            updatePersonPictureName(t1.trim());
+        timeFormatCB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends TimeFormat> ov, TimeFormat t, TimeFormat t1) -> {
+            if (t1 != null) {
+                setTimeFormat(t1);
+            }
+        });
+        defaultPortraitCB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Portrait> ov, Portrait t, Portrait t1) -> {
+            if (t1 != null) {
+                defaultPortrait = t1;
+                updateImage();
+            }
         });
         colorPicker.valueProperty().addListener((ObservableValue<? extends Color> ov, Color t, Color t1) -> {
             updateColor(t1);
         });
         birthDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            updateDateOfBith(t1);
+            dateOfBirth = t1;
+            updateStatus();
         });
         deathDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            updateDateOfDeath(t1);
+            dateOfDeath = t1;
+            updateStatus();
+        });
+        // Updating the temporary values for the portraits dates/times
+        portraitDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
+            updatedPortraitDates.put(portraitSelected, t1);
+        });
+        portraitTimeField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            updatedPortraitTimes.put(portraitSelected, t1);
         });
     }
 
     @FXML
-    protected void handlePicturePathAction(ActionEvent event) {
-        // setting initial directory for fileChooser
-        File projectFolder = currentProject.getProjectFolder();
+    protected void handlePortraitAddAction(ActionEvent event) {
+        var projectFolder = currentProject.getProjectFolder();
+        File initialDirectory;
         if (projectFolder == null) {
-            fileChooser.setInitialDirectory(new File(Configuration.getProjectsParentFolder()));
+            initialDirectory = new File(Configuration.getProjectsParentFolder());
         } else {
-            fileChooser.setInitialDirectory(new File(currentProject.getProjectLocation()));
+            initialDirectory = currentProject.getProjectFolder();
         }
+        fileChooser.setInitialDirectory(initialDirectory);
         File selectedFile = fileChooser.showOpenDialog(nameField.getScene().getWindow());
-        //
         if (selectedFile != null) {
-            pictureField.setText(CustomFileUtils.fromAbsoluteToProjectRelative(currentProject, selectedFile));
-        } else {
-            pictureField.setText("");
+            var newPortrait = PortraitFactory.createPortrait(currentEditedPerson, CustomFileUtils.fromAbsoluteToProjectRelative(currentProject, selectedFile));
+            currentPortaitsList.add(newPortrait);
+            updatePortraitCB();
+            galleryTiles.addFileObject(newPortrait);
         }
+    }
+
+    @FXML
+    protected void handlePortraitRemoveAction(ActionEvent event) {
+        currentPortaitsList.remove(portraitSelected);
+        galleryTiles.removeFileObject(portraitSelected);
+        updatePortraitCB();
     }
 
     @FXML
@@ -141,18 +207,11 @@ public class PersonCreationViewController implements Initializable {
     protected void handleCreateAction(ActionEvent event) {
         switch (editionMode) {
             case CREATION:
-                Person person = PersonFactory.createPerson(currentProject, personName, personColor);
-                person.setPictureName("".equals(personPictureName) ? Person.DEFAULT_PICTURE_NAME : personPictureName);
-                person.setDateOfBirth(dateOfBirth);
-                person.setDateOfDeath(dateOfDeath);
-                propertyChangeSupport.firePropertyChange(PERSON_CREATED, null, person);
+                updatePerson(currentEditedPerson);
+                propertyChangeSupport.firePropertyChange(PERSON_CREATED, null, currentEditedPerson);
                 break;
             case EDITION:
-                currentEditedPerson.setName(personName);
-                currentEditedPerson.setPictureName("".equals(personPictureName) ? Person.DEFAULT_PICTURE_NAME : personPictureName);
-                currentEditedPerson.setColor(personColor);
-                currentEditedPerson.setDateOfBirth(dateOfBirth);
-                currentEditedPerson.setDateOfDeath(dateOfDeath);
+                updatePerson(currentEditedPerson);
                 propertyChangeSupport.firePropertyChange(PERSON_EDITIED, null, currentEditedPerson);
                 reset();
                 break;
@@ -171,28 +230,63 @@ public class PersonCreationViewController implements Initializable {
 
     protected void setPerson(Person aPerson) {
         currentEditedPerson = aPerson;
-        personPictureName = currentEditedPerson.getPictureName();
-        pictureField.setText(currentEditedPerson.getPictureName());
+        currentPortaitsList.clear();
+        currentPortaitsList.addAll(currentEditedPerson.getPortraits());
+        var portraitsCollection = FXCollections.observableArrayList(currentPortaitsList);
+        defaultPortraitCB.setItems(portraitsCollection);
+        defaultPortrait = currentEditedPerson.getDefaultPortrait();
+        portraitsCollection.forEach(galleryTiles::addFileObject);
+        if (defaultPortrait != null) {
+            defaultPortraitCB.getSelectionModel().select(defaultPortrait);
+        }
         nameField.setText(currentEditedPerson.getName());
         colorPicker.setValue(currentEditedPerson.getColor());
-        birthDatePicker.setValue(currentEditedPerson.getDateOfBirth());
-        deathDatePicker.setValue(currentEditedPerson.getDateOfDeath());
+        timeFormatCB.getSelectionModel().select(currentEditedPerson.getTimeFormat());
+        switch (currentEditedPerson.getTimeFormat()) {
+            case LOCAL_TIME -> {
+                birthDatePicker.setValue(currentEditedPerson.getDateOfBirth());
+            }
+            case TIME_MIN -> {
+                birthTimeField.setText(Long.toString(currentEditedPerson.getTimeOfBirth()));
+                deathTimeField.setText(Long.toString(currentEditedPerson.getTimeOfDeath()));
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + currentEditedPerson.getTimeFormat());
+
+        }
         updateStatus();
     }
 
     protected final void reset() {
         currentEditedPerson = null;
+        updatedPortraitDates = new HashMap<>();
+        updatedPortraitTimes = new HashMap<>();
         //
         nameOK = false;
         colorOK = false;
         //
         personColor = null;
         nameField.setText("");
-        pictureField.setText("");
+        defaultPortrait = null;
+        defaultPortraitCB.setItems(FXCollections.emptyObservableList());
+        galleryTiles.removeAllFileObjects();
+        //
+        setTimeFormat(TimeFormat.LOCAL_TIME);
         colorPicker.setValue(null);
+        timeFormatCB.setItems(FXCollections.observableArrayList(TimeFormat.values()));
+        timeFormatCB.setValue(TimeFormat.LOCAL_TIME);
         birthDatePicker.setValue(null);
         deathDatePicker.setValue(null);
-        setEditionMode(EditionMode.CREATION);
+//        setEditionMode(EditionMode.CREATION);
+        //
+        currentPortaitsList = new LinkedList<>();
+        addPortraitButton.setDisable(false);
+        removePortraitButton.setDisable(true);
+        portraitTimeHB.setDisable(true);
+        portraitDatePicker.setDisable(true);
+        portraitTimeField.setDisable(true);
+        portraitDatePicker.setValue(null);
+        portraitTimeField.setText("");
         //
         updateStatus();
     }
@@ -202,6 +296,8 @@ public class PersonCreationViewController implements Initializable {
         switch (editionMode) {
             case CREATION:
                 createButton.setText("Create");
+                // TODO maybe refactor method and group them
+                setPerson(PersonFactory.createPerson(currentProject, "NoName"));
                 break;
             case EDITION:
                 createButton.setText("Validate");
@@ -217,25 +313,54 @@ public class PersonCreationViewController implements Initializable {
         updateStatus();
     }
 
-    private void updatePersonPictureName(String pictureName) {
-        personPictureName = pictureName;
-        updateStatus();
-    }
-
     private void updateColor(Color aColor) {
         personColor = aColor;
         colorOK = personColor != null;
         updateStatus();
     }
 
-    private void updateDateOfBith(LocalDate newDate) {
-        dateOfBirth = newDate;
-        updateStatus();
+    private void setTimeFormat(TimeFormat timeFormat) {
+        switch (timeFormat) {
+            case LOCAL_TIME -> {
+                propertiesGrid.getChildren().remove(birthTimeField);
+                propertiesGrid.getChildren().remove(deathTimeField);
+                portraitTimeHB.getChildren().remove(portraitTimeField);
+                updatedPortraitTimes.clear();
+                if (!propertiesGrid.getChildren().contains(birthDatePicker)) {
+                    propertiesGrid.add(birthDatePicker, 1, 3);
+                    propertiesGrid.add(deathDatePicker, 1, 4);
+                    portraitTimeHB.getChildren().add(portraitDatePicker);
+                }
+            }
+            case TIME_MIN -> {
+                propertiesGrid.getChildren().remove(birthDatePicker);
+                propertiesGrid.getChildren().remove(deathDatePicker);
+                portraitTimeHB.getChildren().remove(portraitDatePicker);
+                updatedPortraitDates.clear();
+                if (!propertiesGrid.getChildren().contains(birthTimeField)) {
+                    propertiesGrid.add(birthTimeField, 1, 3);
+                    propertiesGrid.add(deathTimeField, 1, 4);
+                    portraitTimeHB.getChildren().add(portraitTimeField);
+                }
+            }
+        }
+        if (timeFormat != timeFormatCB.getValue()) {
+            timeFormatCB.setValue(timeFormat);
+        }
     }
 
-    private void updateDateOfDeath(LocalDate newDate) {
-        dateOfDeath = newDate;
-        updateStatus();
+    private void updatePortraitCB() {
+        defaultPortraitCB.setItems(FXCollections.observableArrayList(currentPortaitsList));
+        if (portraitSelected == defaultPortrait) {
+            if (currentPortaitsList.isEmpty()) {
+                defaultPortrait = null;
+                defaultPortraitCB.getSelectionModel().clearSelection();
+            } else {
+                defaultPortrait = currentPortaitsList.get(0);
+                defaultPortraitCB.getSelectionModel().select(defaultPortrait);
+            }
+        }
+        portraitSelected = null;
     }
 
     private void updateStatus() {
@@ -245,28 +370,127 @@ public class PersonCreationViewController implements Initializable {
     }
 
     private void updateImage() {
-        if (currentEditedPerson == null) {
-            image = new Image(File.separatorChar + Person.DEFAULT_PICTURE_NAME);
-            imageView.setImage(image);
-            return;
-        }
-        // TODO improve to only update on change
-        String picturePath = currentProject.getProjectFolder().getAbsolutePath() + File.separatorChar + personPictureName;
-        File pictureFile = new File(picturePath);
-        if (Files.exists(pictureFile.toPath())) {
-            FileInputStream inputstream;
-            try {
-                inputstream = new FileInputStream(picturePath);
-                image = new Image(inputstream);
-                imageView.setImage(image);
-            } catch (FileNotFoundException ex) {
-                LOG.log(Level.SEVERE, "Exception while updating image for {0} : {1}", new Object[]{personPictureName, ex});
-                LOG.log(Level.SEVERE, "> file name was: {0}", new Object[]{picturePath});
+        if (defaultPortrait != null) {
+            String picturePath = currentProject.getProjectFolder().getAbsolutePath() + File.separatorChar + defaultPortrait.getProjectRelativePath();
+            File pictureFile = new File(picturePath);
+            if (Files.exists(pictureFile.toPath())) {
+                FileInputStream inputstream;
+                try {
+                    inputstream = new FileInputStream(picturePath);
+                    image = new Image(inputstream);
+                    imageView.setImage(image);
+                } catch (FileNotFoundException ex) {
+                    LOG.log(Level.SEVERE, "Exception while updating image for {0} : {1}", new Object[]{defaultPortrait, ex});
+                    LOG.log(Level.SEVERE, "> file name was: {0}", new Object[]{picturePath});
+                }
             }
-        } else {
-            image = new Image(File.separatorChar + Person.DEFAULT_PICTURE_NAME);
-            imageView.setImage(image);
+        } else if (currentProject != null) {
+            var path = currentProject.getPortraitsFolder().getAbsolutePath() + File.separatorChar + Person.DEFAULT_PICTURE_NAME;
+            try {
+                image = new Image(path);
+                imageView.setImage(image);
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Exception while updating image foPicturer {0} : {1}", new Object[]{defaultPortrait, e});
+                LOG.log(Level.SEVERE, "> file name was: {0}", new Object[]{path});
+            }
         }
+    }
 
+    private void updatePerson(Person person) {
+        person.setName(personName);
+        LinkedList<Portrait> existingPortraits = new LinkedList<>();
+        existingPortraits.addAll(person.getPortraits());
+        currentPortaitsList.forEach(person::addPortrait);
+        existingPortraits.stream().filter(p -> !currentPortaitsList.contains(p)).forEach(person::removePortrait);
+        person.setDefaultPortrait(defaultPortrait);
+        person.setColor(personColor);
+        var timeFormat = timeFormatCB.getSelectionModel().getSelectedItem();
+        person.setTimeFormat(timeFormat);
+        switch (timeFormat) {
+            case LOCAL_TIME -> {
+                person.setDateOfBirth(dateOfBirth);
+                person.setDateOfDeath(dateOfDeath);
+                updatedPortraitDates.forEach((portrait, date) -> portrait.setDate(date));
+            }
+            case TIME_MIN -> {
+                try {
+                    person.setTimeOfBirth(Long.parseLong(birthTimeField.getText().trim()));
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.INFO, "Birth time for {0} is not a valid timestamp: {1} :: {2}", new Object[]{person, birthTimeField.getText(), e.getMessage()});
+                    person.setTimeOfBirth(Portrait.DEFAULT_TIMESTAMP);
+                }
+                try {
+                    person.setTimeOfDeath(Long.parseLong(deathTimeField.getText().trim()));
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.INFO, "Death time for {0} is not a valid timestamp: {1} :: {2}", new Object[]{person, deathTimeField.getText(), e.getMessage()});
+                    person.setTimeOfDeath(Portrait.DEFAULT_TIMESTAMP);
+                }
+                updatedPortraitTimes.forEach((portrait, date) -> {
+                    try {
+                        portrait.setTimestamp(Long.parseLong(date.trim()));
+                    } catch (NumberFormatException e) {
+                        LOG.log(Level.INFO, "Time for {0} is not a valid timestamp: {1} :: {2}", new Object[]{portrait, date, e.getMessage()});
+                        portrait.setTimestamp(Portrait.DEFAULT_TIMESTAMP);
+                    }
+                });
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+        }
+    }
+
+    private void handleGalleryTilesChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case GalleryTiles.TILE_CLICKED -> {
+                var portrait = (Portrait) event.getNewValue();
+                defaultPortraitCB.getSelectionModel().select(portrait);
+            }
+            case GalleryTiles.TILE_SELECTED -> {
+                var tile = event.getNewValue();
+                if (tile != null) {
+                    portraitSelected = (Portrait) event.getOldValue();
+                    removePortraitButton.setDisable(false);
+                    portraitTimeHB.setDisable(false);
+                    portraitDatePicker.setDisable(false);
+                    portraitTimeField.setDisable(false);
+                    switch (timeFormatCB.getSelectionModel().getSelectedItem()) {
+                        case LOCAL_TIME -> {
+                            var portraitDate = updatedPortraitDates.get(portraitSelected);
+                            if (portraitDate == null) {
+                                portraitDate = portraitSelected.getDate();
+                            }
+                            if (portraitDate != null) {
+                                portraitDatePicker.setValue(portraitDate);
+                            } else {
+                                portraitDatePicker.setValue(null);
+                            }
+                            portraitTimeField.setText("");
+                        }
+                        case TIME_MIN -> {
+                            var portraitTime = updatedPortraitTimes.get(portraitSelected);
+                            if (portraitTime != null) {
+                                portraitTimeField.setText(portraitTime);
+                            } else if (portraitSelected.getTimestamp() != Portrait.DEFAULT_TIMESTAMP) {
+                                portraitTimeField.setText(Long.toString(portraitSelected.getTimestamp()));
+                            } else {
+                                portraitTimeField.setText("");
+                            }
+                            portraitDatePicker.setValue(LocalDate.now());
+                        }
+                        default ->
+                            throw new UnsupportedOperationException("Unsupported time mode : " + event.getPropertyName());
+                    }
+                } else {
+                    removePortraitButton.setDisable(true);
+                    portraitTimeHB.setDisable(true);
+                    portraitDatePicker.setDisable(true);
+                    portraitTimeField.setDisable(true);
+                    portraitDatePicker.setValue(LocalDate.MIN);
+                    portraitTimeField.setText("");
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("While handleGalleryTilesChanges :: " + event.getPropertyName());
+        }
     }
 }

@@ -161,7 +161,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         project = aPicture.getProject();
         picture.getPersons().forEach(person -> peopleCheckListView.getCheckModel().check(person));
         picture.getPlaces().forEach(place -> placesCheckListView.getCheckModel().check(place));
-        pictureFile = new File(picture.getPath());
+        pictureFile = new File(picture.getProjectRelativePath());
         pictureName = pictureFile.getName();
         fileField.setText(pictureFile.getAbsolutePath());
         pictureDateField.setText(picture.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));

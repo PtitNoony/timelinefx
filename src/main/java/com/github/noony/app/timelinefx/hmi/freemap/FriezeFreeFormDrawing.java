@@ -22,7 +22,7 @@ import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.DEFAULT_TIME_HEIGHT;
-import com.github.noony.app.timelinefx.core.freemap.Portrait;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
@@ -72,7 +72,7 @@ public class FriezeFreeFormDrawing {
 
     private final FriezeFreeMap friezeFreeMap;
     //
-    private final Map<Person, PortraitDrawing> portraitDrawings;
+    private final Map<Person, FreeMapPortraitDrawing> portraitDrawings;
     private final Map<Person, PersonInitLinkDrawing> personInitLinkDrawings;
     private final Map<FreeMapPlace, PlaceDrawing> placeDrawings;
     private final Map<FreeMapPerson, PersonDrawing> personDrawings;
@@ -196,7 +196,7 @@ public class FriezeFreeFormDrawing {
         return (drawingHeight + 2.0 * MAP_PADDING) * scale;
     }
 
-    protected PortraitDrawing getPortrait(Person person) {
+    protected FreeMapPortraitDrawing getPortrait(Person person) {
         return portraitDrawings.get(person);
     }
 
@@ -256,14 +256,14 @@ public class FriezeFreeFormDrawing {
         }
     }
 
-    private void createPortraitDrawing(Portrait portrait) {
-        var portraitDrawing = new PortraitDrawing(portrait);
+    private void createPortraitDrawing(FreeMapPortrait portrait) {
+        var portraitDrawing = new FreeMapPortraitDrawing(portrait);
         portraitDrawings.put(portrait.getPerson(), portraitDrawing);
         portraitsGroup.getChildren().add(portraitDrawing.getNode());
         scalableNodes.add(portraitDrawing);
     }
 
-    private void removePortraitDrawing(Portrait portrait) {
+    private void removePortraitDrawing(FreeMapPortrait portrait) {
         var portraitDrawingRemoved = portraitDrawings.remove(portrait.getPerson());
         if (portraitDrawingRemoved != null) {
             portraitsGroup.getChildren().remove(portraitDrawingRemoved.getNode());
@@ -363,7 +363,7 @@ public class FriezeFreeFormDrawing {
                 removePersonDrawing(freeMapPersonRemoved);
             }
             case FriezeFreeMap.FREE_MAP_PORTRAIT_REMOVED -> {
-                var freeMapPortraitRemoved = (Portrait) event.getNewValue();
+                var freeMapPortraitRemoved = (FreeMapPortrait) event.getNewValue();
                 removePortraitDrawing(freeMapPortraitRemoved);
             }
             case FriezeFreeMap.NAME_CHANGED -> {

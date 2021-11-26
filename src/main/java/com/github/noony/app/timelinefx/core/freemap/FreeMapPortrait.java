@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.Person;
+import com.github.noony.app.timelinefx.core.Portrait;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -24,29 +25,35 @@ import java.beans.PropertyChangeSupport;
  *
  * @author hamon
  */
-public class Portrait {
+public class FreeMapPortrait {
 
     public static final String POSITION_CHANGED = "positionChanged";
     public static final String RADIUS_CHANGED = "portraitRadiusChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
-    private final Person person;
+    private final Portrait portrait;
     //
     private double xPos;
     private double yPos;
     private double radius;
 
-    public Portrait(Person aPerson, double aRadius) {
-        propertyChangeSupport = new PropertyChangeSupport(Portrait.this);
-        person = aPerson;
+    public FreeMapPortrait(Portrait aPortrait, double aRadius) {
+        propertyChangeSupport = new PropertyChangeSupport(FreeMapPortrait.this);
+        portrait = aPortrait;
         radius = aRadius;
         xPos = 0;
         yPos = 0;
-        person.addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(e));
+        // TODO why that ?
+        portrait.getPerson().addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(e));
     }
 
+    public Portrait getPortrait() {
+        return portrait;
+    }
+
+    @Deprecated
     public Person getPerson() {
-        return person;
+        return portrait.getPerson();
     }
 
     public void addListener(PropertyChangeListener listener) {

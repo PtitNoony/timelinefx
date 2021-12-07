@@ -35,11 +35,20 @@ public class CustomFileUtils {
         if (projectFolder != null) {
             Path projectPath = projectFolder.toPath();
             Path selectedFilePath = file.toPath();
-            Path relativePath = projectPath.relativize(selectedFilePath);
-            return relativePath.toString();
+            try {
+                Path relativePath = projectPath.relativize(selectedFilePath);
+                return relativePath.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println(" !!!! projectPath ==> " + projectPath);
+                System.err.println(" !!!! selectedFilePath ==> " + selectedFilePath);
+                System.err.println(" !!!! project ==>  " + project);
+            }
+//            return relativePath.toString();
         } else {
             return file.getAbsolutePath();
         }
+        return file.getAbsolutePath();
     }
 
     public static String fromProjectRelativeToAbsolute(TimeLineProject project, String relavivePath) {

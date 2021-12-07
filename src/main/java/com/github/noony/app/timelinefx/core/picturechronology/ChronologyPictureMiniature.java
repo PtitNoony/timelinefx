@@ -17,8 +17,8 @@
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
+import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.Picture;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -36,16 +36,16 @@ public class ChronologyPictureMiniature extends FriezeObject {
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
 
-    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> c1.getPicture().getCreationDate().compareTo(c2.getPicture().getCreationDate());
+    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Long.compare(c1.getPicture().getAbsoluteTime(), c2.getPicture().getAbsoluteTime());
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final Picture picture;
+    private final IPicture picture;
     private final List<Person> persons;
     private Point2D position;
     private double scale;
 
-    protected ChronologyPictureMiniature(long id, Picture picture, Point2D position, double scale) {
+    protected ChronologyPictureMiniature(long id, IPicture picture, Point2D position, double scale) {
         super(id);
         propertyChangeSupport = new PropertyChangeSupport(ChronologyPictureMiniature.this);
         persons = new LinkedList<>(picture.getPersons());
@@ -58,7 +58,7 @@ public class ChronologyPictureMiniature extends FriezeObject {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public Picture getPicture() {
+    public IPicture getPicture() {
         return picture;
     }
 

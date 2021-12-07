@@ -587,7 +587,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         pictureElement.setAttribute(ID_ATR, Long.toString(picture.getId()));
         pictureElement.setAttribute(NAME_ATR, picture.getName());
         pictureElement.setAttribute(PATH_ATR, picture.getProjectRelativePath());
-        pictureElement.setAttribute(DATE_ATR, picture.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));
+        pictureElement.setAttribute(DATE_ATR, picture.getAbsoluteTimeAsString());
         pictureElement.setAttribute(WIDTH_ATR, Integer.toString(picture.getWidth()));
         pictureElement.setAttribute(HEIGHT_ATR, Integer.toString(picture.getHeight()));
         picture.getPersons().forEach(person -> {

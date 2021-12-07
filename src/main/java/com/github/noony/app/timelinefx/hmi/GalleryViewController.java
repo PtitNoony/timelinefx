@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -147,7 +146,7 @@ public class GalleryViewController implements Initializable, ViewController {
         pictureNameColumn.setCellValueFactory((TableColumn.CellDataFeatures<Picture, String> param) -> new ReadOnlyStringWrapper("" + param.getValue().getName()));
         //
         pictureDateColumn.setPrefWidth(100);
-        pictureDateColumn.setCellValueFactory((TableColumn.CellDataFeatures<Picture, String> param) -> new ReadOnlyStringWrapper("" + param.getValue().getCreationDate().format(DateTimeFormatter.ISO_DATE)));
+        pictureDateColumn.setCellValueFactory((TableColumn.CellDataFeatures<Picture, String> param) -> new ReadOnlyStringWrapper("" + param.getValue().getAbsoluteTimeAsString()));
         //
         picturePeopleColumn.setPrefWidth(150);
         picturePeopleColumn.setCellValueFactory(

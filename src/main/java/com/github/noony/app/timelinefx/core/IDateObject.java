@@ -37,4 +37,6 @@ public interface IDateObject {
     void setTimestamp(long aTimestamp);
 
     long getAbsoluteTime();
+
+    String getAbsoluteTimeAsString();
 }

@@ -24,6 +24,9 @@ public interface IFileObject extends IFriezeObject {
 
     String getName();
 
+    //TODO :: in FriezeObject ?
+    void setName(String aName);
+
     TimeLineProject getProject();
 
     String getProjectRelativePath();

@@ -16,51 +16,19 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
 
 /**
  *
  * @author hamon
  */
-public class Picture extends FriezeObject implements IFileObject {
+public class Picture extends AbstractPicture {
 
-    public static final String NAME_CHANGED = "pictureNameChanged";
-    public static final String DATE_CHANGED = "pictureDateChanged";
-    public static final String PERSON_ADDED = "picturePersonAdded";
-    public static final String PERSON_REMOVED = "picturePersonRemoved";
-    public static final String PERSONS_REORDED = "picturePersonsReordered";
-    public static final String PLACE_ADDED = "picturePlaceAdded";
-    public static final String PLACE_REMOVED = "picturePlaceRemoved";
-
-    private final PropertyChangeSupport propertyChangeSupport;
-    private final List<Person> persons;
-    private final List<Place> places;
-    //
     private final TimeLineProject project;
-    private final String path;
-    private final int width;
-    private final int height;
-    //
-    private String name;
-    private LocalDateTime creationDate;
 
-    protected Picture(TimeLineProject aProject, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
-        super(id);
+    protected Picture(TimeLineProject aProject, long id, String pictureName, LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+        super(id, pictureName, picturePath, pictureWidth, pictureHeight, pictureCreationDate);
         project = aProject;
-        propertyChangeSupport = new PropertyChangeSupport(Picture.this);
-        name = pictureName;
-        creationDate = pictureCreationDate;
-        path = picturePath;
-        persons = new ArrayList<>();
-        places = new ArrayList<>();
-        width = pictureWidth;
-        height = pictureHeight;
     }
 
     @Override
@@ -68,116 +36,9 @@ public class Picture extends FriezeObject implements IFileObject {
         return project;
     }
 
-    public void addListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
-    public void setName(String aName) {
-        name = aName;
-        propertyChangeSupport.firePropertyChange(NAME_CHANGED, this, name);
-    }
-
-    public void setCreationDate(LocalDateTime aCreationDate) {
-        creationDate = aCreationDate;
-        propertyChangeSupport.firePropertyChange(DATE_CHANGED, this, creationDate);
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void addPerson(Person aPerson) {
-        if (!persons.contains(aPerson)) {
-            persons.add(aPerson);
-            propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
-        }
-    }
-
-    public void removePerson(Person aPerson) {
-        if (persons.contains(aPerson)) {
-            persons.remove(aPerson);
-            propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, aPerson);
-        }
-    }
-
-    public void movePersonUp(Person aPerson) {
-        int index = persons.indexOf(aPerson);
-        if (index > 0) {
-            Collections.swap(persons, index, index - 1);
-            propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
-        }
-    }
-
-    public void movePersonDown(Person aPerson) {
-        int index = persons.indexOf(aPerson);
-        if (index != 1 & index < persons.size() - 1) {
-            Collections.swap(persons, index + 1, index);
-            propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
-        }
-    }
-
-    public void addPlace(Place aPlace) {
-        if (!places.contains(aPlace)) {
-            places.add(aPlace);
-            propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
-        }
-    }
-
-    public void removePlace(Place aPlace) {
-        if (places.contains(aPlace)) {
-            places.remove(aPlace);
-            propertyChangeSupport.firePropertyChange(PLACE_REMOVED, this, aPlace);
-        }
-    }
-
-    public List<Person> getPersons() {
-        return Collections.unmodifiableList(persons);
-    }
-
-    public List<Place> getPlaces() {
-        return Collections.unmodifiableList(places);
-    }
-
-    @Override
-    public String getProjectRelativePath() {
-        return path;
-    }
-
-    @Override
-    public String getAbsolutePath() {
-        return project.getProjectFolder().getAbsolutePath() + File.separator + path;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
     @Override
     public String toString() {
-        return "Pic[" + name + "]";
-    }
-
-    @Override
-    public int compareTo(IFileObject other) {
-        if (other == null) {
-            return 1;
-        } else if (other instanceof Picture picture) {
-            return creationDate.compareTo(picture.creationDate);
-        }
-        return getAbsolutePath().compareTo(other.getAbsolutePath());
+        return "Pic[" + getName() + "]";
     }
 
 }

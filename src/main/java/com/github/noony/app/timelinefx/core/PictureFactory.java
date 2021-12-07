@@ -35,7 +35,7 @@ import org.apache.commons.io.FileUtils;
  *
  * @author hamon
  */
-public class PictureFactory implements IFactory {
+public class PictureFactory {
 
     public static final String PICTURE_ADDED = "pictureAdded";
 
@@ -73,7 +73,7 @@ public class PictureFactory implements IFactory {
             }
         }
         var picInfo = MetadataParser.parseMetadata(project, pictureFile);
-        var picture = new Picture(project, FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
+        var picture = new Picture(project, FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
@@ -85,7 +85,7 @@ public class PictureFactory implements IFactory {
         if (!FriezeObjectFactory.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FriezeObjectFactory.get(id));
         }
-        var picture = new Picture(project, id, pictureName, pictureCreationDate, picturePath, pictureWidth, pictureHeight);
+        var picture = new Picture(project, id, pictureName, pictureCreationDate.toLocalDate(), picturePath, pictureWidth, pictureHeight);
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);

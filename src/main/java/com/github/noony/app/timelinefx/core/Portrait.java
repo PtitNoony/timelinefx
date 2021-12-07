@@ -16,69 +16,62 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author hamon
  */
-public class Portrait extends FriezeObject implements IFileObject, IDateObject {
-
-    public static final String TIME_CHANGED = "portraitTimeChanged";
+public class Portrait extends AbstractPicture {
 
     public static final Comparator<Portrait> COMPARATOR = (p1, p2) -> Long.compare(p1.getId(), p2.getId());
 
     public static final long DEFAULT_TIMESTAMP = 0;
 
-    private final PropertyChangeSupport propertyChangeSupport;
+    private static final Logger LOG = Logger.getGlobal();
+
     private final Person person;
-    private final String filePath;
-    //
-    private TimeFormat timeFormat;
-    private long timestamp;
-    private LocalDate date;
+    private final ArrayList<Person> persons;
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, long aTimestamp) {
-        super(aPortraitID);
-        propertyChangeSupport = new PropertyChangeSupport(Portrait.this);
+    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
+        super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aTimestamp);
         person = aPerson;
-        filePath = aFilePath;
-        timeFormat = TimeFormat.TIME_MIN;
-        timestamp = aTimestamp;
-        date = null;
+        persons = new ArrayList<>(1);
+        persons.add(person);
     }
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, LocalDate aDate) {
-        super(aPortraitID);
-        propertyChangeSupport = new PropertyChangeSupport(Portrait.this);
+    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+        super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aDate);
         person = aPerson;
-        filePath = aFilePath;
-        timeFormat = TimeFormat.LOCAL_TIME;
-        date = aDate;
-        timestamp = -1;
+        persons = new ArrayList<>(1);
+        persons.add(person);
     }
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath) {
-        this(aPortraitID, aPerson, aFilePath, DEFAULT_TIMESTAMP);
-    }
-
-    @Override
-    public String getName() {
-        return toString();
+    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight) {
+        this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
     }
 
     @Override
-    public String getProjectRelativePath() {
-        return filePath;
+    public List<Person> getPersons() {
+        return Collections.unmodifiableList(persons);
     }
 
     @Override
-    public String getAbsolutePath() {
-        return getProject().getProjectFolder().getAbsolutePath() + File.separator + filePath;
+    public boolean addPerson(Person aPerson) {
+        LOG.log(Level.INFO, "No person can be added to a portrait. ({0}, {1})", new Object[]{this, aPerson});
+        return false;
+    }
+
+    @Override
+    public boolean removePerson(Person aPerson) {
+        LOG.log(Level.INFO, "No person can be removed from a portrait. ({0}, {1})", new Object[]{this, aPerson});
+        return false;
     }
 
     @Override
@@ -96,68 +89,23 @@ public class Portrait extends FriezeObject implements IFileObject, IDateObject {
         return getAbsolutePath().compareTo(other.getAbsolutePath());
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
-    }
-
     public Person getPerson() {
         return person;
     }
 
     @Override
-    public TimeFormat getTimeFormat() {
-        return timeFormat;
+    public boolean addPlace(Place aPlace) {
+        return false;
     }
 
     @Override
-    public void setTimeFormat(TimeFormat aTimeFormat) {
-        timeFormat = aTimeFormat;
-    }
-
-    @Override
-    public LocalDate getDate() {
-        return date;
-    }
-
-    @Override
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    @Override
-    public void setDate(LocalDate aDate) {
-        date = aDate;
-        timeFormat = TimeFormat.LOCAL_TIME;
-        propertyChangeSupport.firePropertyChange(TIME_CHANGED, timeFormat, date);
-    }
-
-    @Override
-    public void setTimestamp(long aTimestamp) {
-        timestamp = aTimestamp;
-        timeFormat = TimeFormat.TIME_MIN;
-        propertyChangeSupport.firePropertyChange(TIME_CHANGED, timeFormat, timestamp);
-    }
-
-    @Override
-    public long getAbsoluteTime() {
-        switch (timeFormat) {
-            case LOCAL_TIME -> {
-                return date.toEpochDay();
-            }
-            case TIME_MIN -> {
-                return timestamp;
-            }
-        }
-        throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+    public boolean removePlace(Place aPlace) {
+        return false;
     }
 
     @Override
     public String toString() {
-        return filePath;
+        return getName();
     }
 
 }

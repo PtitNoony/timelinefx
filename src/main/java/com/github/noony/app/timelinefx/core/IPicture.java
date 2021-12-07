@@ -16,20 +16,35 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import java.beans.PropertyChangeListener;
+import java.util.List;
 
 /**
  *
  * @author hamon
  */
-public interface IFactory {
+public interface IPicture extends IDateObject, IFileObject {
 
-    static void addPropertyChangeListener(PropertyChangeListener listener) {
-//        PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
-    }
+    String NAME_CHANGED = "pictureNameChanged";
+    String DATE_CHANGED = "pictureDateChanged";
+    String PERSON_ADDED = "picturePersonAdded";
+    String PERSON_REMOVED = "picturePersonRemoved";
+    String PERSONS_REORDED = "picturePersonsReordered";
+    String PLACE_ADDED = "picturePlaceAdded";
+    String PLACE_REMOVED = "picturePlaceRemoved";
 
-    static void removePropertyChangeListener(PropertyChangeListener listener) {
-//        PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
-    }
+    List<Person> getPersons();
 
+    boolean addPerson(Person aPerson);
+
+    boolean removePerson(Person aPerson);
+
+    List<Place> getPlaces();
+
+    boolean addPlace(Place aPlace);
+
+    boolean removePlace(Place aPlace);
+
+    int getWidth();
+
+    int getHeight();
 }

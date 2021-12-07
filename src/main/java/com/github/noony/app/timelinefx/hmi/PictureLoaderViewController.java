@@ -31,7 +31,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -164,7 +164,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         pictureFile = new File(picture.getProjectRelativePath());
         pictureName = pictureFile.getName();
         fileField.setText(pictureFile.getAbsolutePath());
-        pictureDateField.setText(picture.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));
+        pictureDateField.setText(picture.getAbsoluteTimeAsString());
         pictureNameField.setText(pictureName);
         updateActions();
     }
@@ -189,11 +189,11 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         peopleCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPerson(p));
         placesCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPlace(p));
         try {
-            var localDateTime = LocalDateTime.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
-            picture.setCreationDate(localDateTime);
+            var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+            picture.setDate(localDate);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
-            picture.setCreationDate(LocalDateTime.now());
+            picture.setDate(LocalDate.now());
         }
     }
 
@@ -205,11 +205,11 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         placesCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPlace(p));
         picture.setName(pictureNameField.getText());
         try {
-            var localDateTime = LocalDateTime.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
-            picture.setCreationDate(localDateTime);
+            var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+            picture.setDate(localDate);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
-            picture.setCreationDate(LocalDateTime.now());
+            picture.setDate(LocalDate.now());
         }
 
     }

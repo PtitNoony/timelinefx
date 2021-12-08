@@ -32,6 +32,14 @@ public interface IPicture extends IDateObject, IFileObject {
     String PLACE_ADDED = "picturePlaceAdded";
     String PLACE_REMOVED = "picturePlaceRemoved";
 
+    static IPicture getPicture(long pictureID) {
+        var picture = PictureFactory.getPicture(pictureID);
+        if (picture != null) {
+            return picture;
+        }
+        return PortraitFactory.getPortrait(pictureID);
+    }
+
     List<Person> getPersons();
 
     boolean addPerson(Person aPerson);

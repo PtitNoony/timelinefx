@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.PictureInfo;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.save.XMLHandler;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
@@ -37,11 +38,13 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -67,6 +70,8 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
     @FXML
     private TextField pictureNameField;
     @FXML
+    private ChoiceBox<TimeFormat> timeformatCB;
+    @FXML
     private TextField pictureDateField;
     @FXML
     private CheckListView<Person> peopleCheckListView;
@@ -91,6 +96,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         LOG.log(Level.INFO, "Loading PictureLoaderViewController");
         peopleCheckListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         placesCheckListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        timeformatCB.setItems(FXCollections.observableArrayList(TimeFormat.values()));
         editionMode = EditionMode.CREATION;
         reset();
     }
@@ -188,12 +194,27 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         picture = PictureFactory.createPicture(project, pictureFile, pictureName);
         peopleCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPerson(p));
         placesCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPlace(p));
-        try {
-            var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
-            picture.setDate(localDate);
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
-            picture.setDate(LocalDate.now());
+        switch (timeformatCB.getSelectionModel().getSelectedItem()) {
+            case LOCAL_TIME -> {
+                try {
+                    var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+                    picture.setDate(localDate);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
+                    picture.setDate(LocalDate.now());
+                }
+            }
+            case TIME_MIN -> {
+                try {
+                    var localTimestamp = Long.parseLong(pictureDateField.getText().trim());
+                    picture.setTimestamp(localTimestamp);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Could not parse timestamp :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
+                    picture.setTimestamp(0);
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeformatCB.getSelectionModel().getSelectedItem());
         }
     }
 

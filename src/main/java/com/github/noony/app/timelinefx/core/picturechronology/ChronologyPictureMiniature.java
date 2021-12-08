@@ -21,9 +21,7 @@ import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import javafx.geometry.Point2D;
 
@@ -41,17 +39,15 @@ public class ChronologyPictureMiniature extends FriezeObject {
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final IPicture picture;
-    private final List<Person> persons;
     private Point2D position;
     private double scale;
 
-    protected ChronologyPictureMiniature(long id, IPicture picture, Point2D position, double scale) {
+    protected ChronologyPictureMiniature(long id, IPicture aPicture, Point2D aPosition, double aScale) {
         super(id);
         propertyChangeSupport = new PropertyChangeSupport(ChronologyPictureMiniature.this);
-        persons = new LinkedList<>(picture.getPersons());
-        this.picture = picture;
-        this.position = position;
-        this.scale = scale;
+        picture = aPicture;
+        position = aPosition;
+        scale = aScale;
     }
 
     public void addListener(PropertyChangeListener listener) {
@@ -71,15 +67,15 @@ public class ChronologyPictureMiniature extends FriezeObject {
     }
 
     public List<Person> getPersons() {
-        return Collections.unmodifiableList(persons);
+        return picture.getPersons();
     }
 
     public int getPersonIndex(Person aPerson) {
-        return persons.indexOf(aPerson);
+        return picture.getPersons().indexOf(aPerson);
     }
 
     public Person getPersonAtIndex(int index) {
-        return persons.get(index);
+        return picture.getPersons().get(index);
     }
 
     public void setPosition(Point2D newPosition) {

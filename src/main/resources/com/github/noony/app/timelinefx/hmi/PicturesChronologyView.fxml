@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.25" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.PicturesChronologyViewController">
+<SplitPane dividerPositions="0.3611738148984199" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.PicturesChronologyViewController">
    <items>
       <SplitPane fx:id="leftSplitPane" orientation="VERTICAL">
          <items>
@@ -21,11 +21,11 @@
                <tabs>
                   <Tab closable="false" text="Chonologies">
                      <content>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane>
                            <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+                              <VBox spacing="8.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
                                  <children>
-                                    <ListView fx:id="chronologiesListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="SOMETIMES" />
+                                    <ListView fx:id="chronologiesListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES" />
                                     <HBox alignment="CENTER" spacing="8.0" VBox.vgrow="NEVER">
                                        <children>
                                           <Button mnemonicParsing="false" text="Delete" />
@@ -43,8 +43,22 @@
                      <content>
                         <VBox spacing="8.0">
                            <children>
-                              <ScrollPane fx:id="picturesPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES" />
+                              <ScrollPane fx:id="picturesPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="200.0" VBox.vgrow="SOMETIMES" />
                               <Button fx:id="insertPictureB" mnemonicParsing="false" onAction="#handleInsertPicture" text="Insert">
+                                 <VBox.margin>
+                                    <Insets bottom="8.0" left="8.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab closable="false" text="Portraits">
+                     <content>
+                        <VBox spacing="8.0">
+                           <children>
+                              <ScrollPane fx:id="portraitsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="200.0" VBox.vgrow="SOMETIMES" />
+                              <Button fx:id="insertPoirtraitB" mnemonicParsing="false" onAction="#handleInsertPortrait" text="Insert">
                                  <VBox.margin>
                                     <Insets bottom="8.0" left="8.0" />
                                  </VBox.margin>

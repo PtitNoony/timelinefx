@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.save.v2;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.IDateObject;
+import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -465,11 +466,11 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         var name = pictureElement.getAttribute(NAME_ATR);
         var path = pictureElement.getAttribute(PATH_ATR);
         relativePathLoaded.add(path);
-        var dateTime = LocalDateTime.parse(pictureElement.getAttribute(DATE_ATR), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
         var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
         var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));
         //
-        Picture picture = PictureFactory.createPicture(project, id, name, dateTime, path, width, height);
+        Picture picture = PictureFactory.createPicture(project, id, name, LocalDateTime.MIN, path, width, height);
+        parseObjectTimeValue(pictureElement, picture);
         //
         var pictureChildrenElements = pictureElement.getChildNodes();
         for (int i = 0; i < pictureChildrenElements.getLength(); i++) {
@@ -871,7 +872,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         double xPos = Double.parseDouble(miniatureElement.getAttribute(X_POS_ATR));
         double yPos = Double.parseDouble(miniatureElement.getAttribute(Y_POS_ATR));
         double scale = Double.parseDouble(miniatureElement.getAttribute(SCALE_ATR));
-        var miniature = PictureChronologyFactory.createChronologyPictureMiniature(PictureFactory.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
+        var miniature = PictureChronologyFactory.createChronologyPictureMiniature(IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
         return miniature;
     }
 
@@ -943,7 +944,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         pictureElement.setAttribute(ID_ATR, Long.toString(picture.getId()));
         pictureElement.setAttribute(NAME_ATR, picture.getName());
         pictureElement.setAttribute(PATH_ATR, picture.getProjectRelativePath());
-        pictureElement.setAttribute(DATE_ATR, picture.getAbsoluteTimeAsString());
         pictureElement.setAttribute(WIDTH_ATR, Integer.toString(picture.getWidth()));
         pictureElement.setAttribute(HEIGHT_ATR, Integer.toString(picture.getHeight()));
         picture.getPersons().forEach(person -> {
@@ -956,6 +956,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             placeElement.setAttribute(ID_ATR, Long.toString(place.getId()));
             pictureElement.appendChild(placeElement);
         });
+        saveObjectTime(pictureElement, picture);
         return pictureElement;
     }
 

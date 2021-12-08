@@ -84,7 +84,7 @@ public class GalleryTiles implements IFxNode {
         objectList.stream()
                 .sorted((p1, p2) -> p1.compareTo(p2))
                 .collect(Collectors.toList());
-        objectList.forEach(GalleryTiles.this::createSetTile);
+        objectList.forEach(GalleryTiles.this::addFileObject);
     }
 
     public GalleryTiles() {
@@ -127,7 +127,7 @@ public class GalleryTiles implements IFxNode {
     }
 
     private void init(int nbItems) {
-        int nbColumns = 2;
+        int nbColumns = 3;
         int nbRows = nbItems / nbColumns + 1;
         tilesPane = new FlowGridPane(nbRows, nbColumns);
         tilesPane.setHgap(16);

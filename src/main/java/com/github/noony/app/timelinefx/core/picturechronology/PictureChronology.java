@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.DrawableObject;
 import com.github.noony.app.timelinefx.core.FriezeObject;
+import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -116,7 +117,7 @@ public class PictureChronology extends FriezeObject implements DrawableObject {
         });
     }
 
-    public ChronologyPictureMiniature createChronologyPicture(Picture aPicture) {
+    public ChronologyPictureMiniature createChronologyPicture(IPicture aPicture) {
         var chronologyPictureMiniature = PictureChronologyFactory.createChronologyPictureMiniature(aPicture, new Point2D(width / 2.0, height / 2.0), 0.2);
         addChronologyPicture(chronologyPictureMiniature);
         return chronologyPictureMiniature;

@@ -17,8 +17,8 @@
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
+import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +84,7 @@ public class PictureChronologyFactory {
         return CHRONOLOGY_PICTURES.get(chronologyPictureMiniatureID);
     }
 
-    public static ChronologyPictureMiniature createChronologyPictureMiniature(Picture aPicture, Point2D aPosition, double aScale) {
+    public static ChronologyPictureMiniature createChronologyPictureMiniature(IPicture aPicture, Point2D aPosition, double aScale) {
         LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating ChronologyPictureMiniature with picture={0} position={1} scale={2}", new Object[]{aPicture, aPosition, aScale});
         var chronologyPictureMiniature = new ChronologyPictureMiniature(FriezeObjectFactory.getNextID(), aPicture, aPosition, aScale);
         CHRONOLOGY_PICTURES.put(chronologyPictureMiniature.getId(), chronologyPictureMiniature);

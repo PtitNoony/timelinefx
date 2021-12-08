@@ -24,6 +24,8 @@ import java.time.LocalDate;
  */
 public interface IDateObject {
 
+    long DEFAULT_TIMESTAMP = 0;
+
     TimeFormat getTimeFormat();
 
     void setTimeFormat(TimeFormat aTimeFormat);

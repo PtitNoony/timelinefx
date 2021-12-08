@@ -136,7 +136,6 @@ public class PicturesChronologyViewController implements Initializable {
         }
         List<IFileObject> portraits = new LinkedList<>();
         portraits.addAll(PortraitFactory.getPortraits());
-        System.err.println(" PORTRAITS == " + portraits);
         portraitGalleryTiles = new GalleryTiles(portraits);
         portraitGalleryTiles.addPropertyChangeListener(portraitTilesListener);
         portraitsPane.setContent(portraitGalleryTiles.getNode());

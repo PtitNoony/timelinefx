@@ -32,8 +32,6 @@ public class Portrait extends AbstractPicture {
 
     public static final Comparator<Portrait> COMPARATOR = (p1, p2) -> Long.compare(p1.getId(), p2.getId());
 
-    public static final long DEFAULT_TIMESTAMP = 0;
-
     private static final Logger LOG = Logger.getGlobal();
 
     private final Person person;

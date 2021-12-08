@@ -19,6 +19,8 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.core.IFileObject;
 import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
+import com.github.noony.app.timelinefx.core.Portrait;
+import com.github.noony.app.timelinefx.core.PortraitFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
@@ -53,9 +55,11 @@ public class PicturesChronologyViewController implements Initializable {
     private static final Logger LOG = Logger.getGlobal();
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private final PropertyChangeListener galleryTilesListener = PicturesChronologyViewController.this::handleGalleryTilesChanges;
+    private final PropertyChangeListener portraitTilesListener = PicturesChronologyViewController.this::handlePortraitTilesChanges;
 
     private TimeLineProject project;
-    private GalleryTiles galleryTiles = null;
+    private GalleryTiles picturesGalleryTiles = null;
+    private GalleryTiles portraitGalleryTiles = null;
     private PictureChronology currentPictureChronology = null;
     private PictureChronologyDrawing pictureChronologyDrawing = null;
     //
@@ -70,11 +74,11 @@ public class PicturesChronologyViewController implements Initializable {
     @FXML
     private SplitPane leftSplitPane;
     @FXML
-    private ScrollPane picturesPane;
+    private ScrollPane picturesPane, portraitsPane;
     @FXML
     private TextField chronologyNameField;
     @FXML
-    private Button insertPictureB;
+    private Button insertPictureB, insertPortraitB;
 
     private AnchorPane configuratorView;
 
@@ -83,6 +87,7 @@ public class PicturesChronologyViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
+        PortraitFactory.addPropertyChangeListener(this::handlePortraitFactoryChanges);
         loadPictureChronologyConfiguratorView();
         //
         projectListener = this::handleProjectChanges;
@@ -110,16 +115,31 @@ public class PicturesChronologyViewController implements Initializable {
         System.err.println(" handleInsertPicture");
     }
 
+    @FXML
+    protected void handleInsertPortrait(ActionEvent event) {
+        System.err.println(" handleInsertPortrait");
+    }
+
     protected void setProject(TimeLineProject aProject) {
         project = aProject;
-        if (galleryTiles != null) {
-            galleryTiles.removePropertyChangeListener(galleryTilesListener);
+        if (picturesGalleryTiles != null) {
+            picturesGalleryTiles.removePropertyChangeListener(galleryTilesListener);
         }
         List<IFileObject> pictures = new LinkedList<>();
         pictures.addAll(PictureFactory.getPictures());
-        galleryTiles = new GalleryTiles(pictures);
-        galleryTiles.addPropertyChangeListener(galleryTilesListener);
-        picturesPane.setContent(galleryTiles.getNode());
+        picturesGalleryTiles = new GalleryTiles(pictures);
+        picturesGalleryTiles.addPropertyChangeListener(galleryTilesListener);
+        picturesPane.setContent(picturesGalleryTiles.getNode());
+        //
+        if (portraitGalleryTiles != null) {
+            portraitGalleryTiles.removePropertyChangeListener(portraitTilesListener);
+        }
+        List<IFileObject> portraits = new LinkedList<>();
+        portraits.addAll(PortraitFactory.getPortraits());
+        System.err.println(" PORTRAITS == " + portraits);
+        portraitGalleryTiles = new GalleryTiles(portraits);
+        portraitGalleryTiles.addPropertyChangeListener(portraitTilesListener);
+        portraitsPane.setContent(portraitGalleryTiles.getNode());
     }
 
     protected void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -169,11 +189,24 @@ public class PicturesChronologyViewController implements Initializable {
     }
 
     private void handlePictureFactoryChanges(PropertyChangeEvent event) {
-        if (galleryTiles != null) {
+        if (picturesGalleryTiles != null) {
             switch (event.getPropertyName()) {
                 case PictureFactory.PICTURE_ADDED -> {
                     var picture = (Picture) event.getNewValue();
-                    galleryTiles.addFileObject(picture);
+                    picturesGalleryTiles.addFileObject(picture);
+                }
+                default ->
+                    throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
+            }
+        }
+    }
+
+    private void handlePortraitFactoryChanges(PropertyChangeEvent event) {
+        if (portraitGalleryTiles != null) {
+            switch (event.getPropertyName()) {
+                case PortraitFactory.PORTRAIT_ADDED -> {
+                    var portrait = (Portrait) event.getNewValue();
+                    portraitGalleryTiles.addFileObject(portrait);
                 }
                 default ->
                     throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
@@ -192,6 +225,20 @@ public class PicturesChronologyViewController implements Initializable {
                 break;
             default:
                 throw new UnsupportedOperationException("While handleGalleryTilesChanges :: " + event.getPropertyName());
+        }
+    }
+
+    private void handlePortraitTilesChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case GalleryTiles.TILE_CLICKED -> {
+                Portrait portrait = (Portrait) event.getNewValue();
+                ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(portrait);
+            }
+            case GalleryTiles.TILE_SELECTED -> {
+                // nothing to do for now
+            }
+            default ->
+                throw new UnsupportedOperationException("While handlePortraitTilesChanges :: " + event.getPropertyName());
         }
     }
 

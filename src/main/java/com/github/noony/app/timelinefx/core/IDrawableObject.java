@@ -20,9 +20,17 @@ package com.github.noony.app.timelinefx.core;
  *
  * @author hamon
  */
-public interface DrawableObject {
+public interface IDrawableObject {
 
+    /**
+     *
+     * @return the object's width
+     */
     double getWidth();
 
+    /**
+     *
+     * @return the object's height
+     */
     double getHeight();
 }

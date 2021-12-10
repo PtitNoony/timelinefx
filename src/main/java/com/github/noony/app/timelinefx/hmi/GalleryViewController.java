@@ -207,7 +207,7 @@ public class GalleryViewController implements Initializable, ViewController {
 
     private void handlePictureLoaderControllerChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case PictureLoaderViewController.OK_EVENT:
+            case PictureLoaderViewController.OK_EVENT -> {
                 final Picture newPicture = (Picture) event.getNewValue();
                 runLater(() -> {
                     if (!picturesTableView.getItems().contains(newPicture)) {
@@ -216,7 +216,7 @@ public class GalleryViewController implements Initializable, ViewController {
                         picturesTableView.refresh();
                     }
                 });
-                break;
+            }
         }
     }
 

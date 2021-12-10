@@ -51,7 +51,7 @@ public class ConfigurationViewController implements Initializable {
     }
 
     @FXML
-    private void handlePicLocationAction(ActionEvent event) {
+    protected void handlePicLocationAction(ActionEvent event) {
         directoryChooser.setInitialDirectory(new File(Configuration.getProjectsParentFolder()));
         directoryChooser.setTitle("Select Timelines Parent Directory");
         File directory = directoryChooser.showDialog(timelinesLocationField.getScene().getWindow());
@@ -62,7 +62,7 @@ public class ConfigurationViewController implements Initializable {
     }
 
     @FXML
-    private void handleConfigurationViewOK(ActionEvent event) {
+    protected void handleConfigurationViewOK(ActionEvent event) {
         propertyChangeSupport.firePropertyChange(CLOSE_REQUESTED, null, this);
     }
 
@@ -72,10 +72,9 @@ public class ConfigurationViewController implements Initializable {
 
     private void handleGlobalConfigurationChanged(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Configuration.TIMELINES_FOLDER_LOCATION_CHANGED:
+            case Configuration.TIMELINES_FOLDER_LOCATION_CHANGED ->
                 runLater(() -> timelinesLocationField.setText((String) event.getNewValue()));
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException("Unsupported configuration change : " + event);
         }
     }

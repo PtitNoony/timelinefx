@@ -119,20 +119,18 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
 
     private void handlePropertyChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case FreeMapPortrait.POSITION_CHANGED:
+            case FreeMapPortrait.POSITION_CHANGED -> {
                 updateX((double) event.getOldValue());
                 updateY((double) event.getNewValue());
-                break;
-            case FreeMapPortrait.RADIUS_CHANGED:
+            }
+            case FreeMapPortrait.RADIUS_CHANGED ->
                 updateLayout();
-                break;
-            case Person.PICTURE_CHANGED:
+            case Person.PICTURE_CHANGED ->
                 updateImage();
-                break;
-            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED:
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
                 // nothin to do
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }

@@ -27,6 +27,9 @@ import java.util.logging.Logger;
  */
 public class FriezeObjectFactory {
 
+    /**
+     * Default logging level to be used when creating an object in a Factory
+     */
     public static final Level CREATION_LOGGING_LEVEL = Level.FINE;
 
     private static final Logger LOG = Logger.getGlobal();
@@ -38,6 +41,9 @@ public class FriezeObjectFactory {
         // private utility constructor
     }
 
+    /**
+     * Resets all the factories and restarts the unique ID counter to 0.
+     */
     public static final void reset() {
         OBJECTS.clear();
         nextUniqueId = 0L;
@@ -45,8 +51,15 @@ public class FriezeObjectFactory {
         PlaceFactory.reset();
         PersonFactory.reset();
         StayFactory.reset();
+        PictureFactory.reset();
+        PortraitFactory.reset();
     }
 
+    /**
+     * Checks that the object's id is not already used.
+     *
+     * @param object the object the be added
+     */
     public static final void addObject(FriezeObject object) {
         if (OBJECTS.containsKey(object.getId())) {
             throw new IllegalStateException();
@@ -56,16 +69,30 @@ public class FriezeObjectFactory {
         nextUniqueId = Math.max(nextUniqueId, object.getId() + 1);
     }
 
+    /**
+     *
+     * @return the next available unique id
+     */
     public static final long getNextID() {
         long result = nextUniqueId;
         incrID();
         return result;
     }
 
+    /**
+     *
+     * @param id an id
+     * @return the corresponding FriezeObject if it exists, null otherwise.
+     */
     public static final FriezeObject get(long id) {
         return OBJECTS.get(id);
     }
 
+    /**
+     *
+     * @param id an id
+     * @return whether the id is already used by an object.
+     */
     public static final boolean isIdAvailable(long id) {
         return !OBJECTS.containsKey(id);
     }

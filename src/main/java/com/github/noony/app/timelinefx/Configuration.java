@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,7 +66,7 @@ public class Configuration {
     }
 
     public static final void loadPreferences() {
-        File userDirFile = new File(DEFAULT_TIMELINES_FOLDER_PATH + File.separator + PREFERENCE_FILE_NAME);
+        var userDirFile = new File(DEFAULT_TIMELINES_FOLDER_PATH + File.separator + PREFERENCE_FILE_NAME);
         if (userDirFile.exists()) {
             preferenceFile = userDirFile;
         } else {
@@ -79,10 +78,10 @@ public class Configuration {
     private static File getUserHomePreferenceFile() {
         var filePathS = DEFAULT_TIMELINES_FOLDER_PATH;
         LOG.log(Level.INFO, "Creating preference file in user.home :: {0}", filePathS);
-        File preferenceFolder = new File(filePathS);
+        var preferenceFolder = new File(filePathS);
         if (!preferenceFolder.exists()) {
             try {
-                Path path = preferenceFolder.toPath();
+                var path = preferenceFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Could not create folder : {0} :: {1}", new Object[]{filePathS, ex});

@@ -16,7 +16,6 @@
  */
 package com.github.noony.app.timelinefx.core.picturechronology;
 
-import com.github.noony.app.timelinefx.core.DrawableObject;
 import com.github.noony.app.timelinefx.core.FriezeObject;
 import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
@@ -33,12 +32,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.geometry.Point2D;
 import javafx.util.Pair;
+import com.github.noony.app.timelinefx.core.IDrawableObject;
 
 /**
  *
  * @author hamon
  */
-public class PictureChronology extends FriezeObject implements DrawableObject {
+public class PictureChronology extends FriezeObject implements IDrawableObject {
 
     public static final String DEFAULT_NAME = "PictureChronologyNoName";
 

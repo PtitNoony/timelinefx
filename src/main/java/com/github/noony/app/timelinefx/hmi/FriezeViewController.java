@@ -24,6 +24,7 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import com.github.noony.app.timelinefx.drawings.IFriezeView;
 import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapListCellImpl;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapView;
@@ -57,7 +58,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.CheckTreeView;
-import com.github.noony.app.timelinefx.drawings.IFriezeView;
 
 public class FriezeViewController implements Initializable {
 
@@ -286,19 +286,14 @@ public class FriezeViewController implements Initializable {
 
     private void handleProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PERSON_ADDED:
-            case TimeLineProject.PERSON_REMOVED:
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED ->
                 updatePersonTab();
-                break;
-            case TimeLineProject.PLACE_ADDED:
-            case TimeLineProject.PLACE_REMOVED:
+            case TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED ->
                 updatePlacesTab();
-                break;
-            case TimeLineProject.STAY_ADDED:
-            case TimeLineProject.STAY_REMOVED:
+            case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
                 // ignored
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }
     }

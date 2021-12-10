@@ -215,14 +215,14 @@ public class PicturesChronologyViewController implements Initializable {
 
     private void handleGalleryTilesChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case GalleryTiles.TILE_CLICKED:
+            case GalleryTiles.TILE_CLICKED -> {
                 Picture pic = (Picture) event.getNewValue();
                 ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(pic);
-                break;
-            case GalleryTiles.TILE_SELECTED:
+            }
+            case GalleryTiles.TILE_SELECTED -> {
                 // nothing to do for now
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException("While handleGalleryTilesChanges :: " + event.getPropertyName());
         }
     }

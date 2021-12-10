@@ -944,8 +944,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         pictureElement.setAttribute(ID_ATR, Long.toString(picture.getId()));
         pictureElement.setAttribute(NAME_ATR, picture.getName());
         pictureElement.setAttribute(PATH_ATR, picture.getProjectRelativePath());
-        pictureElement.setAttribute(WIDTH_ATR, Integer.toString(picture.getWidth()));
-        pictureElement.setAttribute(HEIGHT_ATR, Integer.toString(picture.getHeight()));
+        pictureElement.setAttribute(WIDTH_ATR, Integer.toString((int) picture.getWidth()));
+        pictureElement.setAttribute(HEIGHT_ATR, Integer.toString((int) picture.getHeight()));
         picture.getPersons().forEach(person -> {
             Element personElement = doc.createElement(PERSON_REF_ELEMENT);
             personElement.setAttribute(ID_ATR, Long.toString(person.getId()));
@@ -1006,7 +1006,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createFreeMapElement(Document doc, FriezeFreeMap friezeFreeMap) {
-        Element friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
+        var friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
         friezeFreeMapElement.setAttribute(NAME_ATR, friezeFreeMap.getName());
         friezeFreeMapElement.setAttribute(ID_ATR, Long.toString(friezeFreeMap.getId()));
         friezeFreeMapElement.setAttribute(WIDTH_ATR, Double.toString(friezeFreeMap.getFreeMapWidth()));
@@ -1018,19 +1018,19 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         friezeFreeMapElement.setAttribute(FREEMAP_PLOT_VISIBILITY_ATR, Boolean.toString(friezeFreeMap.getPlotVisibility()));
         friezeFreeMapElement.setAttribute(FREEMAP_PLOT_SIZE_ATR, Double.toString(friezeFreeMap.getPlotSize()));
         //
-        Element portraitsGroupElement = doc.createElement(PORTRAITS_GROUP);
+        var portraitsGroupElement = doc.createElement(PORTRAITS_GROUP);
         friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createFreeMapPortraitElement(doc, portrait)));
         friezeFreeMapElement.appendChild(portraitsGroupElement);
         //
-        Element plotsGroupElement = doc.createElement(PLOTS_GROUP);
+        var plotsGroupElement = doc.createElement(PLOTS_GROUP);
         friezeFreeMap.getPlots().forEach(plot -> plotsGroupElement.appendChild(createPlotElement(doc, plot)));
         friezeFreeMapElement.appendChild(plotsGroupElement);
         //
-        Element placesGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
+        var placesGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
         friezeFreeMap.getPlaces().forEach(place -> placesGroupElement.appendChild(createFreeMapPlaceElement(doc, place)));
         friezeFreeMapElement.appendChild(placesGroupElement);
         //
-        Element linksGroupElement = doc.createElement(LINKS_GROUP);
+        var linksGroupElement = doc.createElement(LINKS_GROUP);
         friezeFreeMap.getStayLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
         friezeFreeMap.getTravelLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
         friezeFreeMapElement.appendChild(linksGroupElement);
@@ -1039,7 +1039,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createFreeMapPortraitElement(Document doc, FreeMapPortrait portrait) {
-        Element portraitElement = doc.createElement(PORTRAIT_ELEMENT);
+        var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
         portraitElement.setAttribute(PERSON_ATR, Long.toString(portrait.getPerson().getId()));
         portraitElement.setAttribute(X_POS_ATR, Double.toString(portrait.getX()));
         portraitElement.setAttribute(Y_POS_ATR, Double.toString(portrait.getY()));
@@ -1048,7 +1048,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createPlotElement(Document doc, Plot plot) {
-        Element plotElement = doc.createElement(PLOT_ELEMENT);
+        var plotElement = doc.createElement(PLOT_ELEMENT);
         plotElement.setAttribute(TYPE_ATR, plot.getType().name());
         plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getParentPeriodID()));
         plotElement.setAttribute(X_POS_ATR, Double.toString(plot.getX()));
@@ -1057,7 +1057,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createLinkElement(Document doc, Link link) {
-        Element linkElement = doc.createElement(LINK_ELEMENT);
+        var linkElement = doc.createElement(LINK_ELEMENT);
         linkElement.setAttribute(TYPE_ATR, link.getType().name());
         linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginPlot().getParentPeriodID()));
         linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
@@ -1072,7 +1072,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createFreeMapPlaceElement(Document doc, FreeMapPlace freeMapPlace) {
-        Element placeElement = doc.createElement(FREEMAP_PLACE_ELEMENT);
+        var placeElement = doc.createElement(FREEMAP_PLACE_ELEMENT);
         placeElement.setAttribute(HEIGHT_ATR, Double.toString(freeMapPlace.getHeight()));
         placeElement.setAttribute(PLACE_ID_ATR, Long.toString(freeMapPlace.getPlace().getId()));
         placeElement.setAttribute(Y_POS_ATR, Double.toString(freeMapPlace.getYPos()));
@@ -1080,7 +1080,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createPictureChronologyElement(Document doc, PictureChronology pictureChronology) {
-        Element pictureChronologyElement = doc.createElement(PICTURE_CHRONOLOGY_ELEMENT);
+        var pictureChronologyElement = doc.createElement(PICTURE_CHRONOLOGY_ELEMENT);
         pictureChronologyElement.setAttribute(ID_ATR, Long.toString(pictureChronology.getId()));
         pictureChronologyElement.setAttribute(NAME_ATR, pictureChronology.getName());
         pictureChronologyElement.setAttribute(WIDTH_ATR, Double.toString(pictureChronology.getWidth()));
@@ -1091,7 +1091,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Element createPictureChronologyMiniature(Document doc, ChronologyPictureMiniature miniature) {
-        Element pictureChronologyMiniatureElement = doc.createElement(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT);
+        var pictureChronologyMiniatureElement = doc.createElement(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT);
         pictureChronologyMiniatureElement.setAttribute(ID_ATR, Long.toString(miniature.getId()));
         pictureChronologyMiniatureElement.setAttribute(X_POS_ATR, Double.toString(miniature.getPosition().getX()));
         pictureChronologyMiniatureElement.setAttribute(Y_POS_ATR, Double.toString(miniature.getPosition().getY()));

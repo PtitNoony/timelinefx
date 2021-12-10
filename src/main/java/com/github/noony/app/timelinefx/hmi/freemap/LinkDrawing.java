@@ -79,17 +79,17 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         line.setStroke(color);
         cubicCurve.setStroke(color);
         switch (link.getType()) {
-            case STAY:
+            case STAY -> {
                 line.setStrokeWidth(4.0);
                 cubicCurve.setStrokeWidth(4.0);
-                break;
-            case TRAVEL:
+            }
+            case TRAVEL -> {
                 line.setStrokeWidth(1.5);
                 line.setStrokeDashOffset(45);
                 cubicCurve.setStrokeWidth(1.5);
                 cubicCurve.setStrokeDashOffset(45);
-                break;
-            default:
+            }
+            default ->
                 throw new IllegalStateException();
         }
         startX = beginPlot.getX();
@@ -158,38 +158,34 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
 
     private void handleStartPlotChanged(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED:
+            case Plot.POS_CHANGED -> {
                 updateX1((double) event.getOldValue());
                 updateY1((double) event.getNewValue());
-                break;
-            case Plot.SELECTION_CHANGED:
-            case Plot.PLOT_SIZE_CHANGED:
-            case Plot.PLOT_VISIBILITY_CHANGED:
+            }
+            case Plot.SELECTION_CHANGED, Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
-                break;
-            case Plot.PLOT_DATE_CHANGED:
+            }
+            case Plot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
     private void handleEndPlotChanged(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED:
+            case Plot.POS_CHANGED -> {
                 updateX2((double) event.getOldValue());
                 updateY2((double) event.getNewValue());
-                break;
-            case Plot.SELECTION_CHANGED:
-            case Plot.PLOT_SIZE_CHANGED:
-            case Plot.PLOT_VISIBILITY_CHANGED:
+            }
+            case Plot.SELECTION_CHANGED, Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
-                break;
-            case Plot.PLOT_DATE_CHANGED:
+            }
+            case Plot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
@@ -224,32 +220,32 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
     private void updateLayout() {
         if (isSelected == true) {
             switch (link.getType()) {
-                case STAY:
+                case STAY -> {
                     line.setStrokeWidth(6.0 * scale);
                     cubicCurve.setStrokeWidth(6.0 * scale);
-                    break;
-                case TRAVEL:
+                }
+                case TRAVEL -> {
                     line.setStrokeWidth(2.5 * scale);
                     line.setStrokeDashOffset(45 * scale);
                     cubicCurve.setStrokeWidth(2.5 * scale);
                     cubicCurve.setStrokeDashOffset(45 * scale);
-                    break;
-                default:
+                }
+                default ->
                     throw new IllegalStateException();
             }
         } else {
             switch (link.getType()) {
-                case STAY:
+                case STAY -> {
                     line.setStrokeWidth(4.0 * scale);
                     cubicCurve.setStrokeWidth(4.0 * scale);
-                    break;
-                case TRAVEL:
+                }
+                case TRAVEL -> {
                     line.setStrokeWidth(1.5 * scale);
                     line.setStrokeDashOffset(45 * scale);
                     cubicCurve.setStrokeWidth(1.5 * scale);
                     cubicCurve.setStrokeDashOffset(45 * scale);
-                    break;
-                default:
+                }
+                default ->
                     throw new IllegalStateException();
             }
         }

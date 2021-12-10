@@ -139,12 +139,12 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     @Override
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
     @Override
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

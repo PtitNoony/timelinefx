@@ -446,20 +446,18 @@ public final class ProjectViewController implements Initializable {
 
     private void handleConfigurationControllerChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case ConfigurationViewController.CLOSE_REQUESTED:
+            case ConfigurationViewController.CLOSE_REQUESTED ->
                 hideModalStage();
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException("" + event);
         }
     }
 
     private void handleProjectCreationControllerChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case ProjectCreationWizardController.CANCEL:
+            case ProjectCreationWizardController.CANCEL ->
                 hideModalStage();
-                break;
-            case ProjectCreationWizardController.CREATE:
+            case ProjectCreationWizardController.CREATE -> {
                 hideModalStage();
                 var configParams = (Map<String, String>) event.getNewValue();
                 String projectName = configParams.get(TimeLineProject.PROJECT_NAME_KEY);
@@ -468,57 +466,52 @@ public final class ProjectViewController implements Initializable {
                 contentEditionView.setDisable(false);
                 timelineView.setDisable(false);
                 displayContentEditionView();
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException("" + event);
         }
     }
 
     private void handleEventChronologyViewControllerChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            default:
+            default ->
                 throw new UnsupportedOperationException("" + event);
         }
     }
 
     private void handleSaveWindowEvents(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case SaveWindow.CANCEL:
+            case SaveWindow.CANCEL ->
                 actionOnHold = ACTION_ON_HOLD.NONE;
-                break;
-            case SaveWindow.SAVE:
+            case SaveWindow.SAVE -> {
                 handleProjectSave(new ActionEvent());
                 executeActionOnHold();
-                break;
-            case SaveWindow.DISCARD:
+            }
+            case SaveWindow.DISCARD ->
                 executeActionOnHold();
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException("" + event);
         }
     }
 
     private void handlePictureLoaderWindowEvents(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case PictureLoaderViewController.CANCEL_EVENT:
+            case PictureLoaderViewController.CANCEL_EVENT ->
                 hideModalStage();
-                break;
-            case PictureLoaderViewController.FILE_REQUEST_EVENT:
-                // TODO : split code ?
+            case PictureLoaderViewController.FILE_REQUEST_EVENT -> // TODO : split code ?
                 pictureLoaderViewController.setFile(fileChooser.showOpenDialog(modalStage));
-                break;
-            case PictureLoaderViewController.OK_EVENT:
+            case PictureLoaderViewController.OK_EVENT -> {
                 galleryController.update();
                 hideModalStage();
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException("" + event);
         }
     }
 
     private void handleGalleryViewControllerChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case GalleryViewController.DISPLAY_PICTURE_LOADER:
+            case GalleryViewController.DISPLAY_PICTURE_LOADER -> {
                 if (pictureLoaderView == null) {
                     pictureLoaderView = (Parent) event.getNewValue();
                     pictureLoaderViewController = (PictureLoaderViewController) event.getOldValue();
@@ -526,8 +519,8 @@ public final class ProjectViewController implements Initializable {
                     pictureLoaderViewController.addPropertyChangeListener(this::handlePictureLoaderWindowEvents);
                 }
                 showModalStage(pictureLoaderView);
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException("" + event);
         }
     }

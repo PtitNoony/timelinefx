@@ -345,47 +345,41 @@ public final class ContentEditionViewController implements Initializable {
     private void handlePlaceCreationControllerChanges(PropertyChangeEvent event) {
         Place place;
         switch (event.getPropertyName()) {
-            case PlaceCreationViewController.PLACE_CREATED:
+            case PlaceCreationViewController.PLACE_CREATED -> {
                 place = (Place) event.getNewValue();
                 customModalWindow.hide();
                 timeLineProject.addPlace(place);
                 updatePlacesTab();
-                break;
+            }
 
-            case PlaceCreationViewController.PLACE_EDITIED:
+            case PlaceCreationViewController.PLACE_EDITIED -> {
                 place = (Place) event.getNewValue();
                 if (place.isRootPlace()) {
                     timeLineProject.addHighLevelPlace(place);
                 } else {
 //                    timeLineProject.addHighLevelPlace(place);
-                    // nothing is needed since the parent place will take care of things
+// nothing is needed since the parent place will take care of things
                 }
                 customModalWindow.hide();
                 updatePlacesTab();
-                break;
-            case PlaceCreationViewController.CANCEL_PLACE_CREATION:
+            }
+            case PlaceCreationViewController.CANCEL_PLACE_CREATION ->
                 customModalWindow.hide();
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }
     }
 
     private void handleTimelineChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PLACE_REMOVED:
-            case TimeLineProject.PLACE_ADDED:
+            case TimeLineProject.PLACE_REMOVED, TimeLineProject.PLACE_ADDED ->
                 runLater(this::updatePlacesTab);
-                break;
-            case TimeLineProject.PERSON_ADDED:
-            case TimeLineProject.PERSON_REMOVED:
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED ->
                 runLater(this::updatePersonTab);
-                break;
-            case TimeLineProject.STAY_ADDED:
-            case TimeLineProject.STAY_REMOVED:
+            case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
                 // TODO : see if ignoring is OK
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }
     }
@@ -393,25 +387,21 @@ public final class ContentEditionViewController implements Initializable {
     private void handlePersonCreationControllerChanges(PropertyChangeEvent event) {
         Person person;
         switch (event.getPropertyName()) {
-            case PersonCreationViewController.PERSON_CREATED:
+            case PersonCreationViewController.PERSON_CREATED -> {
                 person = (Person) event.getNewValue();
                 customModalWindow.hide();
                 timeLineProject.addPerson(person);
                 updatePersonTab();
-                break;
-            case PersonCreationViewController.PERSON_EDITIED:
+            }
+            case PersonCreationViewController.PERSON_EDITIED -> {
                 customModalWindow.hide();
                 updatePersonTab();
-                break;
-            case PersonCreationViewController.CANCEL_PERSON_CREATION:
+            }
+            case PersonCreationViewController.CANCEL_PERSON_CREATION ->
                 customModalWindow.hide();
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }
     }
 
-//    private void handleCreationControllerChanges(PropertyChangeEvent event) {
-//        System.err.println(" TODO :: handleCreationControllerChanges");
-//    }
 }

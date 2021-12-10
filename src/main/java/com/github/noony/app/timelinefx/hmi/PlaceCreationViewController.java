@@ -99,17 +99,16 @@ public class PlaceCreationViewController implements Initializable {
     @FXML
     protected void handleCreateAction(ActionEvent event) {
         switch (editionMode) {
-            case CREATION:
+            case CREATION ->
                 propertyChangeSupport.firePropertyChange(PLACE_CREATED, null, PlaceFactory.createPlace(placeName, placeLevel, parentPlace, placeColor));
-                break;
-            case EDITION:
+            case EDITION -> {
                 currentEditedPlace.setName(placeName);
                 currentEditedPlace.setParent(parentPlace);
                 currentEditedPlace.setLevel(placeLevel);
                 currentEditedPlace.setColor(placeColor);
                 propertyChangeSupport.firePropertyChange(PLACE_EDITIED, null, currentEditedPlace);
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException("handleCreateAction in mode " + editionMode);
         }
         updateAvailablePlaces();
@@ -145,13 +144,11 @@ public class PlaceCreationViewController implements Initializable {
     protected void setEditionMode(EditionMode mode) {
         editionMode = mode;
         switch (editionMode) {
-            case CREATION:
+            case CREATION ->
                 createButton.setText("Create");
-                break;
-            case EDITION:
+            case EDITION ->
                 createButton.setText("Validate");
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException("Unsupported edition mode " + editionMode);
         }
     }

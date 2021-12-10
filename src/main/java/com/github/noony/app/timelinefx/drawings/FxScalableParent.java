@@ -16,7 +16,6 @@
  */
 package com.github.noony.app.timelinefx.drawings;
 
-import com.github.noony.app.timelinefx.core.DrawableObject;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
@@ -26,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import com.github.noony.app.timelinefx.core.IDrawableObject;
 
 /**
  *
@@ -49,14 +49,14 @@ public class FxScalableParent implements IFxScalableNode {
     //
     private final List<IFxScalableNode> scalableNodes;
     //
-    private final DrawableObject drawableObject;
+    private final IDrawableObject drawableObject;
     //
     private double drawingWidth;
     private double drawingHeight;
     //
     private double viewingScale = 1.0;
 
-    public FxScalableParent(DrawableObject aDrawableObject) {
+    public FxScalableParent(IDrawableObject aDrawableObject) {
         drawableObject = aDrawableObject;
         //
         scalableNodes = new LinkedList<>();

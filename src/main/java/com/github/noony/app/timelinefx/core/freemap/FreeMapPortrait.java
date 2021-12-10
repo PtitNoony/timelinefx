@@ -51,7 +51,6 @@ public class FreeMapPortrait {
         return portrait;
     }
 
-    @Deprecated
     public Person getPerson() {
         return portrait.getPerson();
     }

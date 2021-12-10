@@ -208,7 +208,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
                 try {
                     var localTimestamp = Long.parseLong(pictureDateField.getText().trim());
                     picture.setTimestamp(localTimestamp);
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     LOG.log(Level.SEVERE, "Could not parse timestamp :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
                     picture.setTimestamp(0);
                 }

@@ -24,8 +24,12 @@ public class FriezeObject implements IFriezeObject {
 
     private final long id;
 
-    protected FriezeObject(long anIdd) {
-        id = anIdd;
+    /**
+     *
+     * @param anId the object unique ID
+     */
+    protected FriezeObject(long anId) {
+        id = anId;
     }
 
     @Override

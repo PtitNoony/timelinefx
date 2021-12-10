@@ -206,16 +206,16 @@ public class PersonCreationViewController implements Initializable {
     @FXML
     protected void handleCreateAction(ActionEvent event) {
         switch (editionMode) {
-            case CREATION:
+            case CREATION -> {
                 updatePerson(currentEditedPerson);
                 propertyChangeSupport.firePropertyChange(PERSON_CREATED, null, currentEditedPerson);
-                break;
-            case EDITION:
+            }
+            case EDITION -> {
                 updatePerson(currentEditedPerson);
                 propertyChangeSupport.firePropertyChange(PERSON_EDITIED, null, currentEditedPerson);
                 reset();
-                break;
-            default:
+            }
+            default ->
                 throw new UnsupportedOperationException("handleCreateAction in mode " + editionMode);
         }
     }
@@ -294,15 +294,14 @@ public class PersonCreationViewController implements Initializable {
     protected void setEditionMode(EditionMode mode) {
         editionMode = mode;
         switch (editionMode) {
-            case CREATION:
+            case CREATION -> {
                 createButton.setText("Create");
                 // TODO maybe refactor method and group them
                 setPerson(PersonFactory.createPerson(currentProject, "NoName"));
-                break;
-            case EDITION:
+            }
+            case EDITION ->
                 createButton.setText("Validate");
-                break;
-            default:
+            default ->
                 throw new UnsupportedOperationException("Unsupported edition mode " + editionMode);
         }
     }

@@ -55,7 +55,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
         filePath = aFilePath;
         //
         timeFormat = TimeFormat.LOCAL_TIME;
-        date = aDate;
+        date = aDate != null ? aDate : LocalDate.MIN;
         timestamp = -1;
         //
         name = aName;
@@ -84,8 +84,10 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     @Override
     public void setName(String aName) {
-        name = aName;
-        System.err.println("TODO FIRE setName");
+        if (aName == null ? name != null : !aName.equals(name)) {
+            name = aName;
+            propertyChangeSupport.firePropertyChange(NAME_CHANGED, null, name);
+        }
     }
 
     @Override
@@ -156,6 +158,14 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     @Override
     public void setTimeFormat(TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
+        switch (timeFormat) {
+            case LOCAL_TIME ->
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+            case TIME_MIN ->
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+        }
     }
 
     @Override
@@ -170,16 +180,20 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     @Override
     public void setDate(LocalDate aDate) {
-        date = aDate;
-        timeFormat = TimeFormat.LOCAL_TIME;
-        propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+        if (aDate != null && !date.equals(aDate)) {
+            date = aDate;
+            timeFormat = TimeFormat.LOCAL_TIME;
+            propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+        }
     }
 
     @Override
     public void setTimestamp(long aTimestamp) {
-        timestamp = aTimestamp;
-        timeFormat = TimeFormat.TIME_MIN;
-        propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
+        if (aTimestamp != timestamp) {
+            timestamp = aTimestamp;
+            timeFormat = TimeFormat.TIME_MIN;
+            propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
+        }
     }
 
     @Override

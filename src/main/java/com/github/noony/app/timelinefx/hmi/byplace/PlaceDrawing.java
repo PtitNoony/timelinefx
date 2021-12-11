@@ -175,10 +175,13 @@ public final class PlaceDrawing extends FXDrawing {
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
             case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
-                // nothin to do
+                // nothing to do
             }
             case Person.DEFAULT_PORTRAIT_CHANGED, Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
-                // nothin to do
+                // nothing to do
+            }
+            case Person.COLOR_CHANGED -> {
+                // nothing to do, handled in the stay drawings
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());

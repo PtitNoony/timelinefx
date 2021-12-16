@@ -22,6 +22,9 @@ import static com.github.noony.app.timelinefx.core.picturechronology.PictureChro
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Point2D;
 
 /**
@@ -34,6 +37,7 @@ public class ChronologyLink extends FriezeObject {
 
     public static final String PLOTS_UPDATED = "plotUpdated";
 
+    private static final Logger LOG = Logger.getGlobal();
     private static final double PLOT_SEPARATION = 15;
 
     private final PropertyChangeSupport propertyChangeSupport;
@@ -49,8 +53,10 @@ public class ChronologyLink extends FriezeObject {
     //
     private Point2D startPosition;
     private Point2D endPosition;
+    //
+    private double[] linkParameters;
 
-    protected ChronologyLink(long anId, Person aPerson, ChronologyPictureMiniature aStartMiniature, ChronologyPictureMiniature anEndMiniature, ChronologyLinkType aLinkType) {
+    protected ChronologyLink(long anId, Person aPerson, ChronologyPictureMiniature aStartMiniature, ChronologyPictureMiniature anEndMiniature, ChronologyLinkType aLinkType, double[] allLinkParameters) {
         super(anId);
         propertyChangeSupport = new PropertyChangeSupport(ChronologyLink.this);
         person = aPerson;
@@ -59,6 +65,8 @@ public class ChronologyLink extends FriezeObject {
         startIndex = startMiniature.getPersonIndex(person);
         endIndex = endMiniature.getPersonIndex(person);
         linkType = aLinkType;
+        // create a copy ?
+        linkParameters = allLinkParameters;
         //
         updateStartPosition();
         updateEndPosition();
@@ -79,6 +87,41 @@ public class ChronologyLink extends FriezeObject {
         return endMiniature;
     }
 
+    public double[] getLinkParameters() {
+        return Arrays.copyOf(linkParameters, linkParameters.length);
+    }
+
+    public void updateLinkParameters(double[] newParameters) {
+        switch (linkType) {
+            case CUBIC -> {
+                if (newParameters.length != linkType.getNbParameters()) {
+                    LOG.log(Level.SEVERE, "In ChronologyLink, wrong number of parameters: expected {0} for type {1} be found {2}", new Object[]{linkType.getNbParameters(), linkType, newParameters.length});
+                    return;
+                }
+                linkParameters = Arrays.copyOf(newParameters, newParameters.length);
+                var startAngle = linkParameters[0];
+                var startDistance = linkParameters[1];
+                startPosition = new Point2D(startDistance * Math.cos(startAngle), startDistance * Math.sin(startAngle));
+                var endAngle = linkParameters[6];
+                var endDistance = linkParameters[7];
+                endPosition = new Point2D(endDistance * Math.cos(endAngle), endDistance * Math.sin(endAngle));
+            }
+            default ->
+                throw new UnsupportedOperationException("Link type not supported :: " + linkType);
+        }
+        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, newParameters);
+    }
+
+    public void setStartPosition(Point2D newStartPosition) {
+        startPosition = newStartPosition;
+        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, startPosition);
+    }
+
+    public void setEndPosition(Point2D newEndPosition) {
+        endPosition = newEndPosition;
+        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, endPosition);
+    }
+
     public Point2D getStartPosition() {
         return startPosition;
     }
@@ -96,19 +139,13 @@ public class ChronologyLink extends FriezeObject {
     }
 
     private void updateStartPosition() {
-        var startMiniaturePosition = startMiniature.getPosition();
-        startPosition = new Point2D(
-                startMiniaturePosition.getX() + calculateDeltaXPosition(startMiniature, startIndex),
-                calculateYPosition(startMiniature, startIndex));
-        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, startMiniaturePosition);
+        startPosition = calculateDefaultStartPosition(startMiniature, startIndex);
+        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, startPosition);
     }
 
     private void updateEndPosition() {
-        var endMiniaturePosition = endMiniature.getPosition();
-        endPosition = new Point2D(
-                endMiniaturePosition.getX() - calculateDeltaXPosition(endMiniature, endIndex),
-                calculateYPosition(endMiniature, endIndex));
-        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, endMiniaturePosition);
+        endPosition = calculateDefaultEndPosition(endMiniature, endIndex);
+        propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, endPosition);
     }
 
     private void handleStartMiniatureChanges(PropertyChangeEvent event) {
@@ -127,6 +164,18 @@ public class ChronologyLink extends FriezeObject {
         }
     }
 
+    public static Point2D calculateDefaultStartPosition(ChronologyPictureMiniature aMiniature, int anIndex) {
+        return new Point2D(
+                aMiniature.getPosition().getX() + calculateDeltaXPosition(aMiniature, anIndex),
+                calculateYPosition(aMiniature, anIndex));
+    }
+
+    public static Point2D calculateDefaultEndPosition(ChronologyPictureMiniature aMiniature, int anIndex) {
+        return new Point2D(
+                aMiniature.getPosition().getX() - calculateDeltaXPosition(aMiniature, anIndex),
+                calculateYPosition(aMiniature, anIndex));
+    }
+
     private static double calculateYPosition(ChronologyPictureMiniature aMiniature, int anIndex) {
         return aMiniature.getPosition().getY() - aMiniature.getHeight() / 3.0 * aMiniature.getScale() + (anIndex + 1) * PLOT_SEPARATION;
     }
@@ -136,6 +185,11 @@ public class ChronologyLink extends FriezeObject {
         var deltaPos = -(1 + anIndex) * PERSON_CONTOUR_WIDTH;
         var deltaSize = - 2 * deltaPos;
         return (aMiniature.getPicture().getWidth() * scale + deltaSize) / 2.0;
+    }
+
+    public static double calculateDeltaXPosition(ChronologyPictureMiniature aMiniature, Person aPerson) {
+        var deltaPos = -(1 + aMiniature.getPersonIndex(aPerson)) * PERSON_CONTOUR_WIDTH;
+        return -deltaPos;
     }
 
 }

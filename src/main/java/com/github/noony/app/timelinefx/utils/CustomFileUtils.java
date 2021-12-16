@@ -60,4 +60,22 @@ public class CustomFileUtils {
         }
     }
 
+    public static long[] toLongArray(String input) {
+        String[] valuesAsString = input.replace("[", "").replace("]", "").split(", ");
+        long result[] = new long[valuesAsString.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Long.parseLong(valuesAsString[i]);
+        }
+        return result;
+    }
+
+    public static double[] toDoubleArray(String input) {
+        String[] valuesAsString = input.replace("[", "").replace("]", "").split(", ");
+        double result[] = new double[valuesAsString.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = Double.parseDouble(valuesAsString[i]);
+        }
+        return result;
+    }
+
 }

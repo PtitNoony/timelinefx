@@ -21,6 +21,7 @@ import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureM
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,11 +40,14 @@ public class PictureChronologyDrawing extends FxScalableParent {
     private final Map<ChronologyPictureMiniature, ChronologyPictureMiniatureDrawing> miniatureDrawings;
     private final Map<Person, PersonChronologyPicturesDrawing> personsDrawings;
     //
+    private final PropertyChangeListener personListener;
+    //
     private final Group drawingGroup;
     private final Rectangle drawingBackground;
     private final Group picturesGroup;
     private final Group personsGroup;
     //
+    private ChronologyLinkDrawing selectedLink = null;
 
     public PictureChronologyDrawing(PictureChronology aPictureChronology) {
         super(aPictureChronology);
@@ -52,6 +56,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
         personsDrawings = new HashMap<>();
         //
         pictureChronology.addListener(PictureChronologyDrawing.this::handlePictureChronologyChanges);
+        personListener = PictureChronologyDrawing.this::handlePersonEvents;
         //
         drawingGroup = new Group();
         //
@@ -91,11 +96,12 @@ public class PictureChronologyDrawing extends FxScalableParent {
                 .forEach(p -> {
                     PersonChronologyPicturesDrawing personDrawing;
                     if (!personsDrawings.containsKey(p)) {
-                        personDrawing = new PersonChronologyPicturesDrawing(pictureChronology, p);
+                        personDrawing = new PersonChronologyPicturesDrawing(this, p);
                         registerScalableNode(personDrawing);
                         personsDrawings.put(p, personDrawing);
                         personsGroup.getChildren().add(personDrawing.getNode());
-            }
+                        personDrawing.addListener(personListener);
+                    }
                 });
     }
 
@@ -146,6 +152,30 @@ public class PictureChronologyDrawing extends FxScalableParent {
             }
             default ->
                 throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
+        }
+    }
+
+    private void handlePersonEvents(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case ChronologyLinkDrawing.LINK_CLICKED -> {
+                var link = (ChronologyLinkDrawing) event.getNewValue();
+                selectLink(link);
+            }
+            default ->
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    private void selectLink(ChronologyLinkDrawing linkDrawing) {
+        if (selectedLink == linkDrawing) {
+            selectedLink.displayControls(false);
+            selectedLink = null;
+        } else {
+            if (selectedLink != null) {
+                selectedLink.displayControls(false);
+            }
+            selectedLink = linkDrawing;
+            selectedLink.displayControls(true);
         }
     }
 

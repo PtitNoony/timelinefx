@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
+import com.github.noony.app.timelinefx.core.IDrawableObject;
 import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
@@ -32,7 +33,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.geometry.Point2D;
 import javafx.util.Pair;
-import com.github.noony.app.timelinefx.core.IDrawableObject;
 
 /**
  *
@@ -67,7 +67,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     private double width;
     private double height;
 
-    protected PictureChronology(long anID, TimeLineProject aProject, String aName) {
+    protected PictureChronology(long anID, TimeLineProject aProject, String aName, List<ChronologyPictureMiniature> exisitingMiniatures, List<ChronologyLink> existingLinks) {
         super(anID);
         propertyChangeSupport = new PropertyChangeSupport(PictureChronology.this);
         project = aProject;
@@ -78,6 +78,23 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
         name = aName;
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
+        //
+        exisitingMiniatures.forEach(picture -> {
+            chronologyPictures.add(picture);
+            chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
+            propertyChangeSupport.firePropertyChange(PICTURE_ADDED, this, picture);
+        });
+        existingLinks.forEach(link -> {
+            var linkKey = link.getPerson().getId() + "__" + link.getStartMiniature().getId() + "__" + link.getEndMiniature().getId();
+            chronologyLinks.put(linkKey, link);
+            propertyChangeSupport.firePropertyChange(LINK_ADDED, this, link);
+        });
+        persons.addAll(exisitingMiniatures.stream().flatMap(m -> m.getPersons().stream()).filter(p -> !persons.contains(p)).toList());
+        updateLinks();
+    }
+
+    protected PictureChronology(long anID, TimeLineProject aProject, String aName) {
+        this(anID, aProject, aName, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     public void addChronologyPicture(ChronologyPictureMiniature aChronologyPicture) {
@@ -87,34 +104,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
         //
         persons.addAll(aChronologyPicture.getPersons().stream().filter(p -> !persons.contains(p)).toList());
         //
-        List<String> existingLinkKeys = chronologyLinks.keySet().stream().collect(Collectors.toList());
-        Map<String, Pair<ChronologyPictureMiniature, ChronologyPictureMiniature>> linksNeeded = new HashMap<>();
-        // looping all persons and miniatures to calculate all the links needed
-        persons.forEach(person -> {
-            List<ChronologyPictureMiniature> personMiniatures = chronologyPictures.stream().filter(pic -> pic.getPersonIndex(person) >= 0).toList();
-            for (int i = 0; i < personMiniatures.size() - 1; i++) {
-                var startMiniature = personMiniatures.get(i);
-                var endMiniature = personMiniatures.get(i + 1);
-                var linkKey = person.getId() + "__" + startMiniature.getId() + "__" + endMiniature.getId();
-                linksNeeded.put(linkKey, new Pair(startMiniature, endMiniature));
-            }
-        });
-        // remove useless links
-        existingLinkKeys.stream().filter(existingKey -> (!linksNeeded.containsKey(existingKey))).forEachOrdered(existingKey -> {
-            var removedLink = chronologyLinks.get(existingKey);
-            chronologyLinks.remove(existingKey);
-            propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
-        });
-        // create new links
-        linksNeeded.forEach((neededKey, miniatures) -> {
-            if (!existingLinkKeys.contains(neededKey)) {
-                int personID = Integer.parseInt(neededKey.split("__")[0]);
-                var person = PersonFactory.getPerson(personID);
-                var chronologyLink = PictureChronologyFactory.createChronologyLink(person, miniatures.getKey(), miniatures.getValue(), chronologyLinkType);
-                chronologyLinks.put(neededKey, chronologyLink);
-                propertyChangeSupport.firePropertyChange(LINK_ADDED, this, chronologyLink);
-            }
-        });
+        updateLinks();
     }
 
     public ChronologyPictureMiniature createChronologyPicture(IPicture aPicture) {
@@ -134,9 +124,6 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
             chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
             propertyChangeSupport.firePropertyChange(PICTURE_REMOVED, this, aChronologyPicture);
             //
-//            persons.addAll(aChronologyPicture.getPersons().stream().filter(p -> !persons.contains(p)).toList());
-
-            //
             var existingPersons = chronologyPictures.stream()
                     .flatMap(c -> c.getPersons().stream())
                     .collect(Collectors.toList());
@@ -145,34 +132,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
                     .collect(Collectors.toList());
             persons.removeAll(personInExcedent);
             //
-            List<String> existingLinkKeys = chronologyLinks.keySet().stream().collect(Collectors.toList());
-            Map<String, Pair<ChronologyPictureMiniature, ChronologyPictureMiniature>> linksNeeded = new HashMap<>();
-            // looping all persons and miniatures to calculate all the links needed
-            persons.forEach(person -> {
-                List<ChronologyPictureMiniature> personMiniatures = chronologyPictures.stream().filter(pic -> pic.getPersonIndex(person) >= 0).toList();
-                for (int i = 0; i < personMiniatures.size() - 1; i++) {
-                    var startMiniature = personMiniatures.get(i);
-                    var endMiniature = personMiniatures.get(i + 1);
-                    var linkKey = person.getId() + "__" + startMiniature.getId() + "__" + endMiniature.getId();
-                    linksNeeded.put(linkKey, new Pair(startMiniature, endMiniature));
-                }
-            });
-            // remove useless links
-            existingLinkKeys.stream().filter(existingKey -> (!linksNeeded.containsKey(existingKey))).forEachOrdered(existingKey -> {
-                var removedLink = chronologyLinks.get(existingKey);
-                chronologyLinks.remove(existingKey);
-                propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
-            });
-            // create new links
-            linksNeeded.forEach((neededKey, miniatures) -> {
-                if (!existingLinkKeys.contains(neededKey)) {
-                    int personID = Integer.parseInt(neededKey.split("__")[0]);
-                    var person = PersonFactory.getPerson(personID);
-                    var chronologyLink = PictureChronologyFactory.createChronologyLink(person, miniatures.getKey(), miniatures.getValue(), chronologyLinkType);
-                    chronologyLinks.put(neededKey, chronologyLink);
-                    propertyChangeSupport.firePropertyChange(LINK_ADDED, this, chronologyLink);
-                }
-            });
+            updateLinks();
         }
     }
 
@@ -216,4 +176,39 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     public List<ChronologyLink> getLinks() {
         return Collections.unmodifiableList(chronologyLinks.values().stream().toList());
     }
+
+    private void updateLinks() {
+        List<String> existingLinkKeys = chronologyLinks.keySet().stream().collect(Collectors.toList());
+        Map<String, Pair<ChronologyPictureMiniature, ChronologyPictureMiniature>> linksNeeded = new HashMap<>();
+        // looping all persons and miniatures to calculate all the links needed
+        persons.forEach(person -> {
+            List<ChronologyPictureMiniature> personMiniatures = chronologyPictures.stream().filter(pic -> pic.getPersonIndex(person) >= 0).toList();
+            for (int i = 0; i < personMiniatures.size() - 1; i++) {
+                var startMiniature = personMiniatures.get(i);
+                var endMiniature = personMiniatures.get(i + 1);
+                var linkKey = person.getId() + "__" + startMiniature.getId() + "__" + endMiniature.getId();
+                linksNeeded.put(linkKey, new Pair(startMiniature, endMiniature));
+            }
+        });
+        // remove useless links
+        existingLinkKeys.stream().filter(existingKey -> (!linksNeeded.containsKey(existingKey))).forEachOrdered(existingKey -> {
+            var removedLink = chronologyLinks.get(existingKey);
+            chronologyLinks.remove(existingKey);
+            propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
+        });
+        // create new links
+        linksNeeded.forEach((neededKey, miniatures) -> {
+            if (!existingLinkKeys.contains(neededKey)) {
+                int personID = Integer.parseInt(neededKey.split("__")[0]);
+                var person = PersonFactory.getPerson(personID);
+                var startMiniature = miniatures.getKey();
+                var endMiniature = miniatures.getValue();
+                var linkParameters = ChronologyLinkType.getDefaultParameters(chronologyLinkType, startMiniature, endMiniature, person);
+                var chronologyLink = PictureChronologyFactory.createChronologyLink(person, startMiniature, endMiniature, chronologyLinkType, linkParameters);
+                chronologyLinks.put(neededKey, chronologyLink);
+                propertyChangeSupport.firePropertyChange(LINK_ADDED, this, chronologyLink);
+            }
+        });
+    }
+
 }

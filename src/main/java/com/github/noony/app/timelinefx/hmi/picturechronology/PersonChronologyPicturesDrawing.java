@@ -21,6 +21,8 @@ import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.Group;
@@ -32,17 +34,24 @@ import javafx.scene.Node;
  */
 public class PersonChronologyPicturesDrawing implements IFxScalableNode {
 
+    private final PictureChronologyDrawing chronologyDrawing;
     private final PictureChronology chronology;
     private final Map<ChronologyLink, ChronologyLinkDrawing> linkDrawings;
     //
     private final Group mainGroup;
     //
+    private final PropertyChangeSupport propertyChangeSupport;
+    private final PropertyChangeListener linkListener;
+    //
     private double viewingScale = 1.0;
 
-    public PersonChronologyPicturesDrawing(PictureChronology aChronology, Person aPerson) {
-        chronology = aChronology;
+    public PersonChronologyPicturesDrawing(PictureChronologyDrawing aChronologyDrawing, Person aPerson) {
+        chronologyDrawing = aChronologyDrawing;
+        chronology = chronologyDrawing.getPictureChronology();
         chronology.addListener(PersonChronologyPicturesDrawing.this::handleChronologyChange);
         linkDrawings = new HashMap<>();
+        linkListener = PersonChronologyPicturesDrawing.this::handleLinkEvents;
+        propertyChangeSupport = new PropertyChangeSupport(PersonChronologyPicturesDrawing.this);
         mainGroup = new Group();
         chronology.getLinks().stream()
                 .filter(s -> s.getPerson() == aPerson)
@@ -65,11 +74,29 @@ public class PersonChronologyPicturesDrawing implements IFxScalableNode {
         updateLayout();
     }
 
+    protected void addListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    protected void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
     private void addLinkDrawing(ChronologyLink aLink) {
         var linkDrawing = new ChronologyLinkDrawing(aLink);
         linkDrawing.updateScale(viewingScale);
         linkDrawings.put(aLink, linkDrawing);
         mainGroup.getChildren().add(linkDrawing.getNode());
+        linkDrawing.addListener(linkListener);
+    }
+
+    private void removeLinkDrawing(ChronologyLink aLink) {
+        var linkDrawing = linkDrawings.get(aLink);
+        linkDrawings.remove(aLink);
+        if (linkDrawing != null) {
+            mainGroup.getChildren().remove(linkDrawing.getNode());
+            linkDrawing.removeListener(linkListener);
+        }
     }
 
     private void handleChronologyChange(PropertyChangeEvent event) {
@@ -80,11 +107,7 @@ public class PersonChronologyPicturesDrawing implements IFxScalableNode {
             }
             case PictureChronology.LINK_REMOVED -> {
                 var link = (ChronologyLink) event.getNewValue();
-                var linkDrawing = linkDrawings.get(link);
-                linkDrawings.remove(link);
-                if (linkDrawing != null) {
-                    mainGroup.getChildren().remove(linkDrawing.getNode());
-                }
+                removeLinkDrawing(link);
             }
             default -> {
             }
@@ -93,6 +116,10 @@ public class PersonChronologyPicturesDrawing implements IFxScalableNode {
 
     private void updateLayout() {
         linkDrawings.values().forEach(linkDrawing -> linkDrawing.updateScale(viewingScale));
+    }
+
+    private void handleLinkEvents(PropertyChangeEvent event) {
+        propertyChangeSupport.firePropertyChange(event);
     }
 
 }

@@ -44,6 +44,8 @@ import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.core.freemap.PlotType;
 import com.github.noony.app.timelinefx.core.freemap.StayLink;
 import com.github.noony.app.timelinefx.core.freemap.TravelLink;
+import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
+import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLinkType;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
@@ -120,6 +122,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     public static final String FREEMAP_PLACE_ELEMENT = "freeMapPlace";
     public static final String PICTURE_CHRONOLOGY_ELEMENT = "pictureChronology";
     public static final String PICTURE_CHRONOLOGY_MINIATURE_ELEMENT = "pictureChronologyMiniature";
+    public static final String PICTURE_CHRONOLOGY_LINK_ELEMENT = "pictureChronologyLink";
     //
     public static final String PICTURES_LOCATION_ATR = "picsLoc";
     //
@@ -145,6 +148,10 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     public static final String START_ID_ATR = "startID";
     public static final String END_ID_ATR = "endID";
     public static final String PLACE_ID_ATR = "placeID";
+    public static final String FROM_ATR = "from";
+    public static final String TO_ATR = "to";
+    public static final String PERSON_REF_ATR = "personRef";
+    public static final String PARAMETERS_ATR = "params";
     //
     public static final String WIDTH_ATR = "width";
     public static final String HEIGHT_ATR = "height";
@@ -242,7 +249,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 .map(portraitFile -> Paths.get(portraitFile.toURI()))
                 .filter(portraitAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> portraitAbsolutePath.compareTo(loaded) == 0))
                 .forEach(portraitAbsolutePath -> {
-            // FUTURE IMPROVMENT : create actions;
+                    // FUTURE IMPROVMENT : create actions;
                     LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath});
                 });
         // * Pictures
@@ -252,7 +259,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 .map(pictureFile -> Paths.get(pictureFile.toURI()))
                 .filter(pictureAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> pictureAbsolutePath.compareTo(loaded) == 0))
                 .forEach(pictureAbsolutePath -> {
-            // FUTURE IMPROVMENT : create actions;
+                    // FUTURE IMPROVMENT : create actions;
                     LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath});
                 });
         //
@@ -849,18 +856,24 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         double width = Double.parseDouble(pictureChronologyElement.getAttribute(WIDTH_ATR));
         double height = Double.parseDouble(pictureChronologyElement.getAttribute(HEIGHT_ATR));
         //
-        var pictureChronology = PictureChronologyFactory.createPictureChronology(id, project, name);
-        pictureChronology.setWidth(width);
-        pictureChronology.setHeight(height);
+        List<ChronologyPictureMiniature> miniatures = new LinkedList<>();
+        List<ChronologyLink> links = new LinkedList<>();
         //
         NodeList miniaturesElements = pictureChronologyElement.getChildNodes();
         for (int i = 0; i < miniaturesElements.getLength(); i++) {
             if (miniaturesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT)) {
                 Element e = (Element) miniaturesElements.item(i);
                 var miniature = parseChronologyPictureMiniature(project, e);
-                pictureChronology.addChronologyPicture(miniature);
+                miniatures.add(miniature);
+            } else if (miniaturesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_LINK_ELEMENT)) {
+                Element e = (Element) miniaturesElements.item(i);
+                links.add(parsePictureChronologyLink(e));
             }
         }
+        //
+        var pictureChronology = PictureChronologyFactory.createPictureChronology(id, project, name, miniatures, links);
+        pictureChronology.setWidth(width);
+        pictureChronology.setHeight(height);
         //
         return pictureChronology;
     }
@@ -872,8 +885,23 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         double xPos = Double.parseDouble(miniatureElement.getAttribute(X_POS_ATR));
         double yPos = Double.parseDouble(miniatureElement.getAttribute(Y_POS_ATR));
         double scale = Double.parseDouble(miniatureElement.getAttribute(SCALE_ATR));
-        var miniature = PictureChronologyFactory.createChronologyPictureMiniature(IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
+        var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
         return miniature;
+    }
+
+    private static ChronologyLink parsePictureChronologyLink(Element linkElement) {
+        var id = Long.parseLong(linkElement.getAttribute(ID_ATR));
+        var type = ChronologyLinkType.valueOf(linkElement.getAttribute(TYPE_ATR));
+        var fromID = Long.parseLong(linkElement.getAttribute(FROM_ATR));
+        var from = PictureChronologyFactory.getChronologyPictureMiniature(fromID);
+        var toID = Long.parseLong(linkElement.getAttribute(TO_ATR));
+        var to = PictureChronologyFactory.getChronologyPictureMiniature(toID);
+        var personRef = Long.parseLong(linkElement.getAttribute(PERSON_REF_ATR));
+        var person = PersonFactory.getPerson(personRef);
+        var paramsAsString = linkElement.getAttribute(PARAMETERS_ATR);
+        var parameters = CustomFileUtils.toDoubleArray(paramsAsString);
+        var link = PictureChronologyFactory.createChronologyLink(person, from, to, type, parameters);
+        return link;
     }
 
     private static Element createPlaceElement(Document doc, Place place, String fromPlace) {
@@ -1087,6 +1115,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         pictureChronologyElement.setAttribute(HEIGHT_ATR, Double.toString(pictureChronology.getHeight()));
         //
         pictureChronology.getChronologyPictures().forEach(miniature -> pictureChronologyElement.appendChild(createPictureChronologyMiniature(doc, miniature)));
+        pictureChronology.getLinks().forEach(link -> pictureChronologyElement.appendChild(createPictureChronologyLink(doc, link)));
         return pictureChronologyElement;
     }
 
@@ -1098,6 +1127,17 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         pictureChronologyMiniatureElement.setAttribute(PICTURE_REF_ELEMENT, Long.toString(miniature.getPicture().getId()));
         pictureChronologyMiniatureElement.setAttribute(SCALE_ATR, Double.toString(miniature.getScale()));
         return pictureChronologyMiniatureElement;
+    }
+
+    private static Element createPictureChronologyLink(Document doc, ChronologyLink link) {
+        var pictureChronologyLinkElement = doc.createElement(PICTURE_CHRONOLOGY_LINK_ELEMENT);
+        pictureChronologyLinkElement.setAttribute(ID_ATR, Long.toString(link.getId()));
+        pictureChronologyLinkElement.setAttribute(TYPE_ATR, link.getLinkType().name());
+        pictureChronologyLinkElement.setAttribute(FROM_ATR, Long.toString(link.getStartMiniature().getId()));
+        pictureChronologyLinkElement.setAttribute(TO_ATR, Long.toString(link.getEndMiniature().getId()));
+        pictureChronologyLinkElement.setAttribute(PERSON_REF_ATR, Long.toString(link.getPerson().getId()));
+        pictureChronologyLinkElement.setAttribute(PARAMETERS_ATR, Arrays.toString(link.getLinkParameters()));
+        return pictureChronologyLinkElement;
     }
 
     @Override

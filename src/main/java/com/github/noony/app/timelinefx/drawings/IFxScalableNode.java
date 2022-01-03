@@ -22,7 +22,15 @@ package com.github.noony.app.timelinefx.drawings;
  */
 public interface IFxScalableNode extends IFxNode {
 
+    /**
+     *
+     * @param newScale the new scale value to be applied
+     */
     void updateScale(double newScale);
 
+    /**
+     *
+     * @return the current scale value
+     */
     double getScale();
 }

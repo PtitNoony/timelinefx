@@ -51,18 +51,18 @@ public class CustomFileUtils {
         return file.getAbsolutePath();
     }
 
-    public static String fromProjectRelativeToAbsolute(TimeLineProject project, String relavivePath) {
+    public static String fromProjectRelativeToAbsolute(TimeLineProject project, String relativePath) {
         File projectFolder = project.getProjectFolder();
         if (projectFolder != null) {
-            return projectFolder.getAbsolutePath() + File.separator + relavivePath;
+            return projectFolder.getAbsolutePath() + File.separator + relativePath;
         } else {
-            return relavivePath;
+            return relativePath;
         }
     }
 
     public static long[] toLongArray(String input) {
         String[] valuesAsString = input.replace("[", "").replace("]", "").split(", ");
-        long result[] = new long[valuesAsString.length];
+        long[] result = new long[valuesAsString.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = Long.parseLong(valuesAsString[i]);
         }
@@ -71,7 +71,7 @@ public class CustomFileUtils {
 
     public static double[] toDoubleArray(String input) {
         String[] valuesAsString = input.replace("[", "").replace("]", "").split(", ");
-        double result[] = new double[valuesAsString.length];
+        double[] result = new double[valuesAsString.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = Double.parseDouble(valuesAsString[i]);
         }

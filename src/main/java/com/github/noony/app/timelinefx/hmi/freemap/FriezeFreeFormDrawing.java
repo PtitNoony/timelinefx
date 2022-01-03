@@ -21,10 +21,13 @@ import com.github.noony.app.timelinefx.core.freemap.DateHandle;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+
 import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.DEFAULT_TIME_HEIGHT;
+
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -32,6 +35,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -40,7 +44,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- *
  * @author hamon
  */
 public class FriezeFreeFormDrawing {
@@ -73,7 +76,6 @@ public class FriezeFreeFormDrawing {
     private final FriezeFreeMap friezeFreeMap;
     //
     private final Map<Person, FreeMapPortraitDrawing> portraitDrawings;
-    private final Map<Person, PersonInitLinkDrawing> personInitLinkDrawings;
     private final Map<FreeMapPlace, PlaceDrawing> placeDrawings;
     private final Map<FreeMapPerson, PersonDrawing> personDrawings;
     private final Map<Long, DateHandleDrawing> startDatesHandles;
@@ -92,7 +94,6 @@ public class FriezeFreeFormDrawing {
         placeDrawings = new HashMap<>();
         portraitDrawings = new HashMap<>();
         personDrawings = new HashMap<>();
-        personInitLinkDrawings = new HashMap<>();
         startDatesHandles = new HashMap<>();
         endDatesHandles = new HashMap<>();
         //
@@ -152,10 +153,8 @@ public class FriezeFreeFormDrawing {
     public void setZoomLevel(double newScale) {
         if (newScale > FxScalableParent.MAX_SCALE) {
             scale = FxScalableParent.MAX_SCALE;
-        } else if (newScale < FxScalableParent.MIN_SCALE) {
-            scale = FxScalableParent.MIN_SCALE;
         } else {
-            scale = newScale;
+            scale = Math.max(newScale, FxScalableParent.MIN_SCALE);
         }
         updateLayout();
     }
@@ -237,8 +236,8 @@ public class FriezeFreeFormDrawing {
     }
 
     private void addPersonDrawing(FreeMapPerson person) {
-        // create portrait first since needed int person drawings for the time beeing
-        // next impr. merge classes ?
+        // create portrait first since needed int person drawings for the time being
+        // next improvement. merge classes ?
         createPortraitDrawing(friezeFreeMap.getPortrait(person.getPerson()));
         var personDrawing = new PersonDrawing(person, friezeFreeMap, this);
         personsGroup.getChildren().add(personDrawing.getNode());
@@ -335,14 +334,11 @@ public class FriezeFreeFormDrawing {
         //
         placesGroup.setTranslateX(friezeFreeMap.getPlaceDrawingX() * scale);
         placesGroup.setTranslateY(friezeFreeMap.getPlaceDrawingY() * scale);
-        personInitLinkDrawings.values().forEach(PersonInitLinkDrawing::updatePosition);
     }
 
     private void handleFreeMapChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case FriezeFreeMap.LAYOUT_CHANGED -> {
-                updateLayout();
-            }
+            case FriezeFreeMap.LAYOUT_CHANGED -> updateLayout();
             case FriezeFreeMap.FREE_MAP_PLACE_ADDED -> {
                 var freeMapPlaceAdded = (FreeMapPlace) event.getNewValue();
                 addPlaceDrawing(freeMapPlaceAdded);
@@ -369,20 +365,11 @@ public class FriezeFreeFormDrawing {
             case FriezeFreeMap.NAME_CHANGED -> {
                 // nothing to do
             }
-            case FriezeFreeMap.START_DATE_HANDLE_ADDED -> {
-                addStartDateHandleDrawing((DateHandle) event.getNewValue());
-            }
-            case FriezeFreeMap.END_DATE_HANDLE_ADDED -> {
-                addEndDateHandleDrawing((DateHandle) event.getNewValue());
-            }
-            case FriezeFreeMap.START_DATE_HANDLE_REMOVED -> {
-                removeStartDateHandleDrawing((DateHandle) event.getNewValue());
-            }
-            case FriezeFreeMap.END_DATE_HANDLE_REMOVED -> {
-                removeEndDateHandleDrawing((DateHandle) event.getNewValue());
-            }
-            default ->
-                throw new UnsupportedOperationException(event.getPropertyName());
+            case FriezeFreeMap.START_DATE_HANDLE_ADDED -> addStartDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.END_DATE_HANDLE_ADDED -> addEndDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.START_DATE_HANDLE_REMOVED -> removeStartDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.END_DATE_HANDLE_REMOVED -> removeEndDateHandleDrawing((DateHandle) event.getNewValue());
+            default -> throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 

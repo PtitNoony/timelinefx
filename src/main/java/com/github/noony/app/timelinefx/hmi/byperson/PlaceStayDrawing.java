@@ -20,6 +20,7 @@ import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import java.beans.PropertyChangeEvent;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -48,12 +49,8 @@ public class PlaceStayDrawing {
         //
         stayPeriod.getPlace().addPropertyChangeListener(PlaceStayDrawing.this::handlePlaceChanged);
         //
-        rectangle.setOnMouseEntered(event -> {
-            stayPeriod.getPlace().setSelected(true);
-        });
-        rectangle.setOnMouseExited(event -> {
-            stayPeriod.getPlace().setSelected(false);
-        });
+        rectangle.setOnMouseEntered(event -> stayPeriod.getPlace().setSelected(true));
+        rectangle.setOnMouseExited(this::handle);
     }
 
     public Node getNode() {
@@ -86,5 +83,9 @@ public class PlaceStayDrawing {
             default ->
                 throw new AssertionError();
         }
+    }
+
+    private void handle(MouseEvent event) {
+        stayPeriod.getPlace().setSelected(false);
     }
 }

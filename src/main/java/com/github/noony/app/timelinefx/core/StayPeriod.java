@@ -26,7 +26,7 @@ import java.util.Comparator;
  */
 public abstract class StayPeriod extends FriezeObject {
 
-    public static final Comparator<? super StayPeriod> STAY_COMPARATOR = (s1, s2) -> Long.compare(s1.getStartDate(), s2.getStartDate());
+    public static final Comparator<? super StayPeriod> STAY_COMPARATOR = Comparator.comparingLong(StayPeriod::getStartDate);
 
     public static final String PERSON_CHANGED = "StayPeriod__personChanged";
     public static final String PLACE_CHANGED = "StayPeriod__placeChanged";

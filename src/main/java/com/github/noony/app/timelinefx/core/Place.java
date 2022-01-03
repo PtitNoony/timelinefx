@@ -37,7 +37,7 @@ public class Place extends FriezeObject {
 
     public static final Color DEFAULT_COLOR = Color.GREY;
 
-    public static final Comparator<Place> COMPARATOR = (p1, p2) -> p1.getName().compareTo(p2.getName());
+    public static final Comparator<Place> COMPARATOR = Comparator.comparing(Place::getName);
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -103,8 +103,8 @@ public class Place extends FriezeObject {
     }
 
     public boolean setLevel(PlaceLevel aLevel) {
-        boolean placeConflitct = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
-        if (placeConflitct) {
+        boolean placeConflict = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
+        if (placeConflict) {
             LOG.log(Level.SEVERE, "New level cannot be set because of children levels : {0}", new Object[]{aLevel});
             return false;
         }

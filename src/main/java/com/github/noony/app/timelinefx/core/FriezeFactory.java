@@ -17,6 +17,8 @@
 package com.github.noony.app.timelinefx.core;
 
 import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
  *
  * @author hamon
  */
-public class FriezeFactory {
+public final class FriezeFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -37,12 +39,12 @@ public class FriezeFactory {
         // private utility constructor
     }
 
-    public static final void reset() {
+    public static void reset() {
         FRIEZES.clear();
     }
 
     public static List<Frieze> getFriezes() {
-        return FRIEZES.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(FRIEZES.values());
     }
 
     public static Frieze getFrieze(long friezeID) {

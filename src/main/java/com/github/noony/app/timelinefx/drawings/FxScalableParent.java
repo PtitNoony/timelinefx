@@ -111,10 +111,8 @@ public class FxScalableParent implements IFxScalableNode {
     public void updateScale(double newScale) {
         if (newScale > MAX_SCALE) {
             viewingScale = MAX_SCALE;
-        } else if (newScale < MIN_SCALE) {
-            viewingScale = MIN_SCALE;
         } else {
-            viewingScale = newScale;
+            viewingScale = Math.max(newScale, MIN_SCALE);
         }
         updateLayout();
     }

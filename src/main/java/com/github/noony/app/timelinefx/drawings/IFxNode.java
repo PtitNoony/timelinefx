@@ -24,6 +24,10 @@ import javafx.scene.Node;
  */
 public interface IFxNode {
 
+    /**
+     *
+     * @return the JavaFx node to be displayed
+     */
     Node getNode();
 
 }

@@ -23,7 +23,7 @@ package com.github.noony.app.timelinefx.core;
 public interface IFriezeObject {
 
     /**
-     * Each IFriezeObject instance has unique id in its project's scope
+     * Each IFriezeObject instance has a unique id in its project's scope
      *
      * @return the object unique ID
      */

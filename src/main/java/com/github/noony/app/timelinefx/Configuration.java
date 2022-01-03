@@ -65,7 +65,7 @@ public class Configuration {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
 
-    public static final void loadPreferences() {
+    public static void loadPreferences() {
         var userDirFile = new File(DEFAULT_TIMELINES_FOLDER_PATH + File.separator + PREFERENCE_FILE_NAME);
         if (userDirFile.exists()) {
             preferenceFile = userDirFile;
@@ -92,7 +92,8 @@ public class Configuration {
         var tmpPreferenceFile = new File(preferenceFileS);
         if (!tmpPreferenceFile.exists()) {
             try {
-                tmpPreferenceFile.createNewFile();
+                var createdFile = tmpPreferenceFile.createNewFile();
+                LOG.log(Level.INFO, "Created preference file: {0}", new Object[]{createdFile});
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Could not create user home preference file : ", new Object[]{ex});
             }
@@ -141,7 +142,7 @@ public class Configuration {
         }
     }
 
-    public static final void savePreferences() {
+    public static void savePreferences() {
         if (properties == null) {
             LOG.log(Level.SEVERE, "Could not save preferences since they have not been loaded yet.");
             return;

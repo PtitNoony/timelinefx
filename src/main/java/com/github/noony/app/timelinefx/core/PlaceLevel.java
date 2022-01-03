@@ -22,11 +22,11 @@ package com.github.noony.app.timelinefx.core;
  */
 public enum PlaceLevel {
 
-    ADRESS(10), TOWN(20), DEPARTMENT(30), REGION(40), COUNTRY(50), CONTINENT(60), PLANET(70), ORBIT(75), SYSTEM(80), INTER_SYSTEM_SPACE(90), GALAXY(100), UNIVERSE(1000);
+    ADDRESS(10), TOWN(20), DEPARTMENT(30), REGION(40), COUNTRY(50), CONTINENT(60), PLANET(70), ORBIT(75), SYSTEM(80), INTER_SYSTEM_SPACE(90), GALAXY(100), UNIVERSE(1000);
 
     private final int level;
 
-    private PlaceLevel(int level) {
+    PlaceLevel(int level) {
         this.level = level;
     }
 

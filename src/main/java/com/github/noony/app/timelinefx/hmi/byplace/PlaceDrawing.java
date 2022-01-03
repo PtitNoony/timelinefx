@@ -97,12 +97,10 @@ public final class PlaceDrawing extends FXDrawing {
 
     private void initLayout() {
         List<StayPeriod> stayPeriods = frieze.getStayPeriods().stream()
-                .filter(s -> s.getPlace().equals(place))
-                .collect(Collectors.toList());
+                .filter(s -> s.getPlace().equals(place)).toList();
         List<Person> persons = stayPeriods.stream()
-                .map(StayPeriod::getPerson).distinct()
-                .collect(Collectors.toList());
-        visiblePersons.addAll(persons.stream().filter(Person::isVisible).sorted(Person.COMPARATOR).collect(Collectors.toList()));
+                .map(StayPeriod::getPerson).distinct().toList();
+        visiblePersons.addAll(persons.stream().filter(Person::isVisible).sorted(Person.COMPARATOR).toList());
         //
         persons.forEach(p -> {
             p.addPropertyChangeListener(this::handlePersonChange);
@@ -168,16 +166,14 @@ public final class PlaceDrawing extends FXDrawing {
                     visiblePersons.remove(p);
                     stayGroup.getChildren().removeAll(nodes);
                 }
-                runLater(() -> updateLayout());
+                runLater(this::updateLayout);
             }
             case Person.SELECTION_CHANGED ->
                 System.err.println(" Person.SELECTION_CHANGED :: TODO");
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
-            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
-                // nothing to do
-            }
-            case Person.DEFAULT_PORTRAIT_CHANGED, Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED,
+                    Person.DEFAULT_PORTRAIT_CHANGED, Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
                 // nothing to do
             }
             case Person.COLOR_CHANGED -> {

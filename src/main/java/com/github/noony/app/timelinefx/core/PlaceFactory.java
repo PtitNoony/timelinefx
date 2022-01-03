@@ -17,10 +17,8 @@
 package com.github.noony.app.timelinefx.core;
 
 import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.scene.paint.Color;
@@ -29,7 +27,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class PlaceFactory {
+public final class PlaceFactory {
 
     public static final Place PLACES_PLACE = new Place(-1, "PLACES", PlaceLevel.UNIVERSE, null);
 
@@ -43,7 +41,7 @@ public class PlaceFactory {
         // private utility constructor
     }
 
-    public static final void reset() {
+    public static void reset() {
         PLACES.clear();
         ROOT_PLACES.clear();
     }
@@ -53,7 +51,7 @@ public class PlaceFactory {
     }
 
     public static List<Place> getRootPlaces() {
-        return ROOT_PLACES.stream().collect(Collectors.toList());
+        return new ArrayList<>(ROOT_PLACES);
     }
 
     public static Place getPlace(long placeID) {

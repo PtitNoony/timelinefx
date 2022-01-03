@@ -24,7 +24,15 @@ import com.github.noony.app.timelinefx.core.Frieze;
  */
 public interface IFriezeView {
 
+    /**
+     *
+     * @param f the frieze to be displayed
+     */
     void setFrieze(Frieze f);
 
+    /**
+     *
+     * @return the frieze displayed
+     */
     Frieze getFrieze();
 }

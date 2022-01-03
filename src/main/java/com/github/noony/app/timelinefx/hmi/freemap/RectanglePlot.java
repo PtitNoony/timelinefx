@@ -18,13 +18,14 @@ package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
+
 import java.beans.PropertyChangeEvent;
+
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- *
  * @author hamon
  */
 public class RectanglePlot extends AbstractFxScalableNode {
@@ -77,9 +78,7 @@ public class RectanglePlot extends AbstractFxScalableNode {
             var newY = plot.getY() + (deltaY % gridSpace) * gridSpace;
             plot.setPosition(newX, newY);
         });
-        plotRectangle.setOnMouseClicked(event -> {
-            plot.setSelected(!plot.isSelected());
-        });
+        plotRectangle.setOnMouseClicked(event -> plot.setSelected(!plot.isSelected()));
     }
 
     private void handlePropertyChange(PropertyChangeEvent event) {
@@ -91,15 +90,12 @@ public class RectanglePlot extends AbstractFxScalableNode {
             case Plot.SELECTION_CHANGED -> {
                 // nothing to do
             }
-            case Plot.PLOT_SIZE_CHANGED ->
-                updateLayout();
-            case Plot.PLOT_VISIBILITY_CHANGED ->
-                setVisible((boolean) event.getNewValue());
+            case Plot.PLOT_SIZE_CHANGED -> updateLayout();
+            case Plot.PLOT_VISIBILITY_CHANGED -> setVisible((boolean) event.getNewValue());
             case Plot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
             }
-            default ->
-                throw new UnsupportedOperationException(event.getPropertyName());
+            default -> throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 

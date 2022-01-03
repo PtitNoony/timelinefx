@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public class StayFactory {
+public final class StayFactory {
 
     private static final Logger LOG = Logger.getGlobal();
     private static final Map<Long, StayPeriod> STAY_PERIOD_SIMPLE_TIMES = new HashMap<>();
@@ -36,7 +36,7 @@ public class StayFactory {
         // private utility constructor
     }
 
-    public static final void reset() {
+    public static void reset() {
         STAY_PERIOD_SIMPLE_TIMES.clear();
         STAY_PERIOD_LOCAL_DATES.clear();
     }

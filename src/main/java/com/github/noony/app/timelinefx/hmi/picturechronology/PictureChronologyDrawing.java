@@ -111,11 +111,9 @@ public class PictureChronologyDrawing extends FxScalableParent {
         picturesGroup.getChildren().remove(miniatureDrawing.getNode());
         // IMPR in the future, rely on the PictureChronology calculations?
         var existingPersons = miniatureDrawings.keySet().stream()
-                .flatMap(c -> c.getPersons().stream())
-                .collect(Collectors.toList());
+                .flatMap(c -> c.getPersons().stream()).toList();
         var personInExcedent = personsDrawings.keySet().stream()
-                .filter(p -> !existingPersons.contains(p))
-                .collect(Collectors.toList());
+                .filter(p -> !existingPersons.contains(p)).toList();
         personInExcedent.forEach(p -> {
             var personDrawing = personsDrawings.remove(p);
             unregisterScalableNode(personDrawing);

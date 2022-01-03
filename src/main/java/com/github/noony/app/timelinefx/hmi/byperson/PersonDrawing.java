@@ -159,11 +159,9 @@ public class PersonDrawing extends FXDrawing {
                 System.err.println(" Person.SELECTION_CHANGED :: TODO");
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
-            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
-                // nothin to do
-            }
-            case Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
-                // nothin to do
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED,
+                    Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED-> {
+                // nothing to do
             }
             case Person.DEFAULT_PORTRAIT_CHANGED -> {
                 System.err.println(" Person.DEFAULT_PORTRAIT_CHANGED :: TODO");

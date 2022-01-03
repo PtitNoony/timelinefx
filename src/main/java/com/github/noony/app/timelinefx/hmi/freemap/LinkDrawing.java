@@ -21,9 +21,11 @@ import com.github.noony.app.timelinefx.core.freemap.LinkType;
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.core.freemap.Selectable;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
@@ -31,7 +33,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 
 /**
- *
  * @author hamon
  */
 public class LinkDrawing implements Selectable, IFxScalableNode {
@@ -73,9 +74,7 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         cubicCurve.setStrokeType(StrokeType.CENTERED);
         cubicCurve.setFill(null);
         //
-        line.setOnMouseClicked(event -> {
-            setSelected(!isSelected);
-        });
+        line.setOnMouseClicked(event -> setSelected(!isSelected));
         line.setStroke(color);
         cubicCurve.setStroke(color);
         switch (link.getType()) {
@@ -89,8 +88,7 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
                 cubicCurve.setStrokeWidth(1.5);
                 cubicCurve.setStrokeDashOffset(45);
             }
-            default ->
-                throw new IllegalStateException();
+            default -> throw new IllegalStateException();
         }
         startX = beginPlot.getX();
         startY = beginPlot.getY();
@@ -168,8 +166,7 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
             case Plot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
             }
-            default ->
-                throw new UnsupportedOperationException(event.getPropertyName());
+            default -> throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
@@ -185,12 +182,11 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
             case Plot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
             }
-            default ->
-                throw new UnsupportedOperationException(event.getPropertyName());
+            default -> throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
-    // ugly use fonctions
+    // ugly use functions
     private void updateX1(double newX) {
         startX = newX;
         updateLayout();
@@ -218,7 +214,7 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
     }
 
     private void updateLayout() {
-        if (isSelected == true) {
+        if (isSelected) {
             switch (link.getType()) {
                 case STAY -> {
                     line.setStrokeWidth(6.0 * scale);
@@ -230,8 +226,7 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
                     cubicCurve.setStrokeWidth(2.5 * scale);
                     cubicCurve.setStrokeDashOffset(45 * scale);
                 }
-                default ->
-                    throw new IllegalStateException();
+                default -> throw new IllegalStateException();
             }
         } else {
             switch (link.getType()) {
@@ -245,8 +240,7 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
                     cubicCurve.setStrokeWidth(1.5 * scale);
                     cubicCurve.setStrokeDashOffset(45 * scale);
                 }
-                default ->
-                    throw new IllegalStateException();
+                default -> throw new IllegalStateException();
             }
         }
         //

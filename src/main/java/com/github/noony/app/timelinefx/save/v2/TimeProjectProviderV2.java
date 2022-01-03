@@ -292,7 +292,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             // save places
             Element placesGroupElement = doc.createElement(PLACES_GROUP);
             rootElement.appendChild(placesGroupElement);
-            project.getHightLevelPlaces().forEach(place -> placesGroupElement.appendChild(createPlaceElement(doc, place, "root")));
+            project.getHighLevelPlaces().forEach(place -> placesGroupElement.appendChild(createPlaceElement(doc, place, "root")));
             // save persons
             Element personsGroupElement = doc.createElement(PERSONS_GROUP);
             rootElement.appendChild(personsGroupElement);
@@ -312,7 +312,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             // save picture chronologies
             Element pictureChronologiesGroupElement = doc.createElement(PICTURE_CHRONOLOGIES_GROUP);
             rootElement.appendChild(pictureChronologiesGroupElement);
-            project.getPictureChonologies().forEach(picChronology -> pictureChronologiesGroupElement.appendChild(createPictureChronologyElement(doc, picChronology)));
+            project.getPictureChronologies().forEach(picChronology -> pictureChronologiesGroupElement.appendChild(createPictureChronologyElement(doc, picChronology)));
             //
             rootElement.normalize();
             // write the content into xml file

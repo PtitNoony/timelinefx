@@ -212,9 +212,9 @@ public class FriezePeopleLinearDrawing implements IFriezeView {
                 var stay = (StayPeriod) event.getNewValue();
                 updateStayPeriod(stay);
             }
-            case Frieze.START_DATE_ADDED,Frieze.START_DATE_REMOVED -> {// ignore : taken care of in STAY_UPDATED
-            }
-            case Frieze.END_DATE_ADDED,Frieze.END_DATE_REMOVED -> {// ignore : taken care of in STAY_UPDATED
+            case Frieze.START_DATE_ADDED,Frieze.START_DATE_REMOVED,
+                    Frieze.END_DATE_ADDED,Frieze.END_DATE_REMOVED -> {
+                // ignore : taken care of in STAY_UPDATED
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event.getPropertyName());
@@ -224,8 +224,8 @@ public class FriezePeopleLinearDrawing implements IFriezeView {
     private void handlePersonChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case Person.VISIBILITY_CHANGED -> {
-                Person p = (Person) event.getOldValue();
-                PersonDrawing personDrawing = personsAndDrawings.get(p);
+                var p = (Person) event.getOldValue();
+                var personDrawing = personsAndDrawings.get(p);
                 if (p.isVisible()) {
                     visiblePersons.add(p);
                     personsGroup.getChildren().add(personDrawing.getNode());
@@ -233,17 +233,15 @@ public class FriezePeopleLinearDrawing implements IFriezeView {
                     visiblePersons.remove(p);
                     personsGroup.getChildren().remove(personDrawing.getNode());
                 }
-                runLater(() -> updateStaysHeight());
+                runLater(this::updateStaysHeight);
             }
             case Person.SELECTION_CHANGED ->
                 System.err.println(" Person.SELECTION_CHANGED :: TODO in FriezePeopleLinearDrawing");
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO in FriezePeopleLinearDrawing");
-            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
-                // nothin to do
-            }
-            case Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
-                // nothin to do
+            case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED,
+                    Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
+                // nothing to do
             }
             case Person.DEFAULT_PORTRAIT_CHANGED -> {
                 System.err.println(" Person.DEFAULT_PORTRAIT_CHANGED :: TODO");

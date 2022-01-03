@@ -25,8 +25,6 @@ import java.time.LocalDate;
  */
 public class StayPeriodLocalDate extends StayPeriod {
 
-    public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
-
     private LocalDate previousStartDate;
     private LocalDate previousEndDate;
     private LocalDate startDate;

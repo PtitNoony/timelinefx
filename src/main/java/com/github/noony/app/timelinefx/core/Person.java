@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.scene.paint.Color;
 
 /**
@@ -45,10 +48,10 @@ public class Person extends FriezeObject {
     public static final String PORTRAIT_REMOVED = "portraitRemoved";
     public static final String DEFAULT_PORTRAIT_CHANGED = "defaultPortaitChanged";
 
-    public static final Comparator<Person> COMPARATOR = (p1, p2) -> p1.getName().compareTo(p2.getName());
+    public static final Comparator<Person> COMPARATOR = Comparator.comparing(Person::getName);
 
     private static final Color DEFAULT_COLOR = Color.CHOCOLATE;
-
+    private static final Logger LOG = Logger.getGlobal();
     private static final long DEFAULT_TIME = -1;
 
     private final PropertyChangeSupport propertyChangeSupport;
@@ -178,6 +181,7 @@ public class Person extends FriezeObject {
     public void setDateOfBirth(LocalDate newDoB) {
         if (newDoB == null) {
             // for the time being we do not support clearing date of birth
+            LOG.log(Level.INFO,"Clearing date of birth is not supported yet in {0}", new Object[]{this});
         } else if (dateOfBirth == null) {
             dateOfBirth = newDoB;
             timeFormat = TimeFormat.LOCAL_TIME;
@@ -241,7 +245,8 @@ public class Person extends FriezeObject {
 
     public void setDateOfDeath(LocalDate newDoD) {
         if (newDoD == null) {
-            // for the time beeing we do not support clearing date of death
+            // for the time being we do not support clearing date of death
+            LOG.log(Level.INFO,"Clearing date of death is not supported yet in {0}", new Object[]{this});
         } else if (dateOfDeath == null) {
             dateOfDeath = newDoD;
             timeFormat = TimeFormat.LOCAL_TIME;

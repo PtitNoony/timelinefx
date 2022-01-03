@@ -23,6 +23,9 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static javafx.application.Platform.runLater;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,6 +41,8 @@ public class ConfigurationViewController implements Initializable {
 
     public static final String CLOSE_REQUESTED = "closeRequested1";
 
+    private static final Logger LOG = Logger.getGlobal();
+
     @FXML
     private TextField timelinesLocationField;
 
@@ -52,6 +57,7 @@ public class ConfigurationViewController implements Initializable {
 
     @FXML
     protected void handlePicLocationAction(ActionEvent event) {
+        LOG.log(Level.FINE, "handlePicLocationAction with event {0}", new Object[]{event});
         directoryChooser.setInitialDirectory(new File(Configuration.getProjectsParentFolder()));
         directoryChooser.setTitle("Select Timelines Parent Directory");
         File directory = directoryChooser.showDialog(timelinesLocationField.getScene().getWindow());
@@ -63,6 +69,7 @@ public class ConfigurationViewController implements Initializable {
 
     @FXML
     protected void handleConfigurationViewOK(ActionEvent event) {
+        LOG.log(Level.FINE, "handleConfigurationViewOK with event {0}", new Object[]{event});
         propertyChangeSupport.firePropertyChange(CLOSE_REQUESTED, null, this);
     }
 
@@ -71,6 +78,7 @@ public class ConfigurationViewController implements Initializable {
     }
 
     private void handleGlobalConfigurationChanged(PropertyChangeEvent event) {
+        LOG.log(Level.FINE, "handleGlobalConfigurationChanged with event {0}", new Object[]{event});
         switch (event.getPropertyName()) {
             case Configuration.TIMELINES_FOLDER_LOCATION_CHANGED ->
                 runLater(() -> timelinesLocationField.setText((String) event.getNewValue()));

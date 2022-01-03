@@ -41,8 +41,8 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
     private final ORIENTATION orientation;
     private final Polygon handle;
     //
-    private double lastXmouse;
-    private double currentXmouse;
+    private double lastMouseX;
+    private double currentMouseX;
 
     public DateHandleDrawing(DateHandle aDateHandle, double aScale) {
         super();
@@ -112,14 +112,12 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
     }
 
     private void initInteractivity() {
-        handle.setOnMousePressed(e -> {
-            lastXmouse = e.getSceneX();
-        });
+        handle.setOnMousePressed(e -> lastMouseX = e.getSceneX());
         handle.setOnMouseDragged(e -> {
-            currentXmouse = e.getSceneX();
-            dateHandle.setX((getNode().getTranslateX() + currentXmouse - lastXmouse) / getScale());
+            currentMouseX = e.getSceneX();
+            dateHandle.setX((getNode().getTranslateX() + currentMouseX - lastMouseX) / getScale());
             //
-            lastXmouse = currentXmouse;
+            lastMouseX = currentMouseX;
         });
     }
 
@@ -127,7 +125,8 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         switch (event.getPropertyName()) {
             case DateHandle.POSITION_CHANGED ->
                 setX((double) event.getOldValue());
-            case DateHandle.PLOT_REMOVED -> { // nothin to do
+            case DateHandle.PLOT_REMOVED -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());

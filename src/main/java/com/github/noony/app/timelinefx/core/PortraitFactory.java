@@ -22,18 +22,16 @@ import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  *
  * @author hamon
  */
-public class PortraitFactory {
+public final class PortraitFactory {
 
     public static final String PORTRAIT_ADDED = "portraitAdded";
 
@@ -46,11 +44,11 @@ public class PortraitFactory {
         // private utility constructor
     }
 
-    public static final void reset() {
+    public static void reset() {
         PORTRAITS.clear();
     }
 
-    public static final Portrait getPortrait(long id) {
+    public static Portrait getPortrait(long id) {
         return PORTRAITS.get(id);
     }
 
@@ -58,6 +56,7 @@ public class PortraitFactory {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with person={0} filePath={1}.", new Object[]{person, filePath});
         var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
         var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
+        assert picInfo != null;
         var portrait = new Portrait(FriezeObjectFactory.getNextID(), person, filePath, picInfo.getWidth(), picInfo.getHeight());
         PORTRAITS.put(portrait.getId(), portrait);
         FriezeObjectFactory.addObject(portrait);
@@ -72,6 +71,7 @@ public class PortraitFactory {
         }
         var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
         var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
+        assert picInfo != null;
         var portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight());
         PORTRAITS.put(portrait.getId(), portrait);
         FriezeObjectFactory.addObject(portrait);
@@ -80,16 +80,14 @@ public class PortraitFactory {
     }
 
     public static List<Portrait> getPortraits() {
-        return Collections.unmodifiableList(
-                PORTRAITS.values().stream().sorted(Portrait.COMPARATOR).collect(Collectors.toList())
-        );
+        return PORTRAITS.values().stream().sorted(Portrait.COMPARATOR).toList();
     }
 
-    public static final void addPropertyChangeListener(PropertyChangeListener listener) {
+    public static void addPropertyChangeListener(PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
 
-    public static final void removePropertyChangeListener(PropertyChangeListener listener) {
+    public static void removePropertyChangeListener(PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
     }
 

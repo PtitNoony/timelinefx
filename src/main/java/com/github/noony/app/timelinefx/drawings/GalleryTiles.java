@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -81,14 +80,13 @@ public class GalleryTiles implements IFxNode {
         propertyChangeSupport = new PropertyChangeSupport(GalleryTiles.this);
         var nbItems = objectList.isEmpty() ? DEFAULT_NUMBER_OF_TILES : Math.max(DEFAULT_NUMBER_OF_TILES, objectList.size());
         init(nbItems);
-        objectList.stream()
-                .sorted((p1, p2) -> p1.compareTo(p2))
-                .collect(Collectors.toList());
-        objectList.forEach(GalleryTiles.this::addFileObject);
+        var sortedObjectList = objectList.stream()
+                .sorted(IFileObject::compareTo);
+        sortedObjectList.forEach(GalleryTiles.this::addFileObject);
     }
 
     public GalleryTiles() {
-        this(Collections.EMPTY_LIST);
+        this(Collections.emptyList());
     }
 
     @Override
@@ -154,7 +152,7 @@ public class GalleryTiles implements IFxNode {
         } else {
             String largeImagePath = fileObject.getAbsolutePath();
             File pictureFile = new File(largeImagePath);
-            // TODO nice excpetion handling
+            // TODO nice exception handling
             String localUrl = "";
             try {
                 localUrl = pictureFile.toURI().toURL().toString();

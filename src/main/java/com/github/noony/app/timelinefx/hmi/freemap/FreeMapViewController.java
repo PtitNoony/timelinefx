@@ -50,7 +50,6 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     private ScrollPane viewScrollPane;
-
     @FXML
     private AnchorPane viewRootPane;
     @FXML
@@ -169,6 +168,7 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     protected void handleDistributePlacesAction(ActionEvent event) {
+        LOG.log(Level.FINE, "handleDistributePlacesAction with event {0}", new Object[]{event});
         if (friezeFreeMap != null) {
             friezeFreeMap.distributePlaces();
         }
@@ -176,6 +176,7 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     protected void handleConstantTimeAction(ActionEvent event) {
+        LOG.log(Level.FINE, "handleConstantTimeAction with event {0}", new Object[]{event});
         if (friezeFreeFormDrawing != null) {
             System.err.println(" :: displayTimeAsEqualSplit");
             friezeFreeFormDrawing.getFriezeFreeMap().displayTimeAsEqualSplit();
@@ -184,6 +185,7 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     protected void handleUpdateLayout(ActionEvent event) {
+        LOG.log(Level.FINE, "handleUpdateLayout with event {0}", new Object[]{event});
         if (friezeFreeFormDrawing != null) {
             System.err.println(" :: handleUpdateLayout");
             friezeFreeFormDrawing.updateLayout();
@@ -192,6 +194,7 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     protected void handleLinearTimeAction(ActionEvent event) {
+        LOG.log(Level.FINE, "handleLinearTimeAction with event {0}", new Object[]{event});
         if (friezeFreeFormDrawing != null) {
             friezeFreeFormDrawing.getFriezeFreeMap().displayTimeAsProportional();
         }
@@ -199,6 +202,7 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     protected void handleSaveAsPicture(ActionEvent event) {
+        LOG.log(Level.INFO, "Saving as picture on event {0}", new Object[]{event});
         if (friezeFreeFormDrawing != null) {
             File initFolder;
             if (friezeFreeMap != null) {
@@ -217,12 +221,14 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     protected void handleZoomInAction(ActionEvent event) {
+        LOG.log(Level.FINE, "handleZoomInAction with event {0}", new Object[]{event});
         friezeFreeFormDrawing.zoomIn();
         zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 
     @FXML
     protected void handleZoomOutAction(ActionEvent event) {
+        LOG.log(Level.FINE, "handleZoomOutAction with event {0}", new Object[]{event});
         friezeFreeFormDrawing.zoomOut();
         zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }

@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -84,7 +85,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     @Override
     public void setName(String aName) {
-        if (aName == null ? name != null : !aName.equals(name)) {
+        if (!Objects.equals(aName, name)) {
             name = aName;
             propertyChangeSupport.firePropertyChange(NAME_CHANGED, null, name);
         }

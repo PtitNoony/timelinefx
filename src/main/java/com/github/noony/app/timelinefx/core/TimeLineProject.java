@@ -73,7 +73,7 @@ public class TimeLineProject {
     private File miniaturesFolder = null;
     private File projectFile = null;
 
-    private final List<Place> hightLevelPlaces;
+    private final List<Place> highLevelPlaces;
     private final Map<String, Place> allPlaces;
 
     private final List<Person> persons;
@@ -85,7 +85,7 @@ public class TimeLineProject {
         name = projectName;
         initFolders(configParams);
         propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
-        hightLevelPlaces = new LinkedList<>();
+        highLevelPlaces = new LinkedList<>();
         allPlaces = new HashMap<>();
         persons = new LinkedList<>();
         stays = new LinkedList<>();
@@ -142,25 +142,26 @@ public class TimeLineProject {
             }
         }
         //
-        saveDefaultPortraitRessources();
+        saveDefaultPortraitResources();
     }
 
-    private void saveDefaultPortraitRessources() {
+    private void saveDefaultPortraitResources() {
         try {
             FileOutputStream outputStream;
             try (InputStream inputstream = getClass().getResourceAsStream(Person.DEFAULT_PICTURE_NAME)) {
                 String outputPath = portraitsFolder + File.separator + Person.DEFAULT_PICTURE_NAME;
                 File outputFile = new File(outputPath);
-                LOG.log(Level.INFO, "> savePortraitRessources :: {0}", outputPath);
+                LOG.log(Level.INFO, "> savePortraitResources :: {0}", outputPath);
                 outputStream = new FileOutputStream(outputFile);
+                assert inputstream != null;
                 outputStream.write(inputstream.readAllBytes());
             }
             outputStream.close();
         } catch (FileNotFoundException ex) {
-            LOG.log(Level.SEVERE, "Ressource file not found :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
+            LOG.log(Level.SEVERE, "Resource file not found :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
             LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Exception while saving ressource :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
+            LOG.log(Level.SEVERE, "Exception while saving resource :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
             LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});
         }
     }
@@ -218,9 +219,9 @@ public class TimeLineProject {
     }
 
     public boolean addHighLevelPlace(Place aPlace) {
-        if (!hightLevelPlaces.contains(aPlace)) {
-            hightLevelPlaces.add(aPlace);
-            hightLevelPlaces.sort(Place.COMPARATOR);
+        if (!highLevelPlaces.contains(aPlace)) {
+            highLevelPlaces.add(aPlace);
+            highLevelPlaces.sort(Place.COMPARATOR);
             if (!allPlaces.containsKey(aPlace.getName())) {
                 allPlaces.put(aPlace.getName(), aPlace);
                 propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
@@ -233,11 +234,11 @@ public class TimeLineProject {
 
     public boolean removeHighLevelPlace(Place aPlace) {
         // TODO fire
-        return hightLevelPlaces.remove(aPlace);
+        return highLevelPlaces.remove(aPlace);
     }
 
-    public List<Place> getHightLevelPlaces() {
-        return Collections.unmodifiableList(hightLevelPlaces);
+    public List<Place> getHighLevelPlaces() {
+        return Collections.unmodifiableList(highLevelPlaces);
     }
 
     public Place getPlaceByName(String placeName) {
@@ -291,7 +292,7 @@ public class TimeLineProject {
         return Collections.unmodifiableList(persons);
     }
 
-    public List<PictureChronology> getPictureChonologies() {
+    public List<PictureChronology> getPictureChronologies() {
         return Collections.unmodifiableList(pictureChronologies);
     }
 
@@ -322,21 +323,19 @@ public class TimeLineProject {
                 addPerson((Person) event.getNewValue());
             case Frieze.STAY_ADDED ->
                 addStay((StayPeriod) event.getNewValue());
-            case Frieze.DATE_WINDOW_CHANGED -> {// ignoring
+            case Frieze.DATE_WINDOW_CHANGED,
+                    Frieze.PERSON_REMOVED,
+                    Frieze.PLACE_REMOVED,
+                    Frieze.NAME_CHANGED,
+                    Frieze.STAY_UPDATED,
+                    Frieze.START_DATE_ADDED,
+                    Frieze.START_DATE_REMOVED,
+                    Frieze.END_DATE_ADDED,
+                    Frieze.END_DATE_REMOVED -> {
+                // ignoring
             }
-            case Frieze.STAY_REMOVED -> {// ignored since removal from one Freize does not mean deleted
-            }
-            case Frieze.PERSON_REMOVED -> {// ignoring
-            }
-            case Frieze.PLACE_REMOVED -> {// ignoring
-            }
-            case Frieze.NAME_CHANGED -> {// ignoring
-            }
-            case Frieze.STAY_UPDATED -> {// ignoring
-            }
-            case Frieze.START_DATE_ADDED,Frieze.START_DATE_REMOVED -> {// ignoring
-            }
-            case Frieze.END_DATE_ADDED,Frieze.END_DATE_REMOVED -> {// ignoring
+            case Frieze.STAY_REMOVED -> {
+                // ignored since removal from one Frieze does not mean deleted
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
@@ -345,16 +344,12 @@ public class TimeLineProject {
 
     private void handlePicturesChronologyChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case PictureChronology.PICTURE_ADDED, PictureChronology.PICTURE_REMOVED -> {
-                // nothing to do
-            }
-            case PictureChronology.NAME_CHANGED -> {
-                // nothing to do
-            }
-            case PictureChronology.LAYOUT_CHANGED -> {
-                // nothing to do
-            }
-            case PictureChronology.LINK_ADDED , PictureChronology.LINK_REMOVED -> {
+            case PictureChronology.PICTURE_ADDED,
+                    PictureChronology.PICTURE_REMOVED,
+                    PictureChronology.NAME_CHANGED,
+                    PictureChronology.LAYOUT_CHANGED,
+                    PictureChronology.LINK_ADDED,
+                    PictureChronology.LINK_REMOVED -> {
                 // nothing to do
             }
             default ->
@@ -363,10 +358,8 @@ public class TimeLineProject {
     }
 
     public void removePlace(Place deletedPlace) {
-        if (allPlaces.containsKey(deletedPlace.getName())) {
-            allPlaces.remove(deletedPlace.getName());
-        }
-        hightLevelPlaces.remove(deletedPlace);
+        allPlaces.remove(deletedPlace.getName());
+        highLevelPlaces.remove(deletedPlace);
         //
         if (deletedPlace.getParent() != null) {
             deletedPlace.getParent().removePlace(deletedPlace);
@@ -381,7 +374,7 @@ public class TimeLineProject {
     public void removePerson(Person deletedPerson) {
         if (persons.contains(deletedPerson)) {
             persons.remove(deletedPerson);
-            List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPerson() == deletedPerson).collect(Collectors.toList());
+            List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPerson() == deletedPerson).toList();
             staysToRemove.forEach(this::removeStay);
             //
             propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, deletedPerson);
@@ -389,9 +382,8 @@ public class TimeLineProject {
     }
 
     private void removeChildrenPlaces(Place aParentPlace) {
-        List<Place> directChildren = allPlaces.entrySet().stream()
-                .filter(entry -> (entry.getValue().getParent().equals(aParentPlace)))
-                .map(entry -> entry.getValue()).collect(Collectors.toList());
+        List<Place> directChildren = allPlaces.values().stream()
+                .filter(place -> (place.getParent().equals(aParentPlace))).toList();
         directChildren.forEach(child -> {
             allPlaces.remove(child.getName());
             removeStaysAt(child);
@@ -400,7 +392,7 @@ public class TimeLineProject {
     }
 
     private void removeStaysAt(Place aPlace) {
-        List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPlace() == aPlace).collect(Collectors.toList());
+        List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPlace() == aPlace).toList();
         staysToRemove.forEach(this::removeStay);
     }
 

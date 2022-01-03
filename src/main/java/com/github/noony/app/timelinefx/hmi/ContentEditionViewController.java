@@ -71,7 +71,7 @@ public final class ContentEditionViewController implements Initializable {
     @FXML
     private SplitPane splitPane;
 
-    private final PropertyChangeListener timelineChangeListener = e -> handleTimelineChanges(e);
+    private final PropertyChangeListener timelineChangeListener = this::handleTimelineChanges;
     //
     private TimeLineProject timeLineProject;
     //
@@ -210,7 +210,7 @@ public final class ContentEditionViewController implements Initializable {
 
     private void updatePlacesTab() {
         var rootPlaceItem = createRootPlaceItem();
-        timeLineProject.getHightLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
+        timeLineProject.getHighLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
         placesCheckTreeView.setRoot(rootPlaceItem);
         rootPlaceItem.setExpanded(true);
         placesCheckTreeView.refresh();

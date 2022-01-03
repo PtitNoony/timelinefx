@@ -89,7 +89,7 @@ public class Frieze extends FriezeObject {
         startDates = new LinkedList<>();
         endDates = new LinkedList<>();
         //
-        stayChangesListener = e -> handleStayPeriodChanges(e);
+        stayChangesListener = this::handleStayPeriodChanges;
         //
         propertyChangeSupport = new PropertyChangeSupport(Frieze.this);
         //
@@ -100,7 +100,7 @@ public class Frieze extends FriezeObject {
     }
 
     public Frieze(long anID, TimeLineProject aProject, String friezeName) {
-        this(anID, aProject, friezeName, Collections.EMPTY_LIST);
+        this(anID, aProject, friezeName, Collections.emptyList());
     }
 
     public void setName(String aName) {
@@ -119,14 +119,10 @@ public class Frieze extends FriezeObject {
     public void addPerson(Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
-            var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).collect(Collectors.toList());
-            var tmpPlaces = stays.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList());
+            var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).toList();
+            var tmpPlaces = stays.stream().map(StayPeriod::getPlace).distinct().toList();
             tmpPlaces.forEach(place -> {
-                var tempPersons = personsAtPlaces.get(place);
-                if (tempPersons == null) {
-                    tempPersons = new LinkedList<>();
-                    personsAtPlaces.put(place, tempPersons);
-                }
+                var tempPersons = personsAtPlaces.computeIfAbsent(place, k -> new LinkedList<>());
                 tempPersons.add(aPerson);
             });
             // notify place added
@@ -245,7 +241,7 @@ public class Frieze extends FriezeObject {
         if (personsAtPlaces.containsKey(p)) {
             return Collections.unmodifiableList(personsAtPlaces.get(p));
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public void addListener(PropertyChangeListener listener) {
@@ -398,7 +394,7 @@ public class Frieze extends FriezeObject {
     private void removePlace(Place placeRemoved) {
         places.remove(placeRemoved);
         personsAtPlaces.remove(placeRemoved);
-        List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPlace() == placeRemoved).collect(Collectors.toList());
+        List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPlace() == placeRemoved).toList();
         impactedStays.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PLACE_REMOVED, this, placeRemoved);
         //
@@ -408,7 +404,7 @@ public class Frieze extends FriezeObject {
     private void removePerson(Person personRemoved) {
         persons.remove(personRemoved);
         personsAtPlaces.forEach((place, list) -> list.remove(personRemoved));
-        List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPerson() == personRemoved).collect(Collectors.toList());
+        List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPerson() == personRemoved).toList();
         impactedStays.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
     }

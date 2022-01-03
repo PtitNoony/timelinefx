@@ -41,6 +41,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -59,7 +60,7 @@ public class SvgExporter {
     private static double CANVAS_Y = 0;
     private static String OUTPUT_FILE_NAME = "";
 
-    public static void EXPORT(Node srcPane, String outputFileName) {
+    public static void EXPORT(@NotNull Node srcPane, String outputFileName) {
         TEMP_FILE_LIST.clear();
         Bounds canvasBounds = srcPane.localToScene(srcPane.getBoundsInLocal());
 
@@ -97,16 +98,13 @@ public class SvgExporter {
             parserConfigurationException.printStackTrace();
         }
 
-        TEMP_FILE_LIST.stream().map(fileName -> new File(fileName)).filter(File::exists).forEachOrdered(file -> file.delete());
+        TEMP_FILE_LIST.stream().map(File::new).filter(File::exists).forEachOrdered(File::delete);
     }
 
     private static void READ_ELEMENT(Object object, Document document, Element element) {
-        if (object instanceof Pane) {
-            Pane pane = (Pane) object;
-
+        if (object instanceof Pane pane) {
             pane.getChildren().forEach(node -> READ_ELEMENT(node, document, element));
-        } else if ((object instanceof Circle) && (((Circle) object).getOpacity() != 0)) {
-            Circle circleShape = (Circle) object;
+        } else if ((object instanceof Circle circleShape) && (((Circle) object).getOpacity() != 0)) {
 
             Bounds bounds = circleShape.localToScene(circleShape.getBoundsInLocal());
 
@@ -136,8 +134,7 @@ public class SvgExporter {
             }
 
             element.appendChild(circle);
-        } else if ((object instanceof Ellipse) && (((Ellipse) object).getOpacity() != 0)) {
-            Ellipse ellipseShape = (Ellipse) object;
+        } else if ((object instanceof Ellipse ellipseShape) && (((Ellipse) object).getOpacity() != 0)) {
 
             Bounds bounds = ellipseShape.localToScene(ellipseShape.getBoundsInLocal());
 
@@ -168,8 +165,7 @@ public class SvgExporter {
             }
 
             element.appendChild(ellipse);
-        } else if ((object instanceof Rectangle) && (((Rectangle) object).getOpacity() != 0)) {
-            Rectangle rectangleShape = (Rectangle) object;
+        } else if ((object instanceof Rectangle rectangleShape) && (((Rectangle) object).getOpacity() != 0)) {
 
             Bounds rectangleSceneBounds = rectangleShape.localToScene(rectangleShape.getBoundsInLocal());
 
@@ -241,8 +237,7 @@ public class SvgExporter {
             }
 
             element.appendChild(path);
-        } else if ((object instanceof Polyline) && (((Polyline) object).getOpacity() != 0)) {
-            Polyline polylineShape = (Polyline) object;
+        } else if ((object instanceof Polyline polylineShape) && (((Polyline) object).getOpacity() != 0)) {
             Bounds bounds = polylineShape.localToScene(polylineShape.getBoundsInLocal());
 
             String points = "";
@@ -287,11 +282,9 @@ public class SvgExporter {
             double y = bounds.getMinY() - CANVAS_Y;
 
             for (PathElement pathElement : starPath.getElements()) {
-                if (pathElement instanceof MoveTo) {
-                    MoveTo moveTo = (MoveTo) pathElement;
+                if (pathElement instanceof MoveTo moveTo) {
                     d += "M " + (moveTo.getX() + x) + ", " + (moveTo.getY() + y) + " ";
-                } else if (pathElement instanceof LineTo) {
-                    LineTo lineTo = (LineTo) pathElement;
+                } else if (pathElement instanceof LineTo lineTo) {
                     d += "L " + (lineTo.getX() + x) + ", " + (lineTo.getY() + y) + " ";
                 } else if (pathElement instanceof ClosePath) {
                     d += "Z";
@@ -413,10 +406,8 @@ public class SvgExporter {
     public static String GET_BASE64_STRING_FROM_IMAGE(String srcPath) {
         String output = "";
         java.nio.file.Path path = Paths.get(srcPath);
-        byte[] bytes = null;
-
         try {
-            bytes = Files.readAllBytes(path);
+            byte[] bytes = Files.readAllBytes(path);
             output = Base64.getEncoder().encodeToString(bytes);
         } catch (IOException exception) {
             exception.printStackTrace();

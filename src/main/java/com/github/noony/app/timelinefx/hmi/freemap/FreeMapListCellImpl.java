@@ -28,7 +28,7 @@ import javafx.util.StringConverter;
  */
 public class FreeMapListCellImpl extends TextFieldListCell<FriezeFreeMap> {
 
-    private class FreeMapStringConverter extends StringConverter<FriezeFreeMap> {
+    private static class FreeMapStringConverter extends StringConverter<FriezeFreeMap> {
 
         private final FriezeViewController controller;
 

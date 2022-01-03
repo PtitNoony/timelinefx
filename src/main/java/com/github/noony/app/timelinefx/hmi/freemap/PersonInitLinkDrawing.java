@@ -28,13 +28,12 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeType;
 
 /**
- *
  * @author arnaud
  */
 public class PersonInitLinkDrawing implements IFxScalableNode {
 
     //todo variable
-    public static final double TANGEANT_LENGHT = 25;
+    public static final double TANGENT_LENGTH = 25;
 
     //TODO implement request replace in parent when shape is changed
     private final PersonInitLink link;
@@ -81,14 +80,9 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
 
     private void handlePersonLinkChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case PersonInitLink.FIRST_PLOT_CHANGED -> {
-                updateFirstPlotConfiguration((Plot) event.getNewValue());
-            }
-            case PersonInitLink.FIRST_PLOT_POSITION_CHANGED -> {
-                updatePosition();
-            }
-            default ->
-                throw new UnsupportedOperationException("handlePersonLinkChange:: " + event);
+            case PersonInitLink.FIRST_PLOT_CHANGED -> updateFirstPlotConfiguration((Plot) event.getNewValue());
+            case PersonInitLink.FIRST_PLOT_POSITION_CHANGED -> updatePosition();
+            default -> throw new UnsupportedOperationException("handlePersonLinkChange:: " + event);
         }
     }
 
@@ -166,7 +160,7 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
         cubicCurve.setStartY(origin.getY());
         cubicCurve.setControlX1(origin.getX() + 1.5 * curveRadius * scale);
         cubicCurve.setControlY1(origin.getY());
-        cubicCurve.setControlX2(target.getX() - TANGEANT_LENGHT * scale);
+        cubicCurve.setControlX2(target.getX() - TANGENT_LENGTH * scale);
         cubicCurve.setControlY2(target.getY());
         cubicCurve.setEndX(target.getX());
         cubicCurve.setEndY(target.getY());

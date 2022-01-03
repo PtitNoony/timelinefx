@@ -46,12 +46,8 @@ public class StayDrawing {
         //
         stayPeriod.getPerson().addPropertyChangeListener(StayDrawing.this::handlePersonChanged);
         //
-        line.setOnMouseEntered(event -> {
-            stayPeriod.getPerson().setSelected(true);
-        });
-        line.setOnMouseExited(event -> {
-            stayPeriod.getPerson().setSelected(false);
-        });
+        line.setOnMouseEntered(event -> stayPeriod.getPerson().setSelected(true));
+        line.setOnMouseExited(event -> stayPeriod.getPerson().setSelected(false));
     }
 
     public Line getLine() {

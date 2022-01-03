@@ -24,21 +24,56 @@ import java.time.LocalDate;
  */
 public interface IDateObject {
 
+    /**
+     * The default time stamp
+     */
     long DEFAULT_TIMESTAMP = 0;
 
+    /**
+     *
+     * @return the TimeFormat used by the instance
+     */
     TimeFormat getTimeFormat();
 
+    /**
+     *
+     * @param aTimeFormat the new time format to be used by the instance
+     */
     void setTimeFormat(TimeFormat aTimeFormat);
 
+    /**
+     *
+     * @return the instance date value, or null if not set or if the time format is not compatible
+     */
     LocalDate getDate();
 
+    /**
+     *
+     * @return the instance time stamp
+     */
     long getTimestamp();
 
+    /**
+     *
+     * @param aDate the instance's new date value
+     */
     void setDate(LocalDate aDate);
 
+    /**
+     *
+     * @param aTimestamp the instance new time stamp
+     */
     void setTimestamp(long aTimestamp);
 
+    /**
+     *
+     * @return an absolute time value to compare dateObjects no matter their time format
+     */
     long getAbsoluteTime();
 
+    /**
+     *
+     * @return a string representation of the time no matter the time format
+     */
     String getAbsoluteTimeAsString();
 }

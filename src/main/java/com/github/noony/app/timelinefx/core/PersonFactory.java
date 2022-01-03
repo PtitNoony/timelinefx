@@ -17,19 +17,17 @@
 package com.github.noony.app.timelinefx.core;
 
 import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javafx.scene.paint.Color;
 
 /**
  *
  * @author hamon
  */
-public class PersonFactory {
+public final class PersonFactory {
 
     private static final Map<Long, Person> PERSONS = new HashMap<>();
 
@@ -39,11 +37,11 @@ public class PersonFactory {
         // private utility constructor
     }
 
-    public static final void reset() {
+    public static void reset() {
         PERSONS.clear();
     }
 
-    public static final Person getPerson(long id) {
+    public static Person getPerson(long id) {
         return PERSONS.get(id);
     }
 
@@ -75,9 +73,7 @@ public class PersonFactory {
     }
 
     public static List< Person> getPERSONS() {
-        return Collections.unmodifiableList(
-                PERSONS.values().stream().sorted(Person.COMPARATOR).collect(Collectors.toList())
-        );
+        return PERSONS.values().stream().sorted(Person.COMPARATOR).toList();
     }
 
 }

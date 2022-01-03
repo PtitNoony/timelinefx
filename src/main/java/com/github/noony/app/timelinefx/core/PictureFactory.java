@@ -23,19 +23,19 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author hamon
  */
-public class PictureFactory {
+public final class PictureFactory {
 
     public static final String PICTURE_ADDED = "pictureAdded";
 
@@ -48,31 +48,32 @@ public class PictureFactory {
         // private utility constructor
     }
 
-    public static final void reset() {
+    public static void reset() {
         PICTURES.clear();
     }
 
     public static List<Picture> getPictures() {
-        return PICTURES.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(PICTURES.values());
     }
 
     public static Picture getPicture(long pictureID) {
         return PICTURES.get(pictureID);
     }
 
-    public static Picture createPicture(TimeLineProject project, File orignialPictureFile, String pictureName) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, orignialPictureFile});
+    public static Picture createPicture(TimeLineProject project, File originalPictureFile, String pictureName) {
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, originalPictureFile});
         File pictureFile;
-        pictureFile = new File(project.getPicturesFolder(), orignialPictureFile.getName());
+        pictureFile = new File(project.getPicturesFolder(), originalPictureFile.getName());
         if (!pictureFile.exists()) {
             try {
-                FileUtils.copyFile(orignialPictureFile, pictureFile);
+                FileUtils.copyFile(originalPictureFile, pictureFile);
                 LOG.log(CREATION_LOGGING_LEVEL, "Copying picture file to: {0}", new Object[]{pictureFile});
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Error while copying picture file to: {0} : {1}", new Object[]{pictureFile, ex});
             }
         }
         var picInfo = MetadataParser.parseMetadata(project, pictureFile);
+        assert picInfo != null;
         var picture = new Picture(project, FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
         PICTURES.put(picture.getId(), picture);
         FriezeObjectFactory.addObject(picture);
@@ -92,11 +93,11 @@ public class PictureFactory {
         return picture;
     }
 
-    public static final void addPropertyChangeListener(PropertyChangeListener listener) {
+    public static void addPropertyChangeListener(PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
 
-    public static final void removePropertyChangeListener(PropertyChangeListener listener) {
+    public static void removePropertyChangeListener(PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
     }
 

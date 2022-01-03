@@ -188,7 +188,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
             // save places
             Element placesGroupElement = doc.createElement(PLACES_GROUP);
             rootElement.appendChild(placesGroupElement);
-            project.getHightLevelPlaces().forEach(place -> placesGroupElement.appendChild(createPlaceElement(doc, place, "root")));
+            project.getHighLevelPlaces().forEach(place -> placesGroupElement.appendChild(createPlaceElement(doc, place, "root")));
             // save persons
             Element personsGroupElement = doc.createElement(PERSONS_GROUP);
             rootElement.appendChild(personsGroupElement);

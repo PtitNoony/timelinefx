@@ -20,6 +20,7 @@ import com.github.noony.app.timelinefx.save.XMLHandler;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public class TimeLineProjectFactory {
+public final class TimeLineProjectFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -35,24 +36,23 @@ public class TimeLineProjectFactory {
         // private utility constructor
     }
 
-    public static final TimeLineProject createProject(String name, Map<String, String> configParams) {
+    public static TimeLineProject createProject(String name, Map<String, String> configParams) {
         TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
         FriezeObjectFactory.reset();
         return timeLineProject;
     }
 
     public static TimeLineProject loadProject(File aFile) {
-        File timelineFile = null;
+        File timelineFile;
         if (aFile == null) {
             throw new IllegalStateException("Project File cannot be null.");
         } else if (aFile.isFile()) {
             timelineFile = aFile;
             LOG.log(Level.INFO, "Project Folder:: {0}", new Object[]{timelineFile.getParent()});
         } else {
-            File projectFolder = aFile;
-            File fileFound = Arrays.asList(projectFolder.listFiles()).stream().filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
+            File fileFound = Arrays.stream(Objects.requireNonNull(aFile.listFiles())).filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
             if (fileFound == null) {
-                throw new IllegalStateException("No save file was found in " + projectFolder);
+                throw new IllegalStateException("No save file was found in " + aFile);
             }
             timelineFile = fileFound;
         }

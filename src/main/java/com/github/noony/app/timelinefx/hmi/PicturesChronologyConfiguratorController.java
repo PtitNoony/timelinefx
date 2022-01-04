@@ -26,6 +26,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
@@ -45,6 +46,8 @@ public class PicturesChronologyConfiguratorController implements Initializable {
     private TextField heightField;
     @FXML
     private TextField zoomField;
+    @FXML
+    private CheckBox picturesVisibilityCB;
     //
     private PictureChronology pictureChronology;
     private PictureChronologyDrawing pictureChronologyDrawing;
@@ -52,6 +55,12 @@ public class PicturesChronologyConfiguratorController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configuratorRoot.setDisable(true);
+        picturesVisibilityCB.setSelected(true);
+        picturesVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if (pictureChronologyDrawing != null) {
+                pictureChronologyDrawing.setPicturesVisibility(t1);
+            }
+        });
         //
         widthField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (t1.isBlank() | t1.isEmpty()) {
@@ -100,6 +109,7 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         clear();
         pictureChronology = aPictureChronology;
         pictureChronologyDrawing = aPictureChronologyDrawing;
+        pictureChronologyDrawing.setPicturesVisibility(picturesVisibilityCB.isSelected());
         if (pictureChronology != null) {
             widthField.setText(Double.toString(pictureChronology.getWidth()));
             heightField.setText(Double.toString(pictureChronology.getHeight()));

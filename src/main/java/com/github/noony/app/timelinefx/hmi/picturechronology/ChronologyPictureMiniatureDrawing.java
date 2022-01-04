@@ -125,6 +125,10 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
         return scale;
     }
 
+    protected void setPictureVisibility(boolean visibility) {
+        imageView.setVisible(visibility);
+    }
+
     private void initInteractivity() {
         frontGlass.setOnMousePressed(event -> {
             oldScreenX = event.getScreenX();

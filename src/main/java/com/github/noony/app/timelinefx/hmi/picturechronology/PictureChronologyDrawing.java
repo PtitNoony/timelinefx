@@ -24,7 +24,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -76,7 +75,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
         picturesGroup = new Group();
         personsGroup = new Group();
         //
-        drawingGroup.getChildren().addAll(drawingBackground, personsGroup, picturesGroup);
+        drawingGroup.getChildren().addAll(drawingBackground, picturesGroup, personsGroup);
         addNode(drawingGroup);
         //
         pictureChronology.getChronologyPictures().forEach(miniature -> {
@@ -128,6 +127,10 @@ public class PictureChronologyDrawing extends FxScalableParent {
         drawingBackground.setHeight(pictureChronology.getHeight() * getScale());
         drawingGroup.setTranslateX(PADDING * getScale());
         drawingGroup.setTranslateY(PADDING * getScale());
+    }
+
+    public void setPicturesVisibility(boolean visibility) {
+        miniatureDrawings.values().forEach(miniature -> miniature.setPictureVisibility(visibility));
     }
 
     protected PictureChronology getPictureChronology() {

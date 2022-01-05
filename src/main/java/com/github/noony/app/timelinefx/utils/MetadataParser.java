@@ -63,7 +63,7 @@ public class MetadataParser {
                 final PictureInfo picInfo = new PictureInfo(fileName, projectRelativePath, creationDate, xRes, yRes);
                 return picInfo;
             } else {
-                LOG.log(Level.WARNING, "Could not parse file :: {0} \n > {1}", new Object[]{file, metadata});
+                LOG.log(Level.WARNING, "Could not parse file :: {0} > {1}", new Object[]{file, metadata});
                 final PictureInfo picInfo = new PictureInfo(fileName, projectRelativePath, creationDate, xRes, yRes);
                 return picInfo;
             }

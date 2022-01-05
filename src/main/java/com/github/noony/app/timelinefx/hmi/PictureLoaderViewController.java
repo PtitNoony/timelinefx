@@ -123,7 +123,6 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         updateActions();
     }
 
-
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
@@ -225,14 +224,28 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         personsToRemove.forEach(p -> picture.removePerson(p));
         placesCheckListView.getCheckModel().getCheckedItems().forEach(p -> picture.addPlace(p));
         picture.setName(pictureNameField.getText());
-        try {
-            var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
-            picture.setDate(localDate);
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
-            picture.setDate(LocalDate.now());
+        switch (timeformatCB.getSelectionModel().getSelectedItem()) {
+            case LOCAL_TIME -> {
+                try {
+                    var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+                    picture.setDate(localDate);
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
+                    picture.setDate(LocalDate.now());
+                }
+            }
+            case TIME_MIN -> {
+                try {
+                    var localTimestamp = Long.parseLong(pictureDateField.getText().trim());
+                    picture.setTimestamp(localTimestamp);
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.SEVERE, "Could not parse timestamp :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
+                    picture.setTimestamp(0);
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeformatCB.getSelectionModel().getSelectedItem());
         }
-
     }
 
     private void updateActions() {

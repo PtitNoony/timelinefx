@@ -222,9 +222,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                     default ->
                         throw new UnsupportedOperationException("Unknown element :: " + element.getTagName());
                 }
-//                            case CONFIGURATION_ELEMENT:
-//                                loadConfigurationAttributes(element);
-//                                break;
             }
         }
         // check every file exists
@@ -285,10 +282,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             rootElement.setAttribute(PICTURES_LOCATION_ATR, picturesFolderName);
             rootElement.setAttribute(MINIATURES_FOLDER_ATR, miniaturesFolderName);
             doc.appendChild(rootElement);
-            // save configuration
-//            Element configurationElement = doc.createElement(CONFIGURATION_ELEMENT);
-//            rootElement.appendChild(configurationElement);
-//            saveConfigurationAttributes(configurationElement);
             // save places
             Element placesGroupElement = doc.createElement(PLACES_GROUP);
             rootElement.appendChild(placesGroupElement);
@@ -593,36 +586,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return stay;
     }
 
-    private StayPeriodLocalDate parseStayPeriodLocalTimeInFreize(Element stayElement) {
-        // <stay endDate="20" id="1" person="5" startDate="0" timeFormat="LOCAL_TIME"/>
-        long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
-        if (!stayElement.hasAttribute(PERSON_ATR)) {
-            return (StayPeriodLocalDate) StayFactory.getStay(id);
-        } else {
-            long personID = Long.parseLong(stayElement.getAttribute(PERSON_ATR));
-            Person person = PersonFactory.getPerson(personID);
-            if (person == null) {
-                throw new IllegalStateException();
-            }
-            long placeID = Long.parseLong(stayElement.getAttribute(PLACE_ID_ATR));
-            Place place = PlaceFactory.getPlace(placeID);
-            if (place == null) {
-                throw new IllegalStateException();
-            }
-
-            String startS = stayElement.getAttribute(START_DATE_ATR);
-            String endS = stayElement.getAttribute(END_DATE_ATR);
-            LocalDate start = LocalDate.parse(startS);
-            LocalDate end = LocalDate.parse(endS);
-//            long startLong = Long.parseLong(stayElement.getAttribute(START_DATE_ATR));
-//            long endLong = Long.parseLong(stayElement.getAttribute(END_DATE_ATR));
-//            LocalDate start = LocalDate.ofEpochDay(startLong);
-//            LocalDate end = LocalDate.ofEpochDay(endLong);
-            StayPeriodLocalDate stay = StayFactory.createStayPeriodLocalDate(id, person, start, end, place);
-            return stay;
-        }
-    }
-
     private StayPeriodSimpleTime parseStayPeriodSimpleTime(Element stayElement) {
         // <stay endDate="20" id="1" person="5" startDate="0" timeFormat="TIME_MIN"/>
         long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
@@ -642,31 +605,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         return stay;
     }
 
-    private StayPeriodSimpleTime parseStayPeriodSimpleTimeInFreize(Element stayElement) {
-        // <stay endDate="20" id="1" person="5" startDate="0" timeFormat="TIME_MIN"/>
-        long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
-        if (!stayElement.hasAttribute(PERSON_ATR)) {
-            return (StayPeriodSimpleTime) StayFactory.getStay(id);
-        } else {
-            long personID = Long.parseLong(stayElement.getAttribute(PERSON_ATR));
-            Person person = PersonFactory.getPerson(personID);
-            if (person == null) {
-                throw new IllegalStateException();
-            }
-            long placeID = Long.parseLong(stayElement.getAttribute(PLACE_ID_ATR));
-            Place place = PlaceFactory.getPlace(placeID);
-            if (place == null) {
-                throw new IllegalStateException();
-            }
-            var start = Double.parseDouble(stayElement.getAttribute(START_DATE_ATR));
-            var end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
-            StayPeriodSimpleTime stay = StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
-            return stay;
-        }
-    }
-
     private void parseFreeMaps(Element freemapsRootElement, Frieze frieze) {
-//        List<FriezeFreeMap> freeMaps = new LinkedList<>();
         NodeList freemapElements = freemapsRootElement.getChildNodes();
         for (int i = 0; i < freemapElements.getLength(); i++) {
             if (freemapElements.item(i).getNodeName().equals(FREEMAP_ELEMENT)) {
@@ -674,7 +613,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 parseFreeMap(e, frieze);
             }
         }
-//        return freeMaps;
     }
 
     private void parseFreeMap(Element freemapElement, Frieze frieze) {
@@ -802,39 +740,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 plot.setY(yPos);
             }
         }
-    }
-
-    private List<Link> parseLinks(Element linksRootElement, Frieze frieze) {
-        // <link endID="1.0" startID="1" type="STAY"/>
-        List<Link> links = new LinkedList<>();
-        NodeList linkElements = linksRootElement.getChildNodes();
-        for (int i = 0; i < linkElements.getLength(); i++) {
-            if (linkElements.item(i).getNodeName().equals(LINK_ELEMENT)) {
-                Element e = (Element) linkElements.item(i);
-                String type = e.getAttribute(TYPE_ATR);
-                long startID = Long.parseLong(e.getAttribute(START_ID_ATR));
-                long endID = Long.parseLong(e.getAttribute(END_ID_ATR));
-                Optional<StayPeriod> startStayOp = frieze.getStayPeriods().stream().filter(s -> s.getId() == startID).findAny();
-                Optional<StayPeriod> endStayOp = frieze.getStayPeriods().stream().filter(s -> s.getId() == endID).findAny();
-                if (startStayOp.isEmpty()) {
-                    throw new IllegalStateException();
-                }
-                if (endStayOp.isEmpty()) {
-                    throw new IllegalStateException();
-                }
-                Link link;
-//                if (type.equals(LinkType.STAY.name())) {
-//                    link = new StayLink(stayOp.get(), aBeginPlot, aEndPlot));
-//                } else if (type.equals(PlotType.END.name())) {
-//                    plot = new EndPlot(stayOp.get());
-//                } else {
-//                    throw new UnsupportedOperationException();
-//                }
-//                plot.setPosition(xPos, yPos);
-//                plots.add(plot);
-            }
-        }
-        return links;
     }
 
     private List<PictureChronology> parsePictureChronologies(TimeLineProject project, Element pictureChronologiesRootElement) {

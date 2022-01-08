@@ -41,7 +41,7 @@ public final class StayFactory {
         STAY_PERIOD_LOCAL_DATES.clear();
     }
 
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(Person person, long startDate, long endDate, Place aPlace) {
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(Person person, double startDate, double endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
         var stay = new StayPeriodSimpleTime(FriezeObjectFactory.getNextID(), person, startDate, endDate, aPlace);
         STAY_PERIOD_SIMPLE_TIMES.put(stay.getId(), stay);
@@ -49,11 +49,10 @@ public final class StayFactory {
         return stay;
     }
 
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(long id, Person person, long startDate, long endDate, Place aPlace) {
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(long id, Person person, double startDate, double endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FriezeObjectFactory.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " from " + startDate + " to " + endDate + " with existing id=" + id + " (exists : " + id + ")");
-//            throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " from " + startDate + " to " + endDate + " with existing id=" + id + " (exists : " + STAY_PERIOD_SIMPLE_TIMES.get(id).getDisplayString() + ")");
         }
         var stay = new StayPeriodSimpleTime(id, person, startDate, endDate, aPlace);
         STAY_PERIOD_SIMPLE_TIMES.put(stay.getId(), stay);

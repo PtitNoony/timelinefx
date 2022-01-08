@@ -184,7 +184,7 @@ public class FreeMapPerson {
 
     private void updateFirstPlot() {
         var oldFirstPlot = firstPlot;
-        firstPlot = plots.stream().filter(plot -> plot.getPerson().equals(person)).sorted((p1, p2) -> Long.compare(p1.getDate(), p2.getDate())).findFirst().orElse(null);
+        firstPlot = plots.stream().filter(plot -> plot.getPerson().equals(person)).sorted((p1, p2) -> Double.compare(p1.getDate(), p2.getDate())).findFirst().orElse(null);
         if (oldFirstPlot != firstPlot) {
             propertyChangeSupport.firePropertyChange(FIRST_PLOT_CHANGED, this, firstPlot);
         }

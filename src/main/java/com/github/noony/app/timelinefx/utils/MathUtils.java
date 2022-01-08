@@ -22,11 +22,11 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public class MathUtils {
+public final class MathUtils {
 
     public static final double HALF_PI = Math.PI / 2.0;
 
-    public static final double getAngle(Point2D point1, Point2D point2) {
+    public static double getAngle(Point2D point1, Point2D point2) {
         if (point1.getY() == point2.getY()) {
             if (point2.getX() > point1.getX()) {
                 return 0.0;
@@ -35,6 +35,20 @@ public class MathUtils {
             }
         } else {
             return Math.atan2(point2.getY() - point1.getY(), point2.getX() - point1.getX());
+        }
+    }
+
+    /**
+     * Function to convert double values to string without trailing zeros
+     *
+     * @param value the double value to convert
+     * @return the corresponding string
+     */
+    public static final String doubleToString(double value) {
+        if (value == (long) value) {
+            return Long.toString((long) value);
+        } else {
+            return Double.toString(value);
         }
     }
 

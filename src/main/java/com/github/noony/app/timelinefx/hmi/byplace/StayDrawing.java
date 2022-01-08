@@ -58,7 +58,7 @@ public class StayDrawing {
         return stayPeriod;
     }
 
-    public void updateDateRatio(long minDate, double ratio) {
+    public void updateDateRatio(double minDate, double ratio) {
         double startX = (stayPeriod.getStartDate() - minDate) * ratio;
         line.setStartX(startX);
         double endX = (stayPeriod.getEndDate() - minDate) * ratio;

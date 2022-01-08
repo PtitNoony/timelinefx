@@ -20,14 +20,11 @@ import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.freemap.DateHandle;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
-import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-
-import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.DEFAULT_TIME_HEIGHT;
-
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.DEFAULT_TIME_HEIGHT;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -35,7 +32,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -78,8 +74,8 @@ public class FriezeFreeFormDrawing {
     private final Map<Person, FreeMapPortraitDrawing> portraitDrawings;
     private final Map<FreeMapPlace, PlaceDrawing> placeDrawings;
     private final Map<FreeMapPerson, PersonDrawing> personDrawings;
-    private final Map<Long, DateHandleDrawing> startDatesHandles;
-    private final Map<Long, DateHandleDrawing> endDatesHandles;
+    private final Map<Double, DateHandleDrawing> startDatesHandles;
+    private final Map<Double, DateHandleDrawing> endDatesHandles;
     //
     private final List<IFxScalableNode> scalableNodes;
     //
@@ -338,7 +334,8 @@ public class FriezeFreeFormDrawing {
 
     private void handleFreeMapChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case FriezeFreeMap.LAYOUT_CHANGED -> updateLayout();
+            case FriezeFreeMap.LAYOUT_CHANGED ->
+                updateLayout();
             case FriezeFreeMap.FREE_MAP_PLACE_ADDED -> {
                 var freeMapPlaceAdded = (FreeMapPlace) event.getNewValue();
                 addPlaceDrawing(freeMapPlaceAdded);
@@ -365,11 +362,16 @@ public class FriezeFreeFormDrawing {
             case FriezeFreeMap.NAME_CHANGED -> {
                 // nothing to do
             }
-            case FriezeFreeMap.START_DATE_HANDLE_ADDED -> addStartDateHandleDrawing((DateHandle) event.getNewValue());
-            case FriezeFreeMap.END_DATE_HANDLE_ADDED -> addEndDateHandleDrawing((DateHandle) event.getNewValue());
-            case FriezeFreeMap.START_DATE_HANDLE_REMOVED -> removeStartDateHandleDrawing((DateHandle) event.getNewValue());
-            case FriezeFreeMap.END_DATE_HANDLE_REMOVED -> removeEndDateHandleDrawing((DateHandle) event.getNewValue());
-            default -> throw new UnsupportedOperationException(event.getPropertyName());
+            case FriezeFreeMap.START_DATE_HANDLE_ADDED ->
+                addStartDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.END_DATE_HANDLE_ADDED ->
+                addEndDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.START_DATE_HANDLE_REMOVED ->
+                removeStartDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.END_DATE_HANDLE_REMOVED ->
+                removeEndDateHandleDrawing((DateHandle) event.getNewValue());
+            default ->
+                throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 

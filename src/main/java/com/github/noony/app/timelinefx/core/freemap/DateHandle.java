@@ -40,14 +40,14 @@ public class DateHandle {
     private final PropertyChangeSupport propertyChangeSupport;
     private final PropertyChangeListener propertyChangeListener;
     private final TimeType timeType;
-    private final long date;
+    private final double date;
     //
     private final List<Plot> plots;
     //
     private double xPos;
     private double yPos;
 
-    public DateHandle(long aDate, TimeType aTimeType, Point2D aPosition) {
+    public DateHandle(double aDate, TimeType aTimeType, Point2D aPosition) {
         propertyChangeSupport = new PropertyChangeSupport(DateHandle.this);
         propertyChangeListener = e -> DateHandle.this.handlePlotUpdate(e);
         date = aDate;
@@ -57,7 +57,7 @@ public class DateHandle {
         yPos = aPosition.getY();
     }
 
-    public long getDate() {
+    public double getDate() {
         return date;
     }
 

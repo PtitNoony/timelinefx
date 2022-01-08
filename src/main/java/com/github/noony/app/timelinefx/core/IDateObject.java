@@ -51,7 +51,7 @@ public interface IDateObject {
      *
      * @return the instance time stamp
      */
-    long getTimestamp();
+    double getTimestamp();
 
     /**
      *
@@ -63,13 +63,13 @@ public interface IDateObject {
      *
      * @param aTimestamp the instance new time stamp
      */
-    void setTimestamp(long aTimestamp);
+    void setTimestamp(double aTimestamp);
 
     /**
      *
      * @return an absolute time value to compare dateObjects no matter their time format
      */
-    long getAbsoluteTime();
+    double getAbsoluteTime();
 
     /**
      *

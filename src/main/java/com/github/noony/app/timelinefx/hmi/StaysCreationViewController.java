@@ -25,6 +25,7 @@ import com.github.noony.app.timelinefx.core.StayPeriodLocalDate;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -367,13 +368,13 @@ public class StaysCreationViewController implements Initializable {
         switch (selectedStayPeriod.getTimeFormat()) {
             case LOCAL_TIME -> {
                 dateRB.setSelected(true);
-                startDateP.setValue(LocalDate.ofEpochDay(selectedStayPeriod.getStartDate()));
-                endDateP.setValue(LocalDate.ofEpochDay(selectedStayPeriod.getEndDate()));
+                startDateP.setValue(LocalDate.ofEpochDay((long) selectedStayPeriod.getStartDate()));
+                endDateP.setValue(LocalDate.ofEpochDay((long) selectedStayPeriod.getEndDate()));
             }
             case TIME_MIN -> {
                 timeRB.setSelected(true);
-                startTimeTF.setText(Long.toString(selectedStayPeriod.getStartDate()));
-                endTimeTF.setText(Long.toString(selectedStayPeriod.getEndDate()));
+                startTimeTF.setText(MathUtils.doubleToString(selectedStayPeriod.getStartDate()));
+                endTimeTF.setText(MathUtils.doubleToString(selectedStayPeriod.getEndDate()));
             }
             default ->
                 throw new UnsupportedOperationException();

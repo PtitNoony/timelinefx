@@ -423,8 +423,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         if (place == null) {
             throw new IllegalStateException("Could not load StayPeriodSimpleTime id=" + id + " with placeID=" + placeID);
         }
-        long start = Long.parseLong(stayElement.getAttribute(START_DATE_ATR));
-        long end = Long.parseLong(stayElement.getAttribute(END_DATE_ATR));
+        double start = Double.parseDouble(stayElement.getAttribute(START_DATE_ATR));
+        double end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
         StayPeriodSimpleTime stay = StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
         return stay;
     }
@@ -622,8 +622,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         Element stayElement = doc.createElement(STAY_ELEMENT);
         stayElement.setAttribute(ID_ATR, Long.toString(stay.getId()));
         stayElement.setAttribute(PERSON_ATR, Long.toString(stay.getPerson().getId()));
-        stayElement.setAttribute(START_DATE_ATR, Long.toString(stay.getStartDate()));
-        stayElement.setAttribute(END_DATE_ATR, Long.toString(stay.getEndDate()));
+        stayElement.setAttribute(START_DATE_ATR, Double.toString(stay.getStartDate()));
+        stayElement.setAttribute(END_DATE_ATR, Double.toString(stay.getEndDate()));
         stayElement.setAttribute(TIME_FORMAT_ATR, stay.getTimeFormat().name());
         stayElement.setAttribute(PLACE_ID_ATR, Long.toString(stay.getPlace().getId()));
         return stayElement;

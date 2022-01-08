@@ -82,8 +82,8 @@ public final class FriezeFreeMap extends FriezeObject {
     private final Map<Person, FreeMapPerson> freeMapPersons;
     private final Map<Person, FreeMapPortrait> portraits;
     private final List<PersonInitLink> personInitLinks;
-    private final Map<Long, DateHandle> startDateHandles;
-    private final Map<Long, DateHandle> endDateHandles;
+    private final Map<Double, DateHandle> startDateHandles;
+    private final Map<Double, DateHandle> endDateHandles;
     //
     private String name;
     //
@@ -101,8 +101,8 @@ public final class FriezeFreeMap extends FriezeObject {
     private boolean plotVisibiltiy;
     private double plotSize;
     //
-    private long minDate;
-    private long maxDate;
+    private double minDate;
+    private double maxDate;
     private double availableWidth;
     private double timeRatio;
     //
@@ -243,11 +243,11 @@ public final class FriezeFreeMap extends FriezeObject {
         return Collections.unmodifiableList(endDateHandles.values().stream().collect(Collectors.toList()));
     }
 
-    public DateHandle getStartDateHandle(long aDate) {
+    public DateHandle getStartDateHandle(double aDate) {
         return startDateHandles.get(aDate);
     }
 
-    public DateHandle getEndDateHandle(long aDate) {
+    public DateHandle getEndDateHandle(double aDate) {
         return endDateHandles.get(aDate);
     }
 
@@ -501,7 +501,7 @@ public final class FriezeFreeMap extends FriezeObject {
         propertyChangeSupport.firePropertyChange(FREE_MAP_PLACE_ADDED, null, freeMapPlace);
     }
 
-    private DateHandle createDateHandle(long date, DateHandle.TimeType type) {
+    private DateHandle createDateHandle(double date, DateHandle.TimeType type) {
         var calculatedX = getPlaceDrawingWidth() * (date - minDate) / (maxDate - minDate);
         var position = new Point2D(calculatedX, DEFAULT_TIME_HEIGHT / 2.0);
         switch (type) {
@@ -564,8 +564,8 @@ public final class FriezeFreeMap extends FriezeObject {
     }
 
     private void updateDateHandles() {
-        List<Long> startDates = frieze.getStartDates();
-        List<Long> startDatesToBeRemoved = new LinkedList<>();
+        List<Double> startDates = frieze.getStartDates();
+        List<Double> startDatesToBeRemoved = new LinkedList<>();
         startDates.forEach(startDate -> {
             if (!startDateHandles.containsKey(startDate)) {
                 var startDateHandle = createDateHandle(startDate, DateHandle.TimeType.START);
@@ -582,8 +582,8 @@ public final class FriezeFreeMap extends FriezeObject {
             propertyChangeSupport.firePropertyChange(START_DATE_HANDLE_REMOVED, this, startDateHandle);
         });
         //
-        List<Long> endDates = frieze.getEndDates();
-        List<Long> endDatesToBeRemoved = new LinkedList<>();
+        List<Double> endDates = frieze.getEndDates();
+        List<Double> endDatesToBeRemoved = new LinkedList<>();
         frieze.getEndDates().forEach(endDate -> {
             if (!endDateHandles.containsKey(endDate)) {
                 var endDateHandle = createDateHandle(endDate, DateHandle.TimeType.END);

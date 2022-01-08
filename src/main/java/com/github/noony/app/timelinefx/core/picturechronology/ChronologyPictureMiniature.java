@@ -34,7 +34,7 @@ public class ChronologyPictureMiniature extends FriezeObject {
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
 
-    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Long.compare(c1.getPicture().getAbsoluteTime(), c2.getPicture().getAbsoluteTime());
+    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getPicture().getAbsoluteTime(), c2.getPicture().getAbsoluteTime());
 
     private final PropertyChangeSupport propertyChangeSupport;
 

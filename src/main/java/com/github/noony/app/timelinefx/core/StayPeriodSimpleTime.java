@@ -22,12 +22,12 @@ package com.github.noony.app.timelinefx.core;
  */
 public class StayPeriodSimpleTime extends StayPeriod {
 
-    private long previousStartTime;
-    private long previousEndTime;
-    private long startTime;
-    private long endTime;
+    private double previousStartTime;
+    private double previousEndTime;
+    private double startTime;
+    private double endTime;
 
-    protected StayPeriodSimpleTime(Long anId, Person aPerson, long aStartTime, long anEndTime, Place aPlace) {
+    protected StayPeriodSimpleTime(Long anId, Person aPerson, double aStartTime, double anEndTime, Place aPlace) {
         super(anId, aPerson, aPlace);
         previousStartTime = aStartTime;
         previousEndTime = anEndTime;
@@ -36,26 +36,26 @@ public class StayPeriodSimpleTime extends StayPeriod {
     }
 
     @Override
-    public long getPreviousStartDate() {
+    public double getPreviousStartDate() {
         return previousStartTime;
     }
 
     @Override
-    public long getPreviousEndDate() {
+    public double getPreviousEndDate() {
         return previousEndTime;
     }
 
     @Override
-    public long getStartDate() {
+    public double getStartDate() {
         return startTime;
     }
 
     @Override
-    public long getEndDate() {
+    public double getEndDate() {
         return endTime;
     }
 
-    public void setStartDate(long aStartDate) {
+    public void setStartDate(double aStartDate) {
         if (startTime != aStartDate) {
             previousStartTime = startTime;
             startTime = aStartDate;
@@ -63,7 +63,7 @@ public class StayPeriodSimpleTime extends StayPeriod {
         }
     }
 
-    public void setEndDate(long aEndDate) {
+    public void setEndDate(double aEndDate) {
         if (endTime != aEndDate) {
             previousEndTime = endTime;
             endTime = aEndDate;

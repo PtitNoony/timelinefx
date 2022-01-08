@@ -445,7 +445,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 case TIME_MIN -> {
                     if (sourceElement.hasAttribute(DATE_ATR)) {
                         var timeS = sourceElement.getAttribute(DATE_ATR);
-                        var time = Long.parseLong(timeS);
+                        var time = Double.parseDouble(timeS);
                         aDateObject.setTimestamp(time);
                     }
                 }
@@ -636,8 +636,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         if (place == null) {
             throw new IllegalStateException("Could not load StayPeriodSimpleTime id=" + id + " with placeID=" + placeID);
         }
-        long start = Long.parseLong(stayElement.getAttribute(START_DATE_ATR));
-        long end = Long.parseLong(stayElement.getAttribute(END_DATE_ATR));
+        var start = Double.parseDouble(stayElement.getAttribute(START_DATE_ATR));
+        var end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
         StayPeriodSimpleTime stay = StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
         return stay;
     }
@@ -658,8 +658,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             if (place == null) {
                 throw new IllegalStateException();
             }
-            long start = Long.parseLong(stayElement.getAttribute(START_DATE_ATR));
-            long end = Long.parseLong(stayElement.getAttribute(END_DATE_ATR));
+            var start = Double.parseDouble(stayElement.getAttribute(START_DATE_ATR));
+            var end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
             StayPeriodSimpleTime stay = StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
             return stay;
         }
@@ -960,7 +960,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 }
             }
             case TIME_MIN -> {
-                targetElement.setAttribute(DATE_ATR, Long.toString(aDateObject.getTimestamp()));
+                targetElement.setAttribute(DATE_ATR, Double.toString(aDateObject.getTimestamp()));
             }
             default ->
                 throw new UnsupportedOperationException("Unsupported timefomat : " + aDateObject.getTimeFormat());
@@ -1010,14 +1010,14 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         stayElement.setAttribute(PERSON_ATR, Long.toString(stay.getPerson().getId()));
         switch (stay.getTimeFormat()) {
             case LOCAL_TIME -> {
-                LocalDate startDate = LocalDate.ofEpochDay(stay.getStartDate());
-                LocalDate endDate = LocalDate.ofEpochDay(stay.getEndDate());
+                LocalDate startDate = LocalDate.ofEpochDay((long) stay.getStartDate());
+                LocalDate endDate = LocalDate.ofEpochDay((long) stay.getEndDate());
                 stayElement.setAttribute(START_DATE_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(startDate));
                 stayElement.setAttribute(END_DATE_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(endDate));
             }
             case TIME_MIN -> {
-                stayElement.setAttribute(START_DATE_ATR, Long.toString(stay.getStartDate()));
-                stayElement.setAttribute(END_DATE_ATR, Long.toString(stay.getEndDate()));
+                stayElement.setAttribute(START_DATE_ATR, Double.toString(stay.getStartDate()));
+                stayElement.setAttribute(END_DATE_ATR, Double.toString(stay.getEndDate()));
             }
             default ->
                 throw new UnsupportedOperationException("Unknown time format : " + stay.getTimeFormat());

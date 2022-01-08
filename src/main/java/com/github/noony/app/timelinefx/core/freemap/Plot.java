@@ -40,7 +40,7 @@ public class Plot implements GridPositionable, Selectable {
     private final Place place;
     private final long parentPeriodID;
 
-    private long date;
+    private double date;
     private final PlotType type;
     private final DoubleProperty xPos;
     private final DoubleProperty yPos;
@@ -49,7 +49,7 @@ public class Plot implements GridPositionable, Selectable {
     private boolean isSelected = false;
     private double plotSize;
 
-    public Plot(Person aPerson, Place aPlace, long aDate, PlotType aType, long aPeriodID, double aPlotSize) {
+    public Plot(Person aPerson, Place aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
         propertyChangeSupport = new PropertyChangeSupport(Plot.this);
         //
         person = aPerson;
@@ -155,7 +155,7 @@ public class Plot implements GridPositionable, Selectable {
         propertyChangeSupport.firePropertyChange(PLOT_SIZE_CHANGED, this, plotSize);
     }
 
-    public long getDate() {
+    public double getDate() {
         return date;
     }
 
@@ -167,7 +167,7 @@ public class Plot implements GridPositionable, Selectable {
         return yPos;
     }
 
-    public void setDate(long aDate) {
+    public void setDate(double aDate) {
         if (aDate != date) {
             date = aDate;
             propertyChangeSupport.firePropertyChange(PLOT_DATE_CHANGED, this, date);

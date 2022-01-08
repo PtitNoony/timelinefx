@@ -61,19 +61,19 @@ public class Frieze extends FriezeObject {
     private final PropertyChangeSupport propertyChangeSupport;
     private final List<FriezeFreeMap> friezeFreeMaps;
     //
-    private final List<Long> dates;
-    private final List<Long> startDates;
-    private final List<Long> endDates;
+    private final List<Double> dates;
+    private final List<Double> startDates;
+    private final List<Double> endDates;
     //
     private final PropertyChangeListener stayChangesListener;
     //
     private String name;
     //
-    private long minDate = DEFAULT_MIN_DATE;
-    private long maxDate = DEFAULT_MAX_DATE;
+    private double minDate = DEFAULT_MIN_DATE;
+    private double maxDate = DEFAULT_MAX_DATE;
     //
-    private long minDateWindow = minDate;
-    private long maxDateWindow = maxDate;
+    private double minDateWindow = minDate;
+    private double maxDateWindow = maxDate;
 
     protected Frieze(long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
         super(anID);
@@ -175,8 +175,8 @@ public class Frieze extends FriezeObject {
             if (!endDates.contains(stay.getEndDate())) {
                 endDates.add(stay.getEndDate());
             }
-            minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+            maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             //
             propertyChangeSupport.firePropertyChange(STAY_ADDED, this, stay);
         }
@@ -188,14 +188,14 @@ public class Frieze extends FriezeObject {
             stay.removeListener(stayChangesListener);
             //TODO : check if person list and place list is unchanged
             //
-            minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+            maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             //
             var startDate = stay.getStartDate();
             var endDate = stay.getEndDate();
-            var removeStart = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
-            var removeEnd = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
-            maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            var removeStart = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
+            var removeEnd = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
+            maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             if (removeStart) {
                 startDates.remove(startDate);
                 // TODO fire ?
@@ -204,12 +204,12 @@ public class Frieze extends FriezeObject {
                 endDates.remove(endDate);
                 // TODO fire ?
             }
-            if (stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == startDate)
-                    && stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == startDate)) {
+            if (stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == startDate)
+                    && stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == startDate)) {
                 dates.remove(startDate);
             }
-            if (stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == endDate)
-                    && stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == endDate)) {
+            if (stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == endDate)
+                    && stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == endDate)) {
                 dates.remove(endDate);
             }
             //
@@ -296,23 +296,23 @@ public class Frieze extends FriezeObject {
         return Collections.unmodifiableList(friezeFreeMaps);
     }
 
-    public List<Long> getDates() {
+    public List<Double> getDates() {
         return Collections.unmodifiableList(dates);
     }
 
-    public List<Long> getStartDates() {
+    public List<Double> getStartDates() {
         return Collections.unmodifiableList(startDates);
     }
 
-    public List<Long> getEndDates() {
+    public List<Double> getEndDates() {
         return Collections.unmodifiableList(endDates);
     }
 
-    public long getMinDate() {
+    public double getMinDate() {
         return minDate;
     }
 
-    public long getMaxDate() {
+    public double getMaxDate() {
         return maxDate;
     }
 
@@ -320,20 +320,20 @@ public class Frieze extends FriezeObject {
         return dates.size();
     }
 
-    public long getMinDateWindow() {
+    public double getMinDateWindow() {
         return minDateWindow;
     }
 
-    public long getMaxDateWindow() {
+    public double getMaxDateWindow() {
         return maxDateWindow;
     }
 
-    public void setMinDateWindow(long newMinDateWindow) {
+    public void setMinDateWindow(double newMinDateWindow) {
         minDateWindow = newMinDateWindow;
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
 
-    public void setMaxDateWindow(long newMaxDateWindow) {
+    public void setMaxDateWindow(double newMaxDateWindow) {
         maxDateWindow = newMaxDateWindow;
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
@@ -409,9 +409,9 @@ public class Frieze extends FriezeObject {
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
     }
 
-    private void updateDatesOnRemoval(long dateRemoved, boolean isStartDate) {
-        var notInStartDates = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
-        var notInEndDates = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
+    private void updateDatesOnRemoval(double dateRemoved, boolean isStartDate) {
+        var notInStartDates = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
+        var notInEndDates = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
         if (isStartDate && notInStartDates) {
             startDates.remove(dateRemoved);
             propertyChangeSupport.firePropertyChange(START_DATE_REMOVED, this, dateRemoved);
@@ -425,14 +425,14 @@ public class Frieze extends FriezeObject {
 
     }
 
-    private void updateDatesOnCreation(long dateAdded, boolean isStartDate) {
+    private void updateDatesOnCreation(double dateAdded, boolean isStartDate) {
         // start by updating min max
         var minWindowsAtMinDate = minDate == minDateWindow;
         var maxWindowsAtMaxDate = maxDate == maxDateWindow;
         var oldMinDate = minDate;
         var oldMaxDate = maxDate;
-        minDate = stayPeriods.stream().mapToLong(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-        maxDate = stayPeriods.stream().mapToLong(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+        minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+        maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
         //
         if (!dates.contains(dateAdded)) {
             dates.add(dateAdded);

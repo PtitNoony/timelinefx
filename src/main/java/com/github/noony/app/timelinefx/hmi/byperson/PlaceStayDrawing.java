@@ -61,7 +61,7 @@ public class PlaceStayDrawing {
         return stayPeriod;
     }
 
-    protected void updateDateRatio(long minDate, double ratio) {
+    protected void updateDateRatio(double minDate, double ratio) {
         double startX = (stayPeriod.getStartDate() - minDate) * ratio;
         double endX = (stayPeriod.getEndDate() - minDate) * ratio;
         endX = Math.max(startX + 1, endX);

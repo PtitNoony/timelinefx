@@ -82,7 +82,7 @@ public class Portrait extends AbstractPicture {
         if (other == null) {
             return 1;
         } else if (other instanceof Portrait portrait) {
-            return Long.compare(getAbsoluteTime(), portrait.getAbsoluteTime());
+            return Double.compare(getAbsoluteTime(), portrait.getAbsoluteTime());
         }
         return getAbsolutePath().compareTo(other.getAbsolutePath());
     }

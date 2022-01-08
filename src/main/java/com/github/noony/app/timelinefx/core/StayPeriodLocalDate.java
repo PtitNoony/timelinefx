@@ -16,7 +16,6 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 /**
@@ -39,22 +38,22 @@ public class StayPeriodLocalDate extends StayPeriod {
     }
 
     @Override
-    public long getPreviousStartDate() {
+    public double getPreviousStartDate() {
         return previousStartDate.toEpochDay();
     }
 
     @Override
-    public long getPreviousEndDate() {
+    public double getPreviousEndDate() {
         return previousEndDate.toEpochDay();
     }
 
     @Override
-    public long getStartDate() {
+    public double getStartDate() {
         return startDate.toEpochDay();
     }
 
     @Override
-    public long getEndDate() {
+    public double getEndDate() {
         return endDate.toEpochDay();
     }
 

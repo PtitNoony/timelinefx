@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import com.github.noony.app.timelinefx.utils.MathUtils;
 import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -43,7 +44,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     private String name;
     //
     private TimeFormat timeFormat;
-    private long timestamp;
+    private double timestamp;
     private LocalDate date;
 
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
@@ -62,7 +63,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
         name = aName;
     }
 
-    protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
+    protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
         super(anID);
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
@@ -175,7 +176,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     @Override
-    public long getTimestamp() {
+    public double getTimestamp() {
         return timestamp;
     }
 
@@ -189,7 +190,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     @Override
-    public void setTimestamp(long aTimestamp) {
+    public void setTimestamp(double aTimestamp) {
         if (aTimestamp != timestamp) {
             timestamp = aTimestamp;
             timeFormat = TimeFormat.TIME_MIN;
@@ -198,7 +199,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     @Override
-    public long getAbsoluteTime() {
+    public double getAbsoluteTime() {
         switch (timeFormat) {
             case LOCAL_TIME -> {
                 return date.toEpochDay();
@@ -217,7 +218,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
                 return date.format(TimeFormatToString.DATE_TIME_FORMATTER);
             }
             case TIME_MIN -> {
-                return Long.toString(timestamp);
+                return MathUtils.doubleToString(timestamp);
             }
         }
         throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
@@ -264,7 +265,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
         if (other == null) {
             return 1;
         }
-        var timeComparison = Long.compare(getAbsoluteTime(), getAbsoluteTime());
+        var timeComparison = Double.compare(getAbsoluteTime(), getAbsoluteTime());
         if (timeComparison != 0) {
             return timeComparison;
         }

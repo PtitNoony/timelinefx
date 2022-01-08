@@ -63,7 +63,7 @@ public final class PlaceDrawing extends FXDrawing {
     private final Group stayGroup;
     private final Rectangle stayGroupClip;
     //
-    private long currentMinDate = 0L;
+    private double currentMinDate = 0L;
     private double currentRatio = 1;
 
     public PlaceDrawing(Place aPlace, Frieze aFrieze) {
@@ -146,7 +146,7 @@ public final class PlaceDrawing extends FXDrawing {
         }
     }
 
-    protected void updateDateRatio(long minDate, double ratio) {
+    protected void updateDateRatio(double minDate, double ratio) {
         currentMinDate = minDate;
         currentRatio = ratio;
         staysAndDrawings.values().forEach(s -> s.updateDateRatio(currentMinDate, currentRatio));

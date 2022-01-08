@@ -56,7 +56,7 @@ public class PersonDrawing extends FXDrawing {
     private final Group placesGroup;
     private final Rectangle placesGroupClip;
     //
-    private long currentMinDate = 0L;
+    private double currentMinDate = 0L;
     private double currentRatio = 1;
 
     public PersonDrawing(IFriezeView aFriezeView, Person aPerson) {
@@ -123,7 +123,7 @@ public class PersonDrawing extends FXDrawing {
         person.addPropertyChangeListener(this::handlePersonEvents);
     }
 
-    protected void updateDateRatio(long minDate, double ratio) {
+    protected void updateDateRatio(double minDate, double ratio) {
         currentMinDate = minDate;
         currentRatio = ratio;
         staysAndDrawings.values().forEach(s -> s.updateDateRatio(currentMinDate, currentRatio));
@@ -160,7 +160,7 @@ public class PersonDrawing extends FXDrawing {
             case Person.PICTURE_CHANGED ->
                 System.err.println(" Person.PICTURE_CHANGED :: TODO");
             case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED,
-                    Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED-> {
+                    Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
                 // nothing to do
             }
             case Person.DEFAULT_PORTRAIT_CHANGED -> {

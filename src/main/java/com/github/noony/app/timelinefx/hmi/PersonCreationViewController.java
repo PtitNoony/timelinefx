@@ -25,6 +25,7 @@ import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.drawings.GalleryTiles;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
+import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -470,7 +471,7 @@ public class PersonCreationViewController implements Initializable {
                             if (portraitTime != null) {
                                 portraitTimeField.setText(portraitTime);
                             } else if (portraitSelected.getTimestamp() != Portrait.DEFAULT_TIMESTAMP) {
-                                portraitTimeField.setText(Long.toString(portraitSelected.getTimestamp()));
+                                portraitTimeField.setText(MathUtils.doubleToString(portraitSelected.getTimestamp()));
                             } else {
                                 portraitTimeField.setText("");
                             }

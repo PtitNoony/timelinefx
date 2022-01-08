@@ -805,7 +805,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         var person = PersonFactory.getPerson(personRef);
         var paramsAsString = linkElement.getAttribute(PARAMETERS_ATR);
         var parameters = CustomFileUtils.toDoubleArray(paramsAsString);
-        var link = PictureChronologyFactory.createChronologyLink(person, from, to, type, parameters);
+        var link = PictureChronologyFactory.createChronologyLink(id, person, from, to, type, parameters);
         return link;
     }
 

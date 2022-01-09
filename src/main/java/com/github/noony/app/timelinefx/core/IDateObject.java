@@ -30,6 +30,11 @@ public interface IDateObject {
     long DEFAULT_TIMESTAMP = 0;
 
     /**
+     * Name of the property change event for date change
+     */
+    String DATE_CHANGED = "pictureDateChanged";
+
+    /**
      *
      * @return the TimeFormat used by the instance
      */
@@ -64,6 +69,12 @@ public interface IDateObject {
      * @param aTimestamp the instance new time stamp
      */
     void setTimestamp(double aTimestamp);
+
+    /**
+     *
+     * @param aDateObject the date object containing the date to be retreived
+     */
+    void setDate(IDateObject aDateObject);
 
     /**
      *

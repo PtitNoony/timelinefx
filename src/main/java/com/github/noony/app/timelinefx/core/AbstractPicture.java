@@ -199,6 +199,26 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     @Override
+    public void setDate(IDateObject aDateObject) {
+        if (aDateObject == null) {
+            return;
+        }
+        timeFormat = aDateObject.getTimeFormat();
+        switch (timeFormat) {
+            case LOCAL_TIME -> {
+                date = LocalDate.ofEpochDay(aDateObject.getDate().toEpochDay());
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+            }
+            case TIME_MIN -> {
+                timestamp = aDateObject.getTimestamp();
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+        }
+    }
+
+    @Override
     public double getAbsoluteTime() {
         switch (timeFormat) {
             case LOCAL_TIME -> {

@@ -16,7 +16,9 @@
  */
 package com.github.noony.app.timelinefx.core.picturechronology;
 
+import com.github.noony.app.timelinefx.core.DateObject;
 import com.github.noony.app.timelinefx.core.FriezeObject;
+import com.github.noony.app.timelinefx.core.IDateObject;
 import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import java.beans.PropertyChangeListener;
@@ -34,11 +36,12 @@ public class ChronologyPictureMiniature extends FriezeObject {
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
 
-    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getPicture().getAbsoluteTime(), c2.getPicture().getAbsoluteTime());
+    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getChonologyAbsoluteTime(), c2.getChonologyAbsoluteTime());
 
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final IPicture picture;
+    private final IDateObject dateObject;
     private Point2D position;
     private double scale;
 
@@ -48,10 +51,23 @@ public class ChronologyPictureMiniature extends FriezeObject {
         picture = aPicture;
         position = aPosition;
         scale = aScale;
+        dateObject = new DateObject(aPicture);
     }
 
     public void addListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public double getChonologyAbsoluteTime() {
+        return dateObject.getAbsoluteTime();
+    }
+
+    public boolean isInSyncWithPicture() {
+        return Double.compare(dateObject.getAbsoluteTime(), picture.getAbsoluteTime()) == 0;
+    }
+
+    public IDateObject getDateObject() {
+        return dateObject;
     }
 
     public IPicture getPicture() {

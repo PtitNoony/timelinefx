@@ -791,6 +791,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         double yPos = Double.parseDouble(miniatureElement.getAttribute(Y_POS_ATR));
         double scale = Double.parseDouble(miniatureElement.getAttribute(SCALE_ATR));
         var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
+        parseObjectTimeValue(miniatureElement, miniature.getDateObject());
         return miniature;
     }
 
@@ -1031,6 +1032,9 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         pictureChronologyMiniatureElement.setAttribute(Y_POS_ATR, Double.toString(miniature.getPosition().getY()));
         pictureChronologyMiniatureElement.setAttribute(PICTURE_REF_ELEMENT, Long.toString(miniature.getPicture().getId()));
         pictureChronologyMiniatureElement.setAttribute(SCALE_ATR, Double.toString(miniature.getScale()));
+        if (!miniature.isInSyncWithPicture()) {
+            saveObjectTime(pictureChronologyMiniatureElement, miniature.getDateObject());
+        }
         return pictureChronologyMiniatureElement;
     }
 

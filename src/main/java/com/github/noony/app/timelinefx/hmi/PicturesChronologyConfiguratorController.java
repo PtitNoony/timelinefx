@@ -16,8 +16,11 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
+import com.github.noony.app.timelinefx.utils.PngExporter;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -29,6 +32,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 
 /**
  *
@@ -51,6 +55,8 @@ public class PicturesChronologyConfiguratorController implements Initializable {
     //
     private PictureChronology pictureChronology;
     private PictureChronologyDrawing pictureChronologyDrawing;
+    //
+    private FileChooser fileChooser;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -97,12 +103,32 @@ public class PicturesChronologyConfiguratorController implements Initializable {
 
     @FXML
     protected void handleZoomIn(ActionEvent event) {
+        LOG.log(Level.FINE, "handleZoomIn on event {0}.", new Object[]{event});
         pictureChronologyDrawing.zoomIn();
     }
 
     @FXML
     protected void handleZoomOut(ActionEvent event) {
+        LOG.log(Level.FINE, "handleZoomOut on event {0}.", new Object[]{event});
         pictureChronologyDrawing.zoomOut();
+    }
+
+    @FXML
+    protected void handleOnSaveAsPic(ActionEvent event) {
+        LOG.log(Level.INFO, "Saving Picture Chronology as picture on event {0}", new Object[]{event});
+        if (pictureChronology != null) {
+            File initFolder = new File(Configuration.getProjectsParentFolder());
+            if (fileChooser == null) {
+                fileChooser = new FileChooser();
+            }
+            fileChooser.setInitialDirectory(initFolder);
+            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png"));
+            File pngFile = fileChooser.showSaveDialog(configuratorRoot.getScene().getWindow());
+            if (pngFile != null) {
+                PngExporter.exportToPNG(pictureChronologyDrawing.getNode(), pngFile);
+            }
+        }
+
     }
 
     protected void setPictureChronology(PictureChronology aPictureChronology, PictureChronologyDrawing aPictureChronologyDrawing) {

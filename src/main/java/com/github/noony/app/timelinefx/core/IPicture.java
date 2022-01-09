@@ -19,8 +19,7 @@ package com.github.noony.app.timelinefx.core;
 import java.util.List;
 
 /**
- * An IPicture is a drawable object which has date attributes and is linked to
- * an image * file.
+ * An IPicture is a drawable object which has date attributes and is linked to an image * file.
  *
  * @author hamon
  */
@@ -30,10 +29,6 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * Name of the property change event for name change
      */
     String NAME_CHANGED = "pictureNameChanged";
-    /**
-     * Name of the property change event for date change
-     */
-    String DATE_CHANGED = "pictureDateChanged";
     /**
      * Name of the property change event when a person is added
      */

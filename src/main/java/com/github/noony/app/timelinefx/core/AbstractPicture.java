@@ -207,8 +207,9 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
             case TIME_MIN -> {
                 return timestamp;
             }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
         }
-        throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
     }
 
     @Override
@@ -220,8 +221,9 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
             case TIME_MIN -> {
                 return MathUtils.doubleToString(timestamp);
             }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
         }
-        throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
 
     }
 

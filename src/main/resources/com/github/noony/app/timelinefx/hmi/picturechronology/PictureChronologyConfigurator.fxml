@@ -28,16 +28,17 @@
          <children>
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleZoomOut" text="Zoom Out" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleZoomIn" text="Zoom In" GridPane.columnIndex="1" />
-            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Width:" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Height:" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Label text="Label" GridPane.columnIndex="3" />
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Width:" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <Label alignment="CENTER" text="Height:" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+            <Label text="Zoom Level:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
             <Label text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <Label text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <Label text="Label" GridPane.columnIndex="3" GridPane.rowIndex="4" />
             <TextField fx:id="widthField" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="heightField" prefWidth="50.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <TextField fx:id="zoomField" GridPane.columnIndex="2" />
+            <TextField fx:id="zoomField" GridPane.columnIndex="3" />
             <CheckBox fx:id="picturesVisibilityCB" mnemonicParsing="false" text="Show Pictures" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOnSaveAsPic" text="Save As Pic" GridPane.columnIndex="2" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </children>

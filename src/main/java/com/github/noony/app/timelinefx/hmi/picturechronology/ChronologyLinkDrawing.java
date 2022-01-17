@@ -194,6 +194,10 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
         updateFromModel();
     }
 
+    public ChronologyLink getChronologyLink() {
+        return chronologyLink;
+    }
+
     protected void addListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
@@ -210,7 +214,6 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
         cubicControlLine1.setVisible(visible);
         cubicControlLine2.setVisible(visible);
         endNode.setVisible(visible);
-        System.err.println(" handle missing parts");
     }
 
     private void createLinkShape() {

@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
+import com.github.noony.app.timelinefx.utils.MathUtils;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import java.io.File;
 import java.net.URL;
@@ -137,9 +138,9 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         pictureChronologyDrawing = aPictureChronologyDrawing;
         pictureChronologyDrawing.setPicturesVisibility(picturesVisibilityCB.isSelected());
         if (pictureChronology != null) {
-            widthField.setText(Double.toString(pictureChronology.getWidth()));
-            heightField.setText(Double.toString(pictureChronology.getHeight()));
-            zoomField.setText(Double.toString(pictureChronologyDrawing.getScale()));
+            widthField.setText(MathUtils.doubleToString(pictureChronology.getWidth()));
+            heightField.setText(MathUtils.doubleToString(pictureChronology.getHeight()));
+            zoomField.setText(MathUtils.doubleToString(pictureChronologyDrawing.getScale()));
         }
         configuratorRoot.setDisable(pictureChronology == null);
     }

@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.save.v1;
 
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
+import com.github.noony.app.timelinefx.core.IDateObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -41,7 +42,6 @@ import com.github.noony.app.timelinefx.core.freemap.PlotType;
 import com.github.noony.app.timelinefx.core.freemap.StayLink;
 import com.github.noony.app.timelinefx.core.freemap.TravelLink;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
-import com.github.noony.app.timelinefx.save.XMLHandler;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -288,7 +288,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
         var name = pictureElement.getAttribute(NAME_ATR);
         var path = pictureElement.getAttribute(PATH_ATR);
-        var dateTime = LocalDateTime.parse(pictureElement.getAttribute(DATE_ATR), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+        var dateTime = LocalDateTime.parse(pictureElement.getAttribute(DATE_ATR), IDateObject.DEFAULT_DATE_TIME_FORMATTER);
         var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
         var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));
         //

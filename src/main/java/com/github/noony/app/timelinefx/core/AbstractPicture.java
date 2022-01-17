@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import static com.github.noony.app.timelinefx.core.IDateObject.DATE_CHANGED;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.beans.PropertyChangeListener;
@@ -26,12 +27,16 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author hamon
  */
 public abstract class AbstractPicture extends FriezeObject implements IPicture {
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
 
@@ -186,6 +191,36 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
             date = aDate;
             timeFormat = TimeFormat.LOCAL_TIME;
             propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+        }
+    }
+
+    @Override
+    public void setValue(String aTimeValue) {
+        if (aTimeValue == null) {
+            return;
+        }
+        switch (timeFormat) {
+            case LOCAL_TIME -> {
+                try {
+                    var newDate = LocalDate.parse(aTimeValue);
+                    if (!newDate.isEqual(date)) {
+                        date = newDate;
+                        propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Could not set date value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
+                }
+            }
+            case TIME_MIN -> {
+                try {
+                    timestamp = Double.parseDouble(aTimeValue);
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.WARNING, "Could not set timestamp value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
+                }
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
         }
     }
 

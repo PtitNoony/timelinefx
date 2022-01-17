@@ -19,6 +19,8 @@ package com.github.noony.app.timelinefx.hmi.picturechronology;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -41,14 +43,17 @@ import javafx.scene.shape.Rectangle;
  */
 public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
 
+    public static final String MINIATURE_REQUEST_REMOVAL = "miniatureRequestRemoval";
+    public static final String MINIATURE_REQUEST_SELECTION = "miniatureRequestSelection";
+
     public static final double ARC_WIDTH = 32;
     //
     private static final Logger LOG = Logger.getGlobal();
     private static final double MIN_SCALE = 0.05;
     private static final double SCALE_STEP = 0.05;
     //
+    private final PropertyChangeSupport propertyChangeSupport;
     private final ChronologyPictureMiniature chronologyPictureMiniature;
-    private final PictureChronologyDrawing pictureChronologyDrawing;
     private final List<ContourDrawing> contours;
     //
     private final Group mainNode;
@@ -70,9 +75,9 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
     private double oldTranslateX;
     private double oldTranslateY;
 
-    public ChronologyPictureMiniatureDrawing(ChronologyPictureMiniature aChronologyPictureMiniature, PictureChronologyDrawing aPictureChronologyDrawing) {
+    public ChronologyPictureMiniatureDrawing(ChronologyPictureMiniature aChronologyPictureMiniature) {
+        propertyChangeSupport = new PropertyChangeSupport(ChronologyPictureMiniatureDrawing.this);
         chronologyPictureMiniature = aChronologyPictureMiniature;
-        pictureChronologyDrawing = aPictureChronologyDrawing;
         contours = new LinkedList<>();
         scale = chronologyPictureMiniature.getScale();
         //
@@ -125,6 +130,18 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
         return scale;
     }
 
+    public ChronologyPictureMiniature getChronologyPictureMiniature() {
+        return chronologyPictureMiniature;
+    }
+
+    public void addListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
     protected void setPictureVisibility(boolean visibility) {
         imageView.setVisible(visibility);
     }
@@ -162,7 +179,11 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
         });
         frontGlass.setOnMouseClicked(event -> {
             if (event.getClickCount() >= 2 && event.getButton().equals(MouseButton.SECONDARY)) {
-                pictureChronologyDrawing.getPictureChronology().removeChronologyPicture(chronologyPictureMiniature);
+                propertyChangeSupport.firePropertyChange(MINIATURE_REQUEST_REMOVAL, this, chronologyPictureMiniature);
+                return;
+            }
+            if (event.getClickCount() == 1 && event.getButton().equals(MouseButton.PRIMARY)) {
+                propertyChangeSupport.firePropertyChange(MINIATURE_REQUEST_SELECTION, this, chronologyPictureMiniature);
             }
         });
     }
@@ -210,6 +231,11 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
             }
             case ChronologyPictureMiniature.SCALE_CHANGED ->
                 updateMiniatureScale((double) event.getNewValue());
+            case ChronologyPictureMiniature.TIME_CHANGED -> {
+                //nothing to do
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported property change:: " + event);
         }
     }
 }

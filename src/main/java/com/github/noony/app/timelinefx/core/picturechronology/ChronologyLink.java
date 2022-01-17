@@ -138,6 +138,14 @@ public class ChronologyLink extends FriezeObject {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public String getName() {
+        return "Link: " + person.getName() + ":: " + startMiniature.getPicture().getName() + " -> " + endMiniature.getPicture().getName();
+    }
+
     private void updateStartPosition() {
         startPosition = calculateDefaultStartPosition(startMiniature, startIndex);
         propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, startPosition);

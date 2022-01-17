@@ -20,7 +20,6 @@ import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.io.File;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,10 +40,6 @@ import org.xml.sax.SAXException;
 public final class XMLHandler {
 
     public static final String CONFIGURATION_ELEMENT = "configuration";
-    // TODO change name
-    public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
-    public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
-//    public static final SimpleDateFormat DEFAULT_DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
     private static final Logger LOG = Logger.getGlobal();
 

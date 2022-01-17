@@ -50,7 +50,6 @@ import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureM
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
-import com.github.noony.app.timelinefx.save.XMLHandler;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import java.io.File;
 import java.nio.file.Path;
@@ -792,6 +791,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         double scale = Double.parseDouble(miniatureElement.getAttribute(SCALE_ATR));
         var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
         parseObjectTimeValue(miniatureElement, miniature.getDateObject());
+        miniature.setUseCustomTime(!miniature.isInSyncWithPicture());
         return miniature;
     }
 
@@ -834,10 +834,10 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         switch (person.getTimeFormat()) {
             case LOCAL_TIME -> {
                 if (person.getDateOfBirth() != null) {
-                    personElement.setAttribute(DATE_OF_BIRTH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfBirth()));
+                    personElement.setAttribute(DATE_OF_BIRTH_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(person.getDateOfBirth()));
                 }
                 if (person.getDateOfDeath() != null) {
-                    personElement.setAttribute(DATE_OF_DEATH_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(person.getDateOfDeath()));
+                    personElement.setAttribute(DATE_OF_DEATH_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(person.getDateOfDeath()));
                 }
             }
             case TIME_MIN -> {
@@ -862,7 +862,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         switch (aDateObject.getTimeFormat()) {
             case LOCAL_TIME -> {
                 if (aDateObject.getDate() != null) {
-                    targetElement.setAttribute(DATE_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(aDateObject.getDate()));
+                    targetElement.setAttribute(DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(aDateObject.getDate()));
                 }
             }
             case TIME_MIN -> {
@@ -918,8 +918,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
             case LOCAL_TIME -> {
                 LocalDate startDate = LocalDate.ofEpochDay((long) stay.getStartDate());
                 LocalDate endDate = LocalDate.ofEpochDay((long) stay.getEndDate());
-                stayElement.setAttribute(START_DATE_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(startDate));
-                stayElement.setAttribute(END_DATE_ATR, XMLHandler.DEFAULT_DATE_FORMATTER.format(endDate));
+                stayElement.setAttribute(START_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(startDate));
+                stayElement.setAttribute(END_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(endDate));
             }
             case TIME_MIN -> {
                 stayElement.setAttribute(START_DATE_ATR, Double.toString(stay.getStartDate()));

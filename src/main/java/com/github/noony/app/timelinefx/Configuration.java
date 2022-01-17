@@ -41,6 +41,8 @@ public class Configuration {
     public static final String PICTURES_FOLDER_LOCATION_CHANGED = "picturesFolderLocationChanged";
     public static final String MINIATURES_FOLDER_LOCATION_CHANGED = "miniaturesFolderLocationChanged";
     //
+    public static final double DEFAULT_FXML_GAP = 8.0;
+    //
     private static final String DEFAULT_PORTRAITS_FOLDER_NAME = "portraits";
     private static final String DEFAULT_PICTURES_FOLDER_NAME = "pictures";
     private static final String DEFAULT_MINIATURES_FOLDER_NAME = "miniatures";

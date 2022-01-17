@@ -93,6 +93,9 @@ public class ContourDrawing implements IFxScalableNode {
         switch (event.getPropertyName()) {
             case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED ->
                 update();
+            case ChronologyPictureMiniature.TIME_CHANGED -> {
+                // Nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException("handlePictureMiniatureChanges :: " + event.getPropertyName());
         }

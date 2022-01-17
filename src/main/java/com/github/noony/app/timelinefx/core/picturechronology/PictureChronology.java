@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -81,7 +82,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
         //
         exisitingMiniatures.forEach(picture -> {
             chronologyPictures.add(picture);
-            chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
+            picture.addListener(PictureChronology.this::handleChronologyPictureChanges);
             propertyChangeSupport.firePropertyChange(PICTURE_ADDED, this, picture);
         });
         existingLinks.forEach(link -> {
@@ -99,7 +100,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
 
     public void addChronologyPicture(ChronologyPictureMiniature aChronologyPicture) {
         chronologyPictures.add(aChronologyPicture);
-        chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
+        aChronologyPicture.addListener(this::handleChronologyPictureChanges);
         propertyChangeSupport.firePropertyChange(PICTURE_ADDED, this, aChronologyPicture);
         //
         persons.addAll(aChronologyPicture.getPersons().stream().filter(p -> !persons.contains(p)).toList());
@@ -121,7 +122,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     public void removeChronologyPicture(ChronologyPictureMiniature aChronologyPicture) {
         var removed = chronologyPictures.remove(aChronologyPicture);
         if (removed) {
-            chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
+            aChronologyPicture.removeListener(this::handleChronologyPictureChanges);
             propertyChangeSupport.firePropertyChange(PICTURE_REMOVED, this, aChronologyPicture);
             //
             var existingPersons = chronologyPictures.stream()
@@ -178,6 +179,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     }
 
     private void updateLinks() {
+        chronologyPictures.sort(ChronologyPictureMiniature.COMPARATOR);
         List<String> existingLinkKeys = chronologyLinks.keySet().stream().collect(Collectors.toList());
         Map<String, Pair<ChronologyPictureMiniature, ChronologyPictureMiniature>> linksNeeded = new HashMap<>();
         // looping all persons and miniatures to calculate all the links needed
@@ -209,6 +211,19 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
                 propertyChangeSupport.firePropertyChange(LINK_ADDED, this, chronologyLink);
             }
         });
+    }
+
+    private void handleChronologyPictureChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED -> {
+                // Nothing to do
+            }
+            case ChronologyPictureMiniature.TIME_CHANGED -> {
+                updateLinks();
+            }
+            default ->
+                throw new UnsupportedOperationException("handlePictureMiniatureChanges :: " + event.getPropertyName());
+        }
     }
 
 }

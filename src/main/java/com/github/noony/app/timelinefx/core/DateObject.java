@@ -21,12 +21,16 @@ import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author hamon
  */
 public class DateObject implements IDateObject {
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
     //
@@ -90,6 +94,36 @@ public class DateObject implements IDateObject {
     @Override
     public double getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public void setValue(String aTimeValue) {
+        if (aTimeValue == null) {
+            return;
+        }
+        switch (timeFormat) {
+            case LOCAL_TIME -> {
+                try {
+                    var newDate = LocalDate.parse(aTimeValue);
+                    if (!newDate.isEqual(date)) {
+                        date = newDate;
+                        propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Could not set date value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
+                }
+            }
+            case TIME_MIN -> {
+                try {
+                    timestamp = Double.parseDouble(aTimeValue);
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.WARNING, "Could not set timestamp value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
+                }
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+        }
     }
 
     @Override

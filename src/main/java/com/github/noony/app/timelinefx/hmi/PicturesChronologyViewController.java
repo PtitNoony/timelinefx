@@ -22,6 +22,7 @@ import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.Portrait;
 import com.github.noony.app.timelinefx.core.PortraitFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
@@ -42,11 +43,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
@@ -70,6 +74,8 @@ public class PicturesChronologyViewController implements Initializable {
 //    @FXML
 //    private AnchorPane chronologyMainPane;
     @FXML
+    private TabPane propertiesTabPane;
+    @FXML
     private ListView<PictureChronology> chronologiesListView;
     @FXML
     private SplitPane leftSplitPane;
@@ -81,8 +87,15 @@ public class PicturesChronologyViewController implements Initializable {
     private Button insertPictureB, insertPortraitB;
 
     private AnchorPane configuratorView;
+    private AnchorPane miniaturePropertyRootView;
+    private AnchorPane linkPropertyRootView;
 
     private PicturesChronologyConfiguratorController configuratorController;
+    private ChronologyMiniatureConfiguratorController miniaturePropertyController;
+    private ChronologyLinkConfiguratorController linkPropertyController;
+
+    private Tab configuratorTab = null;
+    private Tab itemPropertyTab = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -149,10 +162,13 @@ public class PicturesChronologyViewController implements Initializable {
         currentPictureChronology = aPictureChronology;
         //
         if (pictureChronologyDrawing != null) {
-//            chronologyMainPane.getChildren().remove(pictureChronologyDrawing.getNode());
-            viewScrollPane.setContent(pictureChronologyDrawing.getNode());
+            // WHAT ???
+//            viewScrollPane.setContent(pictureChronologyDrawing.getNode());
+            pictureChronologyDrawing.removeListener(this::handleChronologyChanges);
         }
+        //
         pictureChronologyDrawing = new PictureChronologyDrawing(currentPictureChronology);
+        pictureChronologyDrawing.addListener(this::handleChronologyChanges);
 //        chronologyMainPane.getChildren().add(pictureChronologyDrawing.getNode());
         viewScrollPane.setContent(pictureChronologyDrawing.getNode());
         chronologyNameField.setText(currentPictureChronology.getName());
@@ -241,16 +257,92 @@ public class PicturesChronologyViewController implements Initializable {
         }
     }
 
+    private void handleChronologyChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case PictureChronologyDrawing.LINK_SELECTED -> {
+                var link = (ChronologyLink) event.getNewValue();
+                displayLinkPropertyTab(link);
+            }
+            case PictureChronologyDrawing.LINK_UNSELECTED -> {
+                hideItemPropertyTab();
+            }
+            case PictureChronologyDrawing.MINIATURE_SELECTED -> {
+                var miniature = (ChronologyPictureMiniature) event.getNewValue();
+                displayMiniaturePropertyTab(miniature);
+            }
+            case PictureChronologyDrawing.MINIATURE_UNSELECTED -> {
+                hideItemPropertyTab();
+            }
+            default ->
+                throw new UnsupportedOperationException("While handlePortraitTilesChanges :: " + event.getPropertyName());
+        }
+    }
+
     private void loadPictureChronologyConfiguratorView() {
         FXMLLoader loader = new FXMLLoader(PictureChronologyDrawing.class.getResource("PictureChronologyConfigurator.fxml"));
         try {
             configuratorView = loader.load();
-            leftSplitPane.getItems().add(configuratorView);
+            configuratorTab = new Tab("Chronology", configuratorView);
+            propertiesTabPane.getTabs().add(configuratorTab);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Could not load ContentEditionView ::  {0}", new Object[]{ex});
+            LOG.log(Level.SEVERE, "Could not load PictureChronologyConfigurator ::  {0}", new Object[]{ex});
         }
         configuratorController = loader.getController();
 //        configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
+    }
+
+    private void loadMiniatureConfiguratorView() {
+        FXMLLoader loader = new FXMLLoader(PictureChronologyDrawing.class.getResource("MiniatureConfigurator.fxml"));
+        try {
+            miniaturePropertyRootView = loader.load();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Could not load MiniatureConfigurator ::  {0}", new Object[]{ex});
+        }
+        miniaturePropertyController = loader.getController();
+    }
+
+    private void loadLinkConfiguratorView() {
+        FXMLLoader loader = new FXMLLoader(PictureChronologyDrawing.class.getResource("LinkConfigurator.fxml"));
+        try {
+            linkPropertyRootView = loader.load();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Could not load LinkConfigurator ::  {0}", new Object[]{ex});
+        }
+        linkPropertyController = loader.getController();
+    }
+
+    private void displayMiniaturePropertyTab(ChronologyPictureMiniature miniature) {
+        if (miniaturePropertyRootView == null) {
+            loadMiniatureConfiguratorView();
+        }
+        setPropertyTabContent(miniaturePropertyRootView, "Miniature");
+        miniaturePropertyController.setChronologyMiniature(miniature);
+    }
+
+    private void displayLinkPropertyTab(ChronologyLink link) {
+        if (linkPropertyRootView == null) {
+            loadLinkConfiguratorView();
+        }
+        setPropertyTabContent(linkPropertyRootView, "Link");
+        linkPropertyController.setChronologyLink(link);
+    }
+
+    private void setPropertyTabContent(Node aNode, String title) {
+        if (itemPropertyTab == null) {
+            itemPropertyTab = new Tab(title, aNode);
+            itemPropertyTab.setClosable(false);
+            propertiesTabPane.getTabs().add(itemPropertyTab);
+        } else {
+            itemPropertyTab.setContent(aNode);
+            itemPropertyTab.setText(title);
+        }
+        propertiesTabPane.getSelectionModel().select(itemPropertyTab);
+    }
+
+    private void hideItemPropertyTab() {
+        if (miniaturePropertyController != null && itemPropertyTab != null) {
+            propertiesTabPane.getTabs().remove(itemPropertyTab);
+        }
     }
 
     private static class PictureChronologyListCellImpl extends ListCell<PictureChronology> {

@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.core.IDateObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -25,7 +26,6 @@ import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
-import com.github.noony.app.timelinefx.save.XMLHandler;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -179,7 +179,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
             pictureFile = file;
             PictureInfo info = MetadataParser.parseMetadata(project, file);
             pictureNameField.setText(pictureFile.getName());
-            pictureDateField.setText(info.getCreationDate().format(XMLHandler.DEFAULT_DATE_TIME_FORMATTER));
+            pictureDateField.setText(info.getCreationDate().format(IDateObject.DEFAULT_DATE_TIME_FORMATTER));
             fileField.setText(pictureFile.getAbsolutePath());
             updateActions();
             displayImage();
@@ -196,7 +196,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         switch (timeformatCB.getSelectionModel().getSelectedItem()) {
             case LOCAL_TIME -> {
                 try {
-                    var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+                    var localDate = LocalDate.parse(pictureDateField.getText(), IDateObject.DEFAULT_DATE_TIME_FORMATTER);
                     picture.setDate(localDate);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});
@@ -227,7 +227,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         switch (timeformatCB.getSelectionModel().getSelectedItem()) {
             case LOCAL_TIME -> {
                 try {
-                    var localDate = LocalDate.parse(pictureDateField.getText(), XMLHandler.DEFAULT_DATE_TIME_FORMATTER);
+                    var localDate = LocalDate.parse(pictureDateField.getText(), IDateObject.DEFAULT_DATE_TIME_FORMATTER);
                     picture.setDate(localDate);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Could not parse date :: {0} because of {1}", new Object[]{pictureDateField.getText(), e.getMessage()});

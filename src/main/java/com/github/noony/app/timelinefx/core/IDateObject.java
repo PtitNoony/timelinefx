@@ -17,12 +17,17 @@
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
  * @author hamon
  */
 public interface IDateObject {
+
+    DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
+
+    DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
      * The default time stamp
@@ -57,6 +62,12 @@ public interface IDateObject {
      * @return the instance time stamp
      */
     double getTimestamp();
+
+    /**
+     *
+     * @param aTimeValue updates the time value based on the input parameter
+     */
+    void setValue(String aTimeValue);
 
     /**
      *

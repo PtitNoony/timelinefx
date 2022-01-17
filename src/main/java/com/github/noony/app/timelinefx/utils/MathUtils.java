@@ -16,6 +16,8 @@
  */
 package com.github.noony.app.timelinefx.utils;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import javafx.geometry.Point2D;
 
 /**
@@ -25,6 +27,8 @@ import javafx.geometry.Point2D;
 public final class MathUtils {
 
     public static final double HALF_PI = Math.PI / 2.0;
+
+    private static DecimalFormat DEFAULT_DECIMAL_FORMAT = null;
 
     public static double getAngle(Point2D point1, Point2D point2) {
         if (point1.getY() == point2.getY()) {
@@ -44,12 +48,39 @@ public final class MathUtils {
      * @param value the double value to convert
      * @return the corresponding string
      */
-    public static final String doubleToString(double value) {
+    public static String doubleToString(double value) {
         if (value == (long) value) {
             return Long.toString((long) value);
         } else {
-            return Double.toString(value);
+            if (DEFAULT_DECIMAL_FORMAT == null) {
+                DEFAULT_DECIMAL_FORMAT = new DecimalFormat("0.00");
+                DEFAULT_DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
+                DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+                symbols.setDecimalSeparator('.');
+                DEFAULT_DECIMAL_FORMAT.setDecimalFormatSymbols(symbols);
+            }
+            return DEFAULT_DECIMAL_FORMAT.format(value);
         }
+    }
+
+    /**
+     * Converts the angle value from radian to degree
+     *
+     * @param value angle value
+     * @return the corresponding degree value
+     */
+    public static double toDegree(double value) {
+        return value * 180.0 / Math.PI;
+    }
+
+    /**
+     * Converts the angle value from degree to radian
+     *
+     * @param value angle value
+     * @return the corresponding radian value
+     */
+    public static double toRadian(double value) {
+        return value * Math.PI / 180.0;
     }
 
 }

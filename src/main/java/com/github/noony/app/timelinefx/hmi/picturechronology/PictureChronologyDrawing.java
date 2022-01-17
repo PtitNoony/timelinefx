@@ -22,6 +22,7 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import static javafx.application.Platform.runLater;
@@ -35,10 +36,16 @@ import javafx.scene.shape.Rectangle;
  */
 public class PictureChronologyDrawing extends FxScalableParent {
 
+    public static final String LINK_SELECTED = "linkSelected";
+    public static final String LINK_UNSELECTED = "linkUnselected";
+    public static final String MINIATURE_SELECTED = "miniatureSelected";
+    public static final String MINIATURE_UNSELECTED = "miniatureUnselected";
+
     private final PictureChronology pictureChronology;
     private final Map<ChronologyPictureMiniature, ChronologyPictureMiniatureDrawing> miniatureDrawings;
     private final Map<Person, PersonChronologyPicturesDrawing> personsDrawings;
     //
+    private final PropertyChangeSupport propertyChangeSupport;
     private final PropertyChangeListener personListener;
     //
     private final Group drawingGroup;
@@ -47,6 +54,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
     private final Group personsGroup;
     //
     private ChronologyLinkDrawing selectedLink = null;
+    private ChronologyPictureMiniatureDrawing selectedMiniature = null;
 
     public PictureChronologyDrawing(PictureChronology aPictureChronology) {
         super(aPictureChronology);
@@ -54,6 +62,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
         miniatureDrawings = new HashMap<>();
         personsDrawings = new HashMap<>();
         //
+        propertyChangeSupport = new PropertyChangeSupport(PictureChronologyDrawing.this);
         pictureChronology.addListener(PictureChronologyDrawing.this::handlePictureChronologyChanges);
         personListener = PictureChronologyDrawing.this::handlePersonEvents;
         //
@@ -85,10 +94,19 @@ public class PictureChronologyDrawing extends FxScalableParent {
         runLater(() -> updateLayout());
     }
 
+    public void addListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
     private void addChronologyPictureMiniature(ChronologyPictureMiniature aChronologyPictureMiniature) {
-        ChronologyPictureMiniatureDrawing miniatureDrawing = new ChronologyPictureMiniatureDrawing(aChronologyPictureMiniature, this);
+        ChronologyPictureMiniatureDrawing miniatureDrawing = new ChronologyPictureMiniatureDrawing(aChronologyPictureMiniature);
         registerScalableNode(miniatureDrawing);
         miniatureDrawings.put(aChronologyPictureMiniature, miniatureDrawing);
+        miniatureDrawing.addListener(this::handlePictureChronologyChanges);
         picturesGroup.getChildren().add(miniatureDrawing.getNode());
         //
         aChronologyPictureMiniature.getPicture().getPersons().stream()
@@ -106,6 +124,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
 
     private void removeChronologyPictureMiniature(ChronologyPictureMiniature aChronologyPictureMiniature) {
         var miniatureDrawing = miniatureDrawings.remove(aChronologyPictureMiniature);
+        miniatureDrawing.removeListener(this::handlePictureChronologyChanges);
         unregisterScalableNode(miniatureDrawing);
         picturesGroup.getChildren().remove(miniatureDrawing.getNode());
         // IMPR in the future, rely on the PictureChronology calculations?
@@ -151,6 +170,14 @@ public class PictureChronologyDrawing extends FxScalableParent {
             case PictureChronology.LINK_ADDED, PictureChronology.LINK_REMOVED -> {
                 // nothing to do links are managed by the PersonChronologyPictureDrawing class
             }
+            case ChronologyPictureMiniatureDrawing.MINIATURE_REQUEST_SELECTION -> {
+                var chronologyPictureMiniature = (ChronologyPictureMiniatureDrawing) event.getOldValue();
+                selectMiniature(chronologyPictureMiniature);
+            }
+            case ChronologyPictureMiniatureDrawing.MINIATURE_REQUEST_REMOVAL -> {
+                var chronologyPictureMiniature = (ChronologyPictureMiniature) event.getNewValue();
+                pictureChronology.removeChronologyPicture(chronologyPictureMiniature);
+            }
             default ->
                 throw new UnsupportedOperationException("Unsupported property changed :: " + event.getPropertyName());
         }
@@ -171,12 +198,29 @@ public class PictureChronologyDrawing extends FxScalableParent {
         if (selectedLink == linkDrawing) {
             selectedLink.displayControls(false);
             selectedLink = null;
+            propertyChangeSupport.firePropertyChange(LINK_UNSELECTED, this, linkDrawing.getChronologyLink());
         } else {
             if (selectedLink != null) {
                 selectedLink.displayControls(false);
             }
             selectedLink = linkDrawing;
             selectedLink.displayControls(true);
+            propertyChangeSupport.firePropertyChange(LINK_SELECTED, this, selectedLink.getChronologyLink());
+        }
+    }
+
+    private void selectMiniature(ChronologyPictureMiniatureDrawing miniatureDrawing) {
+        if (selectedMiniature == miniatureDrawing) {
+//            selectedMiniature.displayControls(false);
+            selectedMiniature = null;
+            propertyChangeSupport.firePropertyChange(MINIATURE_UNSELECTED, this, miniatureDrawing.getChronologyPictureMiniature());
+        } else {
+            if (selectedMiniature != null) {
+//                selectedLink.displayControls(false);
+            }
+            selectedMiniature = miniatureDrawing;
+//            selectedMiniature.displayControls(true);
+            propertyChangeSupport.firePropertyChange(MINIATURE_SELECTED, this, selectedMiniature.getChronologyPictureMiniature());
         }
     }
 

@@ -35,15 +35,17 @@ public class ChronologyPictureMiniature extends FriezeObject {
 
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
+    public static final String TIME_CHANGED = "ChronologyPictureMiniature" + "__timeChanged";
 
-    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getChonologyAbsoluteTime(), c2.getChonologyAbsoluteTime());
+    public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getCurrenltyUsedAbsoluteTime(), c2.getCurrenltyUsedAbsoluteTime());
 
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final IPicture picture;
-    private final IDateObject dateObject;
+    private final DateObject dateObject;
     private Point2D position;
     private double scale;
+    private boolean usesCustomTime;
 
     protected ChronologyPictureMiniature(long id, IPicture aPicture, Point2D aPosition, double aScale) {
         super(id);
@@ -52,10 +54,44 @@ public class ChronologyPictureMiniature extends FriezeObject {
         position = aPosition;
         scale = aScale;
         dateObject = new DateObject(aPicture);
+        dateObject.addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(TIME_CHANGED, e, dateObject.getAbsoluteTime()));
+        usesCustomTime = false;
     }
 
     public void addListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public void setUseCustomTime(boolean customTime) {
+        if (usesCustomTime != customTime) {
+            usesCustomTime = customTime;
+            if (!isInSyncWithPicture()) {
+                propertyChangeSupport.firePropertyChange(TIME_CHANGED, this, getCurrenltyUsedAbsoluteTime());
+            }
+        }
+    }
+
+    public boolean usesCustomTime() {
+        return usesCustomTime;
+    }
+
+    public double getCurrenltyUsedAbsoluteTime() {
+        if (usesCustomTime) {
+            return dateObject.getAbsoluteTime();
+        }
+        return picture.getAbsoluteTime();
+    }
+
+    public void setCurrenltyUsedTimeValue(String aTimeValue) {
+        if (usesCustomTime) {
+            dateObject.setValue(aTimeValue);
+        } else {
+            picture.setValue(aTimeValue);
+        }
     }
 
     public double getChonologyAbsoluteTime() {

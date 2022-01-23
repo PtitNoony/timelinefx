@@ -2,8 +2,11 @@
 A JavaFx to build timelines, chronologies...
 
 
-
 ![Simple Star Wars chronology](/docs/images/StarWars_Timeline/Star_Wars_v02.png?raw=true "Star Wars 1-3")
+
+
+
+![Simple Star Wars chronology gallery](/docs/images/StarWars_Timeline/SW_E_01_Chronology_v2_medium.png?raw=true "Star Wars 1-3")
 
 ## Java Version
 

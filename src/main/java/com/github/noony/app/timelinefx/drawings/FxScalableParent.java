@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.drawings;
 
+import com.github.noony.app.timelinefx.core.IDrawableObject;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
@@ -25,7 +26,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import com.github.noony.app.timelinefx.core.IDrawableObject;
 
 /**
  *
@@ -75,8 +75,12 @@ public class FxScalableParent implements IFxScalableNode {
         initFx();
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public final void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public final void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     protected final void addNode(Object anObject) {
@@ -97,6 +101,10 @@ public class FxScalableParent implements IFxScalableNode {
         scalableNodes.remove(scalableNode);
     }
 
+    protected void firePropertyChange(String eventName, Object newValue) {
+        propertyChangeSupport.firePropertyChange(eventName, this, newValue);
+    }
+
     @Override
     public Node getNode() {
         return mainNode;
@@ -114,16 +122,19 @@ public class FxScalableParent implements IFxScalableNode {
         } else {
             viewingScale = Math.max(newScale, MIN_SCALE);
         }
+        propertyChangeSupport.firePropertyChange(ZOOM_LEVEL_CHANGED, this, viewingScale);
         updateLayout();
     }
 
     public void zoomIn() {
         viewingScale = Math.min(MAX_SCALE, viewingScale + SCALE_STEP);
+        propertyChangeSupport.firePropertyChange(ZOOM_LEVEL_CHANGED, this, viewingScale);
         updateLayout();
     }
 
     public void zoomOut() {
         viewingScale = Math.max(MIN_SCALE, viewingScale - SCALE_STEP);
+        propertyChangeSupport.firePropertyChange(ZOOM_LEVEL_CHANGED, this, viewingScale);
         updateLayout();
     }
 

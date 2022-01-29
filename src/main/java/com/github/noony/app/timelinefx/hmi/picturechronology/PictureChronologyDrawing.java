@@ -22,7 +22,6 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.FxScalableParent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import static javafx.application.Platform.runLater;
@@ -45,7 +44,6 @@ public class PictureChronologyDrawing extends FxScalableParent {
     private final Map<ChronologyPictureMiniature, ChronologyPictureMiniatureDrawing> miniatureDrawings;
     private final Map<Person, PersonChronologyPicturesDrawing> personsDrawings;
     //
-    private final PropertyChangeSupport propertyChangeSupport;
     private final PropertyChangeListener personListener;
     //
     private final Group drawingGroup;
@@ -62,7 +60,6 @@ public class PictureChronologyDrawing extends FxScalableParent {
         miniatureDrawings = new HashMap<>();
         personsDrawings = new HashMap<>();
         //
-        propertyChangeSupport = new PropertyChangeSupport(PictureChronologyDrawing.this);
         pictureChronology.addListener(PictureChronologyDrawing.this::handlePictureChronologyChanges);
         personListener = PictureChronologyDrawing.this::handlePersonEvents;
         //
@@ -92,14 +89,6 @@ public class PictureChronologyDrawing extends FxScalableParent {
         });
         //
         runLater(() -> updateLayout());
-    }
-
-    public void addListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     private void addChronologyPictureMiniature(ChronologyPictureMiniature aChronologyPictureMiniature) {
@@ -198,14 +187,14 @@ public class PictureChronologyDrawing extends FxScalableParent {
         if (selectedLink == linkDrawing) {
             selectedLink.displayControls(false);
             selectedLink = null;
-            propertyChangeSupport.firePropertyChange(LINK_UNSELECTED, this, linkDrawing.getChronologyLink());
+            firePropertyChange(LINK_UNSELECTED, linkDrawing.getChronologyLink());
         } else {
             if (selectedLink != null) {
                 selectedLink.displayControls(false);
             }
             selectedLink = linkDrawing;
             selectedLink.displayControls(true);
-            propertyChangeSupport.firePropertyChange(LINK_SELECTED, this, selectedLink.getChronologyLink());
+            firePropertyChange(LINK_SELECTED, selectedLink.getChronologyLink());
         }
     }
 
@@ -213,14 +202,14 @@ public class PictureChronologyDrawing extends FxScalableParent {
         if (selectedMiniature == miniatureDrawing) {
 //            selectedMiniature.displayControls(false);
             selectedMiniature = null;
-            propertyChangeSupport.firePropertyChange(MINIATURE_UNSELECTED, this, miniatureDrawing.getChronologyPictureMiniature());
+            firePropertyChange(MINIATURE_UNSELECTED, miniatureDrawing.getChronologyPictureMiniature());
         } else {
             if (selectedMiniature != null) {
 //                selectedLink.displayControls(false);
             }
             selectedMiniature = miniatureDrawing;
 //            selectedMiniature.displayControls(true);
-            propertyChangeSupport.firePropertyChange(MINIATURE_SELECTED, this, selectedMiniature.getChronologyPictureMiniature());
+            firePropertyChange(MINIATURE_SELECTED, selectedMiniature.getChronologyPictureMiniature());
         }
     }
 

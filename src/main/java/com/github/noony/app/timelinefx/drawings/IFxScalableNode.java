@@ -22,6 +22,8 @@ package com.github.noony.app.timelinefx.drawings;
  */
 public interface IFxScalableNode extends IFxNode {
 
+    String ZOOM_LEVEL_CHANGED = "zoomLevelChanged";
+
     /**
      *
      * @param newScale the new scale value to be applied

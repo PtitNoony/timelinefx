@@ -18,9 +18,11 @@ package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
+import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import com.github.noony.app.timelinefx.utils.PngExporter;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -137,6 +139,7 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         pictureChronology = aPictureChronology;
         pictureChronologyDrawing = aPictureChronologyDrawing;
         pictureChronologyDrawing.setPicturesVisibility(picturesVisibilityCB.isSelected());
+        pictureChronologyDrawing.addPropertyChangeListener(this::handlePictureChronologyDrawingChanges);
         if (pictureChronology != null) {
             widthField.setText(MathUtils.doubleToString(pictureChronology.getWidth()));
             heightField.setText(MathUtils.doubleToString(pictureChronology.getHeight()));
@@ -149,5 +152,17 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         widthField.setText("");
         heightField.setText("");
         zoomField.setText("");
+    }
+
+    private void handlePictureChronologyDrawingChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case IFxScalableNode.ZOOM_LEVEL_CHANGED -> {
+                if (pictureChronologyDrawing != null) {
+                    zoomField.setText(MathUtils.doubleToString(pictureChronologyDrawing.getScale()));
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Could not handle PictureChronologyDrawing event in " + this.getClass().getSimpleName() + ":: " + event.getPropertyName());
+        }
     }
 }

@@ -27,6 +27,7 @@ import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureM
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
 import com.github.noony.app.timelinefx.drawings.GalleryTiles;
+import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -164,11 +165,11 @@ public class PicturesChronologyViewController implements Initializable {
         if (pictureChronologyDrawing != null) {
             // WHAT ???
 //            viewScrollPane.setContent(pictureChronologyDrawing.getNode());
-            pictureChronologyDrawing.removeListener(this::handleChronologyChanges);
+            pictureChronologyDrawing.removePropertyChangeListener(this::handleChronologyChanges);
         }
         //
         pictureChronologyDrawing = new PictureChronologyDrawing(currentPictureChronology);
-        pictureChronologyDrawing.addListener(this::handleChronologyChanges);
+        pictureChronologyDrawing.addPropertyChangeListener(this::handleChronologyChanges);
 //        chronologyMainPane.getChildren().add(pictureChronologyDrawing.getNode());
         viewScrollPane.setContent(pictureChronologyDrawing.getNode());
         chronologyNameField.setText(currentPictureChronology.getName());
@@ -272,6 +273,9 @@ public class PicturesChronologyViewController implements Initializable {
             }
             case PictureChronologyDrawing.MINIATURE_UNSELECTED -> {
                 hideItemPropertyTab();
+            }
+            case IFxScalableNode.ZOOM_LEVEL_CHANGED -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException("While handlePortraitTilesChanges :: " + event.getPropertyName());

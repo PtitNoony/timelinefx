@@ -80,46 +80,10 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
         startNode = new Circle(DEFAULT_RADIUS, DEFAULT_CONTROLS_COLOR);
         endNode = new Circle(DEFAULT_RADIUS, DEFAULT_CONTROLS_COLOR);
         // handling start / end movements
-        startNode.setOnMouseDragged(e -> {
-            var newPosition = getAnchorPointPosition(chronologyLink.getStartMiniature(), e.getX(), e.getY());
-            var newAngle = MathUtils.getAngle(chronologyLink.getStartMiniature().getPosition(), newPosition);
-            var newDistance = chronologyLink.getStartMiniature().getPosition().distance(newPosition) / viewingScale;
-            startNode.setCenterX(newPosition.getX());
-            startNode.setCenterY(newPosition.getY());
-            linkParameters[0] = newAngle;
-            linkParameters[1] = newDistance;
-            updateLocally();
-        });
-        startNode.setOnMouseReleased(e -> {
-            var newPosition = getAnchorPointPosition(chronologyLink.getStartMiniature(), e.getX(), e.getY());
-            var newAngle = MathUtils.getAngle(chronologyLink.getStartMiniature().getPosition(), newPosition);
-            var newDistance = chronologyLink.getStartMiniature().getPosition().distance(newPosition) / viewingScale;
-            startNode.setCenterX(newPosition.getX());
-            startNode.setCenterY(newPosition.getY());
-            linkParameters[0] = newAngle;
-            linkParameters[1] = newDistance;
-            chronologyLink.updateLinkParameters(linkParameters);
-        });
-        endNode.setOnMouseDragged(e -> {
-            var newPosition = getAnchorPointPosition(chronologyLink.getEndMiniature(), e.getX(), e.getY());
-            var newAngle = MathUtils.getAngle(chronologyLink.getEndMiniature().getPosition(), newPosition);
-            var newDistance = chronologyLink.getEndMiniature().getPosition().distance(newPosition) / viewingScale;
-            endNode.setCenterX(newPosition.getX());
-            endNode.setCenterY(newPosition.getY());
-            linkParameters[6] = newAngle;
-            linkParameters[7] = newDistance;
-            updateLocally();
-        });
-        endNode.setOnMouseReleased(e -> {
-            var newPosition = getAnchorPointPosition(chronologyLink.getEndMiniature(), e.getX(), e.getY());
-            var newAngle = MathUtils.getAngle(chronologyLink.getEndMiniature().getPosition(), newPosition);
-            var newDistance = chronologyLink.getEndMiniature().getPosition().distance(newPosition) / viewingScale;
-            endNode.setCenterX(newPosition.getX());
-            endNode.setCenterY(newPosition.getY());
-            linkParameters[6] = newAngle;
-            linkParameters[7] = newDistance;
-            chronologyLink.updateLinkParameters(linkParameters);
-        });
+        startNode.setOnMouseDragged(e -> handleHandlePositionChanged(e, startNode, chronologyLink.getStartMiniature(), 0, true));
+        startNode.setOnMouseReleased(e -> handleHandlePositionChanged(e, startNode, chronologyLink.getStartMiniature(), 0, false));
+        endNode.setOnMouseDragged(e -> handleHandlePositionChanged(e, endNode, chronologyLink.getEndMiniature(), 6, true));
+        endNode.setOnMouseReleased(e -> handleHandlePositionChanged(e, endNode, chronologyLink.getEndMiniature(), 6, false));
         // creating controls for cubic shape
         cubicControlLine1 = new Line();
         cubicControlLine1.setStroke(Color.WHITESMOKE);
@@ -312,12 +276,28 @@ public class ChronologyLinkDrawing implements IFxScalableNode {
         propertyChangeSupport.firePropertyChange(LINK_CLICKED, event, this);
     }
 
+    // todo change type in the futre
+    private void handleHandlePositionChanged(MouseEvent e, Circle handle, ChronologyPictureMiniature miniature, int firstParameterIndex, boolean locally) {
+        var newPosition = getAnchorPointPosition(miniature, e.getX() / viewingScale, e.getY() / viewingScale);
+        var newAngle = MathUtils.getAngle(miniature.getPosition(), newPosition);
+        var newDistance = miniature.getPosition().distance(newPosition);
+        handle.setCenterX(newPosition.getX() * viewingScale);
+        handle.setCenterY(newPosition.getY() * viewingScale);
+        linkParameters[firstParameterIndex] = newAngle;
+        linkParameters[firstParameterIndex + 1] = newDistance;
+        if (locally) {
+            updateLocally();
+        } else {
+            chronologyLink.updateLinkParameters(linkParameters);
+        }
+    }
+
     private Point2D getAnchorPointPosition(ChronologyPictureMiniature aMiniature, double xPos, double yPos) {
-        var imageCenterX = aMiniature.getPosition().getX() * viewingScale;
-        var imageCenterY = aMiniature.getPosition().getY() * viewingScale;
-        var deltaPersonIndex = ChronologyLink.calculateDeltaXPosition(aMiniature, chronologyLink.getPerson()) * viewingScale;
-        var imageHalfWidth = aMiniature.getWidth() / 2.0 + deltaPersonIndex * viewingScale;
-        var imageHalfHeight = aMiniature.getHeight() / 2.0 + deltaPersonIndex * viewingScale;
+        var imageCenterX = aMiniature.getPosition().getX();
+        var imageCenterY = aMiniature.getPosition().getY();
+        var deltaPersonIndex = ChronologyLink.calculateDeltaXPosition(aMiniature, chronologyLink.getPerson());
+        var imageHalfWidth = aMiniature.getWidth() / 2.0 + deltaPersonIndex;
+        var imageHalfHeight = aMiniature.getHeight() / 2.0 + deltaPersonIndex;
         var minX = imageCenterX - imageHalfWidth;
         var maxX = imageCenterX + imageHalfWidth;
         var minY = imageCenterY - imageHalfHeight;

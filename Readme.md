@@ -1,4 +1,7 @@
 # TimelineFx
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2df05c7f4e6d476a8f38092beba4ed75)](https://app.codacy.com/gh/PtitNoony/timelinefx?utm_source=github.com&utm_medium=referral&utm_content=PtitNoony/timelinefx&utm_campaign=Badge_Grade_Settings)
+
 A JavaFx to build timelines, chronologies...
 
 

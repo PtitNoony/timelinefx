@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jfxtras.styles.jmetro.Style;
 
 /**
  *
@@ -40,6 +41,7 @@ public class Configuration {
     public static final String PORTRAITS_FOLDER_LOCATION_CHANGED = "portraitsFolderLocationChanged";
     public static final String PICTURES_FOLDER_LOCATION_CHANGED = "picturesFolderLocationChanged";
     public static final String MINIATURES_FOLDER_LOCATION_CHANGED = "miniaturesFolderLocationChanged";
+    public static final String THEME_CHANGED = "miniaturesFolderLocationChanged";
     //
     public static final double DEFAULT_FXML_GAP = 8.0;
     //
@@ -53,8 +55,10 @@ public class Configuration {
     private static final String PORTRAITS_FOLDER_PROPERTY_NAME = "PortraitsFolder";
     private static final String PICTURES_FOLDER_PROPERTY_NAME = "PicturesFolder";
     private static final String MINIATURES_FOLDER_PROPERTY_NAME = "MiniaturesFolder";
+    private static final String THEME_PROPERTY_NAME = "Theme";
     //
     private static final String DEFAULT_TIMELINES_FOLDER_PATH = System.getProperty("user.home") + File.separator + DEFAULT_PROJECTS_FOLDER_NAME;
+    private static final Style DEFAULT_THEME = Style.DARK;
 
     //
     private static final Logger LOG = Logger.getGlobal();
@@ -138,6 +142,10 @@ public class Configuration {
             propertiesChanged = true;
             properties.setProperty(MINIATURES_FOLDER_PROPERTY_NAME, DEFAULT_MINIATURES_FOLDER_NAME);
         }
+        if (!properties.containsKey(THEME_PROPERTY_NAME)) {
+            propertiesChanged = true;
+            properties.setProperty(THEME_PROPERTY_NAME, DEFAULT_THEME.name());
+        }
         //
         if (propertiesChanged) {
             savePreferences();
@@ -182,6 +190,10 @@ public class Configuration {
         return properties.getProperty(MINIATURES_FOLDER_PROPERTY_NAME);
     }
 
+    public static Style getTheme() {
+        return Style.valueOf(properties.getProperty(THEME_PROPERTY_NAME));
+    }
+
     public static void setProjectsParentFolder(String newValue) {
         if (newValue != null && !newValue.equals(getProjectsParentFolder())) {
             properties.setProperty(TIMELINES_FOLDER_PROPERTY_NAME, newValue);
@@ -211,6 +223,14 @@ public class Configuration {
             properties.setProperty(MINIATURES_FOLDER_PROPERTY_NAME, newValue);
             savePreferences();
             PROPERTY_CHANGE_SUPPORT.firePropertyChange(MINIATURES_FOLDER_LOCATION_CHANGED, null, newValue);
+        }
+    }
+
+    public static void setTheme(Style newStyle) {
+        if (newStyle != null && !newStyle.name().equals(getMiniaturesFolder())) {
+            properties.setProperty(THEME_PROPERTY_NAME, newStyle.name());
+            savePreferences();
+            PROPERTY_CHANGE_SUPPORT.firePropertyChange(THEME_CHANGED, null, newStyle);
         }
     }
 }

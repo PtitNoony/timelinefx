@@ -25,13 +25,16 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static javafx.application.Platform.runLater;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
+import jfxtras.styles.jmetro.Style;
 
 /**
  *
@@ -45,6 +48,10 @@ public class ConfigurationViewController implements Initializable {
 
     @FXML
     private TextField timelinesLocationField;
+    @FXML
+    private RadioButton darkThemeRB;
+    @FXML
+    private RadioButton lightThemeRB;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(ConfigurationViewController.this);
     private final DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -53,6 +60,20 @@ public class ConfigurationViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Configuration.addPropertyChangeListener(this::handleGlobalConfigurationChanged);
         timelinesLocationField.setText(Configuration.getProjectsParentFolder());
+        final ToggleGroup themeRBGroup = new ToggleGroup();
+        darkThemeRB.setToggleGroup(themeRBGroup);
+        lightThemeRB.setToggleGroup(themeRBGroup);
+        updateTheme(Configuration.getTheme());
+        darkThemeRB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if (t1) {
+                Configuration.setTheme(Style.DARK);
+            }
+        });
+        lightThemeRB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if (t1) {
+                Configuration.setTheme(Style.LIGHT);
+            }
+        });
     }
 
     @FXML
@@ -82,8 +103,21 @@ public class ConfigurationViewController implements Initializable {
         switch (event.getPropertyName()) {
             case Configuration.TIMELINES_FOLDER_LOCATION_CHANGED ->
                 runLater(() -> timelinesLocationField.setText((String) event.getNewValue()));
+            case Configuration.THEME_CHANGED ->
+                runLater(() -> updateTheme(Configuration.getTheme()));
             default ->
                 throw new UnsupportedOperationException("Unsupported configuration change : " + event);
         }
+    }
+
+    private void updateTheme(final Style style) {
+        if (style == Style.DARK) {
+            darkThemeRB.setSelected(true);
+            lightThemeRB.setSelected(false);
+        } else {
+            darkThemeRB.setSelected(false);
+            lightThemeRB.setSelected(true);
+        }
+        StageFactory.updateTheme();
     }
 }

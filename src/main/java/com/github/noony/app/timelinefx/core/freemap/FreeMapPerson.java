@@ -51,8 +51,6 @@ public class FreeMapPerson {
     //
     private final List<StayPeriod> stays;
     private final Map<StayPeriod, Link> stayLinks;
-//    private final List< Plot> startPlots = new LinkedList<>();
-//    private final List< Plot> endPlots = new LinkedList<>();
     private final List<Plot> plots;
     private final Map<StayPeriod, Pair<Plot, Plot>> plotsByPeriod;
     private final List<TravelLink> travelLinks;
@@ -76,7 +74,7 @@ public class FreeMapPerson {
         //
         portrait = new FreeMapPortrait(person.getDefaultPortrait(), FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
         //
-        initLink = new PersonInitLink(person, FreeMapPerson.this);
+        initLink = new PersonInitLink(FreeMapPerson.this);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

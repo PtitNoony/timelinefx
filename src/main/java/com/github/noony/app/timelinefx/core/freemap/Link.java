@@ -48,7 +48,7 @@ public class Link implements Selectable {
         endPlot = aEndPlot;
         linkType = type;
         color = aColor;
-        linkShape = LinkShape.QUAD_LINE;
+        linkShape = aLinkShape;
     }
 
     public Link(Plot aBeginPlot, Plot aEndPlot, LinkType type, Color aColor) {

@@ -68,12 +68,9 @@ public class PicturesChronologyViewController implements Initializable {
     private PictureChronology currentPictureChronology = null;
     private PictureChronologyDrawing pictureChronologyDrawing = null;
     //
-    private PropertyChangeListener projectListener;
 
     @FXML
     private ScrollPane viewScrollPane;
-//    @FXML
-//    private AnchorPane chronologyMainPane;
     @FXML
     private TabPane propertiesTabPane;
     @FXML
@@ -104,7 +101,6 @@ public class PicturesChronologyViewController implements Initializable {
         PortraitFactory.addPropertyChangeListener(this::handlePortraitFactoryChanges);
         loadPictureChronologyConfiguratorView();
         //
-        projectListener = this::handleProjectChanges;
         chronologiesListView.setCellFactory((ListView<PictureChronology> p) -> {
             return new PictureChronologyListCellImpl();
         });
@@ -292,7 +288,6 @@ public class PicturesChronologyViewController implements Initializable {
             LOG.log(Level.SEVERE, "Could not load PictureChronologyConfigurator ::  {0}", new Object[]{ex});
         }
         configuratorController = loader.getController();
-//        configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
     }
 
     private void loadMiniatureConfiguratorView() {

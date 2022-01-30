@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
@@ -55,15 +57,17 @@ import org.w3c.dom.Element;
  */
 public class SvgExporter {
 
+    private static final Logger LOG = Logger.getGlobal();
+
     private static final ArrayList<String> TEMP_FILE_LIST = new ArrayList<>();
+
     private static double CANVAS_X = 0;
     private static double CANVAS_Y = 0;
     private static String OUTPUT_FILE_NAME = "";
 
-    public static void EXPORT(@NotNull Node srcPane, String outputFileName) {
+    public static void export(@NotNull Node srcPane, String outputFileName) {
         TEMP_FILE_LIST.clear();
         Bounds canvasBounds = srcPane.localToScene(srcPane.getBoundsInLocal());
-
         CANVAS_X = canvasBounds.getMinX();
         CANVAS_Y = canvasBounds.getMinY();
         OUTPUT_FILE_NAME = outputFileName;
@@ -83,7 +87,7 @@ public class SvgExporter {
             Element mainGroup = document.createElement("g");
             svgElement.appendChild(mainGroup);
 
-            READ_ELEMENT(srcPane, document, mainGroup);
+            readElement(srcPane, document, mainGroup);
 
             svgElement.setAttribute("width", canvasBounds.getWidth() + "px");
             svgElement.setAttribute("height", canvasBounds.getHeight() + "px");
@@ -95,15 +99,15 @@ public class SvgExporter {
             StreamResult result = new StreamResult(outputFile);
             transformer.transform(source, result);
         } catch (ParserConfigurationException | TransformerException parserConfigurationException) {
-            parserConfigurationException.printStackTrace();
+            LOG.log(Level.SEVERE, "Exception while exporting to file {0} :: {1}", new Object[]{outputFileName, parserConfigurationException.getMessage()});
         }
 
         TEMP_FILE_LIST.stream().map(File::new).filter(File::exists).forEachOrdered(File::delete);
     }
 
-    private static void READ_ELEMENT(Object object, Document document, Element element) {
+    private static void readElement(Object object, Document document, Element element) {
         if (object instanceof Pane pane) {
-            pane.getChildren().forEach(node -> READ_ELEMENT(node, document, element));
+            pane.getChildren().forEach(node -> readElement(node, document, element));
         } else if ((object instanceof Circle circleShape) && (((Circle) object).getOpacity() != 0)) {
 
             Bounds bounds = circleShape.localToScene(circleShape.getBoundsInLocal());
@@ -111,12 +115,12 @@ public class SvgExporter {
             String cx = Double.toString(bounds.getMinX() + circleShape.getRadius() - CANVAS_X);
             String cy = Double.toString(bounds.getMinY() + circleShape.getRadius() - CANVAS_Y);
             String r = Double.toString(circleShape.getRadius());
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) circleShape.getFill());
-            String stroke = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) circleShape.getStroke());
+            String fill = getHexColorCodeFromFxColor((Color) circleShape.getFill());
+            String stroke = getHexColorCodeFromFxColor((Color) circleShape.getStroke());
             String strokeWidth = Double.toString(circleShape.getStrokeWidth());
             String fillOpacity = Double.toString(((Color) circleShape.getFill()).getOpacity());
             String strokeOpacity = Double.toString(((Color) circleShape.getStroke()).getOpacity());
-            String strokeDashArray = GET_STRING_FROM_ARRAY(circleShape.getStrokeDashArray());
+            String strokeDashArray = getStringFromArray(circleShape.getStrokeDashArray());
 
             Element circle = document.createElement("ellipse");
             circle.setAttribute("cx", cx);
@@ -142,12 +146,12 @@ public class SvgExporter {
             String cy = Double.toString(bounds.getMinY() + ellipseShape.getRadiusY() - CANVAS_Y);
             String rx = Double.toString(ellipseShape.getRadiusX());
             String ry = Double.toString(ellipseShape.getRadiusY());
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) ellipseShape.getFill());
-            String stroke = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) ellipseShape.getStroke());
+            String fill = getHexColorCodeFromFxColor((Color) ellipseShape.getFill());
+            String stroke = getHexColorCodeFromFxColor((Color) ellipseShape.getStroke());
             String strokeWidth = Double.toString(ellipseShape.getStrokeWidth());
             String fillOpacity = Double.toString(((Color) ellipseShape.getFill()).getOpacity());
             String strokeOpacity = Double.toString(((Color) ellipseShape.getStroke()).getOpacity());
-            String strokeDashArray = GET_STRING_FROM_ARRAY(ellipseShape.getStrokeDashArray());
+            String strokeDashArray = getStringFromArray(ellipseShape.getStrokeDashArray());
 
             Element ellipse = document.createElement("ellipse");
             ellipse.setAttribute("cx", cx);
@@ -174,12 +178,12 @@ public class SvgExporter {
             String ry = Double.toString(rectangleShape.getArcHeight());
             String width = Double.toString(rectangleShape.getWidth());
             String height = Double.toString(rectangleShape.getHeight());
-            String stroke = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) rectangleShape.getStroke());
+            String stroke = getHexColorCodeFromFxColor((Color) rectangleShape.getStroke());
             String strokeWidth = Double.toString(rectangleShape.getStrokeWidth());
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) rectangleShape.getFill());
+            String fill = getHexColorCodeFromFxColor((Color) rectangleShape.getFill());
             String fillOpacity = Double.toString(((Color) rectangleShape.getFill()).getOpacity());
             String strokeOpacity = Double.toString(((Color) rectangleShape.getStroke()).getOpacity());
-            String strokeDashArray = GET_STRING_FROM_ARRAY(rectangleShape.getStrokeDashArray());
+            String strokeDashArray = getStringFromArray(rectangleShape.getStrokeDashArray());
 
             Element rectangle = document.createElement("rect");
             rectangle.setAttribute("x", x);
@@ -217,12 +221,12 @@ public class SvgExporter {
 
             d += "Z";
 
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) polygonShape.getFill());
-            String stroke = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) polygonShape.getStroke());
+            String fill = getHexColorCodeFromFxColor((Color) polygonShape.getFill());
+            String stroke = getHexColorCodeFromFxColor((Color) polygonShape.getStroke());
             String strokeWidth = Double.toString(polygonShape.getStrokeWidth());
             String fillOpacity = Double.toString(((Color) polygonShape.getFill()).getOpacity());
             String strokeOpacity = Double.toString(((Color) polygonShape.getStroke()).getOpacity());
-            String strokeDashArray = GET_STRING_FROM_ARRAY(polygonShape.getStrokeDashArray());
+            String strokeDashArray = getStringFromArray(polygonShape.getStrokeDashArray());
 
             Element path = document.createElement("path");
             path.setAttribute("d", d);
@@ -253,12 +257,12 @@ public class SvgExporter {
                 points += (polylineShape.getPoints().get(i) + bounds.getMinX() - CANVAS_X - minX) + "," + (polylineShape.getPoints().get(i + 1) + bounds.getMinY() - CANVAS_Y - minY) + " ";
             }
 
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) polylineShape.getFill());
-            String stroke = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) polylineShape.getStroke());
+            String fill = getHexColorCodeFromFxColor((Color) polylineShape.getFill());
+            String stroke = getHexColorCodeFromFxColor((Color) polylineShape.getStroke());
             String strokeWidth = Double.toString(polylineShape.getStrokeWidth());
             String fillOpacity = Double.toString(((Color) polylineShape.getFill()).getOpacity());
             String strokeOpacity = Double.toString(((Color) polylineShape.getStroke()).getOpacity());
-            String strokeDashArray = GET_STRING_FROM_ARRAY(polylineShape.getStrokeDashArray());
+            String strokeDashArray = getStringFromArray(polylineShape.getStrokeDashArray());
 
             Element path = document.createElement("polyline");
             path.setAttribute("points", points);
@@ -288,7 +292,7 @@ public class SvgExporter {
                     d += "L " + (lineTo.getX() + x) + ", " + (lineTo.getY() + y) + " ";
                 } else if (pathElement instanceof ClosePath) {
                     d += "Z";
-                } else {
+                } else if (pathElement != null) {
                     QuadCurveTo quadCurveTo = (QuadCurveTo) pathElement;
                     double controlX = (quadCurveTo.getControlX() + x);
                     double controlY = (quadCurveTo.getControlY() + y);
@@ -299,12 +303,12 @@ public class SvgExporter {
                 }
             }
 
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) starPath.getFill());
-            String stroke = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) starPath.getStroke());
+            String fill = getHexColorCodeFromFxColor((Color) starPath.getFill());
+            String stroke = getHexColorCodeFromFxColor((Color) starPath.getStroke());
             String strokeWidth = Double.toString(starPath.getStrokeWidth());
             String fillOpacity = Double.toString(((Color) starPath.getFill()).getOpacity());
             String strokeOpacity = Double.toString(((Color) starPath.getStroke()).getOpacity());
-            String strokeDashArray = GET_STRING_FROM_ARRAY(starPath.getStrokeDashArray());
+            String strokeDashArray = getStringFromArray(starPath.getStrokeDashArray());
 
             Element path = document.createElement("path");
             path.setAttribute("d", d);
@@ -332,7 +336,7 @@ public class SvgExporter {
             String transform = "rotate(" + text.getRotate() + ", " + pivotX + ", " + pivotY + ")";
             String fontSize = Double.toString(text.getFont().getSize()) + "px";
             String fontFamily = text.getFont().getFamily();
-            String fill = GET_HEX_COLOR_CODE_FROM_FX_COLOR((Color) text.getFill());
+            String fill = getHexColorCodeFromFxColor((Color) text.getFill());
             String fontWeight = text.getFont().getStyle().toLowerCase().contains("bold") ? "bold" : "normal";
             String fontStyle = text.getFont().getStyle().toLowerCase().contains("italic") ? "italic" : "normal";
             String textDecoration = text.isUnderline() ? "underline" : "none";
@@ -358,12 +362,12 @@ public class SvgExporter {
             TEMP_FILE_LIST.add(imagePath);
 
             if (imageView.getImage() != null) {
-                WRITE_IMAGE_TO_FILE(imageView.getImage(), imagePath);
+                writeImageToFile(imageView.getImage(), imagePath);
 
                 String pivotX = Double.toString(bounds.getMinX() + (bounds.getWidth() / 2.0) - CANVAS_X);
                 String pivotY = Double.toString(bounds.getMinY() + (bounds.getHeight() / 2.0) - CANVAS_Y);
 
-                String xlinkHref = "data:image/png;base64," + GET_BASE64_STRING_FROM_IMAGE(imagePath);
+                String xlinkHref = "data:image/png;base64," + getBase64StringFromImage(imagePath);
                 String x = Double.toString(bounds.getMinX() - CANVAS_X);
                 String y = Double.toString(bounds.getMinY() - CANVAS_Y);
                 String preserveAspectRatio = "none";
@@ -385,43 +389,40 @@ public class SvgExporter {
         }
     }
 
-    public static String GET_HEX_COLOR_CODE_FROM_FX_COLOR(Color color) {
+    public static String getHexColorCodeFromFxColor(Color color) {
         return ("#" + color.toString().substring(2, color.toString().length() - 2));
     }
 
-    public static String GET_STRING_FROM_ARRAY(ObservableList<Double> points) {
+    public static String getStringFromArray(ObservableList<Double> points) {
         String output = "";
-
         for (int i = 0; i < points.size(); i++) {
             output += points.get(i);
-
             if (i != points.size() - 1) {
                 output += ",";
             }
         }
-
         return output;
     }
 
-    public static String GET_BASE64_STRING_FROM_IMAGE(String srcPath) {
+    public static String getBase64StringFromImage(String srcPath) {
         String output = "";
         java.nio.file.Path path = Paths.get(srcPath);
         try {
             byte[] bytes = Files.readAllBytes(path);
             output = Base64.getEncoder().encodeToString(bytes);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            LOG.log(Level.SEVERE, "Exception while getting base64 string from image {0} :: {1}", new Object[]{srcPath, exception.getMessage()});
         }
 
         return output;
     }
 
-    public static void WRITE_IMAGE_TO_FILE(Image image, String outputName) {
+    public static void writeImageToFile(Image image, String outputName) {
         try {
             BufferedImage outputImage = SwingFXUtils.fromFXImage(image, null);
             ImageIO.write(outputImage, "png", new File(outputName));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.log(Level.SEVERE, "Exception while writting image to file {0} :: {1}", new Object[]{outputName, ex.getMessage()});
         }
     }
 }

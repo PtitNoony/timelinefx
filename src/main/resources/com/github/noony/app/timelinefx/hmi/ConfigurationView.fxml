@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -21,6 +22,13 @@
                   <Label maxHeight="1.7976931348623157E308" text="Timelines Parent Folder:" />
                   <TextField fx:id="timelinesLocationField" disable="true" prefWidth="400.0" promptText="Select Folder" HBox.hgrow="SOMETIMES" />
                   <Button mnemonicParsing="false" onAction="#handlePicLocationAction" text="..." />
+               </children>
+            </HBox>
+            <HBox spacing="8.0" VBox.vgrow="NEVER">
+               <children>
+                  <Label text="Theme:" />
+                  <RadioButton fx:id="darkThemeRB" mnemonicParsing="false" text="Dark" />
+                  <RadioButton fx:id="lightThemeRB" mnemonicParsing="false" text="Light" />
                </children>
             </HBox>
             <Separator prefWidth="200.0" />

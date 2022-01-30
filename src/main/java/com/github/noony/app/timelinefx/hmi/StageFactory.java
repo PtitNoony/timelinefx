@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -28,7 +29,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 /**
  *
@@ -36,7 +36,13 @@ import jfxtras.styles.jmetro.Style;
  */
 public class StageFactory {
 
+    /**
+     * Default scene width.
+     */
     public static final double DEFAULT_SCENE_WIDTH = 1600;
+    /**
+     * Default scene height.
+     */
     public static final double DEFAULT_SCENE_HEIGHT = 900;
     //
     private static final Logger LOG = Logger.getGlobal();
@@ -61,9 +67,8 @@ public class StageFactory {
         stage.setTitle(title);
         stage.setScene(scene);
         if (!DEFAULT_LAF) {
-            JMetro jmetro = new JMetro(scene, Style.DARK);
+            JMetro jmetro = new JMetro(scene, Configuration.getTheme());
             SCENE_STYLES.put(scene, jmetro);
-//            jmetro.setStyle(Style.LIGHT);
         } else {
             scene.getStylesheets().add("/styles/Styles.css");
         }
@@ -75,9 +80,8 @@ public class StageFactory {
         stage.setTitle(title);
         stage.setScene(scene);
         if (!DEFAULT_LAF) {
-            JMetro jmetro = new JMetro(scene, Style.DARK);
+            JMetro jmetro = new JMetro(scene, Configuration.getTheme());
             SCENE_STYLES.put(scene, jmetro);
-//            jmetro.setStyle(Style.LIGHT);
         } else {
             scene.getStylesheets().add("/styles/Styles.css");
         }
@@ -88,10 +92,23 @@ public class StageFactory {
         return SCENE_STYLES.get(aScene);
     }
 
+    /**
+     * Forces the theme to be reapplied.
+     */
     public static void reApplyTheme() {
         runLater(() -> {
-            LOG.log(Level.INFO, "Re-applying styles.");
+            LOG.log(Level.INFO, "Re-applying theme.");
             SCENE_STYLES.values().forEach(JMetro::reApplyTheme);
+        });
+    }
+
+    /**
+     * Updates the application's theme based on the configuration value.
+     */
+    public static void updateTheme() {
+        runLater(() -> {
+            LOG.log(Level.INFO, "Updating theme.");
+            SCENE_STYLES.values().forEach(style -> style.setStyle(Configuration.getTheme()));
         });
     }
 }

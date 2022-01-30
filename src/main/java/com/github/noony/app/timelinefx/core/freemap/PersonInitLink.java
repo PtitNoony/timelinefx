@@ -27,22 +27,25 @@ import java.beans.PropertyChangeSupport;
  */
 public class PersonInitLink {
 
+    /**
+     * Property name for first plot change.
+     */
     public static final String FIRST_PLOT_CHANGED = "PersonInitLinkFirstPlotChanged";
+    /**
+     * Property name for first plot position change.
+     */
     public static final String FIRST_PLOT_POSITION_CHANGED = "PersonInitLinkFirstPlotPositionChanged";
 
     private final Person person;
-    private final FreeMapPerson freeMapPerson;
-    //
     private final PropertyChangeSupport propertyChangeSupport;
     //
     private Plot firstPlot;
 
-    public PersonInitLink(Person aPerson, FreeMapPerson aFreeMapPerson) {
+    public PersonInitLink(final FreeMapPerson aFreeMapPerson) {
         propertyChangeSupport = new PropertyChangeSupport(PersonInitLink.this);
-        person = aPerson;
-        freeMapPerson = aFreeMapPerson;
-        firstPlot = freeMapPerson.getFirstPlot();
-        freeMapPerson.addPropertyChangeListener(PersonInitLink.this::handleFreeMapPersonChanges);
+        person = aFreeMapPerson.getPerson();
+        firstPlot = aFreeMapPerson.getFirstPlot();
+        aFreeMapPerson.addPropertyChangeListener(PersonInitLink.this::handleFreeMapPersonChanges);
     }
 
     public void addListener(PropertyChangeListener listener) {

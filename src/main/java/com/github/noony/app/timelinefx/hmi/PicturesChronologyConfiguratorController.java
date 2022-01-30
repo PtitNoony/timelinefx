@@ -72,9 +72,7 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         });
         //
         widthField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            if (t1.isBlank() | t1.isEmpty()) {
-                // nothing
-            } else {
+            if (!t1.isBlank() && !t1.isEmpty()) {
                 var width = Double.parseDouble(t1);
                 if (pictureChronology != null) {
                     pictureChronology.setWidth(width);
@@ -83,9 +81,7 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         });
         //
         heightField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            if (t1.isBlank() | t1.isEmpty()) {
-                // nothing
-            } else {
+            if (!t1.isBlank() && !t1.isEmpty()) {
                 var height = Double.parseDouble(t1);
                 if (pictureChronology != null) {
                     pictureChronology.setHeight(height);

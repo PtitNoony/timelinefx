@@ -27,6 +27,8 @@ public enum ChronologyLinkType {
 
     LINE(4), QUAD(-1), CUBIC(8);
 
+    public static final double DEFAULT_CUBIC_RADIUS_PERCENTAGE = 0.75;
+
     private int nbParameters;
 
     private ChronologyLinkType(int numberOfParameters) {
@@ -36,8 +38,6 @@ public enum ChronologyLinkType {
     public int getNbParameters() {
         return nbParameters;
     }
-
-    public static final double DEFAULT_CUBIC_RADIUS_PERCENTAGE = 0.75;
 
     public static double[] getDefaultParameters(ChronologyLinkType aType, ChronologyPictureMiniature startMiniature, ChronologyPictureMiniature endMiniature, Person person) {
         var startPoint = ChronologyLink.calculateDefaultStartPosition(startMiniature, startMiniature.getPersonIndex(person));

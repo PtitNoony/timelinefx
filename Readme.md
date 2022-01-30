@@ -10,7 +10,7 @@ A JavaFx to build timelines, chronologies...
 
 ## Java Version
 
-This version is for Java 16.
+This version is for Java 17.
 
 ## Disclaimer
 
@@ -20,6 +20,7 @@ There are a lot of improvments yet to be made.
 SO, feel free to request changes!!
 I welcome ideas for missing features/architectures...
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/28eaaa31088c42d4b7f3143b3c58d91a)](https://www.codacy.com/gh/PtitNoony/timelinefx/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PtitNoony/timelinefx&amp;utm_campaign=Badge_Grade)
 
 ## Small examples
 

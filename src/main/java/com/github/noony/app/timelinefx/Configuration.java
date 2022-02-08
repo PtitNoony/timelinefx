@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx;
 
 import com.github.noony.app.timelinefx.hmi.ConfigurationViewController;
+import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -72,6 +73,7 @@ public class Configuration {
     }
 
     public static void loadPreferences() {
+        CustomProfiler.start("loadPreferences");
         var userDirFile = new File(DEFAULT_TIMELINES_FOLDER_PATH + File.separator + PREFERENCE_FILE_NAME);
         if (userDirFile.exists()) {
             preferenceFile = userDirFile;
@@ -79,6 +81,7 @@ public class Configuration {
             preferenceFile = getUserHomePreferenceFile();
         }
         loadPreferenceFile();
+        CustomProfiler.stop("loadPreferences");
     }
 
     private static File getUserHomePreferenceFile() {
@@ -188,6 +191,10 @@ public class Configuration {
 
     public static String getMiniaturesFolder() {
         return properties.getProperty(MINIATURES_FOLDER_PROPERTY_NAME);
+    }
+
+    public static boolean withProfiling() {
+        return true;
     }
 
     public static Style getTheme() {

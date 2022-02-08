@@ -39,6 +39,7 @@ public class MetadataParser {
     private static final int DEFAULT_RESOLUTION = -1;
 
     public static PictureInfo parseMetadata(TimeLineProject project, File file) {
+        LOG.log(Level.SEVERE, "Parsing metadata for {0}.", new Object[]{file});
         String fileName = file.getName();
         String filePath = file.getAbsolutePath();
         String projectRelativePath = CustomFileUtils.fromAbsoluteToProjectRelative(project, file);

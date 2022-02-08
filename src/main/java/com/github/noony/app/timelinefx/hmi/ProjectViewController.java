@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.examples.StarWars;
 import com.github.noony.app.timelinefx.examples.TestExample;
 import com.github.noony.app.timelinefx.save.XMLHandler;
+import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
@@ -118,6 +119,8 @@ public final class ProjectViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        var loadProjectLoadingFreizesMethodName = this.getClass().getSimpleName() + "__initialize";
+        CustomProfiler.start(loadProjectLoadingFreizesMethodName);
         LOG.log(Level.INFO, "Loading ProjectViewController");
         fileChooser = new FileChooser();
         //
@@ -162,8 +165,8 @@ public final class ProjectViewController implements Initializable {
         //
         StageFactory.reApplyTheme();
         //
-//        contentViewMI.setSelected(true);
         displayContentEditionView();
+        CustomProfiler.stop(loadProjectLoadingFreizesMethodName);
     }
 
     @FXML
@@ -254,7 +257,10 @@ public final class ProjectViewController implements Initializable {
             galleryController.setProject(timeLineProject);
         }
         timelineController.reset();
+        var loadProjectLoadingFreizesMethodName = this.getClass().getSimpleName() + "__loadProjectLoadingFreizes";
+        CustomProfiler.start(loadProjectLoadingFreizesMethodName);
         timeLineProject.getFriezes().forEach(timelineController::loadFreize);
+        CustomProfiler.stop(loadProjectLoadingFreizesMethodName);
     }
 
     private void executeActionOnHold() {
@@ -275,6 +281,8 @@ public final class ProjectViewController implements Initializable {
     }
 
     private void showModalStage(Parent content) {
+        var showModalStageMethodName = this.getClass().getSimpleName() + "__showModalStage";
+        CustomProfiler.start(showModalStageMethodName);
         if (modalStage == null) {
             modalStage = new Stage();
             modalStage.setAlwaysOnTop(true);
@@ -291,6 +299,7 @@ public final class ProjectViewController implements Initializable {
         }
         modalStage.show();
         mainAnchorPane.setDisable(true);
+        CustomProfiler.stop(showModalStageMethodName);
     }
 
     private void hideModalStage() {
@@ -359,6 +368,8 @@ public final class ProjectViewController implements Initializable {
     }
 
     private void loadContentEditionView() {
+        var loadContentEditionViewMethodName = this.getClass().getSimpleName() + "__loadContentEditionView";
+        CustomProfiler.start(loadContentEditionViewMethodName);
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("ContentEditionView.fxml"));
         try {
             contentEditionView = loader.load();
@@ -367,9 +378,12 @@ public final class ProjectViewController implements Initializable {
         }
         contentController = loader.getController();
 //        configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
+        CustomProfiler.stop(loadContentEditionViewMethodName);
     }
 
     private void loadTimelineView() {
+        var loadTimelineViewMethodName = this.getClass().getSimpleName() + "__loadTimelineView";
+        CustomProfiler.start(loadTimelineViewMethodName);
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("TimelineView.fxml"));
         try {
             timelineView = loader.load();
@@ -378,9 +392,12 @@ public final class ProjectViewController implements Initializable {
         }
         timelineController = loader.getController();
 //        configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
+        CustomProfiler.stop(loadTimelineViewMethodName);
     }
 
     private void loadGalleryView() {
+        var loadGalleryViewMethodName = this.getClass().getSimpleName() + "__loadGalleryView";
+        CustomProfiler.start(loadGalleryViewMethodName);
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("GalleryView.fxml"));
         try {
             galleryView = loader.load();
@@ -389,9 +406,13 @@ public final class ProjectViewController implements Initializable {
         }
         galleryController = loader.getController();
         galleryController.addPropertyChangeListener(this::handleGalleryViewControllerChanges);
+        CustomProfiler.stop(loadGalleryViewMethodName);
     }
 
-    private void loadConfigurationView() {
+    protected void loadConfigurationView() {
+        var loadConfigurationViewMethodName = this.getClass().getSimpleName() + "__loadConfigurationView";
+        CustomProfiler.start(loadConfigurationViewMethodName);
+        CustomProfiler.start(this.getClass().getSimpleName() + "__loadConfigurationView");
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("ConfigurationView.fxml"));
         try {
             configurationView = loader.load();
@@ -400,9 +421,12 @@ public final class ProjectViewController implements Initializable {
         }
         configurationController = loader.getController();
         configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
+        CustomProfiler.stop(loadConfigurationViewMethodName);
     }
 
     private void loadProjectCreationWizardView() {
+        var loadProjectCreationWizardViewMethodName = this.getClass().getSimpleName() + "__loadProjectCreationWizardView";
+        CustomProfiler.start(loadProjectCreationWizardViewMethodName);
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("ProjectCreationWizard.fxml"));
         try {
             projectCreationWizardView = loader.load();
@@ -411,9 +435,12 @@ public final class ProjectViewController implements Initializable {
         }
         projectCreationWizardController = loader.getController();
         projectCreationWizardController.addPropertyChangeListener(this::handleProjectCreationControllerChanges);
+        CustomProfiler.stop(loadProjectCreationWizardViewMethodName);
     }
 
     private void loadEventChronologyView() {
+        var loadEventChronologyViewMethodName = this.getClass().getSimpleName() + "__loadEventChronologyView";
+        CustomProfiler.start(loadEventChronologyViewMethodName);
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("PicturesChronologyView.fxml"));
         try {
             picturesChronologyView = loader.load();
@@ -425,6 +452,7 @@ public final class ProjectViewController implements Initializable {
         if (timeLineProject != null) {
             pictureChronologyViewController.setProject(timeLineProject);
         }
+        CustomProfiler.stop(loadEventChronologyViewMethodName);
     }
 
     private void setMainPaneContent(Node node) {

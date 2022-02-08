@@ -51,6 +51,7 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyFactory;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
+import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -176,6 +177,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
 
     @Override
     public TimeLineProject load(File projectFile, Element e) {
+        var loadMethodName = this.getClass().getSimpleName() + "__load";
+        CustomProfiler.start(loadMethodName);
         String projectName = e.getAttribute(NAME_ATR);
         // Load project properties
         var portraitsFolderValue = e.hasAttribute(PORTRAIT_FOLDER_ATR) ? e.getAttribute(PORTRAIT_FOLDER_ATR) : TimeLineProject.DEFAULT_PORTRAIT_FOLDER;
@@ -261,6 +264,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         //
         // FUTURE IMPROVMENT : ENABLE AUTO IMPORT => in config
         //
+        CustomProfiler.stop(loadMethodName);
         return project;
     }
 
@@ -461,6 +465,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private static Picture parsePicture(Element pictureElement, TimeLineProject project, List<String> relativePathLoaded) {
+        Long milliIn = System.currentTimeMillis();
         var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
         var name = pictureElement.getAttribute(NAME_ATR);
         var path = pictureElement.getAttribute(PATH_ATR);
@@ -492,6 +497,12 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 default ->
                     throw new UnsupportedOperationException("Could not parse child element of picture " + name + " :: " + n);
             }
+        }
+        //
+        var milliOut = System.currentTimeMillis();
+        var time = milliOut - milliIn;
+        if (time > 1) {
+            LOG.log(Level.SEVERE, "Parsed picture: {0}\n > took {1}ms.", new Object[]{name, Long.toString(time)});
         }
         return picture;
     }
@@ -667,6 +678,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
     }
 
     private void parsePortraits(Element plotsRootElement, FriezeFreeMap freeMap) {
+        var milliIn = System.currentTimeMillis();
         // <portrait person="21" xPos="690.0" yPos="179.8"/>
         NodeList plotElements = plotsRootElement.getChildNodes();
         for (int i = 0; i < plotElements.getLength(); i++) {
@@ -684,6 +696,12 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 portrait.setY(yPos);
                 portrait.setRadius(radius);
             }
+        }
+        //
+        var milliOut = System.currentTimeMillis();
+        var time = milliOut - milliIn;
+        if (time > 1) {
+            LOG.log(Level.SEVERE, "Parsed portrairs for freemap {0}\n > took {1}ms.", new Object[]{freeMap.getName(), Long.toString(time)});
         }
     }
 

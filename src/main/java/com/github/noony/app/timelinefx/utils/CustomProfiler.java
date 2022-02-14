@@ -18,8 +18,8 @@ package com.github.noony.app.timelinefx.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,74 +32,82 @@ public class CustomProfiler {
 
     private static final int THEORETICAL_MAX_NAME_LENGTH = 50;
 
+    private static final boolean WITH_PROFILE = true;
+
     private static CustomProfiler singletonInstance = null;
 
-    private final Map<String, Profile> profiles; // Fast access to profiles by name
-    private final List<Profile> profilesStack; // Profiles as created chronologically
+    private static final Map<String, Profile> profiles = new HashMap<>(); // Fast access to profiles by name
+    private static final List<Profile> profilesStack = new LinkedList<>();// Profiles as created chronologically
 
-    /**
-     * Get access to the singleton instance (create it if necessary).
-     *
-     * @return
-     */
-    public static CustomProfiler getInstance() {
-        if (singletonInstance == null) {
-            singletonInstance = new CustomProfiler();
-        }
-        return singletonInstance;
-    }
-
+//    /**
+//     * Get access to the singleton instance (create it if necessary).
+//     *
+//     * @return
+//     */
+//    public static CustomProfiler getInstance() {
+//        if (singletonInstance == null) {
+//            singletonInstance = new CustomProfiler();
+//        }
+//        return singletonInstance;
+//    }
     /**
      * Protected constructor for singleton
      */
-    protected CustomProfiler() {
-        profiles = new HashMap<>();
-        profilesStack = new ArrayList<>();
-    }
-
+//    protected CustomProfiler() {
+//        profiles = new HashMap<>();
+//        profilesStack = new ArrayList<>();
+//    }
     /**
-     * Start a profile. If the profile does not exist, it will be created. If it exists, a new round of measure is
-     * taken.
+     * Start a profile. If the profile does not exist, it will be created. If it
+     * exists, a new round of measure is taken.
      *
-     * @param name The name of the profile. If possible, less than Profiler.THEORETICAL_MAX_NAME_LENGTH characters
+     * @param name The name of the profile. If possible, less than
+     * Profiler.THEORETICAL_MAX_NAME_LENGTH characters
      *
      * @see Profiler.THEORETICAL_MAX_NAME_LENGTH
      */
-    public void start(String name) {
-        Profile p = profiles.get(name);
-        if (p == null) {
-            p = new Profile(name);
-            profiles.put(name, p);
-            profilesStack.add(p);
+    public static synchronized void start(String name) {
+        if (WITH_PROFILE) {
+            var p = profiles.get(name);
+            if (p == null) {
+                p = new Profile(name);
+                profiles.put(name, p);
+                profilesStack.add(p);
+            }
+            p.start();
         }
-        p.start();
     }
 
     /**
      * Stop a profile and compute some statistics about it.
      *
-     * @param name The name of the profile as declared in the corresponding start method
+     * @param name The name of the profile as declared in the corresponding
+     * start method
      */
-    public void stop(String name) {
-        Profile p = profiles.get(name);
-        if (p == null) {
-            throw new RuntimeException("The profile " + name + " has not been created by a call to the start() method!");
+    public static synchronized void stop(String name) {
+        if (WITH_PROFILE) {
+            var p = profiles.get(name);
+            if (p == null) {
+                throw new RuntimeException("The profile " + name + " has not been created by a call to the start() method!");
+            }
+            p.stop();
         }
-        p.stop();
     }
 
     /**
-     * Clear all the current measures. Not to be called within any start/stop pair.
+     * Clear all the current measures. Not to be called within any start/stop
+     * pair.
      */
     public void reset() {
         profiles.clear();
     }
 
     /**
-     * Build a string containing all the information about the measures we have taken so far.
+     * Build a string containing all the information about the measures we have
+     * taken so far.
+     * @return
      */
-    @Override
-    public String toString() {
+    public static synchronized String toStringValue() {
         final StringBuffer sb = new StringBuffer();
         profilesStack.stream().map(p -> {
             sb.append(p.toString());

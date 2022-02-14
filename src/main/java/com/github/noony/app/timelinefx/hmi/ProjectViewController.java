@@ -23,9 +23,11 @@ import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.examples.StarWars;
 import com.github.noony.app.timelinefx.examples.TestExample;
 import com.github.noony.app.timelinefx.save.XMLHandler;
+import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -169,6 +171,7 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleConfigurationAction(ActionEvent event) {
         if (configurationView == null) {
+            Method m = Reflex
             loadConfigurationView();
         }
         showModalStage(configurationView);
@@ -392,6 +395,7 @@ public final class ProjectViewController implements Initializable {
     }
 
     private void loadConfigurationView() {
+        CustomProfiler.start(this.getClass().getSimpleName() + "__loadConfigurationView");
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("ConfigurationView.fxml"));
         try {
             configurationView = loader.load();

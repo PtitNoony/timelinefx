@@ -177,7 +177,7 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
 
     @Override
     public TimeLineProject load(File projectFile, Element e) {
-        CustomProfiler.getInstance().start("load");
+        CustomProfiler.start("load");
         String projectName = e.getAttribute(NAME_ATR);
         // Load project properties
         var portraitsFolderValue = e.hasAttribute(PORTRAIT_FOLDER_ATR) ? e.getAttribute(PORTRAIT_FOLDER_ATR) : TimeLineProject.DEFAULT_PORTRAIT_FOLDER;
@@ -263,10 +263,10 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         //
         // FUTURE IMPROVMENT : ENABLE AUTO IMPORT => in config
 
-        CustomProfiler.getInstance().stop("load");
+        CustomProfiler.stop("load");
 
         System.err.println(" !!!!!!!!!");
-        System.err.println(" > " + CustomProfiler.getInstance().toString());
+        System.err.println(" > " + CustomProfiler.toStringValue());
         System.err.println(" !!!!!!!!!");
         //
         return project;

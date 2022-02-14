@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx;
 
 import com.github.noony.app.timelinefx.hmi.ProjectViewController;
 import com.github.noony.app.timelinefx.hmi.StageFactory;
+import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -28,6 +29,7 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 public class MainApp extends Application {
 
@@ -45,6 +47,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        CustomProfiler.start("MainApp_Start");
         var loader = new FXMLLoader(ProjectViewController.class.getResource("ProjectView.fxml"));
         Parent root = loader.load();
         var controller = loader.getController();
@@ -56,10 +59,21 @@ public class MainApp extends Application {
         stage.getIcons().add(new Image("icon.png"));
         stage.show();
         stage.setMaximized(true);
+        stage.setOnCloseRequest((WindowEvent t) -> {
+            System.err.println("! *************");
+            System.err.println("! > " + CustomProfiler.toStringValue());
+            System.err.println("! *************");
+        });
+//        stage.onCloseRequestProperty().addListener((ObservableValue<? extends EventHandler<WindowEvent>> ov, EventHandler<WindowEvent> t, EventHandler<WindowEvent> t1) -> {
+//            System.err.println(" *************");
+//            System.err.println(" > " + CustomProfiler.toStringValue());
+//            System.err.println(" *************");
+//        });
         //
         LOG.log(Level.INFO, "java.version: {0}", System.getProperty("java.version"));
         LOG.log(Level.INFO, "javafx.version: {0}", System.getProperty("javafx.version"));
         //
+        CustomProfiler.stop("MainApp_Start");
     }
 
     /**

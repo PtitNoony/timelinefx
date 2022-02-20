@@ -193,6 +193,10 @@ public class Configuration {
         return properties.getProperty(MINIATURES_FOLDER_PROPERTY_NAME);
     }
 
+    public static boolean withProfiling() {
+        return true;
+    }
+
     public static Style getTheme() {
         return Style.valueOf(properties.getProperty(THEME_PROPERTY_NAME));
     }

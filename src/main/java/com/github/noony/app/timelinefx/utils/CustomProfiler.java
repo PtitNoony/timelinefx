@@ -34,8 +34,7 @@ public class CustomProfiler {
 
     private static final boolean WITH_PROFILE = true;
 
-    private static CustomProfiler singletonInstance = null;
-
+//    private static CustomProfiler singletonInstance = null;
     private static final Map<String, Profile> profiles = new HashMap<>(); // Fast access to profiles by name
     private static final List<Profile> profilesStack = new LinkedList<>();// Profiles as created chronologically
 
@@ -58,11 +57,10 @@ public class CustomProfiler {
 //        profilesStack = new ArrayList<>();
 //    }
     /**
-     * Start a profile. If the profile does not exist, it will be created. If it
-     * exists, a new round of measure is taken.
+     * Start a profile. If the profile does not exist, it will be created. If it exists, a new round of measure is
+     * taken.
      *
-     * @param name The name of the profile. If possible, less than
-     * Profiler.THEORETICAL_MAX_NAME_LENGTH characters
+     * @param name The name of the profile. If possible, less than Profiler.THEORETICAL_MAX_NAME_LENGTH characters
      *
      * @see Profiler.THEORETICAL_MAX_NAME_LENGTH
      */
@@ -81,8 +79,7 @@ public class CustomProfiler {
     /**
      * Stop a profile and compute some statistics about it.
      *
-     * @param name The name of the profile as declared in the corresponding
-     * start method
+     * @param name The name of the profile as declared in the corresponding start method
      */
     public static synchronized void stop(String name) {
         if (WITH_PROFILE) {
@@ -95,16 +92,15 @@ public class CustomProfiler {
     }
 
     /**
-     * Clear all the current measures. Not to be called within any start/stop
-     * pair.
+     * Clear all the current measures. Not to be called within any start/stop pair.
      */
     public void reset() {
         profiles.clear();
     }
 
     /**
-     * Build a string containing all the information about the measures we have
-     * taken so far.
+     * Build a string containing all the information about the measures we have taken so far.
+     *
      * @return
      */
     public static synchronized String toStringValue() {

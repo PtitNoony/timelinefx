@@ -213,7 +213,7 @@ public final class ProjectViewController implements Initializable {
             if (timeline != null) {
                 loadProject(timeline);
             } else {
-                LOG.log(Level.SEVERE, "Could not load project {0}", inputFile);
+                LOG.log(Level.SEVERE, "Could not load project {0}.", inputFile);
             }
         }
     }

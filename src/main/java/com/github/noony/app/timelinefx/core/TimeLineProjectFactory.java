@@ -48,7 +48,7 @@ public final class TimeLineProjectFactory {
             throw new IllegalStateException("Project File cannot be null.");
         } else if (aFile.isFile()) {
             timelineFile = aFile;
-            LOG.log(Level.INFO, "Project Folder:: {0}", new Object[]{timelineFile.getParent()});
+            LOG.log(Level.INFO, "Project Folder:: {0}.", new Object[]{timelineFile.getParent()});
         } else {
             File fileFound = Arrays.stream(Objects.requireNonNull(aFile.listFiles())).filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
             if (fileFound == null) {

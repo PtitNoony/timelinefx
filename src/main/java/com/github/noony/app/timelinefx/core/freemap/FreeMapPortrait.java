@@ -44,7 +44,11 @@ public class FreeMapPortrait {
         xPos = 0;
         yPos = 0;
         // TODO why that ?
-        portrait.getPerson().addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(e));
+        try {
+            portrait.getPerson().addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(e));
+        } catch (Exception e) {
+            System.err.println("Exception while FreeMapPortrait for " + portrait);
+        }
     }
 
     public Portrait getPortrait() {

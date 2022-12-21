@@ -67,11 +67,13 @@ public final class PortraitFactory {
     public static Portrait createPortrait(long id, Person person, String filePath) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with id={0} person={1} filePath={2}.", new Object[]{id, person, filePath});
         if (!FriezeObjectFactory.isIdAvailable(id)) {
-            throw new IllegalArgumentException("trying to create portrait " + filePath + " with existing id=" + id + " (exists : " + PORTRAITS.get(id) + "[" + PORTRAITS.get(id).getId() + "])");
+            throw new IllegalArgumentException("Trying to create portrait " + filePath + " with existing id=" + id + " (exists : " + PORTRAITS.get(id) + "[" + PORTRAITS.get(id).getId() + "])");
         }
         var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Trying to create portrait for " + person + " with missing file=" + filePath);
+        }
         var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
-        assert picInfo != null;
         var portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight());
         PORTRAITS.put(portrait.getId(), portrait);
         FriezeObjectFactory.addObject(portrait);

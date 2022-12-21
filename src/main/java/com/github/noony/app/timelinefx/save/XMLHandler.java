@@ -81,11 +81,16 @@ public final class XMLHandler {
                 Element e = document.getDocumentElement();
                 String version = getVersion(e);
                 //
+                boolean foundProvider = false;
                 for (TimelineProjectProvider candidateprovider : INSTANCE.providers) {
                     if (candidateprovider.getSupportedVersions().contains(version)) {
                         project = candidateprovider.load(file, e);
+                        foundProvider = true;
                         break;
                     }
+                }
+                if (!foundProvider) {
+                    LOG.log(Level.SEVERE, "Could not find a parser for version {0}.\n Available parsers={1}.", new Object[]{version, INSTANCE.providers});
                 }
                 //
             } catch (IOException | SAXException | ParserConfigurationException ex) {
@@ -112,8 +117,8 @@ public final class XMLHandler {
         if (v1.equals(v2)) {
             return 0;
         }
-        String[] v1Split = v1.split(".");
-        String[] v2Split = v2.split(".");
+        String[] v1Split = v1.split("\\.");
+        String[] v2Split = v2.split("\\.");
         int l1 = v1Split.length;
         int l2 = v2Split.length;
         int maxSplit = Math.max(l1, l2);

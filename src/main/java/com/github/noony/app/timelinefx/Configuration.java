@@ -117,14 +117,14 @@ public class Configuration {
             inputStream = new FileInputStream(preferenceFile);
             properties.load(inputStream);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, "Could not load preference file. Exception:: {0}", new Object[]{ex});
         } finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();
                 }
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, "Could not properly close preference file stream. Exception:: {0}", new Object[]{ex});
             }
         }
         var propertiesChanged = false;
@@ -165,14 +165,14 @@ public class Configuration {
             outputStream = new FileOutputStream(preferenceFile);
             properties.store(outputStream, "..");
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, "Could not save preferences. Exception:: {0}", new Object[]{ex});
         } finally {
             try {
                 if (outputStream != null) {
                     outputStream.close();
                 }
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, "Could not properly close preference file output stream. Exception:: {0}", new Object[]{ex});
             }
         }
     }

@@ -448,6 +448,8 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
                 default ->
                     throw new UnsupportedOperationException("Unsupported timefomat : " + timeFormat);
             }
+        } else {
+            throw new IllegalStateException("No time format specified for: " + aDateObject);
         }
     }
 
@@ -808,8 +810,10 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         double yPos = Double.parseDouble(miniatureElement.getAttribute(Y_POS_ATR));
         double scale = Double.parseDouble(miniatureElement.getAttribute(SCALE_ATR));
         var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
-        parseObjectTimeValue(miniatureElement, miniature.getDateObject());
         miniature.setUseCustomTime(!miniature.isInSyncWithPicture());
+        if (!miniature.isInSyncWithPicture()) {
+            parseObjectTimeValue(miniatureElement, miniature.getDateObject());
+        }
         return miniature;
     }
 
@@ -1018,7 +1022,6 @@ public class TimeProjectProviderV2 implements TimelineProjectProvider {
         } else if (link instanceof TravelLink travelLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(travelLink.getPerson().getId()));
         }
-
         linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
         return linkElement;
     }

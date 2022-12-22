@@ -230,7 +230,8 @@ public class PicturesChronologyViewController implements Initializable {
         switch (event.getPropertyName()) {
             case GalleryTiles.TILE_CLICKED -> {
                 Picture pic = (Picture) event.getNewValue();
-                ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(pic);
+                var chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(pic);
+                LOG.log(Level.FINE, "Created picture minitature : {0}.", new Object[]{chronologyPictureMiniature});
             }
             case GalleryTiles.TILE_SELECTED -> {
                 // nothing to do for now
@@ -244,7 +245,8 @@ public class PicturesChronologyViewController implements Initializable {
         switch (event.getPropertyName()) {
             case GalleryTiles.TILE_CLICKED -> {
                 Portrait portrait = (Portrait) event.getNewValue();
-                ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(portrait);
+                var chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(portrait);
+                LOG.log(Level.FINE, "Created picture minitature : {0}.", new Object[]{chronologyPictureMiniature});
             }
             case GalleryTiles.TILE_SELECTED -> {
                 // nothing to do for now
@@ -329,11 +331,15 @@ public class PicturesChronologyViewController implements Initializable {
     private void setPropertyTabContent(Node aNode, String title) {
         if (itemPropertyTab == null) {
             itemPropertyTab = new Tab(title, aNode);
+//            itemPropertyTab.
             itemPropertyTab.setClosable(false);
             propertiesTabPane.getTabs().add(itemPropertyTab);
         } else {
             itemPropertyTab.setContent(aNode);
             itemPropertyTab.setText(title);
+            if (!propertiesTabPane.getTabs().contains(itemPropertyTab)) {
+                propertiesTabPane.getTabs().add(itemPropertyTab);
+            }
         }
         propertiesTabPane.getSelectionModel().select(itemPropertyTab);
     }

@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import javafx.geometry.Point2D;
@@ -91,6 +92,22 @@ public class ChronologyPictureMiniature extends FriezeObject {
             dateObject.setValue(aTimeValue);
         } else {
             picture.setValue(aTimeValue);
+        }
+    }
+
+    public void setCurrenltyUsedTimeValue(LocalDate aDate) {
+        if (usesCustomTime) {
+            dateObject.setDate(aDate);
+        } else {
+            picture.setDate(aDate);
+        }
+    }
+
+    public LocalDate getCurrenltyUsedTimeValue() {
+        if (usesCustomTime) {
+            return dateObject.getDate();
+        } else {
+            return picture.getDate();
         }
     }
 

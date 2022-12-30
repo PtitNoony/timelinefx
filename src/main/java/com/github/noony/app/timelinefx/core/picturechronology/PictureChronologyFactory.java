@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.core.picturechronology;
 import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
 import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.util.HashMap;
 import java.util.List;
@@ -68,15 +69,25 @@ public class PictureChronologyFactory {
         return pictureChronology;
     }
 
-    public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName, List<ChronologyPictureMiniature> miniatures, List<ChronologyLink> links) {
+    public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName, TimeFormat aTimeFormat, List<ChronologyPictureMiniature> miniatures, List<ChronologyLink> links) {
         LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
         if (!FriezeObjectFactory.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with existing id=" + id);
         }
-        var pictureChronology = new PictureChronology(id, aProject, pictureChronologyName, miniatures, links);
+        var pictureChronology = new PictureChronology(id, aProject, pictureChronologyName, aTimeFormat, miniatures, links);
         PICTURES_CHRONOLOGIES.put(pictureChronology.getId(), pictureChronology);
         FriezeObjectFactory.addObject(pictureChronology);
         return pictureChronology;
+    }
+
+    public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName, List<ChronologyPictureMiniature> miniatures, List<ChronologyLink> links) {
+        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
+        long nbTimeFormat = miniatures.stream().map(m -> m.getDateObject().getTimeFormat()).distinct().count();
+        if (nbTimeFormat > 1) {
+            throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with more than 1 time format :: " + nbTimeFormat);
+        }
+        TimeFormat timeFormat = miniatures.stream().map(m -> m.getDateObject().getTimeFormat()).findAny().orElse(TimeFormat.TIME_MIN);
+        return createPictureChronology(id, aProject, pictureChronologyName, timeFormat, miniatures, links);
     }
 
     public static PictureChronology createPictureChronology(TimeLineProject aProject) {

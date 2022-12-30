@@ -317,7 +317,7 @@ public class PicturesChronologyViewController implements Initializable {
             loadMiniatureConfiguratorView();
         }
         setPropertyTabContent(miniaturePropertyRootView, "Miniature");
-        miniaturePropertyController.setChronologyMiniature(miniature);
+        miniaturePropertyController.setChronologyMiniature(currentPictureChronology, miniature);
     }
 
     private void displayLinkPropertyTab(ChronologyLink link) {

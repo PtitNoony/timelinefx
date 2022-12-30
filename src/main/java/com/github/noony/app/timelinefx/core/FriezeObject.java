@@ -32,8 +32,11 @@ public class FriezeObject implements IFriezeObject {
         id = anId;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     @Override
-    public long getId() {
+    public final long getId() {
         return id;
     }
 

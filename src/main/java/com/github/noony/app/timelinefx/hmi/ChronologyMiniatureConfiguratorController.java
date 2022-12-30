@@ -16,17 +16,22 @@
  */
 package com.github.noony.app.timelinefx.hmi;
 
+import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
+import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -51,10 +56,13 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
     private TextField scaleField;
     @FXML
     private TextField pictureDateField;
-    @FXML
-    private TextField customDateField;
+    // Date
     @FXML
     private CheckBox customDateCB;
+    @FXML
+    private DatePicker customDatePicker;
+    @FXML
+    private TextField customDateField;
 
     private ChronologyPictureMiniature currentMiniature = null;
 
@@ -88,12 +96,18 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
                 }
             }
         });
+        // custom date part
         customDateField.setOnKeyTyped((KeyEvent t) -> {
             if (currentMiniature != null) {
                 try {
                     currentMiniature.setCurrenltyUsedTimeValue(customDateField.getText().trim());
                 } catch (NumberFormatException e) {
                 }
+            }
+        });
+        customDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
+            if (currentMiniature != null) {
+                currentMiniature.setCurrenltyUsedTimeValue(t1);
             }
         });
         customDateCB.selectedProperty().addListener((ov, t, t1) -> {
@@ -103,7 +117,7 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
         });
     }
 
-    public void setChronologyMiniature(ChronologyPictureMiniature chronologyPictureMiniature) {
+    public void setChronologyMiniature(PictureChronology pictureChronology, ChronologyPictureMiniature chronologyPictureMiniature) {
         if (currentMiniature != null) {
             currentMiniature.removeListener(this::handleMiniatureChanges);
         }
@@ -115,9 +129,24 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
             yPosField.setText(MathUtils.doubleToString(currentMiniature.getPosition().getY()));
             scaleField.setText(MathUtils.doubleToString(currentMiniature.getScale()));
             pictureDateField.setText(currentMiniature.getPicture().getAbsoluteTimeAsString());
-            customDateField.setText(currentMiniature.getDateObject().getAbsoluteTimeAsString());
             customDateCB.setSelected(currentMiniature.usesCustomTime());
             currentMiniature.addListener(this::handleMiniatureChanges);
+            switch (pictureChronology.getTimeFormat()) {
+                case LOCAL_TIME:
+                    customDatePicker.setDisable(false);
+                    customDateField.setDisable(true);
+                    customDatePicker.setValue(chronologyPictureMiniature.getCurrenltyUsedTimeValue());
+                    customDateField.setText("");
+                    break;
+                case TIME_MIN:
+                    customDatePicker.setDisable(true);
+                    customDateField.setDisable(false);
+                    customDateField.setText(currentMiniature.getDateObject().getAbsoluteTimeAsString());
+                    customDatePicker.setValue(LocalDate.now());
+                    break;
+                default:
+                    throw new AssertionError();
+            }
         } else {
             clear();
         }
@@ -130,8 +159,11 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
         yPosField.setText("");
         scaleField.setText("");
         pictureDateField.setText("");
-        customDateField.setText("");
         customDateCB.setSelected(false);
+        customDatePicker.setValue(LocalDate.now());
+        customDateField.setText("");
+        customDatePicker.setDisable(true);
+        customDateField.setDisable(true);
     }
 
     private void handleMiniatureChanges(PropertyChangeEvent event) {

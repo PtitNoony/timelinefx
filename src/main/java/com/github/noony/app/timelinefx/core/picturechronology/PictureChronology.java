@@ -221,6 +221,15 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
         });
     }
 
+    private void updateLinksConnectedTo(ChronologyPictureMiniature aPictureMiniature) {
+        chronologyLinks.values().stream()
+                .filter(link -> link.getStartMiniature() == aPictureMiniature || link.getEndMiniature() == aPictureMiniature)
+                .forEach(link -> {
+                    var linkParameters = ChronologyLinkType.getDefaultParameters(chronologyLinkType, link);
+                    link.updateLinkParameters(linkParameters);
+                });
+    }
+
     private void handleChronologyPictureChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED -> {
@@ -228,6 +237,9 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
             }
             case ChronologyPictureMiniature.TIME_CHANGED -> {
                 updateLinks();
+            }
+            case ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
+                updateLinksConnectedTo((ChronologyPictureMiniature) event.getNewValue());
             }
             default ->
                 throw new UnsupportedOperationException("handlePictureMiniatureChanges :: " + event.getPropertyName());

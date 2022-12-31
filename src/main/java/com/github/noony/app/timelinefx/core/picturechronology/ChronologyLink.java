@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core.picturechronology;
 
+import com.github.noony.app.timelinefx.core.AnchorSide;
 import com.github.noony.app.timelinefx.core.FriezeObject;
 import com.github.noony.app.timelinefx.core.Person;
 import static com.github.noony.app.timelinefx.core.picturechronology.PictureChronology.PERSON_CONTOUR_WIDTH;
@@ -36,6 +37,11 @@ public class ChronologyLink extends FriezeObject {
     public static final ChronologyLinkType DEFAULT_LINK_TYPE = ChronologyLinkType.CUBIC;
 
     public static final String PLOTS_UPDATED = "plotUpdated";
+    public static final String START_LINK_ANCHOR_UPDATED = "startLinkAnchorUpdated";
+    public static final String END_LINK_ANCHOR_UPDATED = "endLinkAnchorUpdated";
+
+    private static final AnchorSide DEFAULT_START_LINK_ANCHOR_SIDE = AnchorSide.RIGHT;
+    private static final AnchorSide DEFAULT_END_LINK_ANCHOR_SIDE = AnchorSide.LEFT;
 
     private static final Logger LOG = Logger.getGlobal();
     private static final double PLOT_SEPARATION = 15;
@@ -47,6 +53,8 @@ public class ChronologyLink extends FriezeObject {
     private final ChronologyPictureMiniature endMiniature;
     //
     private ChronologyLinkType linkType;
+    private AnchorSide startAnchorSide;
+    private AnchorSide endAnchorSide;
     //
     private int startIndex;
     private int endIndex;
@@ -65,14 +73,17 @@ public class ChronologyLink extends FriezeObject {
         startIndex = startMiniature.getPersonIndex(person);
         endIndex = endMiniature.getPersonIndex(person);
         linkType = aLinkType;
+        // default values here
+        startAnchorSide = DEFAULT_START_LINK_ANCHOR_SIDE;
+        endAnchorSide = DEFAULT_END_LINK_ANCHOR_SIDE.LEFT;
         // create a copy ?
         linkParameters = allLinkParameters;
         //
         updateStartPosition();
         updateEndPosition();
         //
-        startMiniature.addListener(ChronologyLink.this::handleStartMiniatureChanges);
-        endMiniature.addListener(ChronologyLink.this::handleEndMiniatureChanges);
+        startMiniature.addListener(this::handleStartMiniatureChanges);
+        endMiniature.addListener(this::handleEndMiniatureChanges);
     }
 
     public Person getPerson() {
@@ -132,6 +143,24 @@ public class ChronologyLink extends FriezeObject {
 
     public ChronologyLinkType getLinkType() {
         return linkType;
+    }
+
+    public AnchorSide getStartAnchorSide() {
+        return startAnchorSide;
+    }
+
+    public AnchorSide getEndAnchorSide() {
+        return endAnchorSide;
+    }
+
+    public void setStartAnchorSide(AnchorSide aStartAnchorSide) {
+        startAnchorSide = aStartAnchorSide;
+        propertyChangeSupport.firePropertyChange(START_LINK_ANCHOR_UPDATED, this, startAnchorSide);
+    }
+
+    public void setEndAnchorSide(AnchorSide anEndAnchorSide) {
+        endAnchorSide = anEndAnchorSide;
+        propertyChangeSupport.firePropertyChange(END_LINK_ANCHOR_UPDATED, this, endAnchorSide);
     }
 
     public void addListener(PropertyChangeListener listener) {

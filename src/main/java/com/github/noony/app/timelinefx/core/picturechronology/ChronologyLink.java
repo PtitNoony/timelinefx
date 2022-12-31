@@ -71,8 +71,8 @@ public class ChronologyLink extends FriezeObject {
         updateStartPosition();
         updateEndPosition();
         //
-        startMiniature.addListener(ChronologyLink.this::handleStartMiniatureChanges);
-        endMiniature.addListener(ChronologyLink.this::handleEndMiniatureChanges);
+        startMiniature.addListener(this::handleStartMiniatureChanges);
+        endMiniature.addListener(this::handleEndMiniatureChanges);
     }
 
     public Person getPerson() {
@@ -146,12 +146,19 @@ public class ChronologyLink extends FriezeObject {
         return "Link: " + person.getName() + ":: " + startMiniature.getPicture().getName() + " -> " + endMiniature.getPicture().getName();
     }
 
-    private void updateStartPosition() {
+//    protected void updatePositions() {
+//        // Todo : optimisation if needed.
+//        LOG.log(Level.INFO, "Updating positions for link {0}", new Object[]{this});
+//        updateStartPosition();
+//        updateEndPosition();
+//    }
+
+    protected void updateStartPosition() {
         startPosition = calculateDefaultStartPosition(startMiniature, startIndex);
         propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, startPosition);
     }
 
-    private void updateEndPosition() {
+    protected void updateEndPosition() {
         endPosition = calculateDefaultEndPosition(endMiniature, endIndex);
         propertyChangeSupport.firePropertyChange(PLOTS_UPDATED, this, endPosition);
     }

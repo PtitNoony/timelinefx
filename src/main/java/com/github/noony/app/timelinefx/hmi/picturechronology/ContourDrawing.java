@@ -93,7 +93,7 @@ public class ContourDrawing implements IFxScalableNode {
         switch (event.getPropertyName()) {
             case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED ->
                 update();
-            case ChronologyPictureMiniature.TIME_CHANGED -> {
+            case ChronologyPictureMiniature.TIME_CHANGED, ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
                 // Nothing to do
             }
             default ->

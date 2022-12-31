@@ -39,6 +39,7 @@ public enum ChronologyLinkType {
         return nbParameters;
     }
 
+
     public static double[] getDefaultParameters(ChronologyLinkType aType, ChronologyPictureMiniature startMiniature, ChronologyPictureMiniature endMiniature, Person person) {
         var startPoint = ChronologyLink.calculateDefaultStartPosition(startMiniature, startMiniature.getPersonIndex(person));
         var endPoint = ChronologyLink.calculateDefaultEndPosition(endMiniature, endMiniature.getPersonIndex(person));
@@ -62,6 +63,10 @@ public enum ChronologyLinkType {
                 throw new UnsupportedOperationException();
         }
         return null;
+    }
+
+    public static double[] getDefaultParameters(ChronologyLinkType aType, ChronologyLink aLink) {
+        return getDefaultParameters(aType, aLink.getStartMiniature(), aLink.getEndMiniature(), aLink.getPerson());
     }
 
 }

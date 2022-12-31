@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -117,6 +118,13 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
         });
     }
 
+    @FXML
+    public void handleRecalculateLinksAction(ActionEvent event) {
+        if (currentMiniature != null) {
+            currentMiniature.requestAssociatedLinksUpdate();
+        }
+    }
+
     public void setChronologyMiniature(PictureChronology pictureChronology, ChronologyPictureMiniature chronologyPictureMiniature) {
         if (currentMiniature != null) {
             currentMiniature.removeListener(this::handleMiniatureChanges);
@@ -178,6 +186,9 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
             case ChronologyPictureMiniature.TIME_CHANGED -> {
                 pictureDateField.setText(currentMiniature.getPicture().getAbsoluteTimeAsString());
                 customDateField.setText(currentMiniature.getDateObject().getAbsoluteTimeAsString());
+            }
+            case ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
+                //Nothing to do: links are only getting repositioned 
             }
             default ->
                 throw new UnsupportedOperationException("Unsupported property change:: " + event);

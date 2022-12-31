@@ -228,7 +228,7 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
             }
             case ChronologyPictureMiniature.SCALE_CHANGED ->
                 updateMiniatureScale((double) event.getNewValue());
-            case ChronologyPictureMiniature.TIME_CHANGED -> {
+            case ChronologyPictureMiniature.TIME_CHANGED, ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
                 //nothing to do
             }
             default ->

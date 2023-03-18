@@ -370,6 +370,9 @@ public class FriezeFreeFormDrawing {
                 removeStartDateHandleDrawing((DateHandle) event.getNewValue());
             case FriezeFreeMap.END_DATE_HANDLE_REMOVED ->
                 removeEndDateHandleDrawing((DateHandle) event.getNewValue());
+            case FriezeFreeMap.FREE_MAP_PLOT_VISIBILITY_CHANGED -> {
+                System.err.println("TODO : handle FREE_MAP_PLOT_VISIBILITY_CHANGED");
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

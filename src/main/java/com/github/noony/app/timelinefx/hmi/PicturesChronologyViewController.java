@@ -216,7 +216,7 @@ public class PicturesChronologyViewController implements Initializable {
     private void handlePortraitFactoryChanges(PropertyChangeEvent event) {
         if (portraitGalleryTiles != null) {
             switch (event.getPropertyName()) {
-                case PortraitFactory.PORTRAIT_ADDED -> {
+                case PortraitFactory.PORTRAIT_CREATED -> {
                     var portrait = (Portrait) event.getNewValue();
                     portraitGalleryTiles.addFileObject(portrait);
                 }

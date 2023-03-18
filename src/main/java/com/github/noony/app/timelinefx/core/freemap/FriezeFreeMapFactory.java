@@ -52,7 +52,7 @@ public class FriezeFreeMapFactory {
     }
 
     public static FriezeFreeMap createFriezeFreeMap(Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap with Frieze={0}", new Object[]{aFrieze});
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap with Frieze={0}", new Object[]{aFrieze.getName()});
         var friezeFreeMap = new FriezeFreeMap(FriezeObjectFactory.getNextID(), aFrieze, aFriezeDimension, aPersonWidth, aPlaceNameWidth, aFontSize, aPlotSeparation, aPlotVisibilty, aPlotSize);
         FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
         FriezeObjectFactory.addObject(friezeFreeMap);
@@ -63,7 +63,7 @@ public class FriezeFreeMapFactory {
         if (!FriezeObjectFactory.isIdAvailable(anID)) {
             throw new IllegalArgumentException("trying to create a friezeFreeMap with existing id=" + anID);
         }
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze (id={0} with Frieze={1}", new Object[]{anID, aFrieze});
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze (id={0} with Frieze={1}", new Object[]{anID, aFrieze.getName()});
         var friezeFreeMap = new FriezeFreeMap(FriezeObjectFactory.getNextID(), aFrieze, aFriezeDimension, aPersonWidth, aPlaceNameWidth, aFontSize, aPlotSeparation, aPlotVisibilty, aPlotSize);
         FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
         FriezeObjectFactory.addObject(friezeFreeMap);
@@ -71,7 +71,7 @@ public class FriezeFreeMapFactory {
     }
 
     public static FriezeFreeMap createFriezeFreeMap(Frieze aFrieze) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap with Frieze={0} ", new Object[]{aFrieze});
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap with Frieze={0} ", new Object[]{aFrieze.getName()});
         var friezeFreeMap = new FriezeFreeMap(FriezeObjectFactory.getNextID(), aFrieze);
         FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
         FriezeObjectFactory.addObject(friezeFreeMap);

@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Portrait;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -29,9 +30,13 @@ public class FreeMapPortrait {
 
     public static final String POSITION_CHANGED = "positionChanged";
     public static final String RADIUS_CHANGED = "portraitRadiusChanged";
+    public static final String PORTRAIT_UPDATED = "portraitUpdated";
+
+    private static final double DEFAULT_POSITION = 0.0;
 
     private final PropertyChangeSupport propertyChangeSupport;
-    private final Portrait portrait;
+    private final Person person;
+    private Portrait portrait;
     //
     private double xPos;
     private double yPos;
@@ -40,15 +45,11 @@ public class FreeMapPortrait {
     public FreeMapPortrait(Portrait aPortrait, double aRadius) {
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPortrait.this);
         portrait = aPortrait;
+        person = portrait.getPerson();
         radius = aRadius;
-        xPos = 0;
-        yPos = 0;
-        // TODO why that ?
-        try {
-            portrait.getPerson().addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(e));
-        } catch (Exception e) {
-            System.err.println("Exception while FreeMapPortrait for " + portrait);
-        }
+        xPos = DEFAULT_POSITION;
+        yPos = DEFAULT_POSITION;
+        person.addPropertyChangeListener(this::handlePersonChanges);
     }
 
     public Portrait getPortrait() {
@@ -92,6 +93,26 @@ public class FreeMapPortrait {
 
     public double getRadius() {
         return radius;
+    }
+
+    private void handlePersonChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case Person.PORTRAIT_ADDED, Person.DEFAULT_PORTRAIT_CHANGED -> {
+                // nothing to do: if another portrait is added or default portrait is changed,
+                // this freemapPortrait is not automatically changed.
+            }
+            case Person.PORTRAIT_REMOVED -> {
+                // in the case the portrait is removed, then we switch to the default portrait
+                var removedPortrait = (Portrait) event.getNewValue();
+                if (removedPortrait == portrait) {
+                    portrait = person.getDefaultPortrait();
+                    propertyChangeSupport.firePropertyChange(PORTRAIT_UPDATED, this, radius);
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported change : " + event);
+        }
+
     }
 
 }

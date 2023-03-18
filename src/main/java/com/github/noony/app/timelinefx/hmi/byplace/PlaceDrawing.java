@@ -170,8 +170,6 @@ public final class PlaceDrawing extends FXDrawing {
             }
             case Person.SELECTION_CHANGED ->
                 System.err.println(" Person.SELECTION_CHANGED :: TODO");
-            case Person.PICTURE_CHANGED ->
-                System.err.println(" Person.PICTURE_CHANGED :: TODO");
             case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED,
                     Person.DEFAULT_PORTRAIT_CHANGED, Person.PORTRAIT_ADDED, Person.PORTRAIT_REMOVED -> {
                 // nothing to do

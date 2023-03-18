@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  */
 public final class PortraitFactory {
 
-    public static final String PORTRAIT_ADDED = "portraitAdded";
+    public static final String PORTRAIT_CREATED = "portraitCreatedInFactory";
 
     private static final Map<Long, Portrait> PORTRAITS = new HashMap<>();
 
@@ -60,7 +60,7 @@ public final class PortraitFactory {
         var portrait = new Portrait(FriezeObjectFactory.getNextID(), person, filePath, picInfo.getWidth(), picInfo.getHeight());
         PORTRAITS.put(portrait.getId(), portrait);
         FriezeObjectFactory.addObject(portrait);
-        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_ADDED, null, portrait);
+        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_CREATED, null, portrait);
         return portrait;
     }
 
@@ -77,7 +77,7 @@ public final class PortraitFactory {
         var portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight());
         PORTRAITS.put(portrait.getId(), portrait);
         FriezeObjectFactory.addObject(portrait);
-        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_ADDED, null, portrait);
+        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_CREATED, null, portrait);
         return portrait;
     }
 

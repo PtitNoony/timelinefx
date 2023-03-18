@@ -125,7 +125,7 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             }
             case FreeMapPortrait.RADIUS_CHANGED ->
                 updateLayout();
-            case Person.PICTURE_CHANGED ->
+            case FreeMapPortrait.PORTRAIT_UPDATED ->
                 updateImage();
             case Person.DATE_OF_BIRTH_CHANGED, Person.DATE_OF_DEATH_CHANGED -> {
                 // nothin to do

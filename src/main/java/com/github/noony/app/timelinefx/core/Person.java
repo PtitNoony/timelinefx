@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.scene.paint.Color;
 
 /**
@@ -39,7 +38,6 @@ public class Person extends FriezeObject {
     public static final String SELECTION_CHANGED = "selectionChanged";
     public static final String VISIBILITY_CHANGED = "visibilityChanged";
     public static final String NAME_CHANGED = "nameChanged";
-    public static final String PICTURE_CHANGED = "pictureChanged";
     public static final String DATE_OF_BIRTH_CHANGED = "dateOfBirthChanged";
     public static final String DATE_OF_DEATH_CHANGED = "dateOfDeathChanged";
     public static final String COLOR_CHANGED = "colorChanged";
@@ -122,14 +120,14 @@ public class Person extends FriezeObject {
         if (aPortrait != null && aPortrait != defaultPortrait) {
             addPortrait(aPortrait);
             defaultPortrait = aPortrait;
-            propertyChangeSupport.firePropertyChange(DEFAULT_PORTRAIT_CHANGED, null, defaultPortrait);
+            propertyChangeSupport.firePropertyChange(DEFAULT_PORTRAIT_CHANGED, this, defaultPortrait);
         }
     }
 
     public void addPortrait(Portrait aPortrait) {
         if (!portraits.contains(aPortrait)) {
             portraits.add(aPortrait);
-            propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, null, aPortrait);
+            propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, aPortrait);
         }
     }
 

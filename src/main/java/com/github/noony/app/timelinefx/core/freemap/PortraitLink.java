@@ -20,7 +20,22 @@ package com.github.noony.app.timelinefx.core.freemap;
  *
  * @author hamon
  */
-public enum LinkType {
+public class PortraitLink extends Link {
 
-    STAY, TRAVEL, PORTRAIT
+    private final FreeMapPortrait freeMapPortrait;
+
+    public PortraitLink(FreeMapPortrait aFreeMapPortrait, Plot aBeginPlot, Plot aEndPlot) {
+        super(aBeginPlot, aEndPlot, LinkType.PORTRAIT, aFreeMapPortrait.getPerson().getColor());
+        freeMapPortrait = aFreeMapPortrait;
+    }
+
+    public FreeMapPortrait getFreeMapPortrait() {
+        return freeMapPortrait;
+    }
+
+    @Override
+    public String getInfo() {
+        return "Link for " + freeMapPortrait.getPerson().getName() + ":: " + freeMapPortrait.getPortrait().getName();
+    }
+
 }

@@ -53,7 +53,7 @@ public class FreeMapPlace {
     private final List<Plot> plots;
     //
     private double yPos;
-    private double fullWidth;
+    private double placeStayWidth;
     private double height = DEFAULT_HEIGHT;
     private double fontSize;
     private double placeNameWidth;
@@ -62,7 +62,7 @@ public class FreeMapPlace {
     private double minX = DEFAULT_MIN_X;
     private double maxX = DEFAULT_MAX_X;
 
-    public FreeMapPlace(Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {
+    protected FreeMapPlace(Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPlace.this);
         place = aPlace;
         plots = new LinkedList<>();
@@ -136,17 +136,17 @@ public class FreeMapPlace {
         return yPos;
     }
 
-    public double getWidth() {
-        return fullWidth;
+    public double getPlaceStayWidth() {
+        return placeStayWidth;
     }
 
     public double getHeight() {
         return height;
     }
 
-    public void setWidth(double newWidth) {
-        fullWidth = newWidth;
-        propertyChangeSupport.firePropertyChange(WIDTH_POS_CHANGED, this, fullWidth);
+    public void setPlaceStaysWidth(double newWidth) {
+        placeStayWidth = newWidth;
+        propertyChangeSupport.firePropertyChange(WIDTH_POS_CHANGED, this, placeStayWidth);
     }
 
     public void setHeight(double newHeight) {

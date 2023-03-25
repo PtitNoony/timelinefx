@@ -59,12 +59,14 @@ public final class FriezeFreeMap extends FriezeObject {
     // Default Values for layout
     private static final double DEFAULT_WIDTH = 900;
     private static final double DEFAULT_HEIGHT = 600;
-    private static final double DEFAULT_PERSONS_WIDTH = 220;
+    private static final double DEFAULT_PERSONS_WIDTH = 0;
     private static final double DEFAULT_PLACE_NAMES_WIDTH = 100;
+    public static final double MAP_PADDING = 20;
     //
     public static final double DEFAULT_PORTRAIT_RADIUS = 50;
 
     public static final double DEFAULT_TIME_HEIGHT = 25;
+    //
     private static final double DEFAULT_FONT_SIZE = 12;
     private static final double DEFAULT_PLOT_SEPARATION = 8.0;
     private static final boolean DEFAULT_PLOT_VISIBILITY = true;
@@ -91,10 +93,9 @@ public final class FriezeFreeMap extends FriezeObject {
     private double height;
     //TODO : rename into portraitWidth
     private double personsWidth;
-//    private double padding;
     private double placeDrawingWidth;
     private double placeNamesWidth;
-//    @Deprecated
+    //
     private double portraitRadius;
     private double fontSize;
     private double plotSeparation;
@@ -106,7 +107,9 @@ public final class FriezeFreeMap extends FriezeObject {
     private double availableWidth;
     private double timeRatio;
     //
-    private TimeMode timeMode;
+//    private final double drawingXOffset = MAP_PADDING;
+    //
+//    private TimeMode timeMode;
 
     protected FriezeFreeMap(long anID, Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
         super(anID);
@@ -123,14 +126,10 @@ public final class FriezeFreeMap extends FriezeObject {
         name = DEFAULT_NAME;
         width = aFriezeDimension.getWidth();
         height = aFriezeDimension.getHeight();
-//        padding = DEFAULT_PADDING;
         // TODO set in method
         personsWidth = aPersonWidth;
         placeNamesWidth = aPlaceNameWidth;
-        placeDrawingWidth = width - placeNamesWidth - personsWidth;
-        if (placeDrawingWidth < 0) {
-            throw new IllegalStateException("placeDrawingWidth cannot be negative");
-        }
+
         fontSize = aFontSize;
         plotSeparation = aPlotSeparation;
         plotVisibiltiy = aPlotVisibilty;
@@ -149,8 +148,9 @@ public final class FriezeFreeMap extends FriezeObject {
         updateLayout();
         //
         distributePlaces();
-        distributePortraits();
-        displayTimeAsProportional();
+//        distributePortraits();
+// removed until new modes are created, at the moment part of updateLayout
+//        displayTimeAsProportional();
     }
 
     protected FriezeFreeMap(long anID, Frieze aFrieze) {
@@ -182,6 +182,14 @@ public final class FriezeFreeMap extends FriezeObject {
         return height;
     }
 
+    public double getFreeMapDrawingWidth() {
+        return width - 2 * getDrawingOffsetX();
+    }
+
+    public double getFreeMapDrawingHeight() {
+        return height - 2 * getDrawingOffsetY();
+    }
+
     public double getPlaceDrawingX() {
         return personsWidth;
     }
@@ -210,12 +218,24 @@ public final class FriezeFreeMap extends FriezeObject {
         return placeDrawingWidth;
     }
 
+    public double getDrawingOffsetX() {
+        return MAP_PADDING;
+    }
+
+    public double getDrawingOffsetY() {
+        return MAP_PADDING;
+    }
+
     public double getPlaceDrawingHeight() {
         return height;
     }
 
     public double getPlaceNamesWidth() {
         return placeNamesWidth;
+    }
+
+    public double getPlaceNamesXOffset() {
+        return MAP_PADDING + placeDrawingWidth + MAP_PADDING;
     }
 
     public double getFontSize() {
@@ -382,17 +402,16 @@ public final class FriezeFreeMap extends FriezeObject {
 
 // </editor-fold>
     //
-    public void distributePortraits() {
-        var nbPortraits = portraits.size();
-        var separation = (getPersonHeight() - nbPortraits * portraitRadius * 2.0) / (1 + 2 * nbPortraits);
-        var portraitList = portraits.values().stream().collect(Collectors.toList());
-        for (var index = 0; index < nbPortraits; index++) {
-            FreeMapPortrait portrait = portraitList.get(index);
-            portrait.setX(getPersonWidth() / 2.0);
-            portrait.setY(separation * (index + 1) + (index + 0.5) * portraitRadius * 2.0);
-        }
-    }
-
+//    public void distributePortraits() {
+//        var nbPortraits = portraits.size();
+//        var separation = (getPersonHeight() - nbPortraits * portraitRadius * 2.0) / (1 + 2 * nbPortraits);
+//        var portraitList = portraits.values().stream().collect(Collectors.toList());
+//        for (var index = 0; index < nbPortraits; index++) {
+//            FreeMapPortrait portrait = portraitList.get(index);
+//            portrait.setX(getPersonWidth() / 2.0);
+//            portrait.setY(separation * (index + 1) + (index + 0.5) * portraitRadius * 2.0);
+//        }
+//    }
     public final void distributePlaces() {
         var nbPlaces = places.size();
         var freeMapPlaces = places.values().stream().sorted((p1, p2) -> Double.compare(p1.getYPos(), p2.getYPos())).collect(Collectors.toList());
@@ -409,6 +428,8 @@ public final class FriezeFreeMap extends FriezeObject {
     public final void displayTimeAsProportional() {
         availableWidth = getPlaceDrawingWidth();
         timeRatio = (maxDate - minDate) / availableWidth;
+//        startDateHandles.forEach((d, h) -> h.setX((d - minDate) / timeRatio + FreeMapPlace.DEFAULT_PLACE_PADDING * 2));
+//        endDateHandles.forEach((d, h) -> h.setX((d - minDate) / timeRatio + FreeMapPlace.DEFAULT_PLACE_PADDING * 2));
         startDateHandles.forEach((d, h) -> h.setX((d - minDate) / timeRatio));
         endDateHandles.forEach((d, h) -> h.setX((d - minDate) / timeRatio));
     }
@@ -430,7 +451,7 @@ public final class FriezeFreeMap extends FriezeObject {
         var freeMapPerson = new FreeMapPerson(person, this);
         persons.add(person);
         freeMapPersons.put(person, freeMapPerson);
-        portraits.put(person, freeMapPerson.getPortrait());
+//        portraits.put(person, freeMapPerson.getPortrait());
         propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_ADDED, this, freeMapPerson);
     }
 
@@ -496,7 +517,7 @@ public final class FriezeFreeMap extends FriezeObject {
 
     private void addFreeMapPlace(Place aPlace) {
         var freeMapPlace = new FreeMapPlace(aPlace, plotSeparation, placeNamesWidth, fontSize);
-        freeMapPlace.setWidth(getPlaceDrawingWidth());
+        freeMapPlace.setPlaceStaysWidth(getPlaceDrawingWidth());
         places.put(aPlace, freeMapPlace);
         propertyChangeSupport.firePropertyChange(FREE_MAP_PLACE_ADDED, null, freeMapPlace);
     }
@@ -536,9 +557,13 @@ public final class FriezeFreeMap extends FriezeObject {
 
     private void updateLayout() {
         var newDimension = new Dimension2D(width, height);
-        placeDrawingWidth = width - personsWidth - placeNamesWidth;
+        // 3 times DEFAULT_PLACE_PADDING = (2 on the left, 1 on the right)
+        placeDrawingWidth = width - personsWidth - placeNamesWidth - 3 * MAP_PADDING;
+        if (placeDrawingWidth < 0) {
+            throw new IllegalStateException("placeDrawingWidth cannot be negative");
+        }
         propertyChangeSupport.firePropertyChange(LAYOUT_CHANGED, this, newDimension);
-        places.values().forEach(p -> p.setWidth(getPlaceDrawingWidth()));
+        places.values().forEach(p -> p.setPlaceStaysWidth(getPlaceDrawingWidth()));
         //
         displayTimeAsProportional();
     }

@@ -47,6 +47,7 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
     private RectanglePlot plotDrawing;
     private double scale = 1.0;
 
+    @Deprecated
     public PersonInitLinkDrawing(PersonInitLink personInitLink, FriezeFreeFormDrawing freeFormDrawing, PersonDrawing aPersonDrawing) {
         link = personInitLink;
         link.addListener(PersonInitLinkDrawing.this::handlePersonLinkChange);
@@ -54,7 +55,7 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
         personDrawing = aPersonDrawing;
         cubicCurve = new CubicCurve();
         cubicCurve.setStroke(link.getPerson().getColor());
-        updatePortraitConfiguration();
+//        updatePortraitConfiguration();
         cubicCurve.setStrokeType(StrokeType.CENTERED);
         cubicCurve.setStrokeWidth(3);
         cubicCurve.setFill(null);
@@ -86,18 +87,18 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
         }
     }
 
-    private void updatePortraitConfiguration() {
-        if (portraitDrawing != null) {
-            portraitDrawing.getPortrait().removeListener(this::handleChange);
-        }
-        portraitDrawing = friezeFreeFormDrawing.getPortrait(link.getPerson());
-        if (portraitDrawing == null) {
-            waitPortraitDrawingCreation();
-        } else {
-            portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
-        }
-        updatePosition();
-    }
+//    private void updatePortraitConfiguration() {
+//        if (portraitDrawing != null) {
+//            portraitDrawing.getPortrait().removeListener(this::handleChange);
+//        }
+//        portraitDrawing = friezeFreeFormDrawing.getPortrait(link.getPerson());
+//        if (portraitDrawing == null) {
+//            waitPortraitDrawingCreation();
+//        } else {
+//            portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
+//        }
+//        updatePosition();
+//    }
 
     private void updateFirstPlotConfiguration(Plot newFirstPlot) {
         if (firstPlot != null) {
@@ -117,15 +118,15 @@ public class PersonInitLinkDrawing implements IFxScalableNode {
         updatePosition();
     }
 
-    private void waitPortraitDrawingCreation() {
-        portraitDrawing = friezeFreeFormDrawing.getPortrait(link.getPerson());
-        if (plotDrawing == null) {
-            Platform.runLater(this::waitPlotDrawingCreation);
-        } else {
-            portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
-            updatePosition();
-        }
-    }
+//    private void waitPortraitDrawingCreation() {
+//        portraitDrawing = friezeFreeFormDrawing.getPortrait(link.getPerson());
+//        if (plotDrawing == null) {
+//            Platform.runLater(this::waitPlotDrawingCreation);
+//        } else {
+//            portraitDrawing.getPortrait().addListener(PersonInitLinkDrawing.this::handleChange);
+//            updatePosition();
+//        }
+//    }
 
     private void waitPlotDrawingCreation() {
         plotDrawing = personDrawing.getPlotDrawing(firstPlot);

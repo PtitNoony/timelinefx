@@ -47,7 +47,7 @@ public class DateHandle {
     private double xPos;
     private double yPos;
 
-    public DateHandle(double aDate, TimeType aTimeType, Point2D aPosition) {
+    protected DateHandle(double aDate, TimeType aTimeType, Point2D aPosition) {
         propertyChangeSupport = new PropertyChangeSupport(DateHandle.this);
         propertyChangeListener = e -> DateHandle.this.handlePlotUpdate(e);
         date = aDate;
@@ -65,7 +65,7 @@ public class DateHandle {
         return Collections.unmodifiableList(plots);
     }
 
-    public void addPlot(Plot plot) {
+    protected void addPlot(Plot plot) {
         if (plot.getDate() == date && !plots.contains(plot)) {
             plots.add(plot);
             plot.addPropertyChangeListener(propertyChangeListener);

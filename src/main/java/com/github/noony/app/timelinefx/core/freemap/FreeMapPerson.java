@@ -55,7 +55,7 @@ public class FreeMapPerson {
     private final Map<StayPeriod, Pair<Plot, Plot>> plotsByPeriod;
     private final List<TravelLink> travelLinks;
     //
-    private final FreeMapPortrait portrait;
+    private final List<FreeMapPortrait> portraits;
     private final PersonInitLink initLink;
     //
     private Plot firstPlot = null;
@@ -72,7 +72,9 @@ public class FreeMapPerson {
         plotsByPeriod = new HashMap<>();
         travelLinks = new LinkedList<>();
         //
-        portrait = new FreeMapPortrait(person.getDefaultPortrait(), FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
+        portraits = new LinkedList<>();
+        //
+//        portrait = new FreeMapPortrait(person.getDefaultPortrait(), FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
         //
         initLink = new PersonInitLink(FreeMapPerson.this);
     }
@@ -107,6 +109,13 @@ public class FreeMapPerson {
 
     public Pair<Plot, Plot> getPlots(StayPeriod stayPeriod) {
         return plotsByPeriod.get(stayPeriod);
+    }
+
+    public void createPortrait(Link sourceLink) {
+        FreeMapPortrait freeMapPortrait = new FreeMapPortrait(person.getDefaultPortrait(), freeMap.getPortraitRadius());
+        // todo create anchor
+        PortraitLink portraitLink = new PortraitLink(freeMapPortrait, firstPlot, firstPlot);
+        portraits.add(freeMapPortrait);
     }
 
     protected void addStay(StayPeriod stayPeriod) {
@@ -176,8 +185,11 @@ public class FreeMapPerson {
         }
     }
 
-    protected FreeMapPortrait getPortrait() {
-        return portrait;
+//    protected FreeMapPortrait getPortrait() {
+//        return portrait;
+//    }
+    protected List<FreeMapPortrait> getPortraits() {
+        return portraits;
     }
 
     private void updateFirstPlot() {

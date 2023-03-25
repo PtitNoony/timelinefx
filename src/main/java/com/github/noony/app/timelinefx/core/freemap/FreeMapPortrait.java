@@ -42,7 +42,7 @@ public class FreeMapPortrait {
     private double yPos;
     private double radius;
 
-    public FreeMapPortrait(Portrait aPortrait, double aRadius) {
+    protected FreeMapPortrait(Portrait aPortrait, double aRadius) {
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPortrait.this);
         portrait = aPortrait;
         person = portrait.getPerson();

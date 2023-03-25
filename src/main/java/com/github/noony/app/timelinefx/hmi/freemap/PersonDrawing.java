@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +39,9 @@ public class PersonDrawing extends AbstractFxScalableNode {
 
     private final FreeMapPerson freeMapPerson;
     private final FriezeFreeMap freeMap;
-    private final PersonInitLinkDrawing personInitLink;
+//    private final PersonInitLinkDrawing personInitLink;
+    //
+    private final PropertyChangeListener linkListener = PersonDrawing.this::handleLinkChanges;
     //
     private final List<IFxScalableNode> scalableNodes;
     private final Map<Link, LinkDrawing> linkDrawings;
@@ -61,14 +64,12 @@ public class PersonDrawing extends AbstractFxScalableNode {
         linkGroup = new Group();
         plotGroup = new Group();
         //
-        personInitLink = new PersonInitLinkDrawing(freeMapPerson.getPersonInitLink(), freeFormDrawing, PersonDrawing.this);
-        scalableNodes.add(personInitLink);
+//        personInitLink = new PersonInitLinkDrawing(freeMapPerson.getPersonInitLink(), freeFormDrawing, PersonDrawing.this);
+//        scalableNodes.add(personInitLink);
         initLayout();
         //
-        List<Link> links = new LinkedList<>();
-        links.addAll(freeMapPerson.getStayLinks());
-        links.addAll(freeMapPerson.getTravelLinks());
-        links.forEach(PersonDrawing.this::createLink);
+        freeMapPerson.getStayLinks().forEach(PersonDrawing.this::createLink);
+        freeMapPerson.getTravelLinks().forEach(PersonDrawing.this::createLink);
         //
         freeMapPerson.getPlots().forEach(PersonDrawing.this::createPlot);
         //
@@ -93,7 +94,7 @@ public class PersonDrawing extends AbstractFxScalableNode {
     }
 
     private void initLayout() {
-        addNode(personInitLink.getNode());
+//        addNode(personInitLink.getNode());
         addNode(linkGroup);
         linkGroup.setTranslateX(freeMap.getPersonWidth() * getScale());
         addNode(plotGroup);
@@ -105,11 +106,13 @@ public class PersonDrawing extends AbstractFxScalableNode {
         scalableNodes.add(linkDrawing);
         linkDrawings.put(link, linkDrawing);
         linkGroup.getChildren().add(linkDrawing.getNode());
+        linkDrawing.addPropertyChangeListener(linkListener);
     }
 
     private void removeLink(Link link) {
         var linkDrawing = linkDrawings.remove(link);
         if (linkDrawing != null) {
+            linkDrawing.removePropertyChangeListener(linkListener);
             scalableNodes.remove(linkDrawing);
             linkGroup.getChildren().remove(linkDrawing.getNode());
         }
@@ -150,8 +153,24 @@ public class PersonDrawing extends AbstractFxScalableNode {
                 removePlot(startEndPlot.getKey());
                 removePlot(startEndPlot.getValue());
             }
-            case FreeMapPerson.STAY_ADDED,FreeMapPerson.STAY_REMOVED -> {
+            case FreeMapPerson.STAY_ADDED, FreeMapPerson.STAY_REMOVED -> {
                 // nothing to do ??
+            }
+            default -> {
+                System.err.println(" TODO handleFreeMapPersonChanges:" + event.getPropertyName());
+            }
+        }
+    }
+
+    private void handleLinkChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case LinkDrawing.SECONDARY_CLICKED -> {
+                System.err.println(" TODO handleFreeMapPersonChanges:" + event.getPropertyName());
+                var link = (Link)event.getNewValue();
+                freeMapPerson.createPortrait(link);
+            }
+            default -> {
+                System.err.println(" TODO handleFreeMapPersonChanges:" + event.getPropertyName());
             }
         }
     }

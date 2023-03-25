@@ -49,7 +49,7 @@ public class Plot implements GridPositionable, Selectable {
     private boolean isSelected = false;
     private double plotSize;
 
-    public Plot(Person aPerson, Place aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
+    protected Plot(Person aPerson, Place aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
         propertyChangeSupport = new PropertyChangeSupport(Plot.this);
         //
         person = aPerson;

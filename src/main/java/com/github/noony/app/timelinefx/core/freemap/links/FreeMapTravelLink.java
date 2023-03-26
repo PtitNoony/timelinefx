@@ -14,35 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.core.freemap;
+package com.github.noony.app.timelinefx.core.freemap.links;
 
-import com.github.noony.app.timelinefx.core.Person;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
+import com.github.noony.app.timelinefx.hmi.freemap.LinkShape;
 
 /**
  *
  * @author hamon
  */
-public class TravelLink extends Link {
+public class FreeMapTravelLink extends FreeMapSimpleLink {
 
-    private final Person person;
-
-    public TravelLink(Person aPerson, Plot aBeginPlot, Plot anEndPlot) {
-        super(aBeginPlot, anEndPlot, LinkType.TRAVEL, aPerson.getColor());
-        person = aPerson;
-    }
-
-    public Person getPerson() {
-        return person;
+    protected FreeMapTravelLink(long id, FreeMapPerson aPerson, FreeMapConnector aBeginPlot, FreeMapConnector anEndPlot) {
+        super(id, aPerson, aBeginPlot, anEndPlot, LinkType.TRAVEL, aPerson.getPerson().getColor(), LinkShape.SIMPLE_LINE);
     }
 
     @Override
     public String getInfo() {
-        return "Travel of " + person.getName();
+        return "Travel of " + getPerson().getName();
     }
 
     @Override
     public String toString() {
-        return "Travel of " + person.getName() + " from: " + getBeginPlot() + "  to:" + getEndPlot();
+        return "Travel of " + getPerson().getName() + " from: " + getBeginConnector() + "  to:" + getEndConnector();
     }
 
 }

@@ -88,6 +88,7 @@ public final class ContentEditionViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // init
+        AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         loadStaysCreationView();
         //
         createButton.setDisable(false);
@@ -123,6 +124,10 @@ public final class ContentEditionViewController implements Initializable {
         });
         mainTabPane.getSelectionModel().select(placeTab);
         setEditMode(EditType.PLACE);
+        //
+        if(AppInstanceConfiguration.getSelectedProject()!=null){
+            setTimelineProject(AppInstanceConfiguration.getSelectedProject());
+        }
     }
 
     @FXML
@@ -175,7 +180,19 @@ public final class ContentEditionViewController implements Initializable {
         }
     }
 
-    protected void setTimeLineProject(TimeLineProject aTimeLineProject) {
+    private void handleAppConfigChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case AppInstanceConfiguration.TIMELINE_SELECTED_CHANGED ->
+                setTimelineProject((TimeLineProject) event.getNewValue());
+            case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED -> {
+                // nothing to do
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void setTimelineProject(TimeLineProject aTimeLineProject) {
         if (timeLineProject != null) {
             timeLineProject.removeListener(timelineChangeListener);
         }

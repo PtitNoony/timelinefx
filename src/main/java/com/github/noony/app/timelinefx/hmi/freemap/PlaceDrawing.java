@@ -83,8 +83,8 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
         nameLabel.setTextAlignment(TextAlignment.CENTER);
         nameLabel.setMinHeight(FreeMapPlace.PLACE_NAME_HEIGHT);
         nameLabel.setMaxHeight(FreeMapPlace.PLACE_NAME_HEIGHT);
-        nameLabel.setMinWidth(place.getPlaceNameWidth());
-        nameLabel.setMaxWidth(place.getPlaceNameWidth());
+        nameLabel.setMinWidth(place.getNameWidth());
+        nameLabel.setMaxWidth(place.getNameWidth());
         nameLabel.setFont(new Font(16));
         nameLabel.setWrapText(true);
 //        nameLabel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));

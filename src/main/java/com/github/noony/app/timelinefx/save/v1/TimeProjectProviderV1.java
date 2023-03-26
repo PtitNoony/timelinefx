@@ -36,11 +36,11 @@ import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.core.freemap.Link;
-import com.github.noony.app.timelinefx.core.freemap.Plot;
-import com.github.noony.app.timelinefx.core.freemap.PlotType;
-import com.github.noony.app.timelinefx.core.freemap.StayLink;
-import com.github.noony.app.timelinefx.core.freemap.TravelLink;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
+import com.github.noony.app.timelinefx.core.freemap.connectors.PlotType;
+import com.github.noony.app.timelinefx.core.freemap.links.FreeMapSimpleLink;
+import com.github.noony.app.timelinefx.core.freemap.links.FreeMapStayLink;
+import com.github.noony.app.timelinefx.core.freemap.links.FreeMapTravelLink;
 import com.github.noony.app.timelinefx.save.TimelineProjectProvider;
 import java.io.File;
 import java.time.LocalDate;
@@ -496,7 +496,9 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                 double xPos = Double.parseDouble(e.getAttribute(X_POS_ATR));
                 double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
                 double radius = Double.parseDouble(e.getAttribute(RADIUS_ATR));
-                FreeMapPortrait portrait = freeMap.getPortrait(personID);
+//                FreeMapPortrait portrait = freeMap.getPortrait(personID);
+                FreeMapPortrait portrait = null;
+                System.err.println(" TODO parsePortraits");
                 if (portrait == null) {
                     throw new IllegalStateException("Cannot find portrait with personID=" + personID);
                 }
@@ -540,7 +542,7 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                 if (stayOp.isEmpty()) {
                     throw new IllegalStateException();
                 }
-                Plot plot;
+                FreeMapPlot plot;
                 PlotType type;
                 // TODO use values
                 if (typeS.equals(PlotType.START.name())) {
@@ -648,7 +650,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         friezeFreeMapElement.setAttribute(FREEMAP_PLOT_SIZE_ATR, Double.toString(friezeFreeMap.getPlotSize()));
         //
         Element portraitsGroupElement = doc.createElement(PORTRAITS_GROUP);
-        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createPortraitElement(doc, portrait)));
+//        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createPortraitElement(doc, portrait)));
+        System.err.println(" TODO createPortraitElement");
         friezeFreeMapElement.appendChild(portraitsGroupElement);
         //
         Element plotsGroupElement = doc.createElement(PLOTS_GROUP);
@@ -678,26 +681,26 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         return portraitElement;
     }
 
-    private static Element createPlotElement(Document doc, Plot plot) {
+    private static Element createPlotElement(Document doc, FreeMapPlot plot) {
         Element plotElement = doc.createElement(PLOT_ELEMENT);
         plotElement.setAttribute(TYPE_ATR, plot.getType().name());
-        plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getParentPeriodID()));
+        plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getLinkedElementID()));
         plotElement.setAttribute(X_POS_ATR, Double.toString(plot.getX()));
         plotElement.setAttribute(Y_POS_ATR, Double.toString(plot.getY()));
         return plotElement;
     }
 
-    private static Element createLinkElement(Document doc, Link link) {
+    private static Element createLinkElement(Document doc, FreeMapSimpleLink link) {
         Element linkElement = doc.createElement(LINK_ELEMENT);
         linkElement.setAttribute(TYPE_ATR, link.getType().name());
-        linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginPlot().getParentPeriodID()));
-        linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
-        if (link instanceof StayLink stayLink) {
+        linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginConnector().getLinkedElementID()));
+        linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndConnector().getLinkedElementID()));
+        if (link instanceof FreeMapStayLink stayLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(stayLink.getStayPeriod().getId()));
-        } else if (link instanceof TravelLink travelLink) {
+        } else if (link instanceof FreeMapTravelLink travelLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(travelLink.getPerson().getId()));
         }
-        linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
+        linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndConnector().getLinkedElementID()));
         return linkElement;
     }
 

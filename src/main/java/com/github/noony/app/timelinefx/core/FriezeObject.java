@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 NoOnY
+ * Copyright (C) 2021 NoOnY
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,16 @@ package com.github.noony.app.timelinefx.core;
 
 /**
  *
- * @author arnaud
+ * @author hamon
  */
-public class FriezeObject implements IFriezeObject {
+public interface FriezeObject {
 
-    private final long id;
+    long NO_ID = -1;
 
     /**
+     * Each IFriezeObject instance has a unique id in its project's scope
      *
-     * @param anId the object unique ID
+     * @return the object unique ID
      */
-    protected FriezeObject(long anId) {
-        id = anId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    @Override
-    public final long getId() {
-        return id;
-    }
-
+    long getId();
 }

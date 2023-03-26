@@ -16,17 +16,14 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -41,23 +38,23 @@ public final class PictureFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
-    private static final Map<Long, Picture> PICTURES = new HashMap<>();
-    private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(PICTURES);
+    private static final Factory<Picture> FACTORY = new Factory<>();
+    private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(FACTORY);
 
     private PictureFactory() {
         // private utility constructor
     }
 
     public static void reset() {
-        PICTURES.clear();
+        FACTORY.reset();
     }
 
     public static List<Picture> getPictures() {
-        return new ArrayList<>(PICTURES.values());
+        return FACTORY.getObjects();
     }
 
     public static Picture getPicture(long pictureID) {
-        return PICTURES.get(pictureID);
+        return FACTORY.get(pictureID);
     }
 
     public static Picture createPicture(TimeLineProject project, File originalPictureFile, String pictureName) {
@@ -74,21 +71,19 @@ public final class PictureFactory {
         }
         var picInfo = MetadataParser.parseMetadata(project, pictureFile);
         assert picInfo != null;
-        var picture = new Picture(project, FriezeObjectFactory.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
-        PICTURES.put(picture.getId(), picture);
-        FriezeObjectFactory.addObject(picture);
+        var picture = new Picture(project, FACTORY.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
+        FACTORY.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
     }
 
     public static Picture createPicture(TimeLineProject project, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
-            throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FriezeObjectFactory.get(id));
+        if (!FACTORY.isIdAvailable(id)) {
+            throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));
         }
         var picture = new Picture(project, id, pictureName, pictureCreationDate.toLocalDate(), picturePath, pictureWidth, pictureHeight);
-        PICTURES.put(picture.getId(), picture);
-        FriezeObjectFactory.addObject(picture);
+        FACTORY.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
     }

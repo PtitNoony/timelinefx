@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 NoOnY
+ * Copyright (C) 2023 NoOnY
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,29 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.core.freemap;
-
-import com.github.noony.app.timelinefx.core.StayPeriod;
+package com.github.noony.app.timelinefx.core;
 
 /**
  *
  * @author hamon
  */
-public class EndPlot extends Plot {
-
-    private final StayPeriod period;
-
-    public EndPlot(StayPeriod stayPeriod, double plotSize) {
-        super(stayPeriod.getPerson(), stayPeriod.getPlace(), stayPeriod.getEndDate(), PlotType.END, stayPeriod.getId(), plotSize);
-        period = stayPeriod;
-    }
-
-    public StayPeriod getStayPeriod() {
-        return period;
-    }
-
-    @Override
-    public String getInfo() {
-        return "end";
-    }
+public enum ItemSelectionPropagation {
+    NONE, RECURSIVE
 }

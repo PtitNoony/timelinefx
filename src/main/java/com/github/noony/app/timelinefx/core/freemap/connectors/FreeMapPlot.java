@@ -14,30 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.core.freemap;
+package com.github.noony.app.timelinefx.core.freemap.connectors;
 
-import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.Place;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.paint.Color;
 
 /**
  *
  * @author hamon
  */
-public class Plot implements GridPositionable, Selectable {
+public class FreeMapPlot implements FreeMapConnector {
 
-    public static final String POS_CHANGED = "posChanged";
-    public static final String PLOT_SIZE_CHANGED = "plotSizeChanged";
-    public static final String PLOT_VISIBILITY_CHANGED = "plotVisibilityChanged";
     public static final String PLOT_DATE_CHANGED = "plotDateChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
-
-    private final Person person;
-    private final Place place;
+    private final long id;
+    private final FreeMapPerson person;
+    private final FreeMapPlace place;
     private final long parentPeriodID;
 
     private double date;
@@ -47,10 +45,12 @@ public class Plot implements GridPositionable, Selectable {
 
     private boolean isVisible = true;
     private boolean isSelected = false;
+    private Color color;
     private double plotSize;
 
-    protected Plot(Person aPerson, Place aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
-        propertyChangeSupport = new PropertyChangeSupport(Plot.this);
+    protected FreeMapPlot(long anID, FreeMapPerson aPerson, FreeMapPlace aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
+        id = anID;
+        propertyChangeSupport = new PropertyChangeSupport(FreeMapPlot.this);
         //
         person = aPerson;
         place = aPlace;
@@ -61,17 +61,35 @@ public class Plot implements GridPositionable, Selectable {
         //
         date = aDate;
         plotSize = aPlotSize;
+        // for the time being, we keep the colors identical.
+        color = person.getPerson().getColor();
     }
 
-    public long getParentPeriodID() {
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public Color getColor() {
+        return color;
+    }
+
+    @Override
+    public long getLinkedElementID() {
         return parentPeriodID;
     }
 
-    public Person getPerson() {
+    @Override
+    public void setColor(Color aColor) {
+        color = aColor;
+    }
+
+    public FreeMapPerson getPerson() {
         return person;
     }
 
-    public Place getPlace() {
+    public FreeMapPlace getPlace() {
         return place;
     }
 
@@ -79,6 +97,7 @@ public class Plot implements GridPositionable, Selectable {
         return type;
     }
 
+    @Override
     public double getPlotSize() {
         return plotSize;
     }
@@ -155,6 +174,7 @@ public class Plot implements GridPositionable, Selectable {
         propertyChangeSupport.firePropertyChange(PLOT_SIZE_CHANGED, this, plotSize);
     }
 
+    @Override
     public double getDate() {
         return date;
     }

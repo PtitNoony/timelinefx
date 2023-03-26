@@ -16,11 +16,8 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -31,48 +28,45 @@ public final class FriezeFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
-    private static final Map<Long, Frieze> FRIEZES = new HashMap<>();
+    private static final Factory<Frieze> FACTORY =new Factory<>();
 
     private FriezeFactory() {
         // private utility constructor
     }
 
     public static void reset() {
-        FRIEZES.clear();
+        FACTORY.reset();
     }
 
     public static List<Frieze> getFriezes() {
-        return new ArrayList<>(FRIEZES.values());
+        return FACTORY.getObjects();
     }
 
     public static Frieze getFrieze(long friezeID) {
-        return FRIEZES.get(friezeID);
+        return FACTORY.get(friezeID);
     }
 
     public static Frieze createFrieze(TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze with TimeLineProject={0} friezeName={1} staysToConsider={2} ", new Object[]{aProject.getName(), friezeName, staysToConsider});
-        var frieze = new Frieze(FriezeObjectFactory.getNextID(), aProject, friezeName, staysToConsider);
-        FRIEZES.put(frieze.getId(), frieze);
-        FriezeObjectFactory.addObject(frieze);
+        var frieze = new Frieze(FACTORY.getNextID(), aProject, friezeName, staysToConsider);
+        FACTORY.addObject(frieze);
         return frieze;
     }
 
     public static Frieze createFrieze(long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
-        if (!FriezeObjectFactory.isIdAvailable(anID)) {
+        if (!FACTORY.isIdAvailable(anID)) {
             throw new IllegalArgumentException("trying to create a frieze " + friezeName + " with existing id=" + anID);
         }
         LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze (id={0} with TimeLineProject={1} friezeName={2} staysToConsider={3} ", new Object[]{anID, aProject.getName(), friezeName, staysToConsider});
         var frieze = new Frieze(anID, aProject, friezeName, staysToConsider);
-        FRIEZES.put(frieze.getId(), frieze);
-        FriezeObjectFactory.addObject(frieze);
+        FACTORY.addObject(frieze);
         return frieze;
     }
 
     public static Frieze createFrieze(TimeLineProject aProject, String friezeName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze with TimeLineProject={0} friezeName={1}", new Object[]{aProject.getName(), friezeName});
-        var frieze = new Frieze(FriezeObjectFactory.getNextID(), aProject, friezeName);
-        FRIEZES.put(frieze.getId(), frieze);
-        FriezeObjectFactory.addObject(frieze);
+        var frieze = new Frieze(FACTORY.getNextID(), aProject, friezeName);
+        FACTORY.addObject(frieze);
         return frieze;
     }
 

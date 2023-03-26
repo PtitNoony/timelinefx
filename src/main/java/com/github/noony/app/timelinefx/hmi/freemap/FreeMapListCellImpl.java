@@ -18,7 +18,7 @@ package com.github.noony.app.timelinefx.hmi.freemap;
 //package javafx.scene.control.cell;
 
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.hmi.FriezeViewController;
+import com.github.noony.app.timelinefx.hmi.frieze.FriezeContentEditorController;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 
@@ -30,9 +30,9 @@ public class FreeMapListCellImpl extends TextFieldListCell<FriezeFreeMap> {
 
     private static class FreeMapStringConverter extends StringConverter<FriezeFreeMap> {
 
-        private final FriezeViewController controller;
+        private final FriezeContentEditorController controller;
 
-        public FreeMapStringConverter(FriezeViewController aController) {
+        public FreeMapStringConverter(FriezeContentEditorController aController) {
             controller = aController;
         }
 
@@ -50,7 +50,7 @@ public class FreeMapListCellImpl extends TextFieldListCell<FriezeFreeMap> {
 
     }
 
-    public FreeMapListCellImpl(FriezeViewController controller) {
+    public FreeMapListCellImpl(FriezeContentEditorController controller) {
         super();
         setConverter(new FreeMapStringConverter(controller));
     }

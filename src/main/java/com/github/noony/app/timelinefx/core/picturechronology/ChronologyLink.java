@@ -32,7 +32,7 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public class ChronologyLink extends FriezeObject {
+public class ChronologyLink implements FriezeObject {
 
     public static final ChronologyLinkType DEFAULT_LINK_TYPE = ChronologyLinkType.CUBIC;
 
@@ -47,6 +47,7 @@ public class ChronologyLink extends FriezeObject {
     private static final double PLOT_SEPARATION = 15;
 
     private final PropertyChangeSupport propertyChangeSupport;
+    private final long id;
 
     private final Person person;
     private final ChronologyPictureMiniature startMiniature;
@@ -65,7 +66,7 @@ public class ChronologyLink extends FriezeObject {
     private double[] linkParameters;
 
     protected ChronologyLink(long anId, Person aPerson, ChronologyPictureMiniature aStartMiniature, ChronologyPictureMiniature anEndMiniature, ChronologyLinkType aLinkType, double[] allLinkParameters) {
-        super(anId);
+        id = anId;
         propertyChangeSupport = new PropertyChangeSupport(ChronologyLink.this);
         person = aPerson;
         startMiniature = aStartMiniature;
@@ -84,6 +85,11 @@ public class ChronologyLink extends FriezeObject {
         //
         startMiniature.addListener(this::handleStartMiniatureChanges);
         endMiniature.addListener(this::handleEndMiniatureChanges);
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public Person getPerson() {

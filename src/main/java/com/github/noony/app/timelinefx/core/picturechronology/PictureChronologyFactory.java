@@ -16,16 +16,14 @@
  */
 package com.github.noony.app.timelinefx.core.picturechronology;
 
-import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
+import com.github.noony.app.timelinefx.core.Factory;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javafx.geometry.Point2D;
 
 /**
@@ -36,52 +34,50 @@ public class PictureChronologyFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
-    private static final Map<Long, PictureChronology> PICTURES_CHRONOLOGIES = new HashMap<>();
-    private static final Map<Long, ChronologyPictureMiniature> CHRONOLOGY_PICTURES = new HashMap<>();
-    private static final Map<Long, ChronologyLink> CHRONOLOGY_LINKS = new HashMap<>();
+    private static final Factory<PictureChronology> CHROLOGY_FACTORY = new Factory<>();
+    private static final Factory<ChronologyPictureMiniature> PICTURE_FACTORY = new Factory<>();
+    private static final Factory<ChronologyLink> LINK_FACTORY = new Factory<>();
 
     private PictureChronologyFactory() {
         // private utility constructor
     }
 
     public static final void reset() {
-        PICTURES_CHRONOLOGIES.clear();
-        CHRONOLOGY_PICTURES.clear();
-        CHRONOLOGY_LINKS.clear();
+        CHROLOGY_FACTORY.reset();
+        PICTURE_FACTORY.reset();
+        LINK_FACTORY.reset();
     }
 
     public static List<PictureChronology> getPicturesChronologies() {
-        return PICTURES_CHRONOLOGIES.values().stream().collect(Collectors.toList());
+        return CHROLOGY_FACTORY.getObjects();
     }
 
     public static PictureChronology getPictureChronology(long pictureChronologyID) {
-        return PICTURES_CHRONOLOGIES.get(pictureChronologyID);
+        return CHROLOGY_FACTORY.get(pictureChronologyID);
     }
 
     public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1}", new Object[]{id, pictureChronologyName});
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1}", new Object[]{id, pictureChronologyName});
+        if (!CHROLOGY_FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with existing id=" + id);
         }
         var pictureChronology = new PictureChronology(id, aProject, pictureChronologyName);
-        PICTURES_CHRONOLOGIES.put(pictureChronology.getId(), pictureChronology);
-        FriezeObjectFactory.addObject(pictureChronology);
+        CHROLOGY_FACTORY.addObject(pictureChronology);
         return pictureChronology;
     }
 
     public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName, TimeFormat aTimeFormat, List<ChronologyPictureMiniature> miniatures, List<ChronologyLink> links) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
+        if (!CHROLOGY_FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with existing id=" + id);
         }
         var pictureChronology = new PictureChronology(id, aProject, pictureChronologyName, aTimeFormat, miniatures, links);
-        PICTURES_CHRONOLOGIES.put(pictureChronology.getId(), pictureChronology);
-        FriezeObjectFactory.addObject(pictureChronology);
+        CHROLOGY_FACTORY.addObject(pictureChronology);
         return pictureChronology;
     }
 
     public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName, List<ChronologyPictureMiniature> miniatures, List<ChronologyLink> links) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
         long nbTimeFormat = miniatures.stream().map(m -> m.getDateObject().getTimeFormat()).distinct().count();
         if (nbTimeFormat > 1) {
             throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with more than 1 time format :: " + nbTimeFormat);
@@ -91,66 +87,61 @@ public class PictureChronologyFactory {
     }
 
     public static PictureChronology createPictureChronology(TimeLineProject aProject) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating createPictureChronology with default parameters");
-        var pictureChronology = new PictureChronology(FriezeObjectFactory.getNextID(), aProject, PictureChronology.DEFAULT_NAME);
-        PICTURES_CHRONOLOGIES.put(pictureChronology.getId(), pictureChronology);
-        FriezeObjectFactory.addObject(pictureChronology);
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with default parameters");
+        var pictureChronology = new PictureChronology(CHROLOGY_FACTORY.getNextID(), aProject, PictureChronology.DEFAULT_NAME);
+        CHROLOGY_FACTORY.addObject(pictureChronology);
         return pictureChronology;
     }
 
     public static List<ChronologyPictureMiniature> getChronologyPictureMiniatures() {
-        return CHRONOLOGY_PICTURES.values().stream().collect(Collectors.toList());
+        return PICTURE_FACTORY.getObjects();
     }
 
     public static ChronologyPictureMiniature getChronologyPictureMiniature(long chronologyPictureMiniatureID) {
-        return CHRONOLOGY_PICTURES.get(chronologyPictureMiniatureID);
+        return PICTURE_FACTORY.get(chronologyPictureMiniatureID);
     }
 
     public static ChronologyPictureMiniature createChronologyPictureMiniature(IPicture aPicture, Point2D aPosition, double aScale) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating ChronologyPictureMiniature with picture={0} position={1} scale={2}", new Object[]{aPicture, aPosition, aScale});
-        var chronologyPictureMiniature = new ChronologyPictureMiniature(FriezeObjectFactory.getNextID(), aPicture, aPosition, aScale);
-        CHRONOLOGY_PICTURES.put(chronologyPictureMiniature.getId(), chronologyPictureMiniature);
-        FriezeObjectFactory.addObject(chronologyPictureMiniature);
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating ChronologyPictureMiniature with picture={0} position={1} scale={2}", new Object[]{aPicture, aPosition, aScale});
+        var chronologyPictureMiniature = new ChronologyPictureMiniature(PICTURE_FACTORY.getNextID(), aPicture, aPosition, aScale);
+        PICTURE_FACTORY.addObject(chronologyPictureMiniature);
         return chronologyPictureMiniature;
     }
 
     public static ChronologyPictureMiniature createChronologyPictureMiniature(long anID, IPicture aPicture, Point2D aPosition, double aScale) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating ChronologyPictureMiniature with picture={0} position={1} scale={2}", new Object[]{aPicture, aPosition, aScale});
-        if (!FriezeObjectFactory.isIdAvailable(anID)) {
-            var conflitingObject = FriezeObjectFactory.get(anID);
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating ChronologyPictureMiniature with picture={0} position={1} scale={2}", new Object[]{aPicture, aPosition, aScale});
+        if (!PICTURE_FACTORY.isIdAvailable(anID)) {
+            var conflitingObject = PICTURE_FACTORY.get(anID);
             throw new IllegalArgumentException("Trying to create ChronologyPictureMiniature for " + aPicture.getName() + " with existing id=" + anID + " existing Object: " + conflitingObject);
         }
         var chronologyPictureMiniature = new ChronologyPictureMiniature(anID, aPicture, aPosition, aScale);
-        CHRONOLOGY_PICTURES.put(chronologyPictureMiniature.getId(), chronologyPictureMiniature);
-        FriezeObjectFactory.addObject(chronologyPictureMiniature);
+        PICTURE_FACTORY.addObject(chronologyPictureMiniature);
         return chronologyPictureMiniature;
     }
 
     public static List<ChronologyLink> getChronologyLinks() {
-        return CHRONOLOGY_LINKS.values().stream().collect(Collectors.toList());
+        return LINK_FACTORY.getObjects();
     }
 
     public static ChronologyLink getChronologyLink(long chronologyLinkID) {
-        return CHRONOLOGY_LINKS.get(chronologyLinkID);
+        return LINK_FACTORY.get(chronologyLinkID);
     }
 
     public static ChronologyLink createChronologyLink(Person aPerson, ChronologyPictureMiniature aStartMiniature, ChronologyPictureMiniature anEndMiniature, ChronologyLinkType aLinkType, double[] linkParameters) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating ChronologyLink with person={0} start={1} end={2}", new Object[]{aPerson, aStartMiniature, anEndMiniature});
-        var chronologyLink = new ChronologyLink(FriezeObjectFactory.getNextID(), aPerson, aStartMiniature, anEndMiniature, aLinkType, linkParameters);
-        CHRONOLOGY_LINKS.put(chronologyLink.getId(), chronologyLink);
-        FriezeObjectFactory.addObject(chronologyLink);
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating ChronologyLink with person={0} start={1} end={2}", new Object[]{aPerson, aStartMiniature, anEndMiniature});
+        var chronologyLink = new ChronologyLink(LINK_FACTORY.getNextID(), aPerson, aStartMiniature, anEndMiniature, aLinkType, linkParameters);
+        LINK_FACTORY.addObject(chronologyLink);
         return chronologyLink;
     }
 
     public static ChronologyLink createChronologyLink(long anID, Person aPerson, ChronologyPictureMiniature aStartMiniature, ChronologyPictureMiniature anEndMiniature, ChronologyLinkType aLinkType, double[] linkParameters) {
-        LOG.log(FriezeObjectFactory.CREATION_LOGGING_LEVEL, "Creating ChronologyLink with id={0} person={1} start={2} end={3}", new Object[]{anID, aPerson, aStartMiniature, anEndMiniature});
-        if (!FriezeObjectFactory.isIdAvailable(anID)) {
-            var conflitingObject = FriezeObjectFactory.get(anID);
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating ChronologyLink with id={0} person={1} start={2} end={3}", new Object[]{anID, aPerson, aStartMiniature, anEndMiniature});
+        if (!LINK_FACTORY.isIdAvailable(anID)) {
+            var conflitingObject = LINK_FACTORY.get(anID);
             throw new IllegalArgumentException("Trying to create ChronologyLink for " + aPerson.getName() + " with existing id=" + anID + " existing Object: " + conflitingObject);
         }
         var chronologyLink = new ChronologyLink(anID, aPerson, aStartMiniature, anEndMiniature, aLinkType, linkParameters);
-        CHRONOLOGY_LINKS.put(chronologyLink.getId(), chronologyLink);
-        FriezeObjectFactory.addObject(chronologyLink);
+        LINK_FACTORY.addObject(chronologyLink);
         return chronologyLink;
     }
 }

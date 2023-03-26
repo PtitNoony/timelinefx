@@ -16,7 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi.freemap;
 
-import com.github.noony.app.timelinefx.core.freemap.DateHandle;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapDateHandle;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import java.beans.PropertyChangeEvent;
 import javafx.scene.paint.Color;
@@ -36,7 +36,7 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
         UP, DOWN
     }
 
-    private final DateHandle dateHandle;
+    private final FreeMapDateHandle dateHandle;
 
     private final ORIENTATION orientation;
     private final Polygon handle;
@@ -44,7 +44,7 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
     private double lastMouseX;
     private double currentMouseX;
 
-    public DateHandleDrawing(DateHandle aDateHandle, double aScale) {
+    public DateHandleDrawing(FreeMapDateHandle aDateHandle, double aScale) {
         super();
         dateHandle = aDateHandle;
         dateHandle.addListener(DateHandleDrawing.this::handleUpdate);
@@ -123,9 +123,9 @@ public class DateHandleDrawing extends AbstractFxScalableNode {
 
     private void handleUpdate(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case DateHandle.POSITION_CHANGED ->
+            case FreeMapDateHandle.POSITION_CHANGED ->
                 setX((double) event.getOldValue());
-            case DateHandle.PLOT_REMOVED -> {
+            case FreeMapDateHandle.PLOT_REMOVED -> {
                 // nothing to do
             }
             default ->

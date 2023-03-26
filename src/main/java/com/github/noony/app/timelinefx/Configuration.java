@@ -68,6 +68,10 @@ public class Configuration {
     private static File preferenceFile = null;
     private static Properties properties = null;
 
+    private Configuration() {
+        // utility constructor
+    }
+
     public static void addPropertyChangeListener(PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
@@ -104,7 +108,7 @@ public class Configuration {
                 var createdFile = tmpPreferenceFile.createNewFile();
                 LOG.log(Level.INFO, "Created preference file: {0}", new Object[]{createdFile});
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create user home preference file : ", new Object[]{ex});
+                LOG.log(Level.SEVERE, "Could not create user home preference file: {0}", new Object[]{ex});
             }
         }
         return tmpPreferenceFile;
@@ -155,25 +159,17 @@ public class Configuration {
         }
     }
 
+
     public static void savePreferences() {
         if (properties == null) {
             LOG.log(Level.SEVERE, "Could not save preferences since they have not been loaded yet.");
             return;
         }
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(preferenceFile);
+
+        try (OutputStream outputStream = new FileOutputStream(preferenceFile);) {
             properties.store(outputStream, "..");
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Could not save preferences. Exception:: {0}", new Object[]{ex});
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not properly close preference file output stream. Exception:: {0}", new Object[]{ex});
-            }
         }
     }
 

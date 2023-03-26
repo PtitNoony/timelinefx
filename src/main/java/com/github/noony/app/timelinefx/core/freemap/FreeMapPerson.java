@@ -16,8 +16,15 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
+import com.github.noony.app.timelinefx.core.FriezeObject;
+import com.github.noony.app.timelinefx.core.IFileObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.StayPeriod;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnectorFactory;
+import com.github.noony.app.timelinefx.core.freemap.links.FreeMapLinkFactory;
+import com.github.noony.app.timelinefx.core.freemap.links.FreeMapTravelLink;
+import com.github.noony.app.timelinefx.core.freemap.links.PortraitLink;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -25,58 +32,83 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import javafx.util.Pair;
 
 /**
  *
  * @author hamon
  */
-public class FreeMapPerson {
+public class FreeMapPerson implements FriezeObject {
 
-    public static final String STAY_ADDED = "stayAdded";
-    public static final String STAY_REMOVED = "stayRemoved";
-    public static final String LINK_ADDED = "linkAdded";
-    public static final String LINK_REMOVED = "linkRemoved";
-    public static final String PLOTS_ADDED = "plotsAdded";
-    public static final String PLOTS_REMOVED = "plotsRemoved";
+    public static final String FREEMAP_STAY_ADDED = "stayAdded";
+    public static final String FREEMAP_STAY_REMOVED = "stayRemoved";
     public static final String FIRST_PLOT_CHANGED = "firstPlotChanged";
     public static final String TRAVEL_LINK_ADDED = "travelLinkAdded";
     public static final String TRAVEL_LINK_REMOVED = "travelLinkRemoved";
+    public static final String PORTRAIT_ADDED = "portraitAdded";
+    public static final String PORTRAIT_REMOVED = "portraitRemoved";
+    public static final String PORTRAIT_LINK_ADDED = "portraitLinkAdded";
+    public static final String PORTRAIT_LINK_REMOVED = "portraitLinkRemoved";
 
+    //
+    private static final Map<Long, List<FreeMapPerson>> FACTORY_CONTENT = new HashMap<>();
+
+    public static final FreeMapPerson createFreeMapPerson(long aFriezeFreeMapID, Person aPerson) {
+        var freeMapPersons = FACTORY_CONTENT.getOrDefault(aFriezeFreeMapID, new LinkedList<>());
+        if (freeMapPersons.isEmpty()) {
+            FACTORY_CONTENT.put(aFriezeFreeMapID, freeMapPersons);
+        }
+        if (freeMapPersons.stream().anyMatch(fp -> fp.getPerson() == aPerson)) {
+            throw new IllegalStateException("Cannot create a FreeMapPerson twice. (" + aPerson.getName() + " in " + FriezeFreeMapFactory.getFriezeFreeMap(aFriezeFreeMapID).getName() + ")");
+        }
+        var freeMapPerson = new FreeMapPerson(aPerson);
+        freeMapPersons.add(freeMapPerson);
+        return freeMapPerson;
+    }
+
+    public static final void resetFactory() {
+        FACTORY_CONTENT.clear();
+    }
+
+    //
+    // paramters to be saved
+    //
+    private final long id;
+    //
+    private final List<FreeMapStay> stays;
+    private final List<FreeMapPortrait> freeMapPortraits;
+    //
+    // to be saved in next version
+    //
+    private final List<FreeMapTravelLink> travelLinks;
+    private final Map<FreeMapPortrait, PortraitLink> portraitLinks;
+    //
+    // other instance parameters, usually calculated
+    //
+    // no need to save since ids match by construction
     private final Person person;
-    private final FriezeFreeMap freeMap;
     //
     private final PropertyChangeSupport propertyChangeSupport;
-    //
-    private final List<StayPeriod> stays;
-    private final Map<StayPeriod, Link> stayLinks;
-    private final List<Plot> plots;
-    private final Map<StayPeriod, Pair<Plot, Plot>> plotsByPeriod;
-    private final List<TravelLink> travelLinks;
-    //
-    private final List<FreeMapPortrait> portraits;
-    private final PersonInitLink initLink;
-    //
-    private Plot firstPlot = null;
 
-    public FreeMapPerson(Person aPerson, FriezeFreeMap aFreemap) {
+    /**
+     * The FreeMapPerson instance has the same id as is related person
+     *
+     * @param aPerson the related person
+     */
+    private FreeMapPerson(Person aPerson) {
         person = aPerson;
-        freeMap = aFreemap;
+        id = aPerson.getId();
         //
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPerson.this);
         //
         stays = new LinkedList<>();
-        plots = new LinkedList<>();
-        stayLinks = new HashMap<>();
-        plotsByPeriod = new HashMap<>();
         travelLinks = new LinkedList<>();
-        //
-        portraits = new LinkedList<>();
-        //
-//        portrait = new FreeMapPortrait(person.getDefaultPortrait(), FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
-        //
-        initLink = new PersonInitLink(FreeMapPerson.this);
+        freeMapPortraits = new LinkedList<>();
+        portraitLinks = new HashMap<>();
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -87,122 +119,122 @@ public class FreeMapPerson {
         return person;
     }
 
-    public List<Plot> getPlots() {
-        return Collections.unmodifiableList(plots);
+    public String getName() {
+        return person.getName();
     }
 
-    public List<Link> getStayLinks() {
-        return Collections.unmodifiableList(stayLinks.values().stream().collect(Collectors.toList()));
+    public List<FreeMapStay> getFreeMapStays() {
+        return Collections.unmodifiableList(stays);
     }
 
-    public List<Link> getTravelLinks() {
+    public List<FreeMapTravelLink> getFreeMapTravelLinks() {
         return Collections.unmodifiableList(travelLinks);
     }
 
-    public PersonInitLink getPersonInitLink() {
-        return initLink;
+    public FreeMapPortrait createPortrait(FreeMapLink sourceLink) {
+        return createPortrait(sourceLink, IFileObject.NO_ID, IFileObject.NO_ID, IFileObject.NO_ID);
     }
 
-    public Plot getFirstPlot() {
-        return firstPlot;
-    }
-
-    public Pair<Plot, Plot> getPlots(StayPeriod stayPeriod) {
-        return plotsByPeriod.get(stayPeriod);
-    }
-
-    public void createPortrait(Link sourceLink) {
-        FreeMapPortrait freeMapPortrait = new FreeMapPortrait(person.getDefaultPortrait(), freeMap.getPortraitRadius());
+    public FreeMapPortrait createPortrait(FreeMapLink stayLink, long portraitRefID, long connectorID, long linkID) {
+        var xPosition = (stayLink.getEndConnector().getX() - stayLink.getBeginConnector().getX()) / 2.0 + stayLink.getBeginConnector().getX();
+        var yPosition = (stayLink.getEndConnector().getY() - stayLink.getBeginConnector().getY()) / 2.0 + stayLink.getBeginConnector().getY();
+        var freeMapPortrait = FreeMapPortraitFactory.createFreeMapPortrait(portraitRefID, person.getDefaultPortrait(), this, FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
+        freeMapPortrait.setX(xPosition);
+        freeMapPortrait.setY(yPosition);
+        var connectorTempDate = (stayLink.getEndConnector().getDate() - stayLink.getBeginConnector().getDate()) / 2.0;
+        // TODO: also use cursor position
+        var stayLinkConnector = FreeMapConnectorFactory.createFreeMapLinkConnector(connectorID, stayLink, connectorTempDate, FriezeFreeMap.DEFAULT_PLOT_SIZE);
         // todo create anchor
-        PortraitLink portraitLink = new PortraitLink(freeMapPortrait, firstPlot, firstPlot);
-        portraits.add(freeMapPortrait);
+        var portraitLink = FreeMapLinkFactory.createPortraitLink(linkID, freeMapPortrait, stayLinkConnector);
+        freeMapPortraits.add(freeMapPortrait);
+        portraitLinks.put(freeMapPortrait, portraitLink);
+        propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, freeMapPortrait);
+        propertyChangeSupport.firePropertyChange(PORTRAIT_LINK_ADDED, this, portraitLink);
+        return freeMapPortrait;
     }
 
-    protected void addStay(StayPeriod stayPeriod) {
-        if (stays.contains(stayPeriod)) {
+    public boolean addFreeMapPortrait(FreeMapPortrait aFreeMapPortrait, PortraitLink aPortraitLink) {
+        if (freeMapPortraits.contains(aFreeMapPortrait)) {
+            return false;
+        }
+        freeMapPortraits.add(aFreeMapPortrait);
+        portraitLinks.put(aFreeMapPortrait, aPortraitLink);
+        propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, aFreeMapPortrait);
+        propertyChangeSupport.firePropertyChange(PORTRAIT_LINK_ADDED, this, aPortraitLink);
+        return true;
+    }
+
+    public List<FreeMapPortrait> getFreeMapPortraits() {
+        return Collections.unmodifiableList(freeMapPortraits);
+    }
+
+    public PortraitLink getPortraitLink(FreeMapPortrait aFreeMapPortrait) {
+        return portraitLinks.get(aFreeMapPortrait);
+    }
+
+    protected void addStay(StayPeriod stayPeriod, FreeMapPlace aFreeMapPlace) {
+        addStay(stayPeriod, aFreeMapPlace, IFileObject.NO_ID, IFileObject.NO_ID);
+    }
+
+    protected void addStay(StayPeriod stayPeriod, FreeMapPlace aFreeMapPlace, long aStartID, long anEndID) {
+        for (FreeMapStay freeMapStay : stays) {
+            if (freeMapStay.containsStay(stayPeriod)) {
+                return;
+            }
+        }
+        var freeMapStay = FreeMapStayFactory.createFreeMapStay(stayPeriod, aStartID, anEndID, this, aFreeMapPlace);
+        addFreeMapStay(freeMapStay);
+        //
+    }
+
+    protected void addFreeMapStay(FreeMapStay aFreeMapStay) {
+        if (stays.contains(aFreeMapStay)) {
             return;
         }
-        stays.add(stayPeriod);
-        stays.sort(StayPeriod.STAY_COMPARATOR);
-        var startPlot = new StartPlot(stayPeriod, freeMap.getPlotSize());
-        var endPlot = new EndPlot(stayPeriod, freeMap.getPlotSize());
-        var link = new StayLink(stayPeriod, startPlot, endPlot);
-        propertyChangeSupport.firePropertyChange(LINK_ADDED, this, link);
-        stayLinks.put(stayPeriod, link);
-        plots.add(startPlot);
-        plots.add(endPlot);
+        stays.add(aFreeMapStay);
+        stays.sort(FreeMapSimpleStay.STAY_START_COMPARATOR);
+        // TODO: temp remove unnecessary maps/lists
+        var startPlot = aFreeMapStay.getStartPlot();
+        var endPlot = aFreeMapStay.getEndPlot();
         //
-        var startEndPlots = new Pair(startPlot, endPlot);
-        plotsByPeriod.put(stayPeriod, startEndPlots);
-        propertyChangeSupport.firePropertyChange(PLOTS_ADDED, this, startEndPlots);
+        var freeMapPlace = aFreeMapStay.getPlace();
+        freeMapPlace.registerFreeMapPlot(startPlot);
+        freeMapPlace.registerFreeMapPlot(endPlot);
         //
-        freeMap.getStartDateHandle(startPlot.getDate()).addPlot(startPlot);
-        freeMap.getEndDateHandle(endPlot.getDate()).addPlot(endPlot);
-        var freeMapPlace = freeMap.getFreeMapPlace(stayPeriod.getPlace());
-        freeMapPlace.addPlot(startPlot);
-        freeMapPlace.addPlot(endPlot);
+        propertyChangeSupport.firePropertyChange(FREEMAP_STAY_ADDED, this, aFreeMapStay);
         //
-        propertyChangeSupport.firePropertyChange(STAY_ADDED, this, stayPeriod);
-        //
-        updateFirstPlot();
         recalculateTravelLinks();
-        //
     }
 
     protected void removeStay(StayPeriod stayPeriod) {
-        if (!stays.contains(stayPeriod)) {
+        var optStayToRemove = stays.stream().filter(s -> s.containsStay(stayPeriod)).findAny();
+        if (optStayToRemove.isEmpty()) {
             return;
         }
-        stays.remove(stayPeriod);
-        stays.sort(StayPeriod.STAY_COMPARATOR);
+        var stayToRemove = optStayToRemove.get();
+        stays.remove(stayToRemove);
+        stays.sort(FreeMapSimpleStay.STAY_START_COMPARATOR);
+        propertyChangeSupport.firePropertyChange(FREEMAP_STAY_REMOVED, this, stayPeriod);
         //
-        propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stayPeriod);
+        // TODO remove ?
+//        propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
         //
-        var removedLink = stayLinks.get(stayPeriod);
-        propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
-        //
-        var startEndPlots = plotsByPeriod.remove(stayPeriod);
-        if (startEndPlots != null) {
-            plots.remove(startEndPlots.getKey());
-            plots.remove(startEndPlots.getValue());
-            propertyChangeSupport.firePropertyChange(PLOTS_REMOVED, this, startEndPlots);
-        }
-        updateFirstPlot();
+//        System.err.println("TODO: notify stay removed");
+//        updateFirstPlot();
         recalculateTravelLinks();
     }
 
-    protected void updateStay(StayPeriod stayPeriod) {
-        var startEndPlots = plotsByPeriod.get(stayPeriod);
-        if (startEndPlots != null) {
-            var startPlot = startEndPlots.getKey();
-            var endPlot = startEndPlots.getValue();
-            //
-            startPlot.setDate(stayPeriod.getStartDate());
-            endPlot.setDate(stayPeriod.getEndDate());
-            //
-            freeMap.getStartDateHandle(startPlot.getDate()).addPlot(startPlot);
-            freeMap.getEndDateHandle(endPlot.getDate()).addPlot(endPlot);
-        }
+    protected void setPlotsVisibilty(boolean visibility) {
+        stays.forEach(s -> s.setPlotVisibility(visibility));
     }
 
-//    protected FreeMapPortrait getPortrait() {
-//        return portrait;
-//    }
-    protected List<FreeMapPortrait> getPortraits() {
-        return portraits;
-    }
-
-    private void updateFirstPlot() {
-        var oldFirstPlot = firstPlot;
-        firstPlot = plots.stream().filter(plot -> plot.getPerson().equals(person)).sorted((p1, p2) -> Double.compare(p1.getDate(), p2.getDate())).findFirst().orElse(null);
-        if (oldFirstPlot != firstPlot) {
-            propertyChangeSupport.firePropertyChange(FIRST_PLOT_CHANGED, this, firstPlot);
-        }
+    protected void setPortraitConnectorsVisibilty(boolean visibility) {
+        portraitLinks.values().forEach(pLinks -> pLinks.setConnectorsVisibility(visibility));
     }
 
     private void recalculateTravelLinks() {
-        List<TravelLink> linksToBeRemoved = new LinkedList<>();
-        List<TravelLink> linksToBeAdded = new LinkedList<>();
+        List<FreeMapTravelLink> linksToBeRemoved = new LinkedList<>();
+        List<FreeMapTravelLink> linksToBeAdded = new LinkedList<>();
         var nbStays = stays.size();
         // stays list is already sorted after the new stay has been added / removed
         if (nbStays <= 1) {
@@ -211,32 +243,28 @@ public class FreeMapPerson {
         for (int i = 0; i < nbStays - 1; i++) {
             var previousStay = stays.get(i);
             var nextStay = stays.get(i + 1);
-            var previousStartEndPlots = plotsByPeriod.get(previousStay);
-            var nextStartEndPlots = plotsByPeriod.get(nextStay);
-            var previousPlot = previousStartEndPlots.getValue();
-            var nextPlot = nextStartEndPlots.getKey();
+            var previousPlot = previousStay.getEndConnector();
+            var nextPlot = nextStay.getBeginConnector();
             if (findLink(previousPlot, nextPlot) == null) {
-                final var travelLink = new TravelLink(person, previousPlot, nextPlot);
+                final var travelLink = FreeMapLinkFactory.createTravelLink(IFileObject.NO_ID, this, previousPlot, nextPlot);
                 linksToBeAdded.add(travelLink);
                 travelLinks.forEach(existingTravelLink -> {
-                    if (existingTravelLink.getEndPlot().getDate() == nextPlot.getDate() && travelLink.getBeginPlot().getDate() != previousPlot.getDate()) {
+                    if (existingTravelLink.getEndConnector().getDate() == nextPlot.getDate() && travelLink.getBeginConnector().getDate() != previousPlot.getDate()) {
                         linksToBeRemoved.add(existingTravelLink);
-                    } else if (existingTravelLink.getBeginPlot().getDate() == previousPlot.getDate() && existingTravelLink.getEndPlot().getDate() != nextPlot.getDate()) {
+                    } else if (existingTravelLink.getBeginConnector().getDate() == previousPlot.getDate() && existingTravelLink.getEndConnector().getDate() != nextPlot.getDate()) {
                         linksToBeRemoved.add(existingTravelLink);
                     }
                 });
             }
         }
-        for (TravelLink trL : travelLinks) {
-            boolean needed = false;
+        for (var trL : travelLinks) {
+            var needed = false;
             for (int i = 0; i < nbStays - 1; i++) {
                 var previousStay = stays.get(i);
                 var nextStay = stays.get(i + 1);
-                var previousStartEndPlots = plotsByPeriod.get(previousStay);
-                var nextStartEndPlots = plotsByPeriod.get(nextStay);
-                var previousPlot = previousStartEndPlots.getValue();
-                var nextPlot = nextStartEndPlots.getKey();
-                if (trL.getEndPlot().getDate() == nextPlot.getDate() && trL.getBeginPlot().getDate() == previousPlot.getDate()) {
+                var previousPlot = previousStay.getEndConnector();
+                var nextPlot = nextStay.getBeginConnector();
+                if (trL.getEndConnector().getDate() == nextPlot.getDate() && trL.getBeginConnector().getDate() == previousPlot.getDate()) {
                     needed = true;
                     break;
                 }
@@ -251,13 +279,18 @@ public class FreeMapPerson {
         linksToBeAdded.forEach(link -> propertyChangeSupport.firePropertyChange(TRAVEL_LINK_ADDED, this, link));
     }
 
-    private TravelLink findLink(Plot previousPlot, Plot nextPlot) {
-        for (TravelLink travelLink : travelLinks) {
-            if (travelLink.getEndPlot().getDate() == nextPlot.getDate() && travelLink.getBeginPlot().getDate() == previousPlot.getDate()) {
+    private FreeMapLink findLink(FreeMapConnector previousPlot, FreeMapConnector nextPlot) {
+        for (var travelLink : travelLinks) {
+            if (travelLink.getEndConnector().getDate() == nextPlot.getDate() && travelLink.getBeginConnector().getDate() == previousPlot.getDate()) {
                 return travelLink;
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "" + getClass().getSimpleName() + "_" + id + "_refTo_" + person.getId();
     }
 
 }

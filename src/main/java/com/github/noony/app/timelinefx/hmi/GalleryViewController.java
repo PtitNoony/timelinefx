@@ -93,8 +93,14 @@ public class GalleryViewController implements Initializable, ViewController {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Loading GalleryViewController");
+        // init
+        AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         init();
+        //
+        if(AppInstanceConfiguration.getSelectedProject()!=null){
+            setTimelineProject(AppInstanceConfiguration.getSelectedProject());
+        }
     }
 
     @FXML
@@ -128,9 +134,21 @@ public class GalleryViewController implements Initializable, ViewController {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    protected void setProject(TimeLineProject aProject) {
+    private void handleAppConfigChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case AppInstanceConfiguration.TIMELINE_SELECTED_CHANGED ->
+                setTimelineProject((TimeLineProject) event.getNewValue());
+            case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED -> {
+                // nothing to do
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void setTimelineProject(TimeLineProject aProject) {
         project = aProject;
-        pictureLoaderController.setProject(project);
+//        pictureLoaderController.setProject(project);
     }
 
     protected void reset() {

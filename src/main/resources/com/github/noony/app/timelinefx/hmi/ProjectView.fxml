@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectViewController">
+<BorderPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectViewController">
     <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -24,15 +24,16 @@
                               <MenuItem mnemonicParsing="false" text="Close" />
                           </items>
                       </Menu>
-                      <Menu mnemonicParsing="false" text="Edit">
-                          <items>
+                      <Menu disable="true" mnemonicParsing="false" text="Edit" />
+                  <Menu fx:id="friezesMenu" mnemonicParsing="false" text="Friezes">
+                     <items>
                               <MenuItem mnemonicParsing="false" onAction="#handleFriezeCreation" text="Create New Frieze" />
-                          </items>
-                      </Menu>
+                     </items>
+                  </Menu>
                       <Menu mnemonicParsing="false" text="View">
                           <items>
                               <RadioMenuItem fx:id="contentViewMI" mnemonicParsing="false" text="Content Edition View" />
-                              <RadioMenuItem fx:id="timelineViewMI" mnemonicParsing="false" text="Timelines View" />
+                              <RadioMenuItem fx:id="timelineViewMI" mnemonicParsing="false" text="Frieze View" />
                         <RadioMenuItem fx:id="galleryViewMI" mnemonicParsing="false" text="Gallery View" />
                         <RadioMenuItem fx:id="picturesChronologyViewMI" mnemonicParsing="false" text="Pictures Chronology View" />
                           </items>

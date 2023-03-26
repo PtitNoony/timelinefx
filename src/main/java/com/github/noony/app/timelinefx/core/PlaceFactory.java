@@ -16,8 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
-
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public final class PlaceFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
-    private static final Map<Long, Place> PLACES = new HashMap<>();
+    private static final Factory<Place> FACTORY = new Factory<>();
 
     private static final List<Place> ROOT_PLACES = new LinkedList<>();
 
@@ -42,12 +41,12 @@ public final class PlaceFactory {
     }
 
     public static void reset() {
-        PLACES.clear();
+        FACTORY.reset();
         ROOT_PLACES.clear();
     }
 
     public static List<Place> getPlaces() {
-        return PLACES.values().stream().sorted(Place.COMPARATOR).collect(Collectors.toList());
+        return FACTORY.getObjects().stream().sorted(Place.COMPARATOR).collect(Collectors.toList());
     }
 
     public static List<Place> getRootPlaces() {
@@ -55,45 +54,42 @@ public final class PlaceFactory {
     }
 
     public static Place getPlace(long placeID) {
-        return PLACES.get(placeID);
+        return FACTORY.get(placeID);
     }
 
     public static Place createPlace(String placeName, PlaceLevel placeLevel, Place parentPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} ", new Object[]{placeName, placeLevel, parentPlace});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
-        var place = new Place(FriezeObjectFactory.getNextID(), placeName, placeLevel, trueParentPlace);
-        PLACES.put(place.getId(), place);
+        var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace);
         if (place.isRootPlace()) {
             addRootPlace(place);
         }
-        FriezeObjectFactory.addObject(place);
+        FACTORY.addObject(place);
         return place;
     }
 
     public static Place createPlace(String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} color={3} ", new Object[]{placeName, placeLevel, parentPlace, color});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
-        var place = new Place(FriezeObjectFactory.getNextID(), placeName, placeLevel, trueParentPlace, color);
-        PLACES.put(place.getId(), place);
+        var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace, color);
         if (place.isRootPlace()) {
             addRootPlace(place);
         }
-        FriezeObjectFactory.addObject(place);
+        FACTORY.addObject(place);
         return place;
     }
 
     public static Place createPlace(long id, String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
+        if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create place " + placeName + " with existing id=" + id);
         }
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place (id={0} with placeName={1} placeLevel={2} parentPlace={3} ", new Object[]{id, placeName, placeLevel, parentPlace});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
         var place = new Place(id, placeName, placeLevel, trueParentPlace, color);
-        PLACES.put(place.getId(), place);
         if (place.isRootPlace()) {
             addRootPlace(place);
         }
-        FriezeObjectFactory.addObject(place);
+        FACTORY.addObject(place);
         return place;
     }
 

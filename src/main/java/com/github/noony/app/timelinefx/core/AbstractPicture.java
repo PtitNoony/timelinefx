@@ -34,11 +34,13 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public abstract class AbstractPicture extends FriezeObject implements IPicture {
+public abstract class AbstractPicture implements FriezeObject, IPicture {
 
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
+
+    private final Long id;
 
     private final List<Person> persons;
     private final List<Place> places;
@@ -53,7 +55,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     private LocalDate date;
 
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
-        super(anID);
+        id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -69,7 +71,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
-        super(anID);
+        id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -82,6 +84,11 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
         date = null;
         //
         name = aName;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     @Override
@@ -187,10 +194,12 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     @Override
     public void setDate(LocalDate aDate) {
-        if (aDate != null && !date.equals(aDate)) {
-            date = aDate;
-            timeFormat = TimeFormat.LOCAL_TIME;
-            propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+        if (aDate != null) {
+            if (date != null && !date.equals(aDate)) {
+                date = aDate;
+                timeFormat = TimeFormat.LOCAL_TIME;
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+            }
         }
     }
 

@@ -16,10 +16,8 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -29,62 +27,58 @@ import java.util.logging.Logger;
 public final class StayFactory {
 
     private static final Logger LOG = Logger.getGlobal();
-    private static final Map<Long, StayPeriod> STAY_PERIOD_SIMPLE_TIMES = new HashMap<>();
-    private static final Map<Long, StayPeriod> STAY_PERIOD_LOCAL_DATES = new HashMap<>();
+//    private static final Map<Long, StayPeriod> STAY_PERIOD_SIMPLE_TIMES = new HashMap<>();
+//    private static final Map<Long, StayPeriod> STAY_PERIOD_LOCAL_DATES = new HashMap<>();
+
+
+    private static final Factory<StayPeriod> FACTORY = new Factory<>();
 
     private StayFactory() {
         // private utility constructor
     }
 
     public static void reset() {
-        STAY_PERIOD_SIMPLE_TIMES.clear();
-        STAY_PERIOD_LOCAL_DATES.clear();
+        FACTORY.reset();
+//        STAY_PERIOD_SIMPLE_TIMES.clear();
+//        STAY_PERIOD_LOCAL_DATES.clear();
     }
 
     public static StayPeriodSimpleTime createStayPeriodSimpleTime(Person person, double startDate, double endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
-        var stay = new StayPeriodSimpleTime(FriezeObjectFactory.getNextID(), person, startDate, endDate, aPlace);
-        STAY_PERIOD_SIMPLE_TIMES.put(stay.getId(), stay);
-        FriezeObjectFactory.addObject(stay);
+        var stay = new StayPeriodSimpleTime(FACTORY.getNextID(), person, startDate, endDate, aPlace);
+        FACTORY.addObject(stay);
         return stay;
     }
 
     public static StayPeriodSimpleTime createStayPeriodSimpleTime(long id, Person person, double startDate, double endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
+        if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " from " + startDate + " to " + endDate + " with existing id=" + id + " (exists : " + id + ")");
         }
         var stay = new StayPeriodSimpleTime(id, person, startDate, endDate, aPlace);
-        STAY_PERIOD_SIMPLE_TIMES.put(stay.getId(), stay);
-        FriezeObjectFactory.addObject(stay);
+        FACTORY.addObject(stay);
         return stay;
     }
 
     public static StayPeriodLocalDate createStayPeriodLocalDate(Person person, LocalDate startDate, LocalDate endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
-        var stay = new StayPeriodLocalDate(FriezeObjectFactory.getNextID(), person, startDate, endDate, aPlace);
-        STAY_PERIOD_LOCAL_DATES.put(stay.getId(), stay);
-        FriezeObjectFactory.addObject(stay);
+        var stay = new StayPeriodLocalDate(FACTORY.getNextID(), person, startDate, endDate, aPlace);
+        FACTORY.addObject(stay);
         return stay;
     }
 
     public static StayPeriodLocalDate createStayPeriodLocalDate(long id, Person person, LocalDate startDate, LocalDate endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
-            throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " with existing id=" + id + " (exists : " + STAY_PERIOD_LOCAL_DATES.get(id).getDisplayString() + ")");
+        if (!FACTORY.isIdAvailable(id)) {
+            throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " with existing id=" + id + " (exists : " + FACTORY.get(id).getDisplayString() + ")");
         }
         var stay = new StayPeriodLocalDate(id, person, startDate, endDate, aPlace);
-        STAY_PERIOD_LOCAL_DATES.put(stay.getId(), stay);
-        FriezeObjectFactory.addObject(stay);
+        FACTORY.addObject(stay);
         return stay;
     }
 
     public static StayPeriod getStay(long id) {
-        StayPeriod stay = STAY_PERIOD_SIMPLE_TIMES.get(id);
-        if (stay != null) {
-            return stay;
-        }
-        return STAY_PERIOD_LOCAL_DATES.get(id);
+        return FACTORY.get(id);
     }
 
 }

@@ -20,7 +20,7 @@ package com.github.noony.app.timelinefx.core;
  *
  * @author hamon
  */
-public interface IFileObject extends IFriezeObject {
+public interface IFileObject extends FriezeObject {
 
     String getName();
 

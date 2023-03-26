@@ -56,7 +56,7 @@ public class StarWars {
         );
         TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Star Wars", configParams);
         //
-        File pictureFolder = timeLineProject.getPortraitsFolder();
+        File pictureFolder = timeLineProject.getPortraitsAbsoluteFolder();
         for (var picName : RESOURCES) {
             var picExportPath = pictureFolder.getAbsolutePath() + File.separator + picName;
             File file = new File(picExportPath);

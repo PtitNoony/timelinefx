@@ -16,7 +16,7 @@
  */
 package com.github.noony.app.timelinefx.hmi.freemap;
 
-import com.github.noony.app.timelinefx.core.freemap.DateHandle;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapDateHandle;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPerson;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
@@ -42,6 +42,8 @@ import javafx.scene.shape.Rectangle;
  * @author hamon
  */
 public class FriezeFreeFormDrawing {
+
+    public static final String PORTRAIT_SECTION_REQUEST = "portraitSelectionRequest";
 
     public static final double MAIN_CONTAINER_PADDING = 8;
 
@@ -70,9 +72,9 @@ public class FriezeFreeFormDrawing {
 
     private final FriezeFreeMap friezeFreeMap;
     //
-//    private final Map<Person, FreeMapPortraitDrawing> initialPortraitDrawings;
+    private final Map<FreeMapPortrait, FreeMapPortraitDrawing> portraitDrawings;
     private final Map<FreeMapPlace, PlaceDrawing> placeDrawings;
-    private final Map<FreeMapPerson, PersonDrawing> personDrawings;
+    private final Map<FreeMapPerson, FreeMapPersonDrawing> personDrawings;
     private final Map<Double, DateHandleDrawing> startDatesHandles;
     private final Map<Double, DateHandleDrawing> endDatesHandles;
     //
@@ -87,8 +89,8 @@ public class FriezeFreeFormDrawing {
         friezeFreeMap = aFriezeFreeMap;
         //
         placeDrawings = new HashMap<>();
-//        initialPortraitDrawings = new HashMap<>();
         personDrawings = new HashMap<>();
+        portraitDrawings = new HashMap<>();
         startDatesHandles = new HashMap<>();
         endDatesHandles = new HashMap<>();
         //
@@ -127,7 +129,7 @@ public class FriezeFreeFormDrawing {
         return friezeFreeMap;
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    protected void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
@@ -135,17 +137,17 @@ public class FriezeFreeFormDrawing {
         return mainNode;
     }
 
-    public void zoomIn() {
+    protected void zoomIn() {
         scale = Math.max(FxScalableParent.MIN_SCALE, scale - FxScalableParent.SCALE_STEP);
         updateLayout();
     }
 
-    public void zoomOut() {
+    protected void zoomOut() {
         scale = Math.min(FxScalableParent.MAX_SCALE, scale + FxScalableParent.SCALE_STEP);
         updateLayout();
     }
 
-    public void setZoomLevel(double newScale) {
+    protected void setZoomLevel(double newScale) {
         if (newScale > FxScalableParent.MAX_SCALE) {
             scale = FxScalableParent.MAX_SCALE;
         } else {
@@ -191,7 +193,7 @@ public class FriezeFreeFormDrawing {
         return (drawingHeight + 2.0 * MAIN_CONTAINER_PADDING) * scale;
     }
 
-    private void addStartDateHandleDrawing(DateHandle date) {
+    private void addStartDateHandleDrawing(FreeMapDateHandle date) {
         if (!startDatesHandles.containsKey(date.getDate())) {
             var handle = new DateHandleDrawing(date, scale);
             startDateHandleGroup.getChildren().add(handle.getNode());
@@ -200,7 +202,7 @@ public class FriezeFreeFormDrawing {
         }
     }
 
-    private void addEndDateHandleDrawing(DateHandle date) {
+    private void addEndDateHandleDrawing(FreeMapDateHandle date) {
         if (!endDatesHandles.containsKey(date.getDate())) {
             final var handle = new DateHandleDrawing(date, scale);
             endDateHandleGroup.getChildren().add(handle.getNode());
@@ -228,11 +230,7 @@ public class FriezeFreeFormDrawing {
     }
 
     private void addPersonDrawing(FreeMapPerson person) {
-        // create portrait first since needed int person drawings for the time being
-        // next improvement. merge classes ?
-//        createInitialPortraitDrawing(friezeFreeMap.getPortrait(person.getPerson()));
-        System.err.println("TODO : create default first portrait ?");
-        var personDrawing = new PersonDrawing(person, friezeFreeMap, this);
+        var personDrawing = new FreeMapPersonDrawing(person, friezeFreeMap, this);
         personsGroup.getChildren().add(personDrawing.getNode());
         personDrawings.put(person, personDrawing);
         scalableNodes.add(personDrawing);
@@ -248,19 +246,21 @@ public class FriezeFreeFormDrawing {
         }
     }
 
-//    private void createInitialPortraitDrawing(FreeMapPortrait portrait) {
-//        var portraitDrawing = new FreeMapPortraitDrawing(portrait);
-//        initialPortraitDrawings.put(portrait.getPerson(), portraitDrawing);
-//        portraitsGroup.getChildren().add(portraitDrawing.getNode());
-//        scalableNodes.add(portraitDrawing);
-//    }
-//    private void removeInitialPortraitDrawing(FreeMapPortrait portrait) {
-//        var portraitDrawingRemoved = initialPortraitDrawings.remove(portrait.getPerson());
-//        if (portraitDrawingRemoved != null) {
-//            portraitsGroup.getChildren().remove(portraitDrawingRemoved.getNode());
-//            scalableNodes.remove(portraitDrawingRemoved);
-//        }
-//    }
+    protected void createPortraitDrawing(FreeMapPortrait portrait) {
+        var portraitDrawing = new FreeMapPortraitDrawing(portrait, this);
+        portraitDrawings.put(portrait, portraitDrawing);
+        portraitsGroup.getChildren().add(portraitDrawing.getNode());
+        scalableNodes.add(portraitDrawing);
+    }
+
+    protected void removePortraitDrawing(FreeMapPortrait portrait) {
+        var portraitDrawingRemoved = portraitDrawings.remove(portrait);
+        if (portraitDrawingRemoved != null) {
+            portraitsGroup.getChildren().remove(portraitDrawingRemoved.getNode());
+            scalableNodes.remove(portraitDrawingRemoved);
+        }
+    }
+
     private void initFx() {
         background.setFill(Color.BLACK);
         background.setArcWidth(MAIN_CONTAINER_PADDING);
@@ -315,7 +315,11 @@ public class FriezeFreeFormDrawing {
         endDatesHandles.values().forEach(d -> d.setColor(color));
     }
 
-    public void updateLayout() {
+    protected void requestPortraitSelectionUpdate(FreeMapPortrait aFreeMapPortrait){
+        propertyChangeSupport.firePropertyChange(PORTRAIT_SECTION_REQUEST, this, aFreeMapPortrait);
+    }
+
+    protected void updateLayout() {
         //
         freeMapGroup.setTranslateX(MAIN_CONTAINER_PADDING);
         freeMapGroup.setTranslateY(MAIN_CONTAINER_PADDING);
@@ -368,29 +372,30 @@ public class FriezeFreeFormDrawing {
                 // nothing to do
             }
             case FriezeFreeMap.START_DATE_HANDLE_ADDED ->
-                addStartDateHandleDrawing((DateHandle) event.getNewValue());
+                addStartDateHandleDrawing((FreeMapDateHandle) event.getNewValue());
             case FriezeFreeMap.END_DATE_HANDLE_ADDED ->
-                addEndDateHandleDrawing((DateHandle) event.getNewValue());
+                addEndDateHandleDrawing((FreeMapDateHandle) event.getNewValue());
             case FriezeFreeMap.START_DATE_HANDLE_REMOVED ->
-                removeStartDateHandleDrawing((DateHandle) event.getNewValue());
+                removeStartDateHandleDrawing((FreeMapDateHandle) event.getNewValue());
             case FriezeFreeMap.END_DATE_HANDLE_REMOVED ->
-                removeEndDateHandleDrawing((DateHandle) event.getNewValue());
-            case FriezeFreeMap.FREE_MAP_PLOT_VISIBILITY_CHANGED -> {
-                System.err.println("TODO : handle FREE_MAP_PLOT_VISIBILITY_CHANGED");
-            }
+                removeEndDateHandleDrawing((FreeMapDateHandle) event.getNewValue());
+//            case FriezeFreeMap.FREE_MAP_PLOT_VISIBILITY_CHANGED -> {
+//                System.err.println("TODO : handle FREE_MAP_PLOT_VISIBILITY_CHANGED "+event);
+//                friezeFreeMap.setPlotVisibility(true);
+//            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
-    private void removeStartDateHandleDrawing(DateHandle aDateHandle) {
+    private void removeStartDateHandleDrawing(FreeMapDateHandle aDateHandle) {
         var handleDrawing = startDatesHandles.remove(aDateHandle.getDate());
         if (handleDrawing != null) {
             startDateHandleGroup.getChildren().remove(handleDrawing.getNode());
         }
     }
 
-    private void removeEndDateHandleDrawing(DateHandle aDateHandle) {
+    private void removeEndDateHandleDrawing(FreeMapDateHandle aDateHandle) {
         var handleDrawing = endDatesHandles.remove(aDateHandle.getDate());
         if (handleDrawing != null) {
             endDateHandleGroup.getChildren().remove(handleDrawing.getNode());

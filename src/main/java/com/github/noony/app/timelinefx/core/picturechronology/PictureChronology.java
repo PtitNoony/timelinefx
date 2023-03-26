@@ -40,7 +40,7 @@ import javafx.util.Pair;
  *
  * @author hamon
  */
-public class PictureChronology extends FriezeObject implements IDrawableObject {
+public class PictureChronology implements FriezeObject, IDrawableObject {
 
     public static final String DEFAULT_NAME = "PictureChronologyNoName";
 
@@ -57,6 +57,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     public static final double PERSON_CONTOUR_WIDTH = 6;
 
     private final PropertyChangeSupport propertyChangeSupport;
+    private final long id;
 
     private final ChronologyLinkType chronologyLinkType = ChronologyLink.DEFAULT_LINK_TYPE;
 
@@ -72,7 +73,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     private double height;
 
     protected PictureChronology(long anID, TimeLineProject aProject, String aName, TimeFormat aTimeFormat, List<ChronologyPictureMiniature> exisitingMiniatures, List<ChronologyLink> existingLinks) {
-        super(anID);
+        id = anID;
         propertyChangeSupport = new PropertyChangeSupport(PictureChronology.this);
         project = aProject;
         project.addPictureChronology(PictureChronology.this);
@@ -99,7 +100,12 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     }
 
     protected PictureChronology(long anID, TimeLineProject aProject, String aName) {
-        this(anID, aProject, aName, TimeFormat.LOCAL_TIME, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        this(anID, aProject, aName, TimeFormat.LOCAL_TIME, Collections.emptyList(), Collections.emptyList());
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public TimeFormat getTimeFormat() {

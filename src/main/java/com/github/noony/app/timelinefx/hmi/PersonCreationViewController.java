@@ -385,7 +385,7 @@ public class PersonCreationViewController implements Initializable {
                 }
             }
         } else if (currentProject != null) {
-            var path = currentProject.getPortraitsFolder().getAbsolutePath() + File.separatorChar + Person.DEFAULT_PICTURE_NAME;
+            var path = currentProject.getPortraitsAbsoluteFolder().getAbsolutePath() + File.separatorChar + Person.DEFAULT_PICTURE_NAME;
             try {
                 image = new Image(path);
                 imageView.setImage(image);

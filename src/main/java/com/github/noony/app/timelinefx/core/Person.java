@@ -31,7 +31,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class Person extends FriezeObject {
+public class Person implements FriezeObject {
 
     public static final String DEFAULT_PICTURE_NAME = "LegoHead.png";
 
@@ -54,6 +54,8 @@ public class Person extends FriezeObject {
 
     private final PropertyChangeSupport propertyChangeSupport;
     //
+    private final Long id;
+    //
     private final TimeLineProject project;
     private final List<Portrait> portraits;
     //
@@ -70,7 +72,7 @@ public class Person extends FriezeObject {
     private boolean visible;
 
     protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
-        super(personId);
+        id = personId;
         project = aProject;
         portraits = new LinkedList<>();
         name = personName;
@@ -84,7 +86,7 @@ public class Person extends FriezeObject {
     }
 
     protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, long aToB, long aToD) {
-        super(personId);
+        id = personId;
         project = aProject;
         portraits = new LinkedList<>();
         name = personName;
@@ -99,6 +101,11 @@ public class Person extends FriezeObject {
 
     protected Person(TimeLineProject aProject, Long personId, String personName) {
         this(aProject, personId, personName, DEFAULT_COLOR, 0, 0);
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public TimeLineProject getProject() {
@@ -137,6 +144,10 @@ public class Person extends FriezeObject {
 
     public List<Portrait> getPortraits() {
         return Collections.unmodifiableList(portraits);
+    }
+
+    public Portrait getPortrait(long aPortraiID) {
+        return portraits.stream().filter(p -> p.getId() == aPortraiID).findAny().orElse(null);
     }
 
     public void removePortrait(Portrait aPortrait) {

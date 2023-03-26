@@ -97,6 +97,8 @@ public class PicturesChronologyViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // init
+        AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         PortraitFactory.addPropertyChangeListener(this::handlePortraitFactoryChanges);
         loadPictureChronologyConfiguratorView();
@@ -111,6 +113,10 @@ public class PicturesChronologyViewController implements Initializable {
         });
         updateChronologiesTab();
         chronologyNameField.setText("");
+        //
+        if(AppInstanceConfiguration.getSelectedProject()!=null){
+            setTimelineProject(AppInstanceConfiguration.getSelectedProject());
+        }
     }
 
     @FXML
@@ -130,7 +136,20 @@ public class PicturesChronologyViewController implements Initializable {
         System.err.println(" handleInsertPortrait");
     }
 
-    protected void setProject(TimeLineProject aProject) {
+
+    private void handleAppConfigChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case AppInstanceConfiguration.TIMELINE_SELECTED_CHANGED ->
+                setTimelineProject((TimeLineProject) event.getNewValue());
+            case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED -> {
+                // nothing to do
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void setTimelineProject(TimeLineProject aProject) {
         project = aProject;
         if (picturesGalleryTiles != null) {
             picturesGalleryTiles.removePropertyChangeListener(galleryTilesListener);
@@ -183,9 +202,7 @@ public class PicturesChronologyViewController implements Initializable {
 
     private void handleProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED,
-                    TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED,
-                    TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED, TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED, TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);

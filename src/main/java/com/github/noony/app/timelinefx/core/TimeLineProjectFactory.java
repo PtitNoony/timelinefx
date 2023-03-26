@@ -56,6 +56,8 @@ public final class TimeLineProjectFactory {
             }
             timelineFile = fileFound;
         }
-        return XMLHandler.loadFile(timelineFile);
+        var timeline = XMLHandler.loadFile(timelineFile);
+        LOG.log(Level.FINE, "Project created: {0}", new Object[]{timeline});
+        return timeline;
     }
 }

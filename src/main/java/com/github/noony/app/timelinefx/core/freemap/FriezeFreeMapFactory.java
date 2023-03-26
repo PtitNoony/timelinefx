@@ -16,14 +16,12 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
-import com.github.noony.app.timelinefx.core.*;
-import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
-import java.util.HashMap;
+import com.github.noony.app.timelinefx.core.Factory;
+import com.github.noony.app.timelinefx.core.Frieze;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javafx.geometry.Dimension2D;
 
 /**
  *
@@ -33,59 +31,50 @@ public class FriezeFreeMapFactory {
 
     private static final Logger LOG = Logger.getGlobal();
 
-    private static final Map<Long, FriezeFreeMap> FREE_MAPS = new HashMap<>();
+    private static final Factory<FriezeFreeMap> FACTORY = new Factory<>();
 
     private FriezeFreeMapFactory() {
         // private utility constructor
     }
 
     public static final void reset() {
-        FREE_MAPS.clear();
+        FACTORY.reset();
     }
 
     public static List<FriezeFreeMap> getFriezeFreeMaps() {
-        return FREE_MAPS.values().stream().collect(Collectors.toList());
+        return FACTORY.getObjects();
     }
 
     public static FriezeFreeMap getFriezeFreeMap(long friezeID) {
-        return FREE_MAPS.get(friezeID);
+        return FACTORY.get(friezeID);
     }
 
-    public static FriezeFreeMap createFriezeFreeMap(Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap with Frieze={0}", new Object[]{aFrieze.getName()});
-        var friezeFreeMap = new FriezeFreeMap(FriezeObjectFactory.getNextID(), aFrieze, aFriezeDimension, aPersonWidth, aPlaceNameWidth, aFontSize, aPlotSeparation, aPlotVisibilty, aPlotSize);
-        FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
-        FriezeObjectFactory.addObject(friezeFreeMap);
+    public static FriezeFreeMap createFriezeFreeMap(Frieze aFrieze, boolean allStays) {
+        LOG.log(Level.WARNING, "Creating a friezeFreeMap with Frieze={0} ", new Object[]{aFrieze.getName()});
+        var friezeFreeMap = new FriezeFreeMap(FACTORY.getNextID(), aFrieze, allStays);
+        FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
     }
 
-    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, Dimension2D aFriezeDimension, double aPersonWidth, double aPlaceNameWidth, double aFontSize, double aPlotSeparation, boolean aPlotVisibilty, double aPlotSize) {
-        if (!FriezeObjectFactory.isIdAvailable(anID)) {
+    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, boolean allStays) {
+        if (!FACTORY.isIdAvailable(anID)) {
             throw new IllegalArgumentException("trying to create a friezeFreeMap with existing id=" + anID);
         }
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze (id={0} with Frieze={1}", new Object[]{anID, aFrieze.getName()});
-        var friezeFreeMap = new FriezeFreeMap(FriezeObjectFactory.getNextID(), aFrieze, aFriezeDimension, aPersonWidth, aPlaceNameWidth, aFontSize, aPlotSeparation, aPlotVisibilty, aPlotSize);
-        FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
-        FriezeObjectFactory.addObject(friezeFreeMap);
+        LOG.log(Level.WARNING, "Creating a friezeFreeMap (id={0} with Frieze={1}", new Object[]{anID, aFrieze});
+        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, allStays);
+        FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
     }
 
-    public static FriezeFreeMap createFriezeFreeMap(Frieze aFrieze) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap with Frieze={0} ", new Object[]{aFrieze.getName()});
-        var friezeFreeMap = new FriezeFreeMap(FriezeObjectFactory.getNextID(), aFrieze);
-        FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
-        FriezeObjectFactory.addObject(friezeFreeMap);
-        return friezeFreeMap;
-    }
-
-    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze) {
-        if (!FriezeObjectFactory.isIdAvailable(anID)) {
-            throw new IllegalArgumentException("trying to create a friezeFreeMap with existing id=" + anID);
+    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, Map<String, String> inputParameters,
+            List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
+        //
+        if (!FACTORY.isIdAvailable(anID)) {
+            throw new IllegalArgumentException("Trying to create a friezeFreeMap with existing id=" + anID);
         }
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating a friezeFreeMap (id={0} with Frieze={1}", new Object[]{anID, aFrieze});
-        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze);
-        FREE_MAPS.put(friezeFreeMap.getId(), friezeFreeMap);
-        FriezeObjectFactory.addObject(friezeFreeMap);
+        LOG.log(Level.WARNING, "Creating a friezeFreeMap (id={0} with Frieze={1} with its full content.", new Object[]{anID, aFrieze});
+        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, inputParameters, dateHandles, persons, places, stays, false);
+        FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
     }
 

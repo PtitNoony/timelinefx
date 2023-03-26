@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class Place extends FriezeObject {
+public class Place implements FriezeObject {
 
     public static final String SELECTION_CHANGED = "selectionChanged";
     public static final String CONTENT_CHANGED = "contentChanged";
@@ -41,6 +41,7 @@ public class Place extends FriezeObject {
 
     private static final Logger LOG = Logger.getGlobal();
 
+    private final Long id;
     private final List<Place> places;
     private String name;
     private Place parent;
@@ -55,7 +56,7 @@ public class Place extends FriezeObject {
     //
 
     protected Place(long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace, Color aColor) {
-        super(placeId);
+        id = placeId;
         name = placeName;
         parent = parentPlace;
         level = placeLevel;
@@ -68,13 +69,18 @@ public class Place extends FriezeObject {
         isRootPlace = parentPlace == null || PlaceFactory.PLACES_PLACE.equals(parentPlace);
         propertyChangeSupport = new PropertyChangeSupport(Place.this);
         selected = false;
-        if (!isLowerThan(parent)) {
+        if (!isLowerThanOrLeveled(parent)) {
             throw new IllegalStateException("For place '" + name + "' (lvl " + level + ") is greater or equal than its parent place '" + (parent != null ? parent.name : "null") + "' (lvl " + (parent != null ? parent.level : "null") + ")");
         }
     }
 
     protected Place(long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace) {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -125,7 +131,7 @@ public class Place extends FriezeObject {
         Place oldParent = parent;
         parent = aParentPlace;
         isRootPlace = parent == null || PlaceFactory.PLACES_PLACE.equals(parent);
-        if (oldParent != null & oldParent != parent) {
+        if (oldParent != null && oldParent != parent) {
             oldParent.removePlace(this);
             if (parent != null) {
                 parent.addPlace(this);
@@ -138,7 +144,7 @@ public class Place extends FriezeObject {
         return Collections.unmodifiableList(places);
     }
 
-    public boolean addPlace(Place place) {
+    private boolean addPlace(Place place) {
         if (place.getLevel().getLevelValue() < level.getLevelValue()) {
             places.add(place);
             propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
@@ -169,10 +175,11 @@ public class Place extends FriezeObject {
     }
 
     public boolean isSelected() {
-        return false;
+        return selected;
     }
 
-    public final boolean isLowerThan(Place anotherPlace) {
+
+    public final boolean isLowerThanOrLeveled(Place anotherPlace) {
         if (level == null) {
             return false;
         } else if (anotherPlace == null) {
@@ -180,6 +187,25 @@ public class Place extends FriezeObject {
         } else {
             return level.getLevelValue() <= anotherPlace.level.getLevelValue();
         }
+    }
+
+    public final boolean encompasses(Place anotherPlace) {
+        if (anotherPlace == null || level.getLevelValue() < anotherPlace.level.getLevelValue()) {
+            return false;
+        }
+        if (anotherPlace.equals(this)) {
+            return true;
+        }
+        if (places.isEmpty()) {
+            return false;
+        } else {
+            for (Place childPlace : places) {
+                if (childPlace.encompasses(anotherPlace)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

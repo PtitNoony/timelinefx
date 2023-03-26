@@ -19,15 +19,12 @@ package com.github.noony.app.timelinefx.hmi.byplace;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.StayPeriod;
-
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static javafx.application.Platform.runLater;
-
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -60,7 +57,7 @@ public class FriezeSpaceLinearDrawing {
     //
     private double timeRatio = 1;
 
-    public FriezeSpaceLinearDrawing(Frieze aFrieze) {
+    protected FriezeSpaceLinearDrawing(Frieze aFrieze) {
         frieze = aFrieze;
         frieze.addListener(FriezeSpaceLinearDrawing.this::handleFriezeChange);
         //

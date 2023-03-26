@@ -70,7 +70,7 @@ public class FriezeFreeFormDrawing {
 
     private final FriezeFreeMap friezeFreeMap;
     //
-//    private final Map<Person, FreeMapPortraitDrawing> initialPortraitDrawings;
+    private final Map<FreeMapPortrait, FreeMapPortraitDrawing> portraitDrawings;
     private final Map<FreeMapPlace, PlaceDrawing> placeDrawings;
     private final Map<FreeMapPerson, PersonDrawing> personDrawings;
     private final Map<Double, DateHandleDrawing> startDatesHandles;
@@ -87,8 +87,8 @@ public class FriezeFreeFormDrawing {
         friezeFreeMap = aFriezeFreeMap;
         //
         placeDrawings = new HashMap<>();
-//        initialPortraitDrawings = new HashMap<>();
         personDrawings = new HashMap<>();
+        portraitDrawings = new HashMap<>();
         startDatesHandles = new HashMap<>();
         endDatesHandles = new HashMap<>();
         //
@@ -228,10 +228,6 @@ public class FriezeFreeFormDrawing {
     }
 
     private void addPersonDrawing(FreeMapPerson person) {
-        // create portrait first since needed int person drawings for the time being
-        // next improvement. merge classes ?
-//        createInitialPortraitDrawing(friezeFreeMap.getPortrait(person.getPerson()));
-        System.err.println("TODO : create default first portrait ?");
         var personDrawing = new PersonDrawing(person, friezeFreeMap, this);
         personsGroup.getChildren().add(personDrawing.getNode());
         personDrawings.put(person, personDrawing);
@@ -248,19 +244,21 @@ public class FriezeFreeFormDrawing {
         }
     }
 
-//    private void createInitialPortraitDrawing(FreeMapPortrait portrait) {
-//        var portraitDrawing = new FreeMapPortraitDrawing(portrait);
-//        initialPortraitDrawings.put(portrait.getPerson(), portraitDrawing);
-//        portraitsGroup.getChildren().add(portraitDrawing.getNode());
-//        scalableNodes.add(portraitDrawing);
-//    }
-//    private void removeInitialPortraitDrawing(FreeMapPortrait portrait) {
-//        var portraitDrawingRemoved = initialPortraitDrawings.remove(portrait.getPerson());
-//        if (portraitDrawingRemoved != null) {
-//            portraitsGroup.getChildren().remove(portraitDrawingRemoved.getNode());
-//            scalableNodes.remove(portraitDrawingRemoved);
-//        }
-//    }
+    protected void createPortraitDrawing(FreeMapPortrait portrait) {
+        var portraitDrawing = new FreeMapPortraitDrawing(portrait);
+        portraitDrawings.put(portrait, portraitDrawing);
+        portraitsGroup.getChildren().add(portraitDrawing.getNode());
+        scalableNodes.add(portraitDrawing);
+    }
+
+    protected void removePortraitDrawing(FreeMapPortrait portrait) {
+        var portraitDrawingRemoved = portraitDrawings.remove(portrait);
+        if (portraitDrawingRemoved != null) {
+            portraitsGroup.getChildren().remove(portraitDrawingRemoved.getNode());
+            scalableNodes.remove(portraitDrawingRemoved);
+        }
+    }
+
     private void initFx() {
         background.setFill(Color.BLACK);
         background.setArcWidth(MAIN_CONTAINER_PADDING);
@@ -375,9 +373,10 @@ public class FriezeFreeFormDrawing {
                 removeStartDateHandleDrawing((DateHandle) event.getNewValue());
             case FriezeFreeMap.END_DATE_HANDLE_REMOVED ->
                 removeEndDateHandleDrawing((DateHandle) event.getNewValue());
-            case FriezeFreeMap.FREE_MAP_PLOT_VISIBILITY_CHANGED -> {
-                System.err.println("TODO : handle FREE_MAP_PLOT_VISIBILITY_CHANGED");
-            }
+//            case FriezeFreeMap.FREE_MAP_PLOT_VISIBILITY_CHANGED -> {
+//                System.err.println("TODO : handle FREE_MAP_PLOT_VISIBILITY_CHANGED "+event);
+//                friezeFreeMap.setPlotVisibility(true);
+//            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

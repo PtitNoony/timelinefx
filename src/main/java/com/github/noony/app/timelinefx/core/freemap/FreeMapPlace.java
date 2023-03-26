@@ -189,6 +189,9 @@ public class FreeMapPlace {
             case Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
             }
+            case Selectable.SELECTION_CHANGED -> {
+                // nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
         }

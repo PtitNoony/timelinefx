@@ -16,8 +16,6 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
-import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.Place;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javafx.beans.property.DoubleProperty;
@@ -27,18 +25,15 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author hamon
  */
-public class Plot extends AbstractFreeMapConnector {
+public class FreeMapLinkConnector extends AbstractFreeMapConnector {
 
     public static final String PLOT_DATE_CHANGED = "plotDateChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final Person person;
-    private final Place place;
-    private final long parentPeriodID;
+    private final FreeMapLink sourceLink;
 
     private double date;
-    private final PlotType type;
     private final DoubleProperty xPos;
     private final DoubleProperty yPos;
 
@@ -46,35 +41,24 @@ public class Plot extends AbstractFreeMapConnector {
     private boolean isSelected = false;
     private double plotSize;
 
-    protected Plot(Person aPerson, Place aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
-        propertyChangeSupport = new PropertyChangeSupport(Plot.this);
+    protected FreeMapLinkConnector(FreeMapLink aSourceLink, double aDate, double aPlotSize) {
+        super();
+        propertyChangeSupport = new PropertyChangeSupport(FreeMapLinkConnector.this);
+        sourceLink = aSourceLink;
         //
-        person = aPerson;
-        place = aPlace;
-        type = aType;
-        parentPeriodID = aPeriodID;
         xPos = new SimpleDoubleProperty();
         yPos = new SimpleDoubleProperty();
         //
         date = aDate;
         plotSize = aPlotSize;
+        xPos.setValue(sourceLink.getBeginPlot().getX() + (sourceLink.getEndPlot().getX() - sourceLink.getBeginPlot().getX()) / 2.0);
+        // Assumption: the link is horizontal
+        yPos.setValue(sourceLink.getBeginPlot().getY());
     }
 
     @Override
     public long getLinkedElementID() {
-        return parentPeriodID;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public Place getPlace() {
-        return place;
-    }
-
-    public PlotType getType() {
-        return type;
+        return sourceLink.getId();
     }
 
     @Override
@@ -132,19 +116,24 @@ public class Plot extends AbstractFreeMapConnector {
 
     @Override
     public String getInfo() {
-        return "Plot [t=" + date + "  x=" + xPos.doubleValue() + ", y=" + yPos.doubleValue() + "]";
+        return "Connector [t=" + date + "  x=" + xPos.doubleValue() + ", y=" + yPos.doubleValue() + "]";
     }
 
     public void setX(double newX) {
-        if (Math.abs(newX - xPos.doubleValue()) > EPSILON) {
-            xPos.setValue(newX);
+        var boundedNewX = Math.max(sourceLink.getBeginPlot().getX(), newX);
+        boundedNewX = Math.min(sourceLink.getEndPlot().getX(), boundedNewX);
+        if (Math.abs(boundedNewX - xPos.doubleValue()) > EPSILON) {
+            xPos.setValue(boundedNewX);
             propertyChangeSupport.firePropertyChange(POS_CHANGED, xPos.doubleValue(), yPos.doubleValue());
         }
     }
 
     public void setY(double newY) {
-        if (Math.abs(newY - yPos.doubleValue()) > EPSILON) {
-            yPos.setValue(newY);
+        // hypothesis: the link is horizontal
+        // overriding newY
+        newY = sourceLink.getBeginPlot().getY();
+        if (Math.abs(yPos.doubleValue() - newY) > EPSILON) {
+            yPos.setValue(sourceLink.getBeginPlot().getY());
             propertyChangeSupport.firePropertyChange(POS_CHANGED, xPos.doubleValue(), yPos.doubleValue());
         }
     }

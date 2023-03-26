@@ -49,7 +49,6 @@ public final class FriezeFreeMap extends FriezeObject {
     public static final String FREE_MAP_PERSON_ADDED = "freeMapPersonAdded";
     public static final String FREE_MAP_PERSON_REMOVED = "freeMapPersonRemoved";
     public static final String FREE_MAP_PORTRAIT_REMOVED = "freeMapPortraitRemoved";
-    public static final String FREE_MAP_PLOT_VISIBILITY_CHANGED = "freeMapPlotVisibilityChanged";
     public static final String FREE_MAP_PLOT_SIZE_CHANGED = "freeMapPlotSizeChanged";
     public static final String START_DATE_HANDLE_ADDED = "freeMapStartDateAdded";
     public static final String START_DATE_HANDLE_REMOVED = "freeMapStartDateRemoved";
@@ -83,7 +82,6 @@ public final class FriezeFreeMap extends FriezeObject {
     private final Map<Place, FreeMapPlace> places;
     private final Map<Person, FreeMapPerson> freeMapPersons;
     private final Map<Person, FreeMapPortrait> portraits;
-    private final List<PersonInitLink> personInitLinks;
     private final Map<Double, DateHandle> startDateHandles;
     private final Map<Double, DateHandle> endDateHandles;
     //
@@ -100,6 +98,7 @@ public final class FriezeFreeMap extends FriezeObject {
     private double fontSize;
     private double plotSeparation;
     private boolean plotVisibiltiy;
+    private boolean portraitConnectorsVisibiltiy;
     private double plotSize;
     //
     private double minDate;
@@ -116,7 +115,6 @@ public final class FriezeFreeMap extends FriezeObject {
         propertyChangeSupport = new PropertyChangeSupport(FriezeFreeMap.this);
         frieze = aFrieze;
         persons = new LinkedList<>();
-        personInitLinks = new LinkedList<>();
         places = new HashMap<>();
         freeMapPersons = new HashMap<>();
         portraits = new HashMap<>();
@@ -133,6 +131,7 @@ public final class FriezeFreeMap extends FriezeObject {
         fontSize = aFontSize;
         plotSeparation = aPlotSeparation;
         plotVisibiltiy = aPlotVisibilty;
+        portraitConnectorsVisibiltiy = true;
         plotSize = aPlotSize;
         portraitRadius = DEFAULT_PORTRAIT_RADIUS;
         // TODO use a map for all relevant attributes
@@ -271,10 +270,6 @@ public final class FriezeFreeMap extends FriezeObject {
         return endDateHandles.get(aDate);
     }
 
-    public List<PersonInitLink> getPersonInitLinks() {
-        return Collections.unmodifiableList(personInitLinks);
-    }
-
     public List<FreeMapPlace> getPlaces() {
         return Collections.unmodifiableList(places.values().stream().collect(Collectors.toList()));
     }
@@ -301,7 +296,7 @@ public final class FriezeFreeMap extends FriezeObject {
      *
      * @return
      */
-    public List<Link> getStayLinks() {
+    public List<FreeMapLink> getStayLinks() {
         return freeMapPersons.values().stream().flatMap(x -> x.getStayLinks().stream()).collect(Collectors.toList());
     }
 
@@ -310,7 +305,7 @@ public final class FriezeFreeMap extends FriezeObject {
      *
      * @return
      */
-    public List<Link> getTravelLinks() {
+    public List<FreeMapLink> getTravelLinks() {
         return freeMapPersons.values().stream().flatMap(x -> x.getTravelLinks().stream()).collect(Collectors.toList());
     }
 
@@ -347,7 +342,6 @@ public final class FriezeFreeMap extends FriezeObject {
         return portraits.values().stream().filter(p -> p.getPerson() == aPerson).findAny().orElse(null);
     }
 
-    @Deprecated
     public double getPortraitRadius() {
         return portraitRadius;
     }
@@ -392,8 +386,19 @@ public final class FriezeFreeMap extends FriezeObject {
 
     public void setPlotVisibility(boolean plotVisible) {
         plotVisibiltiy = plotVisible;
-        propertyChangeSupport.firePropertyChange(FREE_MAP_PLOT_VISIBILITY_CHANGED, this, plotVisibiltiy);
+        freeMapPersons.forEach((p, fMP) -> {
+            fMP.setPlotsVisibilty(plotVisibiltiy);
+        });
     }
+
+
+    public void setPortraitConnectorVisibility(boolean pConnectorVisibiliy) {
+        portraitConnectorsVisibiltiy = pConnectorVisibiliy;
+        freeMapPersons.forEach((p, fMP) -> {
+            fMP.setPortraitConnectorsVisibilty(portraitConnectorsVisibiltiy);
+        });
+    }
+
 
     public void setPlotSize(double newPlotSize) {
         plotSize = newPlotSize;
@@ -402,16 +407,6 @@ public final class FriezeFreeMap extends FriezeObject {
 
 // </editor-fold>
     //
-//    public void distributePortraits() {
-//        var nbPortraits = portraits.size();
-//        var separation = (getPersonHeight() - nbPortraits * portraitRadius * 2.0) / (1 + 2 * nbPortraits);
-//        var portraitList = portraits.values().stream().collect(Collectors.toList());
-//        for (var index = 0; index < nbPortraits; index++) {
-//            FreeMapPortrait portrait = portraitList.get(index);
-//            portrait.setX(getPersonWidth() / 2.0);
-//            portrait.setY(separation * (index + 1) + (index + 0.5) * portraitRadius * 2.0);
-//        }
-//    }
     public final void distributePlaces() {
         var nbPlaces = places.size();
         var freeMapPlaces = places.values().stream().sorted((p1, p2) -> Double.compare(p1.getYPos(), p2.getYPos())).collect(Collectors.toList());
@@ -451,7 +446,6 @@ public final class FriezeFreeMap extends FriezeObject {
         var freeMapPerson = new FreeMapPerson(person, this);
         persons.add(person);
         freeMapPersons.put(person, freeMapPerson);
-//        portraits.put(person, freeMapPerson.getPortrait());
         propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_ADDED, this, freeMapPerson);
     }
 

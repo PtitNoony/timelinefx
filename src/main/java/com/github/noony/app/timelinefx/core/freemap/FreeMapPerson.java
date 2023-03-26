@@ -43,6 +43,10 @@ public class FreeMapPerson {
     public static final String FIRST_PLOT_CHANGED = "firstPlotChanged";
     public static final String TRAVEL_LINK_ADDED = "travelLinkAdded";
     public static final String TRAVEL_LINK_REMOVED = "travelLinkRemoved";
+    public static final String PORTRAIT_ADDED = "portraitAdded";
+    public static final String PORTRAIT_REMOVED = "portraitRemoved";
+    public static final String PORTRAIT_LINK_ADDED = "portraitLinkAdded";
+    public static final String PORTRAIT_LINK_REMOVED = "portraitLinkRemoved";
 
     private final Person person;
     private final FriezeFreeMap freeMap;
@@ -50,13 +54,13 @@ public class FreeMapPerson {
     private final PropertyChangeSupport propertyChangeSupport;
     //
     private final List<StayPeriod> stays;
-    private final Map<StayPeriod, Link> stayLinks;
+    private final Map<StayPeriod, FreeMapLink> stayLinks;
     private final List<Plot> plots;
     private final Map<StayPeriod, Pair<Plot, Plot>> plotsByPeriod;
     private final List<TravelLink> travelLinks;
     //
     private final List<FreeMapPortrait> portraits;
-    private final PersonInitLink initLink;
+    private final List<PortraitLink> portraitLinks;
     //
     private Plot firstPlot = null;
 
@@ -71,12 +75,8 @@ public class FreeMapPerson {
         stayLinks = new HashMap<>();
         plotsByPeriod = new HashMap<>();
         travelLinks = new LinkedList<>();
-        //
         portraits = new LinkedList<>();
-        //
-//        portrait = new FreeMapPortrait(person.getDefaultPortrait(), FriezeFreeMap.DEFAULT_PORTRAIT_RADIUS);
-        //
-        initLink = new PersonInitLink(FreeMapPerson.this);
+        portraitLinks = new LinkedList<>();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -91,16 +91,12 @@ public class FreeMapPerson {
         return Collections.unmodifiableList(plots);
     }
 
-    public List<Link> getStayLinks() {
+    public List<FreeMapLink> getStayLinks() {
         return Collections.unmodifiableList(stayLinks.values().stream().collect(Collectors.toList()));
     }
 
-    public List<Link> getTravelLinks() {
+    public List<FreeMapLink> getTravelLinks() {
         return Collections.unmodifiableList(travelLinks);
-    }
-
-    public PersonInitLink getPersonInitLink() {
-        return initLink;
     }
 
     public Plot getFirstPlot() {
@@ -111,11 +107,22 @@ public class FreeMapPerson {
         return plotsByPeriod.get(stayPeriod);
     }
 
-    public void createPortrait(Link sourceLink) {
-        FreeMapPortrait freeMapPortrait = new FreeMapPortrait(person.getDefaultPortrait(), freeMap.getPortraitRadius());
+    public void createPortrait(FreeMapLink sourceLink) {
+        var xPosition = (sourceLink.getEndPlot().getX() - sourceLink.getBeginPlot().getX()) / 2.0 + sourceLink.getBeginPlot().getX();
+        var yPosition = (sourceLink.getEndPlot().getY() - sourceLink.getBeginPlot().getY()) / 2.0 + sourceLink.getBeginPlot().getY();
+        var freeMapPortrait = new FreeMapPortrait(person.getDefaultPortrait(), freeMap.getPortraitRadius());
+        freeMapPortrait.setX(xPosition);
+        freeMapPortrait.setY(yPosition);
+        // TODO: also use cursor position
+        var linkConnector = sourceLink.createConnector();
         // todo create anchor
-        PortraitLink portraitLink = new PortraitLink(freeMapPortrait, firstPlot, firstPlot);
+        var portraitLink = new PortraitLink(freeMapPortrait, linkConnector);
         portraits.add(freeMapPortrait);
+        portraitLinks.add(portraitLink);
+        propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, freeMapPortrait);
+        propertyChangeSupport.firePropertyChange(PORTRAIT_LINK_ADDED, this, portraitLink);
+        var startEndPlots = new Pair(portraitLink.getBeginPlot(), portraitLink.getEndPlot());
+        propertyChangeSupport.firePropertyChange(PLOTS_ADDED, this, startEndPlots);
     }
 
     protected void addStay(StayPeriod stayPeriod) {
@@ -155,10 +162,10 @@ public class FreeMapPerson {
         }
         stays.remove(stayPeriod);
         stays.sort(StayPeriod.STAY_COMPARATOR);
-        //
         propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, stayPeriod);
         //
         var removedLink = stayLinks.get(stayPeriod);
+        // TODO remove ?
         propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);
         //
         var startEndPlots = plotsByPeriod.remove(stayPeriod);
@@ -169,6 +176,14 @@ public class FreeMapPerson {
         }
         updateFirstPlot();
         recalculateTravelLinks();
+    }
+
+    protected void setPlotsVisibilty(boolean visibility) {
+        plots.forEach(plot -> plot.setVisible(visibility));
+    }
+
+    protected void setPortraitConnectorsVisibilty(boolean visibility) {
+        portraitLinks.forEach(pLinks -> pLinks.setConnectorsVisible(visibility));
     }
 
     protected void updateStay(StayPeriod stayPeriod) {
@@ -185,9 +200,6 @@ public class FreeMapPerson {
         }
     }
 
-//    protected FreeMapPortrait getPortrait() {
-//        return portrait;
-//    }
     protected List<FreeMapPortrait> getPortraits() {
         return portraits;
     }

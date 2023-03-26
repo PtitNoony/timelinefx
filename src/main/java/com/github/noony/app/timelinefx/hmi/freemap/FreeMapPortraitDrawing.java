@@ -150,6 +150,7 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             // the file path shall always be relative to the project Folder
             var portrait = freeMapPortrait.getPortrait();
             var project = portrait.getPerson().getProject();
+            //
             var filePathS = project.getProjectFolder().getAbsolutePath() + File.separatorChar + portrait.getProjectRelativePath();
             LOG.log(Level.FINE, "Trying to load file {0}", new Object[]{filePathS});
             FileInputStream inputstream = new FileInputStream(filePathS);

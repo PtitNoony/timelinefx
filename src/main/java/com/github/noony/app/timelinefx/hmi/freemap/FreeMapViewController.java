@@ -57,6 +57,8 @@ public class FreeMapViewController implements Initializable {
     @FXML
     private CheckBox plotsVisibilityCB;
     @FXML
+    private CheckBox portraitConnectorVisibilityCB;
+    @FXML
     private TextField zoomField;
     @FXML
     private TextField widthField;
@@ -91,6 +93,13 @@ public class FreeMapViewController implements Initializable {
         plotsVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             if (friezeFreeMap != null) {
                 friezeFreeMap.setPlotVisibility(plotsVisibilityCB.isSelected());
+            }
+        });
+        //
+        portraitConnectorVisibilityCB.setSelected(true);
+        portraitConnectorVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if (friezeFreeMap != null) {
+                friezeFreeMap.setPortraitConnectorVisibility(portraitConnectorVisibilityCB.isSelected());
             }
         });
         //

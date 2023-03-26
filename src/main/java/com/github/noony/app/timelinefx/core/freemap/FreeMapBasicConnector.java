@@ -16,8 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
-import com.github.noony.app.timelinefx.core.Person;
-import com.github.noony.app.timelinefx.core.Place;
+import com.github.noony.app.timelinefx.core.IFriezeObject;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javafx.beans.property.DoubleProperty;
@@ -27,18 +26,15 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author hamon
  */
-public class Plot extends AbstractFreeMapConnector {
+public class FreeMapBasicConnector extends AbstractFreeMapConnector {
 
     public static final String PLOT_DATE_CHANGED = "plotDateChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final Person person;
-    private final Place place;
-    private final long parentPeriodID;
+    private final IFriezeObject parentObject;
 
     private double date;
-    private final PlotType type;
     private final DoubleProperty xPos;
     private final DoubleProperty yPos;
 
@@ -46,13 +42,11 @@ public class Plot extends AbstractFreeMapConnector {
     private boolean isSelected = false;
     private double plotSize;
 
-    protected Plot(Person aPerson, Place aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
-        propertyChangeSupport = new PropertyChangeSupport(Plot.this);
+    protected FreeMapBasicConnector(IFriezeObject aParentObject, double aDate, double aPlotSize) {
+        super();
+        propertyChangeSupport = new PropertyChangeSupport(FreeMapBasicConnector.this);
+        parentObject = aParentObject;
         //
-        person = aPerson;
-        place = aPlace;
-        type = aType;
-        parentPeriodID = aPeriodID;
         xPos = new SimpleDoubleProperty();
         yPos = new SimpleDoubleProperty();
         //
@@ -62,19 +56,7 @@ public class Plot extends AbstractFreeMapConnector {
 
     @Override
     public long getLinkedElementID() {
-        return parentPeriodID;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public Place getPlace() {
-        return place;
-    }
-
-    public PlotType getType() {
-        return type;
+        return parentObject.getId();
     }
 
     @Override
@@ -132,7 +114,7 @@ public class Plot extends AbstractFreeMapConnector {
 
     @Override
     public String getInfo() {
-        return "Plot [t=" + date + "  x=" + xPos.doubleValue() + ", y=" + yPos.doubleValue() + "]";
+        return "Connector [t=" + date + "  x=" + xPos.doubleValue() + ", y=" + yPos.doubleValue() + "]";
     }
 
     public void setX(double newX) {

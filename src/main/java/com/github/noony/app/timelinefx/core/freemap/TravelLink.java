@@ -22,15 +22,17 @@ import com.github.noony.app.timelinefx.core.Person;
  *
  * @author hamon
  */
-public class TravelLink extends Link {
+public class TravelLink extends FreeMapLink {
 
     private final Person person;
 
     public TravelLink(Person aPerson, Plot aBeginPlot, Plot anEndPlot) {
-        super(aBeginPlot, anEndPlot, LinkType.TRAVEL, aPerson.getColor());
+        // TODO rethink constructor to remove useless color
+        super(aPerson, aBeginPlot, anEndPlot, LinkType.TRAVEL, aPerson.getColor());
         person = aPerson;
     }
 
+    // todo, in parent class?
     public Person getPerson() {
         return person;
     }

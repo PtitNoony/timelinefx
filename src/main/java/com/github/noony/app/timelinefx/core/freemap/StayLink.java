@@ -22,12 +22,12 @@ import com.github.noony.app.timelinefx.core.StayPeriod;
  *
  * @author hamon
  */
-public class StayLink extends Link {
+public class StayLink extends FreeMapLink {
 
     private final StayPeriod period;
 
     public StayLink(StayPeriod aPeriod, Plot aBeginPlot, Plot aEndPlot) {
-        super(aBeginPlot, aEndPlot, LinkType.STAY, aPeriod.getPerson().getColor());
+        super(aPeriod.getPerson(),aBeginPlot, aEndPlot, LinkType.STAY, aPeriod.getPerson().getColor());
         period = aPeriod;
     }
 

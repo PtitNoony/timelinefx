@@ -16,47 +16,62 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
+import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
+import com.github.noony.app.timelinefx.core.IFriezeObject;
+import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.hmi.freemap.LinkShape;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.LinkedList;
+import java.util.List;
 import javafx.scene.paint.Color;
 
 /**
  *
  * @author hamon
  */
-public class Link implements Selectable {
+public class FreeMapLink implements Selectable, IFriezeObject {
 
     private static final Color DEFAULT_COLOR = Color.BLUEVIOLET;
     private static final String COLOR_CHANGED = "colorChanged";
     private static final String LINK_SHAPE_CHANGED = "linkShapeChanged";
+    private static final String CONNECTOR_ADDED = "connectorAdded";
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final Plot beginPlot;
-    private final Plot endPlot;
+    private final long id;
+    private final Person person;
+    private final AbstractFreeMapConnector beginConnector;
+    private final AbstractFreeMapConnector endConnector;
     private final LinkType linkType;
+    //
+    private final List<AbstractFreeMapConnector> intermediateConnectors;
     //
     private LinkShape linkShape;
     private Color color;
     private boolean isSelected = false;
 
-    public Link(Plot aBeginPlot, Plot aEndPlot, LinkType type, Color aColor, LinkShape aLinkShape) {
-        propertyChangeSupport = new PropertyChangeSupport(Link.this);
+    protected FreeMapLink(Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor, LinkShape aLinkShape) {
+        id = FriezeObjectFactory.getNextID();
+        FriezeObjectFactory.addObject(FreeMapLink.this);
         //
-        beginPlot = aBeginPlot;
-        endPlot = aEndPlot;
+        propertyChangeSupport = new PropertyChangeSupport(FreeMapLink.this);
+        intermediateConnectors = new LinkedList<>();
+        //
+        person = aPerson;
+        beginConnector = aBeginPlot;
+        endConnector = aEndPlot;
         linkType = type;
         color = aColor;
         linkShape = aLinkShape;
     }
 
-    public Link(Plot aBeginPlot, Plot aEndPlot, LinkType type, Color aColor) {
-        this(aBeginPlot, aEndPlot, type, aColor, LinkShape.QUAD_LINE);
+    protected FreeMapLink(Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor) {
+        this(aPerson, aBeginPlot, aEndPlot, type, aColor, LinkShape.QUAD_LINE);
     }
 
-    public Link(Plot beginPlot, Plot endPlot, LinkType linkType) {
-        this(beginPlot, endPlot, linkType, DEFAULT_COLOR);
+    protected FreeMapLink(Person aPerson, AbstractFreeMapConnector beginPlot, AbstractFreeMapConnector endPlot, LinkType linkType) {
+        this(aPerson, beginPlot, endPlot, linkType, DEFAULT_COLOR);
     }
 
     @Override
@@ -80,12 +95,17 @@ public class Link implements Selectable {
         propertyChangeSupport.firePropertyChange(SELECTION_CHANGED, this, this.isSelected);
     }
 
-    public Plot getBeginPlot() {
-        return beginPlot;
+    @Override
+    public long getId() {
+        return id;
     }
 
-    public Plot getEndPlot() {
-        return endPlot;
+    public AbstractFreeMapConnector getBeginPlot() {
+        return beginConnector;
+    }
+
+    public AbstractFreeMapConnector getEndPlot() {
+        return endConnector;
     }
 
     public LinkType getType() {
@@ -105,14 +125,27 @@ public class Link implements Selectable {
         propertyChangeSupport.firePropertyChange(COLOR_CHANGED, this, color);
     }
 
-    public void setLinkShape(LinkShape aLinkShape) {
+    protected void setConnectorsVisible(boolean visibility) {
+        beginConnector.setVisible(visibility);
+        endConnector.setVisible(visibility);
+    }
+
+    protected void setLinkShape(LinkShape aLinkShape) {
         linkShape = aLinkShape;
         propertyChangeSupport.firePropertyChange(LINK_SHAPE_CHANGED, this, linkShape);
     }
 
+    protected AbstractFreeMapConnector createConnector() {
+        var newConnector = new FreeMapLinkConnector(this, (endConnector.getDate() - beginConnector.getDate()) / 2.0 + beginConnector.getDate(), beginConnector.getPlotSize());
+        // todo, manage person properly
+        intermediateConnectors.add(newConnector);
+        propertyChangeSupport.firePropertyChange(CONNECTOR_ADDED, this, newConnector);
+        return newConnector;
+    }
+
     @Override
     public String getInfo() {
-        return "Link " + linkType + " from: " + beginPlot + "  to:" + endPlot;
+        return "Link " + linkType + " from: " + beginConnector + "  to:" + endConnector;
     }
 
 }

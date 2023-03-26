@@ -33,10 +33,10 @@ import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.core.freemap.Link;
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.core.freemap.PlotType;
 import com.github.noony.app.timelinefx.core.freemap.StayLink;
@@ -681,23 +681,23 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
     private static Element createPlotElement(Document doc, Plot plot) {
         Element plotElement = doc.createElement(PLOT_ELEMENT);
         plotElement.setAttribute(TYPE_ATR, plot.getType().name());
-        plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getParentPeriodID()));
+        plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getLinkedElementID()));
         plotElement.setAttribute(X_POS_ATR, Double.toString(plot.getX()));
         plotElement.setAttribute(Y_POS_ATR, Double.toString(plot.getY()));
         return plotElement;
     }
 
-    private static Element createLinkElement(Document doc, Link link) {
+    private static Element createLinkElement(Document doc, FreeMapLink link) {
         Element linkElement = doc.createElement(LINK_ELEMENT);
         linkElement.setAttribute(TYPE_ATR, link.getType().name());
-        linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginPlot().getParentPeriodID()));
-        linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
+        linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginPlot().getLinkedElementID()));
+        linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndPlot().getLinkedElementID()));
         if (link instanceof StayLink stayLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(stayLink.getStayPeriod().getId()));
         } else if (link instanceof TravelLink travelLink) {
             linkElement.setAttribute(END_ID_ATR, Long.toString(travelLink.getPerson().getId()));
         }
-        linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndPlot().getParentPeriodID()));
+        linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndPlot().getLinkedElementID()));
         return linkElement;
     }
 

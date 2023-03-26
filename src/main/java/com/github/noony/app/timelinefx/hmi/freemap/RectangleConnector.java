@@ -16,69 +16,67 @@
  */
 package com.github.noony.app.timelinefx.hmi.freemap;
 
+import com.github.noony.app.timelinefx.core.freemap.AbstractFreeMapConnector;
 import com.github.noony.app.timelinefx.core.freemap.Plot;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
-
 import java.beans.PropertyChangeEvent;
-
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
  * @author hamon
  */
-public class RectanglePlot extends AbstractFxScalableNode {
+public class RectangleConnector extends AbstractFxScalableNode {
 
-    private final Plot plot;
-    private final Rectangle plotRectangle;
+    private final AbstractFreeMapConnector connector;
+    private final Rectangle connectorRectangle;
     //
     private Point2D oldScene;
     private Point2D currentScene;
     private double oldMainNodeTranslateX;
     private double oldMainNodeTranslateY;
 
-    public RectanglePlot(Plot aPlot) {
-        plot = aPlot;
-        plot.addPropertyChangeListener(RectanglePlot.this::handlePropertyChange);
-        plotRectangle = new Rectangle();
-        plotRectangle.setFill(Color.BLACK);
-        addNode(plotRectangle);
+    protected RectangleConnector(AbstractFreeMapConnector abstractConnector) {
+        connector = abstractConnector;
+        connector.addPropertyChangeListener(RectangleConnector.this::handlePropertyChange);
+        connectorRectangle = new Rectangle();
+        connectorRectangle.setFill(connector.getColor());
+        addNode(connectorRectangle);
         initInteractivity();
         updateLayout();
     }
 
-    public Plot getPlot() {
-        return plot;
+    protected AbstractFreeMapConnector getConnector() {
+        return connector;
     }
 
-    public Point2D getScenePosition() {
+    protected Point2D getScenePosition() {
         return getNode().localToScene(0, 0);
     }
 
     private void initInteractivity() {
         double gridSpace = 1; //TODO use a grid
-        plotRectangle.setOnMousePressed(event -> {
+        connectorRectangle.setOnMousePressed(event -> {
             oldScene = new Point2D(event.getScreenX(), event.getScreenY());
             oldMainNodeTranslateX = getNode().getTranslateX();
             oldMainNodeTranslateY = getNode().getTranslateY();
         });
-        plotRectangle.setOnMouseDragged(event -> {
+        connectorRectangle.setOnMouseDragged(event -> {
             currentScene = new Point2D(event.getScreenX(), event.getScreenY());
             setNodeTranslateX(oldMainNodeTranslateX + currentScene.getX() - oldScene.getX());
             setNodeTranslateY(oldMainNodeTranslateY + currentScene.getY() - oldScene.getY());
         });
-        plotRectangle.setOnMouseReleased(event -> {
+        connectorRectangle.setOnMouseReleased(event -> {
             currentScene = new Point2D(event.getScreenX(), event.getScreenY());
             var deltaXScaled = currentScene.getX() - oldScene.getX();
             var deltaYScaled = currentScene.getY() - oldScene.getY();
             var deltaX = deltaXScaled / getScale();
             var deltaY = deltaYScaled / getScale();
-            var newX = plot.getX() + (deltaX / gridSpace) * gridSpace;
-            var newY = plot.getY() + (deltaY % gridSpace) * gridSpace;
-            plot.setPosition(newX, newY);
+            var newX = connector.getX() + (deltaX / gridSpace) * gridSpace;
+            var newY = connector.getY() + (deltaY % gridSpace) * gridSpace;
+            connector.setPosition(newX, newY);
         });
-        plotRectangle.setOnMouseClicked(event -> plot.setSelected(!plot.isSelected()));
+        connectorRectangle.setOnMouseClicked(event -> connector.setSelected(!connector.isSelected()));
     }
 
     private void handlePropertyChange(PropertyChangeEvent event) {
@@ -90,12 +88,15 @@ public class RectanglePlot extends AbstractFxScalableNode {
             case Plot.SELECTION_CHANGED -> {
                 // nothing to do
             }
-            case Plot.PLOT_SIZE_CHANGED -> updateLayout();
-            case Plot.PLOT_VISIBILITY_CHANGED -> setVisible((boolean) event.getNewValue());
+            case Plot.PLOT_SIZE_CHANGED ->
+                updateLayout();
+            case Plot.PLOT_VISIBILITY_CHANGED ->
+                setVisible((boolean) event.getNewValue());
             case Plot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
             }
-            default -> throw new UnsupportedOperationException(event.getPropertyName());
+            default ->
+                throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
@@ -103,19 +104,20 @@ public class RectanglePlot extends AbstractFxScalableNode {
     protected final void updateLayout() {
         updateX();
         updateY();
-        var rectangleHalfWidthScaled = plot.getPlotSize() * getScale();
+        var rectangleHalfWidthScaled = connector.getPlotSize() * getScale();
         var size = rectangleHalfWidthScaled * 2;
-        plotRectangle.setWidth(size);
-        plotRectangle.setHeight(size);
-        plotRectangle.setX(-rectangleHalfWidthScaled);
-        plotRectangle.setY(-rectangleHalfWidthScaled);
+        connectorRectangle.setWidth(size);
+        connectorRectangle.setHeight(size);
+        connectorRectangle.setX(-rectangleHalfWidthScaled);
+        connectorRectangle.setY(-rectangleHalfWidthScaled);
     }
 
     private void updateX() {
-        setNodeTranslateX(plot.getX() * getScale());
+        setNodeTranslateX(connector.getX() * getScale());
     }
 
     private void updateY() {
-        setNodeTranslateY(plot.getY() * getScale());
+        setNodeTranslateY(connector.getY() * getScale());
     }
+
 }

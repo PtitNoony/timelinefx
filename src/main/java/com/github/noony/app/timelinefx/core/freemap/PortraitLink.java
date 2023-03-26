@@ -20,13 +20,15 @@ package com.github.noony.app.timelinefx.core.freemap;
  *
  * @author hamon
  */
-public class PortraitLink extends Link {
+public class PortraitLink extends FreeMapLink {
 
     private final FreeMapPortrait freeMapPortrait;
 
-    public PortraitLink(FreeMapPortrait aFreeMapPortrait, Plot aBeginPlot, Plot aEndPlot) {
-        super(aBeginPlot, aEndPlot, LinkType.PORTRAIT, aFreeMapPortrait.getPerson().getColor());
+    public PortraitLink(FreeMapPortrait aFreeMapPortrait, AbstractFreeMapConnector aConnector) {
+        super(aFreeMapPortrait.getPerson(), aFreeMapPortrait.getConnector(), aConnector, LinkType.PORTRAIT, aFreeMapPortrait.getPerson().getColor());
         freeMapPortrait = aFreeMapPortrait;
+        getBeginPlot().setColor(freeMapPortrait.getPerson().getColor());
+        getEndPlot().setColor(freeMapPortrait.getPerson().getColor());
     }
 
     public FreeMapPortrait getFreeMapPortrait() {
@@ -35,7 +37,7 @@ public class PortraitLink extends Link {
 
     @Override
     public String getInfo() {
-        return "Link for " + freeMapPortrait.getPerson().getName() + ":: " + freeMapPortrait.getPortrait().getName();
+        return "ConnectorLink for " + freeMapPortrait.getPerson().getName() + ":: " + freeMapPortrait.getPortrait().getName();
     }
 
 }

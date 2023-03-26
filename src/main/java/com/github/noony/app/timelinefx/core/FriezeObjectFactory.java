@@ -33,7 +33,7 @@ public class FriezeObjectFactory {
     public static final Level CREATION_LOGGING_LEVEL = Level.FINE;
 
     private static final Logger LOG = Logger.getGlobal();
-    private static final Map<Long, FriezeObject> OBJECTS = new HashMap<>();
+    private static final Map<Long, IFriezeObject> OBJECTS = new HashMap<>();
     //
     private static long nextUniqueId = 0L;
 
@@ -60,7 +60,7 @@ public class FriezeObjectFactory {
      *
      * @param object the object the be added
      */
-    public static final void addObject(FriezeObject object) {
+    public static final void addObject(IFriezeObject object) {
         if (OBJECTS.containsKey(object.getId())) {
             throw new IllegalStateException();
         }
@@ -84,7 +84,7 @@ public class FriezeObjectFactory {
      * @param id an id
      * @return the corresponding FriezeObject if it exists, null otherwise.
      */
-    public static final FriezeObject get(long id) {
+    public static final IFriezeObject get(long id) {
         return OBJECTS.get(id);
     }
 

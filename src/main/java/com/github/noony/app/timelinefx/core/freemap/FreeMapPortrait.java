@@ -16,6 +16,8 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
+import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
+import com.github.noony.app.timelinefx.core.IFriezeObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Portrait;
 import java.beans.PropertyChangeEvent;
@@ -26,7 +28,7 @@ import java.beans.PropertyChangeSupport;
  *
  * @author hamon
  */
-public class FreeMapPortrait {
+public class FreeMapPortrait implements IFriezeObject {
 
     public static final String POSITION_CHANGED = "positionChanged";
     public static final String RADIUS_CHANGED = "portraitRadiusChanged";
@@ -36,20 +38,33 @@ public class FreeMapPortrait {
 
     private final PropertyChangeSupport propertyChangeSupport;
     private final Person person;
+    private final long id;
     private Portrait portrait;
+    //
+    private final FreeMapBasicConnector connector;
     //
     private double xPos;
     private double yPos;
     private double radius;
 
     protected FreeMapPortrait(Portrait aPortrait, double aRadius) {
+        id = FriezeObjectFactory.getNextID();
+        FriezeObjectFactory.addObject(FreeMapPortrait.this);
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPortrait.this);
+        connector = new FreeMapBasicConnector(FreeMapPortrait.this, radius, xPos);
         portrait = aPortrait;
         person = portrait.getPerson();
         radius = aRadius;
         xPos = DEFAULT_POSITION;
         yPos = DEFAULT_POSITION;
+        connector.setX(xPos);
+        connector.setY(yPos);
         person.addPropertyChangeListener(this::handlePersonChanges);
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public Portrait getPortrait() {
@@ -70,11 +85,13 @@ public class FreeMapPortrait {
 
     public void setX(double x) {
         xPos = x;
+        connector.setX(xPos);
         propertyChangeSupport.firePropertyChange(POSITION_CHANGED, xPos, yPos);
     }
 
     public void setY(double y) {
         yPos = y;
+        connector.setY(yPos);
         propertyChangeSupport.firePropertyChange(POSITION_CHANGED, xPos, yPos);
     }
 
@@ -93,6 +110,10 @@ public class FreeMapPortrait {
 
     public double getRadius() {
         return radius;
+    }
+
+    public AbstractFreeMapConnector getConnector() {
+        return connector;
     }
 
     private void handlePersonChanges(PropertyChangeEvent event) {

@@ -4,7 +4,7 @@
   <groupId>com.github.noony.app</groupId>
   <artifactId>timelinefx</artifactId>
   <name>Timeline FX</name>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <organization>
     <name>NoOnY</name>
   </organization>
@@ -13,7 +13,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.10</version>
         <executions>
           <execution>
             <goals>
@@ -99,9 +99,6 @@
         <version>3.11.0</version>
         <configuration>
           <release>${maven.compiler.release}</release>
-          <compilerArgs>
-            <arg>--enable-preview</arg>
-          </compilerArgs>
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
@@ -127,7 +124,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.9.2</version>
+      <version>5.9.3</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -147,7 +144,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <version>5.9.2</version>
+      <version>5.9.3</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -159,7 +156,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.9.2</version>
+      <version>5.9.3</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -174,12 +171,12 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.release>19</maven.compiler.release>
+    <maven.compiler.release>20</maven.compiler.release>
     <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
-    <maven.compiler.source>19</maven.compiler.source>
-    <maven.compiler.target>19</maven.compiler.target>
+    <maven.compiler.source>20</maven.compiler.source>
+    <maven.compiler.target>20</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>19</javafx.version>
-    <javafx.dep.version>19</javafx.dep.version>
+    <javafx.version>20</javafx.version>
+    <javafx.dep.version>20</javafx.dep.version>
   </properties>
 </project>

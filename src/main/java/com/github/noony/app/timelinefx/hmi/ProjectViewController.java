@@ -17,17 +17,21 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
+import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.examples.StarWars;
 import com.github.noony.app.timelinefx.examples.TestExample;
+import static com.github.noony.app.timelinefx.hmi.AppInstanceConfiguration.ANCHOR_CONSTRAINT_ZERO;
+import com.github.noony.app.timelinefx.hmi.frieze.FriezeContentEditorController;
 import com.github.noony.app.timelinefx.save.XMLHandler;
 import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -41,6 +45,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.Toggle;
@@ -68,13 +74,12 @@ public final class ProjectViewController implements Initializable {
 
     @FXML
     private AnchorPane mainAnchorPane;
-
     @FXML
     private MenuBar menuBar;
-
     @FXML
     private HBox toolbarHBox;
-
+    @FXML
+    private Menu friezesMenu;
     @FXML
     private RadioMenuItem contentViewMI;
     @FXML
@@ -84,6 +89,8 @@ public final class ProjectViewController implements Initializable {
     @FXML
     private RadioMenuItem picturesChronologyViewMI;
 
+    private final Map<CheckMenuItem, Frieze> friezeMenuItems = new HashMap<>();
+
     private TimeLineProject timeLineProject;
     private FileChooser fileChooser;
     //
@@ -91,15 +98,13 @@ public final class ProjectViewController implements Initializable {
     private Scene modalScene;
     //
     private Parent contentEditionView = null;
-    private Parent timelineView = null;
+    private Parent friezeContentEditorView = null;
     private Parent galleryView = null;
     private Parent configurationView = null;
     private Parent projectCreationWizardView = null;
     private Parent pictureLoaderView = null;
     private Parent picturesChronologyView = null;
     //
-    private ContentEditionViewController contentController = null;
-    private TimelineViewController timelineController = null;
     private GalleryViewController galleryController = null;
     private ConfigurationViewController configurationController = null;
     private ProjectCreationWizardController projectCreationWizardController = null;
@@ -127,7 +132,7 @@ public final class ProjectViewController implements Initializable {
         createToolbar();
         //
         loadContentEditionView();
-        loadTimelineView();
+        loadFriezeContentEditorView();
         //
         viewToggleGroup = new ToggleGroup();
         contentViewMI.setToggleGroup(viewToggleGroup);
@@ -163,9 +168,12 @@ public final class ProjectViewController implements Initializable {
             }
         });
         //
-        StageFactory.reApplyTheme();
+        AppInstanceConfiguration.addPropertyChangeListener(this::handleAppInstanceConfigChanges);
         //
         displayContentEditionView();
+        //
+        StageFactory.reApplyTheme();
+        //
         CustomProfiler.stop(loadProjectLoadingFreizesMethodName);
     }
 
@@ -211,6 +219,7 @@ public final class ProjectViewController implements Initializable {
             LOG.log(Level.INFO, "Loading project {0}", inputFile);
             TimeLineProject timeline = TimeLineProjectFactory.loadProject(inputFile);
             if (timeline != null) {
+                AppInstanceConfiguration.setSelectedTimeline(timeline);
                 loadProject(timeline);
             } else {
                 LOG.log(Level.SEVERE, "Could not load project {0}.", inputFile);
@@ -222,9 +231,7 @@ public final class ProjectViewController implements Initializable {
     protected void handleFriezeCreation(ActionEvent event) {
         LOG.log(Level.INFO, "handleFriezeCreation {0}", event);
         var frieze = FriezeFactory.createFrieze(timeLineProject, "New Frieze", timeLineProject.getStays());
-        System.err.println("TODO handle freize creation");
-        // TODO use a property change instead ?
-        timelineController.loadFreize(frieze);
+        AppInstanceConfiguration.setSelectedFrieze(frieze);
     }
 
     @FXML
@@ -236,31 +243,32 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleCreateStarWars(ActionEvent event) {
         LOG.log(Level.INFO, "handleCreateStarWars {0}", event);
-        loadProject(StarWars.createStartWars());
+        var starWars = StarWars.createStartWars();
+        AppInstanceConfiguration.setSelectedTimeline(starWars);
+//        loadProject(starWars);
     }
 
-    public void loadProject(TimeLineProject aTimeLineProject) {
+    private void loadProject(TimeLineProject aTimeLineProject) {
+        if (timeLineProject == aTimeLineProject) {
+            return;
+        } else if (timeLineProject != null) {
+            System.err.println("TODO: manage listeners");
+//            timeLineProject.removeListener(listener);
+        }
         timeLineProject = aTimeLineProject;
+        friezeMenuItems.clear();
+        friezesMenu.getItems().clear();
+        //
         if (timeLineProject == null) {
+            // TODO: each view
             contentEditionView.setDisable(true);
-            timelineView.setDisable(true);
+            friezeContentEditorView.setDisable(true);
         } else {
             contentEditionView.setDisable(false);
-            timelineView.setDisable(false);
+            friezeContentEditorView.setDisable(false);
+            timeLineProject.getFriezes().forEach(this::createFriezeCheckMenuItem);
+            updateFrizeMenuItemsSelection(AppInstanceConfiguration.getSelectedFrieze());
         }
-        //
-        contentController.setTimeLineProject(timeLineProject);
-        if (pictureLoaderViewController != null) {
-            pictureChronologyViewController.setProject(timeLineProject);
-        }
-        if (galleryController != null) {
-            galleryController.setProject(timeLineProject);
-        }
-        timelineController.reset();
-        var loadProjectLoadingFreizesMethodName = this.getClass().getSimpleName() + "__loadProjectLoadingFreizes";
-        CustomProfiler.start(loadProjectLoadingFreizesMethodName);
-        timeLineProject.getFriezes().forEach(timelineController::loadFreize);
-        CustomProfiler.stop(loadProjectLoadingFreizesMethodName);
     }
 
     private void executeActionOnHold() {
@@ -272,6 +280,7 @@ public final class ProjectViewController implements Initializable {
                 showModalStage(projectCreationWizardView);
             }
             case NONE -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException("Unsupported action type :: " + actionOnHold);
@@ -281,19 +290,15 @@ public final class ProjectViewController implements Initializable {
     }
 
     private void showModalStage(Parent content) {
-        var showModalStageMethodName = this.getClass().getSimpleName() + "__showModalStage";
+        var showModalStageMethodName = getClass().getSimpleName() + "__showModalStage";
         CustomProfiler.start(showModalStageMethodName);
         if (modalStage == null) {
             modalStage = new Stage();
             modalStage.setAlwaysOnTop(true);
             modalScene = new Scene(content);
             modalStage.setScene(modalScene);
-            modalStage.setOnCloseRequest(e -> {
-                hideModalStage();
-            });
-            modalStage.setOnHiding(e -> {
-                hideModalStage();
-            });
+            modalStage.setOnCloseRequest(e -> hideModalStage());
+            modalStage.setOnHiding(e -> hideModalStage());
         } else {
             modalScene.setRoot(content);
         }
@@ -325,11 +330,11 @@ public final class ProjectViewController implements Initializable {
     }
 
     private void displayTimelineView() {
-        if (timelineView == null) {
-            loadTimelineView();
-            timelineView.setDisable(true);
+        if (friezeContentEditorView == null) {
+            loadFriezeContentEditorView();
+            friezeContentEditorView.setDisable(true);
         }
-        setMainPaneContent(timelineView);
+        setMainPaneContent(friezeContentEditorView);
         toolbarToggleGroup.selectToggle(timeLineToggle);
         viewToggleGroup.selectToggle(timelineViewMI);
         //
@@ -376,27 +381,25 @@ public final class ProjectViewController implements Initializable {
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Could not load ContentEditionView ::  {0}", new Object[]{ex});
         }
-        contentController = loader.getController();
+//        contentController = loader.getController();
 //        configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
         CustomProfiler.stop(loadContentEditionViewMethodName);
     }
 
-    private void loadTimelineView() {
-        var loadTimelineViewMethodName = this.getClass().getSimpleName() + "__loadTimelineView";
-        CustomProfiler.start(loadTimelineViewMethodName);
-        FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("TimelineView.fxml"));
+    private void loadFriezeContentEditorView() {
+        var loadFriezeViewMethodName = getClass().getSimpleName() + "__loadFriezeView";
+        CustomProfiler.start(loadFriezeViewMethodName);
+        FXMLLoader loader = new FXMLLoader(FriezeContentEditorController.class.getResource("FriezeContentEditor.fxml"));
         try {
-            timelineView = loader.load();
+            friezeContentEditorView = loader.load();
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Could not load TimelineView ::  {0}", new Object[]{ex});
+            LOG.log(Level.SEVERE, "Could not load FriezeView ::  {0}", new Object[]{ex});
         }
-        timelineController = loader.getController();
-//        configurationController.addPropertyChangeListener(this::handleConfigurationControllerChanges);
-        CustomProfiler.stop(loadTimelineViewMethodName);
+        CustomProfiler.stop(loadFriezeViewMethodName);
     }
 
     private void loadGalleryView() {
-        var loadGalleryViewMethodName = this.getClass().getSimpleName() + "__loadGalleryView";
+        var loadGalleryViewMethodName = getClass().getSimpleName() + "__loadGalleryView";
         CustomProfiler.start(loadGalleryViewMethodName);
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("GalleryView.fxml"));
         try {
@@ -410,9 +413,9 @@ public final class ProjectViewController implements Initializable {
     }
 
     protected void loadConfigurationView() {
-        var loadConfigurationViewMethodName = this.getClass().getSimpleName() + "__loadConfigurationView";
+        var loadConfigurationViewMethodName = getClass().getSimpleName() + "__loadConfigurationView";
         CustomProfiler.start(loadConfigurationViewMethodName);
-        CustomProfiler.start(this.getClass().getSimpleName() + "__loadConfigurationView");
+        CustomProfiler.start(getClass().getSimpleName() + "__loadConfigurationView");
         FXMLLoader loader = new FXMLLoader(PlaceCreationViewController.class.getResource("ConfigurationView.fxml"));
         try {
             configurationView = loader.load();
@@ -449,19 +452,15 @@ public final class ProjectViewController implements Initializable {
         }
         pictureChronologyViewController = loader.getController();
         pictureChronologyViewController.addPropertyChangeListener(this::handleEventChronologyViewControllerChanges);
-        if (timeLineProject != null) {
-            pictureChronologyViewController.setProject(timeLineProject);
-        }
         CustomProfiler.stop(loadEventChronologyViewMethodName);
     }
 
     private void setMainPaneContent(Node node) {
         mainAnchorPane.getChildren().setAll(node);
-        // TODO use a constant
-        AnchorPane.setBottomAnchor(node, 0.0);
-        AnchorPane.setTopAnchor(node, 0.0);
-        AnchorPane.setLeftAnchor(node, 0.0);
-        AnchorPane.setRightAnchor(node, 0.0);
+        AnchorPane.setBottomAnchor(node, ANCHOR_CONSTRAINT_ZERO);
+        AnchorPane.setTopAnchor(node, ANCHOR_CONSTRAINT_ZERO);
+        AnchorPane.setLeftAnchor(node, ANCHOR_CONSTRAINT_ZERO);
+        AnchorPane.setRightAnchor(node, ANCHOR_CONSTRAINT_ZERO);
     }
 
     private void showSaveWindow() {
@@ -492,7 +491,7 @@ public final class ProjectViewController implements Initializable {
                 TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
                 loadProject(project);
                 contentEditionView.setDisable(false);
-                timelineView.setDisable(false);
+                friezeContentEditorView.setDisable(false);
                 displayContentEditionView();
             }
             default ->
@@ -543,7 +542,6 @@ public final class ProjectViewController implements Initializable {
                 if (pictureLoaderView == null) {
                     pictureLoaderView = (Parent) event.getNewValue();
                     pictureLoaderViewController = (PictureLoaderViewController) event.getOldValue();
-                    pictureLoaderViewController.setProject(timeLineProject);
                     pictureLoaderViewController.addPropertyChangeListener(this::handlePictureLoaderWindowEvents);
                 }
                 showModalStage(pictureLoaderView);
@@ -565,9 +563,9 @@ public final class ProjectViewController implements Initializable {
     private void createContentEditionToggle() {
         // https://iconarchive.com/show/outline-icons-by-iconsmind/Pencil-icon.html
         contentEditionToggle = new ToggleButton();
-        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Pencil-icon.png"));
-        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Pencil-icon_selected.png"));
-        final ImageView toggleImage = new ImageView();
+        final var unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Pencil-icon.png"));
+        final var selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Pencil-icon_selected.png"));
+        final var toggleImage = new ImageView();
         contentEditionToggle.setGraphic(toggleImage);
         toggleImage.imageProperty().bind(Bindings
                 .when(contentEditionToggle.selectedProperty())
@@ -581,9 +579,9 @@ public final class ProjectViewController implements Initializable {
     private void createTimelineToggle() {
         // https://iconarchive.com/show/windows-8-icons-by-icons8/Data-Timeline-icon.html
         timeLineToggle = new ToggleButton();
-        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Data-Timeline-icon.png"));
-        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Data-Timeline-icon_selected.png"));
-        final ImageView toggleImage = new ImageView();
+        final var unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Data-Timeline-icon.png"));
+        final var selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Data-Timeline-icon_selected.png"));
+        final var toggleImage = new ImageView();
         timeLineToggle.setGraphic(toggleImage);
         toggleImage.imageProperty().bind(Bindings
                 .when(timeLineToggle.selectedProperty())
@@ -595,11 +593,11 @@ public final class ProjectViewController implements Initializable {
     }
 
     private void createGalleryToggle() {
-        https://iconarchive.com/show/windows-8-icons-by-icons8/Photo-Video-Gallery-icon.html
+        // https://iconarchive.com/show/windows-8-icons-by-icons8/Photo-Video-Gallery-icon.html
         galleryToggle = new ToggleButton();
-        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Video-Gallery-icon.png"));
-        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Video-Gallery-icon_selected.png"));
-        final ImageView toggleImage = new ImageView();
+        final var unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Video-Gallery-icon.png"));
+        final var selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Video-Gallery-icon_selected.png"));
+        final var toggleImage = new ImageView();
         galleryToggle.setGraphic(toggleImage);
         toggleImage.imageProperty().bind(Bindings
                 .when(galleryToggle.selectedProperty())
@@ -613,9 +611,9 @@ public final class ProjectViewController implements Initializable {
     private void createPicturesChronologyToggleToggle() {
         // https://iconarchive.com/show/outline-icons-by-iconsmind/Photo-Album-icon.html
         picturesChronologyToggle = new ToggleButton();
-        final Image unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Album-icon.png"));
-        final Image selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Album-icon_selected.png"));
-        final ImageView toggleImage = new ImageView();
+        final var unselected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Album-icon.png"));
+        final var selected = new Image(PlaceCreationViewController.class.getResourceAsStream("Photo-Album-icon_selected.png"));
+        final var toggleImage = new ImageView();
         picturesChronologyToggle.setGraphic(toggleImage);
         toggleImage.imageProperty().bind(Bindings
                 .when(picturesChronologyToggle.selectedProperty())
@@ -624,6 +622,45 @@ public final class ProjectViewController implements Initializable {
         );
         picturesChronologyToggle.setToggleGroup(toolbarToggleGroup);
         toolbarHBox.getChildren().add(picturesChronologyToggle);
+    }
+
+    private void handleAppInstanceConfigChanges(PropertyChangeEvent event) {
+        LOG.log(Level.INFO, "Handling app instance configuration change: {0}.", new Object[]{event});
+        switch (event.getPropertyName()) {
+            case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED -> {
+                var selectedFrieze = (Frieze) event.getNewValue();
+                var foundItem = friezeMenuItems.containsValue(selectedFrieze);
+                if (!foundItem && selectedFrieze != null) {
+                    createFriezeCheckMenuItem(selectedFrieze);
+                } else {
+                    updateFrizeMenuItemsSelection(selectedFrieze);
+                }
+            }
+            case AppInstanceConfiguration.TIMELINE_SELECTED_CHANGED -> {
+                loadProject((TimeLineProject) event.getNewValue());
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void createFriezeCheckMenuItem(Frieze aFrieze) {
+        var friezeItem = new CheckMenuItem(aFrieze.getName());
+        friezeItem.selectedProperty().addListener((var ov, var t, var t1) -> {
+            if (t1) {
+                AppInstanceConfiguration.setSelectedFrieze(aFrieze);
+            }
+        });
+        friezeMenuItems.put(friezeItem, aFrieze);
+        friezesMenu.getItems().add(friezeItem);
+    }
+
+    private void updateFrizeMenuItemsSelection(Frieze aSelectedFrieze) {
+        friezeMenuItems.forEach((item, f) -> {
+            var isSame = f == aSelectedFrieze;
+            item.setSelected(isSame);
+            item.setDisable(isSame);
+        });
     }
 
 }

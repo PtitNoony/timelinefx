@@ -16,20 +16,27 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
+import com.github.noony.app.timelinefx.core.FriezeObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author arnaud
  */
-public class FreeMapPlace {
+public class FreeMapPlace implements FriezeObject {
 
     public static final String Y_POS_CHANGED = "yPosChanged";
     public static final String WIDTH_POS_CHANGED = "widthPosChanged";
@@ -43,37 +50,78 @@ public class FreeMapPlace {
     public static final double DEFAULT_HEIGHT = 25;
     public static final double DEFAULT_PLACE_PADDING = 8;
 
+    private static final Logger LOG = Logger.getGlobal();
+
     private static final double DEFAULT_MIN_X = 0;
     private static final double DEFAULT_MAX_X = 0;
 
+    //
+    private static final Map<Long, List<FreeMapPlace>> FACTORY_CONTENT = new HashMap<>();
+
+    public static final FreeMapPlace createFreeMapPlace(long aFriezeFreeMapID, Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {
+        var freeMapPlaces = FACTORY_CONTENT.getOrDefault(aFriezeFreeMapID, new LinkedList<>());
+        if (freeMapPlaces.isEmpty()) {
+            FACTORY_CONTENT.put(aFriezeFreeMapID, freeMapPlaces);
+        }
+        if (freeMapPlaces.stream().anyMatch(fp -> fp.getPlace() == aPlace)) {
+            throw new IllegalStateException("Cannot create a Freemap place twice. (" + aPlace.getName() + " in " + FriezeFreeMapFactory.getFriezeFreeMap(aFriezeFreeMapID).getName() + ")");
+        }
+        var freeMapPlace = new FreeMapPlace(aPlace, aPlotSeparation, aNameWidth, aFontSize);
+        freeMapPlaces.add(freeMapPlace);
+        return freeMapPlace;
+    }
+
+    public static final void resetFactory() {
+        FACTORY_CONTENT.clear();
+    }
+
+    //
     private final PropertyChangeSupport propertyChangeSupport;
+
     //
-    private final Place place;
-    private final List<Person> persons;
-    private final List<Plot> plots;
+    // paramters to be saved
     //
+    private final long id;
+    // for the order of each person when drawn
+    private final List<FreeMapPerson> persons;
     private double yPos;
-    private double placeStayWidth;
-    private double height = DEFAULT_HEIGHT;
     private double fontSize;
     private double placeNameWidth;
+    //
+    // other instance parameters, usually calculated
+    //
+    private final Place place;
+    private final List<FreeMapPlot> registeredPlots;
+    //
+    private double placeStayWidth;
+    private double height = DEFAULT_HEIGHT;
     private double plotSeparation;
     //
     private double minX = DEFAULT_MIN_X;
     private double maxX = DEFAULT_MAX_X;
 
-    protected FreeMapPlace(Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {
+    private FreeMapPlace(Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPlace.this);
+        id = aPlace.getId();
         place = aPlace;
-        plots = new LinkedList<>();
+        registeredPlots = new LinkedList<>();
         persons = new LinkedList<>();
         plotSeparation = aPlotSeparation;
         placeNameWidth = aNameWidth;
         fontSize = aFontSize;
     }
 
+    @Override
+    public long getId() {
+        return id;
+    }
+
     public Place getPlace() {
         return place;
+    }
+
+    public String getName() {
+        return place.getName();
     }
 
     // TODO update layout
@@ -81,7 +129,7 @@ public class FreeMapPlace {
 //        placeNameWidth = newNameWidth;
 //        propertyChangeSupport.firePropertyChange(NAME_WIDTH_CHANGED, this, placeNameWidth);
 //    }
-    public double getPlaceNameWidth() {
+    public double getNameWidth() {
         return placeNameWidth;
     }
 
@@ -107,8 +155,31 @@ public class FreeMapPlace {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void addPlot(Plot plot) {
-        plots.add(plot);
+    /**
+     * This method adds persons that are not contained and requires the array to contains at least the persons already contained in the place. And this method adds the remaining
+     * persons even if no stays are linked.
+     *
+     * @param personsSorted an array containing the persons in the new order (top to bottom)
+     * @return return false if the conditions are not met.
+     */
+    public boolean setPersonOrder(FreeMapPerson[] personsSorted) {
+        List<FreeMapPerson> personsSortedAsList = Arrays.asList(personsSorted);
+        for (var person : persons) {
+            if (!personsSortedAsList.contains(person)) {
+                LOG.log(Level.WARNING, "Could not setPersonOrder for place {0} since person {1} is missing.", new Object[]{getName(), person.getName()});
+                return false;
+            }
+        }
+        persons.clear();
+        persons.addAll(personsSortedAsList);
+        // update plots
+        setY(yPos);
+        LOG.log(Level.INFO, "Successfull setPersonOrder for FreeMapPlace {0}.", new Object[]{getName()});
+        return true;
+    }
+
+    protected void registerFreeMapPlot(FreeMapPlot plot) {
+        registeredPlots.add(plot);
         var person = plot.getPerson();
         if (!persons.contains(person)) {
             persons.add(person);
@@ -128,7 +199,11 @@ public class FreeMapPlace {
         return maxX;
     }
 
-    public int indexOf(Person p) {
+    public List<FreeMapPerson> getPersons() {
+        return Collections.unmodifiableList(persons);
+    }
+
+    public int indexOf(FreeMapPerson p) {
         return persons.indexOf(p);
     }
 
@@ -157,20 +232,22 @@ public class FreeMapPlace {
     public void setY(double newY) {
         var oldY = yPos;
         yPos = newY;
-        plots.forEach(plot -> {
+        registeredPlots.forEach(plot -> {
             var deltaY = plot.getY() - oldY;
             plot.setY(yPos + deltaY);
         });
         propertyChangeSupport.firePropertyChange(Y_POS_CHANGED, this, yPos);
     }
 
-    public List<Plot> getPlots() {
-        return Collections.unmodifiableList(plots);
+    public List<FreeMapPlot> getPlots() {
+        return Collections.unmodifiableList(registeredPlots);
     }
 
     protected void removePerson(Person aPerson) {
-        if (persons.remove(aPerson)) {
-            plots.stream().forEach(plot -> {
+        var freemapPersonToRemove = persons.stream().filter(fmP -> fmP.getPerson() == aPerson).findAny().orElse(null);
+        if (freemapPersonToRemove != null) {
+            persons.remove(freemapPersonToRemove);
+            registeredPlots.stream().forEach(plot -> {
                 var personPlot = plot.getPerson();
                 var index = indexOf(personPlot);
                 plot.setY(yPos + (index + 1) * plotSeparation);
@@ -183,10 +260,13 @@ public class FreeMapPlace {
 
     private void handlePlotChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED, Plot.PLOT_DATE_CHANGED -> {
+            case FreeMapPlot.POS_CHANGED, FreeMapPlot.PLOT_DATE_CHANGED -> {
                 updateMinMaxX();
             }
-            case Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
+            case FreeMapPlot.PLOT_SIZE_CHANGED, FreeMapPlot.PLOT_VISIBILITY_CHANGED -> {
+                // nothing to do
+            }
+            case Selectable.SELECTION_CHANGED -> {
                 // nothing to do
             }
             default ->
@@ -198,8 +278,8 @@ public class FreeMapPlace {
         var oldMin = minX;
         var oldMax = maxX;
         //
-        minX = plots.stream().mapToDouble(Plot::getX).min().orElse(DEFAULT_MIN_X) - DEFAULT_PLACE_PADDING;
-        maxX = plots.stream().mapToDouble(Plot::getX).max().orElse(DEFAULT_MAX_X) + DEFAULT_PLACE_PADDING;
+        minX = registeredPlots.stream().mapToDouble(FreeMapPlot::getX).min().orElse(DEFAULT_MIN_X) - DEFAULT_PLACE_PADDING;
+        maxX = registeredPlots.stream().mapToDouble(FreeMapPlot::getX).max().orElse(DEFAULT_MAX_X) + DEFAULT_PLACE_PADDING;
         //
         if (Math.abs(oldMax - maxX) + Math.abs(oldMin - minX) > GridPositionable.EPSILON) {
             propertyChangeSupport.firePropertyChange(MIN_MAX_X_CHANGED, minX, maxX);

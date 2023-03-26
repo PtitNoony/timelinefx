@@ -18,6 +18,7 @@ package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
+import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -93,7 +95,6 @@ public class TimeLineProject {
         pictureChronologies = new LinkedList<>();
     }
 
-
     private void initFolders(Map<String, String> configParams) {
         var projectFolderLocation = configParams.getOrDefault(PROJECT_FOLDER_KEY, Configuration.getProjectsParentFolder() + File.separator + name);
         var portraitsFolderLocation = configParams.getOrDefault(PORTRAIT_FOLDER_KEY, DEFAULT_PORTRAIT_FOLDER);
@@ -107,7 +108,7 @@ public class TimeLineProject {
                 Path path = projectFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create project folder : {0}", ex);
+                LOG.log(Level.SEVERE, "Could not create project folder : {0}", new Object[]{ex});
             }
         }
         projectFile = new File(projectFolderLocation + File.separator + name + ".xml");
@@ -119,7 +120,7 @@ public class TimeLineProject {
                 Path path = portraitsFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create portrait folder : {0}", ex);
+                LOG.log(Level.SEVERE, "Could not create portrait folder : {0}.", new Object[]{ex});
             }
         }
         String picturesRoot = projectFolderLocation + File.separator + picturesFolderLocation;
@@ -129,7 +130,7 @@ public class TimeLineProject {
                 Path path = picturesFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create pictures folder : {0}", ex);
+                LOG.log(Level.SEVERE, "Could not create pictures folder : {0}.", new Object[]{ex});
             }
         }
         miniaturesFolder = new File(projectFolderLocation + File.separator + miniaturesFolderLocation);
@@ -138,7 +139,7 @@ public class TimeLineProject {
                 Path path = miniaturesFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create miniature folder : {0}", ex);
+                LOG.log(Level.SEVERE, "Could not create miniature folder : {0}.", new Object[]{ex});
             }
         }
         //
@@ -170,8 +171,12 @@ public class TimeLineProject {
         return projectFolder;
     }
 
-    public File getPortraitsFolder() {
+    public File getPortraitsAbsoluteFolder() {
         return portraitsFolder;
+    }
+
+    public String getPortraitsRelativeFolder() {
+        return CustomFileUtils.fromAbsoluteToProjectRelative(this, portraitsFolder);
     }
 
     public File getTimelineFile() {
@@ -243,6 +248,16 @@ public class TimeLineProject {
 
     public Place getPlaceByName(String placeName) {
         return allPlaces.get(placeName);
+    }
+
+    public void addAllStays(StayPeriod... stays) {
+        for (StayPeriod s : stays) {
+            addStay(s);
+        }
+    }
+
+    public void addAllStays(Collection<? extends StayPeriod> stays) {
+        stays.forEach(this::addStay);
     }
 
     public void addStay(StayPeriod aStay) {
@@ -323,15 +338,7 @@ public class TimeLineProject {
                 addPerson((Person) event.getNewValue());
             case Frieze.STAY_ADDED ->
                 addStay((StayPeriod) event.getNewValue());
-            case Frieze.DATE_WINDOW_CHANGED,
-                    Frieze.PERSON_REMOVED,
-                    Frieze.PLACE_REMOVED,
-                    Frieze.NAME_CHANGED,
-                    Frieze.STAY_UPDATED,
-                    Frieze.START_DATE_ADDED,
-                    Frieze.START_DATE_REMOVED,
-                    Frieze.END_DATE_ADDED,
-                    Frieze.END_DATE_REMOVED -> {
+            case Frieze.DATE_WINDOW_CHANGED, Frieze.PERSON_REMOVED, Frieze.PLACE_REMOVED, Frieze.NAME_CHANGED, Frieze.STAY_UPDATED, Frieze.START_DATE_ADDED, Frieze.START_DATE_REMOVED, Frieze.END_DATE_ADDED, Frieze.END_DATE_REMOVED -> {
                 // ignoring
             }
             case Frieze.STAY_REMOVED -> {
@@ -344,12 +351,7 @@ public class TimeLineProject {
 
     private void handlePicturesChronologyChange(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case PictureChronology.PICTURE_ADDED,
-                    PictureChronology.PICTURE_REMOVED,
-                    PictureChronology.NAME_CHANGED,
-                    PictureChronology.LAYOUT_CHANGED,
-                    PictureChronology.LINK_ADDED,
-                    PictureChronology.LINK_REMOVED -> {
+            case PictureChronology.PICTURE_ADDED, PictureChronology.PICTURE_REMOVED, PictureChronology.NAME_CHANGED, PictureChronology.LAYOUT_CHANGED, PictureChronology.LINK_ADDED, PictureChronology.LINK_REMOVED -> {
                 // nothing to do
             }
             default ->

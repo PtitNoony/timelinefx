@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 NoOnY
+ * Copyright (C) 2023 NoOnY
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.core.freemap;
+package com.github.noony.app.timelinefx.core.freemap.connectors;
+
+import com.github.noony.app.timelinefx.core.FriezeObject;
+import com.github.noony.app.timelinefx.core.freemap.GridPositionable;
+import com.github.noony.app.timelinefx.core.freemap.Selectable;
+import javafx.scene.paint.Color;
 
 /**
  *
  * @author hamon
  */
-public class PortraitLink extends Link {
+public interface FreeMapConnector extends GridPositionable, Selectable, FriezeObject {
 
-    private final FreeMapPortrait freeMapPortrait;
+    public static final Color DEFAULT_COLOR = Color.BLACK;
 
-    public PortraitLink(FreeMapPortrait aFreeMapPortrait, Plot aBeginPlot, Plot aEndPlot) {
-        super(aBeginPlot, aEndPlot, LinkType.PORTRAIT, aFreeMapPortrait.getPerson().getColor());
-        freeMapPortrait = aFreeMapPortrait;
-    }
+    void setColor(Color aColor);
 
-    public FreeMapPortrait getFreeMapPortrait() {
-        return freeMapPortrait;
-    }
+    Color getColor();
 
-    @Override
-    public String getInfo() {
-        return "Link for " + freeMapPortrait.getPerson().getName() + ":: " + freeMapPortrait.getPortrait().getName();
-    }
+    double getDate();
+
+    double getPlotSize();
+
+    long getLinkedElementID();
 
 }

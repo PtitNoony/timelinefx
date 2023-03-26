@@ -32,7 +32,7 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public class ChronologyPictureMiniature extends FriezeObject {
+public class ChronologyPictureMiniature implements FriezeObject {
 
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
@@ -42,6 +42,7 @@ public class ChronologyPictureMiniature extends FriezeObject {
     public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getCurrenltyUsedAbsoluteTime(), c2.getCurrenltyUsedAbsoluteTime());
 
     private final PropertyChangeSupport propertyChangeSupport;
+    private final long id;
 
     private final IPicture picture;
     private final DateObject dateObject;
@@ -49,8 +50,8 @@ public class ChronologyPictureMiniature extends FriezeObject {
     private double scale;
     private boolean usesCustomTime;
 
-    protected ChronologyPictureMiniature(long id, IPicture aPicture, Point2D aPosition, double aScale) {
-        super(id);
+    protected ChronologyPictureMiniature(long anId, IPicture aPicture, Point2D aPosition, double aScale) {
+        id = anId;
         propertyChangeSupport = new PropertyChangeSupport(ChronologyPictureMiniature.this);
         picture = aPicture;
         position = aPosition;
@@ -58,6 +59,11 @@ public class ChronologyPictureMiniature extends FriezeObject {
         dateObject = new DateObject(aPicture);
         dateObject.addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(TIME_CHANGED, e, dateObject.getAbsoluteTime()));
         usesCustomTime = false;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public void addListener(PropertyChangeListener listener) {

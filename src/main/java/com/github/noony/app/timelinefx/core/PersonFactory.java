@@ -16,10 +16,8 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.FriezeObjectFactory.CREATION_LOGGING_LEVEL;
-import java.util.HashMap;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
 
@@ -29,51 +27,48 @@ import javafx.scene.paint.Color;
  */
 public final class PersonFactory {
 
-    private static final Map<Long, Person> PERSONS = new HashMap<>();
-
     private static final Logger LOG = Logger.getGlobal();
+
+    private static final Factory<Person> FACTORY = new Factory<>();
 
     private PersonFactory() {
         // private utility constructor
     }
 
     public static void reset() {
-        PERSONS.clear();
+        FACTORY.reset();
     }
 
     public static Person getPerson(long id) {
-        return PERSONS.get(id);
+        return FACTORY.get(id);
     }
 
     public static Person createPerson(TimeLineProject project, String personName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0}  ", new Object[]{personName});
-        var person = new Person(project, FriezeObjectFactory.getNextID(), personName);
-        PERSONS.put(person.getId(), person);
-        FriezeObjectFactory.addObject(person);
+        var person = new Person(project, FACTORY.getNextID(), personName);
+        FACTORY.addObject(person);
         return person;
     }
 
     public static Person createPerson(TimeLineProject project, String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
-        var person = new Person(project, FriezeObjectFactory.getNextID(), personName, color, null, null);
-        PERSONS.put(person.getId(), person);
-        FriezeObjectFactory.addObject(person);
+        var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
+        FACTORY.addObject(person);
         return person;
     }
 
     public static Person createPerson(TimeLineProject project, long id, String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
-        if (!FriezeObjectFactory.isIdAvailable(id)) {
-            throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + PERSONS.get(id) + "[" + PERSONS.get(id).getId() + "])");
+        if (!FACTORY.isIdAvailable(id)) {
+            throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");
         }
         var person = new Person(project, id, personName, color, null, null);
-        PERSONS.put(person.getId(), person);
-        FriezeObjectFactory.addObject(person);
+        FACTORY.addObject(person);
         return person;
     }
 
     public static List< Person> getPERSONS() {
-        return PERSONS.values().stream().sorted(Person.COMPARATOR).toList();
+        return FACTORY.getObjects().stream().sorted(Person.COMPARATOR).toList();
     }
 
 }

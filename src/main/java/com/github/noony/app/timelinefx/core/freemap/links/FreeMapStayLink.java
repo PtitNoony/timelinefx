@@ -14,30 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.core.freemap;
+package com.github.noony.app.timelinefx.core.freemap.links;
 
-import com.github.noony.app.timelinefx.core.StayPeriod;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapStay;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
+import com.github.noony.app.timelinefx.hmi.freemap.LinkShape;
 
 /**
  *
  * @author hamon
  */
-public class StartPlot extends Plot {
+public class FreeMapStayLink extends FreeMapSimpleLink {
 
-    private final StayPeriod period;
+    private final FreeMapStay period;
 
-    public StartPlot(StayPeriod stayPeriod, double plotSize) {
-        super(stayPeriod.getPerson(), stayPeriod.getPlace(), stayPeriod.getStartDate(), PlotType.START, stayPeriod.getId(), plotSize);
-        period = stayPeriod;
+    protected FreeMapStayLink(long id, FreeMapStay aStay, FreeMapPlot aBeginPlot, FreeMapPlot aEndPlot) {
+        super(id, aStay.getPerson(),aBeginPlot, aEndPlot, LinkType.STAY, aStay.getPerson().getPerson().getColor(),LinkShape.SIMPLE_LINE);
+        period = aStay;
     }
 
-    public StayPeriod getStayPeriod() {
+    public FreeMapStay getStayPeriod() {
         return period;
     }
 
     @Override
     public String getInfo() {
-        return "start";
+        return "Link for " + period.getPerson().getName() + " @ " + period.getPlace().getName();
     }
 
 }

@@ -106,6 +106,10 @@ public class Person extends FriezeObject {
     }
 
     public Portrait getDefaultPortrait() {
+        // Checking it here to only create a default portrait when it really becomes necessary
+        if (defaultPortrait == null) {
+            defaultPortrait = PortraitFactory.createPortrait(this);
+        }
         return defaultPortrait;
     }
 
@@ -179,7 +183,7 @@ public class Person extends FriezeObject {
     public void setDateOfBirth(LocalDate newDoB) {
         if (newDoB == null) {
             // for the time being we do not support clearing date of birth
-            LOG.log(Level.INFO,"Clearing date of birth is not supported yet in {0}", new Object[]{this});
+            LOG.log(Level.INFO, "Clearing date of birth is not supported yet in {0}", new Object[]{this});
         } else if (dateOfBirth == null) {
             dateOfBirth = newDoB;
             timeFormat = TimeFormat.LOCAL_TIME;
@@ -244,7 +248,7 @@ public class Person extends FriezeObject {
     public void setDateOfDeath(LocalDate newDoD) {
         if (newDoD == null) {
             // for the time being we do not support clearing date of death
-            LOG.log(Level.INFO,"Clearing date of death is not supported yet in {0}", new Object[]{this});
+            LOG.log(Level.INFO, "Clearing date of death is not supported yet in {0}", new Object[]{this});
         } else if (dateOfDeath == null) {
             dateOfDeath = newDoD;
             timeFormat = TimeFormat.LOCAL_TIME;

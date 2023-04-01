@@ -52,6 +52,21 @@ public final class PortraitFactory {
         return PORTRAITS.get(id);
     }
 
+    public static Portrait createPortrait(Person person) {
+        LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with person={0} and default picture.", new Object[]{person});
+        System.err.println(" !! person.getProject().getPortraitsFolder()");
+        System.err.println(" >>> =" + person.getProject().getPortraitsFolder());
+        String filePath = person.getProject().getPortraitsFolder().getAbsolutePath() + File.separator + Person.DEFAULT_PICTURE_NAME;
+        var file = new File(filePath);
+        var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
+        assert picInfo != null;
+        var portrait = new Portrait(FriezeObjectFactory.getNextID(), person, filePath, picInfo.getWidth(), picInfo.getHeight());
+        PORTRAITS.put(portrait.getId(), portrait);
+        FriezeObjectFactory.addObject(portrait);
+        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_CREATED, null, portrait);
+        return portrait;
+    }
+
     public static Portrait createPortrait(Person person, String filePath) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with person={0} filePath={1}.", new Object[]{person, filePath});
         var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));

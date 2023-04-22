@@ -17,11 +17,15 @@
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.Configuration;
+import com.github.noony.app.timelinefx.core.Portrait;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.core.freemap.Selectable;
+import com.github.noony.app.timelinefx.hmi.CustomModalWindow;
+import com.github.noony.app.timelinefx.hmi.PortraitSelectionViewController;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -29,7 +33,9 @@ import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
@@ -79,6 +85,11 @@ public class FreeMapViewController implements Initializable {
     private FriezeFreeMap friezeFreeMap;
     //
     private FileChooser fileChooser;
+    private CustomModalWindow modalWindow;
+    private Parent portraitSelectionView = null;
+    private PortraitSelectionViewController portraitSelectionViewController;
+    //
+    private FreeMapPortrait freeMapPortraitToUpdate = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -254,14 +265,65 @@ public class FreeMapViewController implements Initializable {
         zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 
-    private void handleSelectedItemChange(PropertyChangeEvent event) {
-        Selectable selectable = (Selectable) event.getOldValue();
+    private void handleFreeFormDrawingChange(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case FriezeFreeFormDrawing.PORTRAIT_SECTION_REQUEST -> {
+                var freeMapPortrait = (FreeMapPortrait) event.getNewValue();
+                displayPortraitSelectionWindow(freeMapPortrait);
+            }
+            default ->
+                throw new AssertionError();
+        }
     }
 
     private void createDrawing() {
         friezeFreeFormDrawing = new FriezeFreeFormDrawing(friezeFreeMap);
-        friezeFreeFormDrawing.addPropertyChangeListener(this::handleSelectedItemChange);
+        friezeFreeFormDrawing.addPropertyChangeListener(this::handleFreeFormDrawingChange);
         viewScrollPane.setContent(friezeFreeFormDrawing.getNode());
+    }
+
+    private void displayPortraitSelectionWindow(FreeMapPortrait freeMapPortrait) {
+        if (portraitSelectionView == null) {
+            loadPortraitSelectionView();
+        }
+        freeMapPortraitToUpdate = freeMapPortrait;
+        portraitSelectionViewController.setPortraits(freeMapPortrait.getPerson().getPortraits(), freeMapPortrait.getPortrait());
+        showModalStage(portraitSelectionView);
+    }
+
+    private void loadPortraitSelectionView() {
+        FXMLLoader loader = new FXMLLoader(PortraitSelectionViewController.class.getResource("PortraitSelectionView.fxml"));
+        try {
+            portraitSelectionView = loader.load();
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, "Could not load PlaceCreationView ::  {0}", new Object[]{ex});
+        }
+        portraitSelectionViewController = loader.getController();
+        portraitSelectionViewController.addPropertyChangeListener(this::handlePortraitSelectionControllerChanges);
+    }
+
+    private void showModalStage(Parent content) {
+        if (modalWindow == null) {
+            modalWindow = new CustomModalWindow(viewScrollPane.getScene().getWindow(), content);
+        } else {
+            modalWindow.setRoot(content);
+        }
+        modalWindow.show();
+    }
+
+    private void handlePortraitSelectionControllerChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case PortraitSelectionViewController.HIDE_REQUESTED ->
+                modalWindow.hide();
+            case PortraitSelectionViewController.PORTRAIT_SELECTION_UPDATED -> {
+                if (freeMapPortraitToUpdate != null) {
+                    var newPortrait = (Portrait) event.getNewValue();
+                    freeMapPortraitToUpdate.changePortrait(newPortrait);
+                }
+            }
+            default ->
+                throw new AssertionError();
+        }
     }
 
 }

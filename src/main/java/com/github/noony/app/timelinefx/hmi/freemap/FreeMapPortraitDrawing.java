@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -39,6 +40,7 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
 
     private static final Logger LOG = Logger.getGlobal();
 
+    private final FriezeFreeFormDrawing friezeFreeFormDrawing;
     private final FreeMapPortrait freeMapPortrait;
     private final Circle circle;
     private final Circle smallerCircle;
@@ -55,8 +57,9 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
     private double oldTranslateX;
     private double oldTranslateY;
 
-    public FreeMapPortraitDrawing(FreeMapPortrait aPortrait) {
+    public FreeMapPortraitDrawing(FreeMapPortrait aPortrait, FriezeFreeFormDrawing aFriezeFreeFormDrawing) {
         super();
+        friezeFreeFormDrawing = aFriezeFreeFormDrawing;
         freeMapPortrait = aPortrait;
         circle = new Circle();
         smallerCircle = new Circle();
@@ -114,6 +117,12 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             //
             freeMapPortrait.setX(translateXScaled / getScale());
             freeMapPortrait.setY(translateYScaled / getScale());
+        });
+        imageView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                friezeFreeFormDrawing.requestPortraitSelectionUpdate(freeMapPortrait);
+
+            }
         });
     }
 

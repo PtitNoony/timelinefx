@@ -43,6 +43,8 @@ import javafx.scene.shape.Rectangle;
  */
 public class FriezeFreeFormDrawing {
 
+    public static final String PORTRAIT_SECTION_REQUEST = "portraitSelectionRequest";
+
     public static final double MAIN_CONTAINER_PADDING = 8;
 
     private final PropertyChangeSupport propertyChangeSupport;
@@ -127,7 +129,7 @@ public class FriezeFreeFormDrawing {
         return friezeFreeMap;
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    protected void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
@@ -135,17 +137,17 @@ public class FriezeFreeFormDrawing {
         return mainNode;
     }
 
-    public void zoomIn() {
+    protected void zoomIn() {
         scale = Math.max(FxScalableParent.MIN_SCALE, scale - FxScalableParent.SCALE_STEP);
         updateLayout();
     }
 
-    public void zoomOut() {
+    protected void zoomOut() {
         scale = Math.min(FxScalableParent.MAX_SCALE, scale + FxScalableParent.SCALE_STEP);
         updateLayout();
     }
 
-    public void setZoomLevel(double newScale) {
+    protected void setZoomLevel(double newScale) {
         if (newScale > FxScalableParent.MAX_SCALE) {
             scale = FxScalableParent.MAX_SCALE;
         } else {
@@ -245,7 +247,7 @@ public class FriezeFreeFormDrawing {
     }
 
     protected void createPortraitDrawing(FreeMapPortrait portrait) {
-        var portraitDrawing = new FreeMapPortraitDrawing(portrait);
+        var portraitDrawing = new FreeMapPortraitDrawing(portrait, this);
         portraitDrawings.put(portrait, portraitDrawing);
         portraitsGroup.getChildren().add(portraitDrawing.getNode());
         scalableNodes.add(portraitDrawing);
@@ -313,7 +315,11 @@ public class FriezeFreeFormDrawing {
         endDatesHandles.values().forEach(d -> d.setColor(color));
     }
 
-    public void updateLayout() {
+    protected void requestPortraitSelectionUpdate(FreeMapPortrait aFreeMapPortrait){
+        propertyChangeSupport.firePropertyChange(PORTRAIT_SECTION_REQUEST, this, aFreeMapPortrait);
+    }
+
+    protected void updateLayout() {
         //
         freeMapGroup.setTranslateX(MAIN_CONTAINER_PADDING);
         freeMapGroup.setTranslateY(MAIN_CONTAINER_PADDING);

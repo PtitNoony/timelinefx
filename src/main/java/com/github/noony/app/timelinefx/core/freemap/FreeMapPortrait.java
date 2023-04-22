@@ -23,6 +23,8 @@ import com.github.noony.app.timelinefx.core.Portrait;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,6 +35,8 @@ public class FreeMapPortrait implements IFriezeObject {
     public static final String POSITION_CHANGED = "positionChanged";
     public static final String RADIUS_CHANGED = "portraitRadiusChanged";
     public static final String PORTRAIT_UPDATED = "portraitUpdated";
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private static final double DEFAULT_POSITION = 0.0;
 
@@ -65,6 +69,15 @@ public class FreeMapPortrait implements IFriezeObject {
     @Override
     public long getId() {
         return id;
+    }
+
+    public void changePortrait(Portrait newPortrait) {
+        if (!person.getPortraits().contains(newPortrait)) {
+            LOG.log(Level.SEVERE, "Could not set portrait {0} for {1} who does not own it.", new Object[]{newPortrait, person});
+            return;
+        }
+        portrait = newPortrait;
+        propertyChangeSupport.firePropertyChange(PORTRAIT_UPDATED, this, portrait);
     }
 
     public Portrait getPortrait() {

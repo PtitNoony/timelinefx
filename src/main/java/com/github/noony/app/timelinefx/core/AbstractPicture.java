@@ -187,10 +187,12 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     @Override
     public void setDate(LocalDate aDate) {
-        if (aDate != null && !date.equals(aDate)) {
-            date = aDate;
-            timeFormat = TimeFormat.LOCAL_TIME;
-            propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+        if (aDate != null) {
+            if (date != null && !date.equals(aDate)) {
+                date = aDate;
+                timeFormat = TimeFormat.LOCAL_TIME;
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+            }
         }
     }
 

@@ -122,7 +122,7 @@ public class FreeMapPerson {
         // TODO: also use cursor position
         var linkConnector = sourceLink.createConnector(connectorID != IFileObject.NO_ID ? connectorID : FriezeObjectFactory.getNextID());
         // todo create anchor
-        var portraitLink = new PortraitLink(linkID, freeMapPortrait, linkConnector);
+        var portraitLink = new PortraitLink(linkID != IFileObject.NO_ID ? linkID : FriezeObjectFactory.getNextID(), freeMapPortrait, linkConnector);
         portraits.add(freeMapPortrait);
         portraitLinks.add(portraitLink);
         propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, freeMapPortrait);

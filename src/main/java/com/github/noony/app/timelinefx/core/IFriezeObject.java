@@ -22,6 +22,8 @@ package com.github.noony.app.timelinefx.core;
  */
 public interface IFriezeObject {
 
+    long NO_ID = -1;
+
     /**
      * Each IFriezeObject instance has a unique id in its project's scope
      *

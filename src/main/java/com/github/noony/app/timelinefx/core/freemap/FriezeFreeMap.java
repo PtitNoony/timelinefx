@@ -81,7 +81,7 @@ public final class FriezeFreeMap extends FriezeObject {
     private final List<Person> persons;
     private final Map<Place, FreeMapPlace> places;
     private final Map<Person, FreeMapPerson> freeMapPersons;
-    private final Map<Person, FreeMapPortrait> portraits;
+//    private final Map<Person, FreeMapPortrait> portraits;
     private final Map<Double, DateHandle> startDateHandles;
     private final Map<Double, DateHandle> endDateHandles;
     //
@@ -117,7 +117,7 @@ public final class FriezeFreeMap extends FriezeObject {
         persons = new LinkedList<>();
         places = new HashMap<>();
         freeMapPersons = new HashMap<>();
-        portraits = new HashMap<>();
+//        portraits = new HashMap<>();
         startDateHandles = new HashMap<>();
         endDateHandles = new HashMap<>();
         //
@@ -278,10 +278,6 @@ public final class FriezeFreeMap extends FriezeObject {
         return Collections.unmodifiableList(freeMapPersons.values().stream().collect(Collectors.toList()));
     }
 
-    public List<FreeMapPortrait> getPortraits() {
-        return Collections.unmodifiableList(portraits.values().stream().collect(Collectors.toList()));
-    }
-
     /**
      * Costly method
      *
@@ -332,14 +328,6 @@ public final class FriezeFreeMap extends FriezeObject {
 
     public FreeMapPlace getFreeMapPlace(long placeID) {
         return places.values().stream().filter(p -> p.getPlace().getId() == placeID).findAny().orElse(null);
-    }
-
-    public FreeMapPortrait getPortrait(long portraitID) {
-        return portraits.values().stream().filter(p -> p.getPerson().getId() == portraitID).findAny().orElse(null);
-    }
-
-    public FreeMapPortrait getPortrait(Person aPerson) {
-        return portraits.values().stream().filter(p -> p.getPerson() == aPerson).findAny().orElse(null);
     }
 
     public double getPortraitRadius() {
@@ -439,7 +427,8 @@ public final class FriezeFreeMap extends FriezeObject {
 
     public void setPortraitRadius(double newPortraitRadius) {
         portraitRadius = newPortraitRadius;
-        portraits.values().forEach(portrait -> portrait.setRadius(newPortraitRadius));
+        System.err.println(" todo : setPortraitRadius");
+//        portraits.values().forEach(portrait -> portrait.setRadius(newPortraitRadius));
     }
 
     private void addFreeMapPerson(Person person) {
@@ -503,10 +492,10 @@ public final class FriezeFreeMap extends FriezeObject {
         places.forEach((place, freemapPlace) -> freemapPlace.removePerson(person));
         //
         propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_REMOVED, this, freeMapPerson);
-        var removedPortrait = portraits.remove(person);
-        if (removedPortrait != null) {
-            propertyChangeSupport.firePropertyChange(FREE_MAP_PORTRAIT_REMOVED, this, removedPortrait);
-        }
+//        var removedPortrait = portraits.remove(person);
+//        if (removedPortrait != null) {
+//            propertyChangeSupport.firePropertyChange(FREE_MAP_PORTRAIT_REMOVED, this, removedPortrait);
+//        }
     }
 
     private void addFreeMapPlace(Place aPlace) {

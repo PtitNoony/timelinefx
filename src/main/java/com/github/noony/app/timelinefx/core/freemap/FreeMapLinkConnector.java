@@ -41,8 +41,8 @@ public class FreeMapLinkConnector extends AbstractFreeMapConnector {
     private boolean isSelected = false;
     private double plotSize;
 
-    protected FreeMapLinkConnector(FreeMapLink aSourceLink, double aDate, double aPlotSize) {
-        super();
+    protected FreeMapLinkConnector(long anID, FreeMapLink aSourceLink, double aDate, double aPlotSize) {
+        super(anID);
         propertyChangeSupport = new PropertyChangeSupport(FreeMapLinkConnector.this);
         sourceLink = aSourceLink;
         //

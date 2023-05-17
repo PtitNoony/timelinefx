@@ -16,6 +16,8 @@
  */
 package com.github.noony.app.timelinefx.core.freemap;
 
+import com.github.noony.app.timelinefx.core.FriezeObjectFactory;
+import com.github.noony.app.timelinefx.core.IFileObject;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import java.beans.PropertyChangeListener;
@@ -108,21 +110,29 @@ public class FreeMapPerson {
     }
 
     public void createPortrait(FreeMapLink sourceLink) {
+        createPortrait(sourceLink, IFileObject.NO_ID, IFileObject.NO_ID, IFileObject.NO_ID);
+    }
+
+    public void createPortrait(FreeMapLink sourceLink, long portraitID, long connectorID, long linkID) {
         var xPosition = (sourceLink.getEndPlot().getX() - sourceLink.getBeginPlot().getX()) / 2.0 + sourceLink.getBeginPlot().getX();
         var yPosition = (sourceLink.getEndPlot().getY() - sourceLink.getBeginPlot().getY()) / 2.0 + sourceLink.getBeginPlot().getY();
-        var freeMapPortrait = new FreeMapPortrait(person.getDefaultPortrait(), freeMap.getPortraitRadius());
+        FreeMapPortrait freeMapPortrait = new FreeMapPortrait(portraitID != IFileObject.NO_ID ? portraitID : FriezeObjectFactory.getNextID(), person.getDefaultPortrait(), freeMap.getPortraitRadius());
         freeMapPortrait.setX(xPosition);
         freeMapPortrait.setY(yPosition);
         // TODO: also use cursor position
-        var linkConnector = sourceLink.createConnector();
+        var linkConnector = sourceLink.createConnector(connectorID != IFileObject.NO_ID ? connectorID : FriezeObjectFactory.getNextID());
         // todo create anchor
-        var portraitLink = new PortraitLink(freeMapPortrait, linkConnector);
+        var portraitLink = new PortraitLink(linkID, freeMapPortrait, linkConnector);
         portraits.add(freeMapPortrait);
         portraitLinks.add(portraitLink);
         propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, freeMapPortrait);
         propertyChangeSupport.firePropertyChange(PORTRAIT_LINK_ADDED, this, portraitLink);
         var startEndPlots = new Pair(portraitLink.getBeginPlot(), portraitLink.getEndPlot());
         propertyChangeSupport.firePropertyChange(PLOTS_ADDED, this, startEndPlots);
+    }
+
+    public List<FreeMapPortrait> getPortraits() {
+        return Collections.unmodifiableList(portraits);
     }
 
     protected void addStay(StayPeriod stayPeriod) {
@@ -198,10 +208,6 @@ public class FreeMapPerson {
             freeMap.getStartDateHandle(startPlot.getDate()).addPlot(startPlot);
             freeMap.getEndDateHandle(endPlot.getDate()).addPlot(endPlot);
         }
-    }
-
-    protected List<FreeMapPortrait> getPortraits() {
-        return portraits;
     }
 
     private void updateFirstPlot() {

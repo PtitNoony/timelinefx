@@ -51,8 +51,8 @@ public class FreeMapPortrait implements IFriezeObject {
     private double yPos;
     private double radius;
 
-    protected FreeMapPortrait(Portrait aPortrait, double aRadius) {
-        id = FriezeObjectFactory.getNextID();
+    protected FreeMapPortrait(long anID, Portrait aPortrait, double aRadius) {
+        id = anID;
         FriezeObjectFactory.addObject(FreeMapPortrait.this);
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPortrait.this);
         connector = new FreeMapBasicConnector(FreeMapPortrait.this, radius, xPos);
@@ -64,6 +64,10 @@ public class FreeMapPortrait implements IFriezeObject {
         connector.setX(xPos);
         connector.setY(yPos);
         person.addPropertyChangeListener(this::handlePersonChanges);
+    }
+
+    protected FreeMapPortrait(Portrait aPortrait, double aRadius) {
+        this(FriezeObjectFactory.getNextID(), aPortrait, aRadius);
     }
 
     @Override

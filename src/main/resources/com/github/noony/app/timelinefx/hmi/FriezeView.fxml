@@ -19,7 +19,7 @@
 <?import org.controlsfx.control.CheckListView?>
 <?import org.controlsfx.control.CheckTreeView?>
 
-<SplitPane dividerPositions="0.25" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.FriezeViewController">
+<SplitPane dividerPositions="0.25" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.FriezeViewController">
     <items>
       <Accordion fx:id="leftAccordion">
         <panes>
@@ -47,7 +47,7 @@
                                  </children>
                               </GridPane>
                               <Separator prefWidth="200.0" />
-                              <Label text="FreeMaps">
+                              <Label text="FreeMaps" underline="true">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>

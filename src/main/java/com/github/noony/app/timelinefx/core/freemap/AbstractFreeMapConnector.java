@@ -31,17 +31,17 @@ public abstract class AbstractFreeMapConnector implements GridPositionable, Sele
     private final long id;
     private Color color;
 
-    public AbstractFreeMapConnector() {
-        id = FriezeObjectFactory.getNextID();
-        FriezeObjectFactory.addObject(AbstractFreeMapConnector.this);
-        color = DEFAULT_COLOR;
-    }
-
     public AbstractFreeMapConnector(long andId) {
         id = andId;
         if (!FriezeObjectFactory.isIdAvailable(andId)) {
             throw new IllegalStateException("Cannot create Abstract connector with existing id=" + Long.toString(andId));
         }
+        FriezeObjectFactory.addObject(AbstractFreeMapConnector.this);
+        color = DEFAULT_COLOR;
+    }
+
+    public AbstractFreeMapConnector() {
+        this(FriezeObjectFactory.getNextID());
     }
 
     protected void setColor(Color aColor) {

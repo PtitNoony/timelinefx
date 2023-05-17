@@ -24,8 +24,8 @@ public class PortraitLink extends FreeMapLink {
 
     private final FreeMapPortrait freeMapPortrait;
 
-    public PortraitLink(FreeMapPortrait aFreeMapPortrait, AbstractFreeMapConnector aConnector) {
-        super(aFreeMapPortrait.getPerson(), aFreeMapPortrait.getConnector(), aConnector, LinkType.PORTRAIT, aFreeMapPortrait.getPerson().getColor());
+    public PortraitLink(long anID, FreeMapPortrait aFreeMapPortrait, AbstractFreeMapConnector aConnector) {
+        super(anID, aFreeMapPortrait.getPerson(), aFreeMapPortrait.getConnector(), aConnector, LinkType.PORTRAIT, aFreeMapPortrait.getPerson().getColor());
         freeMapPortrait = aFreeMapPortrait;
         getBeginPlot().setColor(freeMapPortrait.getPerson().getColor());
         getEndPlot().setColor(freeMapPortrait.getPerson().getColor());

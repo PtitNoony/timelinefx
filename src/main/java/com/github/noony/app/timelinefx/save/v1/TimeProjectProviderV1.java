@@ -496,7 +496,9 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
                 double xPos = Double.parseDouble(e.getAttribute(X_POS_ATR));
                 double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
                 double radius = Double.parseDouble(e.getAttribute(RADIUS_ATR));
-                FreeMapPortrait portrait = freeMap.getPortrait(personID);
+//                FreeMapPortrait portrait = freeMap.getPortrait(personID);
+                FreeMapPortrait portrait = null;
+                System.err.println(" TODO parsePortraits");
                 if (portrait == null) {
                     throw new IllegalStateException("Cannot find portrait with personID=" + personID);
                 }
@@ -648,7 +650,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
         friezeFreeMapElement.setAttribute(FREEMAP_PLOT_SIZE_ATR, Double.toString(friezeFreeMap.getPlotSize()));
         //
         Element portraitsGroupElement = doc.createElement(PORTRAITS_GROUP);
-        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createPortraitElement(doc, portrait)));
+//        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createPortraitElement(doc, portrait)));
+        System.err.println(" TODO createPortraitElement");
         friezeFreeMapElement.appendChild(portraitsGroupElement);
         //
         Element plotsGroupElement = doc.createElement(PLOTS_GROUP);

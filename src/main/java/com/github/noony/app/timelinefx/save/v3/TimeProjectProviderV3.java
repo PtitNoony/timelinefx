@@ -35,15 +35,6 @@ import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
-import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
-import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
-import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
-import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
-import com.github.noony.app.timelinefx.core.freemap.Plot;
-import com.github.noony.app.timelinefx.core.freemap.PlotType;
-import com.github.noony.app.timelinefx.core.freemap.StayLink;
-import com.github.noony.app.timelinefx.core.freemap.TravelLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLinkType;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
@@ -61,7 +52,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -99,11 +89,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     public static final String FRIEZES_GROUP = "FRIEZES";
     public static final String STAYS_GROUP = "STAYS";
     public static final String STAYS_REF_GROUP = "stays";
-    public static final String FREEMAPS_GROUP = "freeMaps";
     public static final String PORTRAITS_GROUP = "portraits";
-    public static final String PLOTS_GROUP = "plots";
-    public static final String LINKS_GROUP = "links";
-    public static final String FREEMAP_PLACES_GROUP = "freeMapPlaces";
     public static final String PICTURE_CHRONOLOGIES_GROUP = "PICTURE_CHRONOLOGIES";
     //
     public static final String PLACE_ELEMENT = "place";
@@ -115,11 +101,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     public static final String FRIEZE_ELEMENT = "frieze";
     public static final String STAY_ELEMENT = "stay";
     public static final String STAY_ELEMENT_REF = "stayRef";
-    public static final String FREEMAP_ELEMENT = "freeMap";
     public static final String PORTRAIT_ELEMENT = "portrait";
-    public static final String PLOT_ELEMENT = "plot";
-    public static final String LINK_ELEMENT = "link";
-    public static final String FREEMAP_PLACE_ELEMENT = "freeMapPlace";
     public static final String PICTURE_CHRONOLOGY_ELEMENT = "pictureChronology";
     public static final String PICTURE_CHRONOLOGY_MINIATURE_ELEMENT = "pictureChronologyMiniature";
     public static final String PICTURE_CHRONOLOGY_LINK_ELEMENT = "pictureChronologyLink";
@@ -159,12 +141,12 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     public static final String Y_POS_ATR = "yPos";
     public static final String RADIUS_ATR = "radius";
     public static final String SCALE_ATR = "scale";
-    public static final String FREEMAP_PERSON_WIDTH_ATR = "personWidth";
-    public static final String FREEMAP_PLACE_NAME_WIDTH_ATR = "placeNameWidth";
-    public static final String FREEMAP_FONT_SIZE_ATR = "fontSize";
-    public static final String FREEMAP_PLOT_SEPARATION_ATR = "plotSeparation";
-    public static final String FREEMAP_PLOT_VISIBILITY_ATR = "plotVisibility";
-    public static final String FREEMAP_PLOT_SIZE_ATR = "plotSize";
+//    public static final String FREEMAP_PERSON_WIDTH_ATR = "personWidth";
+//    public static final String FREEMAP_PLACE_NAME_WIDTH_ATR = "placeNameWidth";
+//    public static final String FREEMAP_FONT_SIZE_ATR = "fontSize";
+//    public static final String FREEMAP_PLOT_SEPARATION_ATR = "plotSeparation";
+//    public static final String FREEMAP_PLOT_VISIBILITY_ATR = "plotVisibility";
+//    public static final String FREEMAP_PLOT_SIZE_ATR = "plotSize";
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -427,7 +409,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         return person;
     }
 
-    private static void parseObjectTimeValue(Element sourceElement, IDateObject aDateObject) {
+    protected static void parseObjectTimeValue(Element sourceElement, IDateObject aDateObject) {
         if (sourceElement.hasAttribute(TIME_FORMAT_ATR)) {
             var timeFormat = TimeFormat.valueOf(sourceElement.getAttribute(TIME_FORMAT_ATR));
             aDateObject.setTimeFormat(timeFormat);
@@ -534,11 +516,11 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             throw new IllegalStateException("Wrong number of STAYS_GROUP : " + stayGroups.getLength());
         }
         //
-        NodeList freemapGroups = friezeElement.getElementsByTagName(FREEMAPS_GROUP);
+        NodeList freemapGroups = friezeElement.getElementsByTagName(FreeMapProviderV3.FREEMAPS_GROUP);
         if (freemapGroups.getLength() != 1) {
             throw new IllegalStateException("Wrong number of FREEMAPS_GROUP : " + freemapGroups.getLength());
         }
-        parseFreeMaps((Element) freemapGroups.item(0), frieze);
+        FreeMapProviderV3.parseFreeMaps((Element) freemapGroups.item(0), frieze);
         //
         return frieze;
     }
@@ -616,153 +598,6 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         var end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
         StayPeriodSimpleTime stay = StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
         return stay;
-    }
-
-    private void parseFreeMaps(Element freemapsRootElement, Frieze frieze) {
-        NodeList freemapElements = freemapsRootElement.getChildNodes();
-        for (int i = 0; i < freemapElements.getLength(); i++) {
-            if (freemapElements.item(i).getNodeName().equals(FREEMAP_ELEMENT)) {
-                Element e = (Element) freemapElements.item(i);
-                parseFreeMap(e, frieze);
-            }
-        }
-    }
-
-    private void parseFreeMap(Element freemapElement, Frieze frieze) {
-        long freeMapID = Long.parseLong(freemapElement.getAttribute(ID_ATR));
-        FriezeFreeMap freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze);
-        if (freemapElement.hasAttribute(NAME_ATR)) {
-            freeMap.setName(freemapElement.getAttribute(NAME_ATR));
-        }
-        // !! IMPORTANT : set all the properties before updating plots, places...
-        // parsing parameters
-        double width = Double.parseDouble(freemapElement.getAttribute(WIDTH_ATR));
-        double height = Double.parseDouble(freemapElement.getAttribute(HEIGHT_ATR));
-        freeMap.setWidth(width);
-        freeMap.setHeight(height);
-        //
-        double personWidth = Double.parseDouble(freemapElement.getAttribute(FREEMAP_PERSON_WIDTH_ATR));
-        freeMap.setPersonWidth(personWidth);
-        //
-        double placeNameWidth = Double.parseDouble(freemapElement.getAttribute(FREEMAP_PLACE_NAME_WIDTH_ATR));
-        freeMap.setPlaceNameWidth(placeNameWidth);
-        //
-        double fontSize = Double.parseDouble(freemapElement.getAttribute(FREEMAP_FONT_SIZE_ATR));
-        freeMap.setFontSize(fontSize);
-        //
-        double plotSeparation = Double.parseDouble(freemapElement.getAttribute(FREEMAP_PLOT_SEPARATION_ATR));
-        freeMap.setPlotSeparation(plotSeparation);
-        //
-        boolean plotVisible = Boolean.parseBoolean(freemapElement.getAttribute(FREEMAP_PLOT_VISIBILITY_ATR));
-        freeMap.setPlotVisibility(plotVisible);
-        //
-        double plotSize = Double.parseDouble(freemapElement.getAttribute(FREEMAP_PLOT_SIZE_ATR));
-        freeMap.setPlotSize(plotSize);
-        //
-        NodeList portraitsGroups = freemapElement.getElementsByTagName(PORTRAITS_GROUP);
-//        if (portraitsGroups.getLength() < 1) {
-//            throw new IllegalStateException();
-//        }
-        if (portraitsGroups.getLength() > 0) {
-            parsePortraits((Element) portraitsGroups.item(0), freeMap);
-        }
-        //
-        NodeList freemapPlacesGroups = freemapElement.getElementsByTagName(FREEMAP_PLACES_GROUP);
-        if (freemapPlacesGroups.getLength() < 1) {
-            throw new IllegalStateException();
-        }
-        parseFreemapPlaces((Element) freemapPlacesGroups.item(0), freeMap);
-        //
-        NodeList plotsGroups = freemapElement.getElementsByTagName(PLOTS_GROUP);
-        if (plotsGroups.getLength() < 1) {
-            throw new IllegalStateException();
-        }
-        parsePlots((Element) plotsGroups.item(0), frieze, freeMap);
-        //
-        frieze.addFriezeFreeMap(freeMap);
-    }
-
-    private void parsePortraits(Element plotsRootElement, FriezeFreeMap freeMap) {
-        var milliIn = System.currentTimeMillis();
-        // <portrait person="21" xPos="690.0" yPos="179.8"/>
-        NodeList plotElements = plotsRootElement.getChildNodes();
-        for (int i = 0; i < plotElements.getLength(); i++) {
-            if (plotElements.item(i).getNodeName().equals(PORTRAIT_ELEMENT)) {
-                Element e = (Element) plotElements.item(i);
-                long personID = Long.parseLong(e.getAttribute(PERSON_ATR));
-                double xPos = Double.parseDouble(e.getAttribute(X_POS_ATR));
-                double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
-                double radius = Double.parseDouble(e.getAttribute(RADIUS_ATR));
-                FreeMapPortrait portrait = freeMap.getPortrait(personID);
-                if (portrait == null) {
-                    System.err.println(PersonFactory.getPERSONS());
-                    throw new IllegalStateException("Cannot find portrait with personID=" + personID);
-                }
-                portrait.setX(xPos);
-                portrait.setY(yPos);
-                portrait.setRadius(radius);
-            }
-        }
-        //
-        var milliOut = System.currentTimeMillis();
-        var time = milliOut - milliIn;
-        if (time > 1) {
-            LOG.log(Level.SEVERE, "Parsed portrairs for freemap {0}\n > took {1}ms.", new Object[]{freeMap.getName(), Long.toString(time)});
-        }
-    }
-
-    private void parseFreemapPlaces(Element freemapPlacesRootElement, FriezeFreeMap freeMap) {
-        //  <freeMapPlace height="72.0" placeID="6" yPos="439.2"/>
-        NodeList freemapPlaceElements = freemapPlacesRootElement.getChildNodes();
-        for (int i = 0; i < freemapPlaceElements.getLength(); i++) {
-            if (freemapPlaceElements.item(i).getNodeName().equals(FREEMAP_PLACE_ELEMENT)) {
-                Element e = (Element) freemapPlaceElements.item(i);
-                long placeID = Long.parseLong(e.getAttribute(PLACE_ID_ATR));
-                double height = Double.parseDouble(e.getAttribute(HEIGHT_ATR));
-                double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
-                FreeMapPlace freeMapPlace = freeMap.getFreeMapPlace(placeID);
-                if (freeMapPlace == null) {
-                    throw new IllegalStateException("Cannot find freeMapPlace with personID=" + placeID);
-                }
-                freeMapPlace.setHeight(height);
-                freeMapPlace.setY(yPos);
-            }
-        }
-    }
-
-    private void parsePlots(Element plotsRootElement, Frieze frieze, FriezeFreeMap freeMap) {
-        // <plot stayID="1" type="START" xPos="10.350877192982455" yPos="23.0"/>
-        NodeList plotElements = plotsRootElement.getChildNodes();
-        List<Plot> existingPlots = freeMap.getPlots();
-        for (int i = 0; i < plotElements.getLength(); i++) {
-            if (plotElements.item(i).getNodeName().equals(PLOT_ELEMENT)) {
-                Element e = (Element) plotElements.item(i);
-                String typeS = e.getAttribute(TYPE_ATR);
-                long stayID = Long.parseLong(e.getAttribute(STAY_ID_ATR));
-                double xPos = Double.parseDouble(e.getAttribute(X_POS_ATR));
-                double yPos = Double.parseDouble(e.getAttribute(Y_POS_ATR));
-                Optional<StayPeriod> stayOp = frieze.getStayPeriods().stream().filter(s -> s.getId() == stayID).findAny();
-                if (stayOp.isEmpty()) {
-                    throw new IllegalStateException();
-                }
-                Plot plot;
-                PlotType type;
-                // TODO use values
-                if (typeS.equals(PlotType.START.name())) {
-                    type = PlotType.START;
-                } else if (typeS.equals(PlotType.END.name())) {
-                    type = PlotType.END;
-                } else {
-                    throw new UnsupportedOperationException();
-                }
-                plot = existingPlots.stream().filter(p -> p.getLinkedElementID() == stayID && p.getType() == type).findFirst().orElse(null);
-                if (plot == null) {
-                    throw new IllegalStateException("Cannot find plot with stayID=" + stayID + " and of type " + typeS);
-                }
-                plot.setX(xPos);
-                plot.setY(yPos);
-            }
-        }
     }
 
     private List<PictureChronology> parsePictureChronologies(TimeLineProject project, Element pictureChronologiesRootElement) {
@@ -930,9 +765,9 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         friezeElement.appendChild(staysElement);
         frieze.getStayPeriods().forEach(stay -> staysElement.appendChild(createStayElementInFreize(doc, stay)));
         // FreeMaps
-        Element freemapsElement = doc.createElement(FREEMAPS_GROUP);
+        Element freemapsElement = doc.createElement(FreeMapProviderV3.FREEMAPS_GROUP);
         friezeElement.appendChild(freemapsElement);
-        frieze.getFriezeFreeMaps().forEach(freeMap -> freemapsElement.appendChild(createFreeMapElement(doc, freeMap)));
+        frieze.getFriezeFreeMaps().forEach(freeMap -> freemapsElement.appendChild(FreeMapProviderV3.createFreeMapElement(doc, freeMap)));
         return friezeElement;
     }
 
@@ -965,78 +800,6 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         return stayElement;
     }
 
-    private static Element createFreeMapElement(Document doc, FriezeFreeMap friezeFreeMap) {
-        var friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
-        friezeFreeMapElement.setAttribute(NAME_ATR, friezeFreeMap.getName());
-        friezeFreeMapElement.setAttribute(ID_ATR, Long.toString(friezeFreeMap.getId()));
-        friezeFreeMapElement.setAttribute(WIDTH_ATR, Double.toString(friezeFreeMap.getFreeMapWidth()));
-        friezeFreeMapElement.setAttribute(HEIGHT_ATR, Double.toString(friezeFreeMap.getFreeMapHeight()));
-        friezeFreeMapElement.setAttribute(FREEMAP_PERSON_WIDTH_ATR, Double.toString(friezeFreeMap.getPersonWidth()));
-        friezeFreeMapElement.setAttribute(FREEMAP_PLACE_NAME_WIDTH_ATR, Double.toString(friezeFreeMap.getPlaceNamesWidth()));
-        friezeFreeMapElement.setAttribute(FREEMAP_FONT_SIZE_ATR, Double.toString(friezeFreeMap.getFontSize()));
-        friezeFreeMapElement.setAttribute(FREEMAP_PLOT_SEPARATION_ATR, Double.toString(friezeFreeMap.getPlotSeparation()));
-        friezeFreeMapElement.setAttribute(FREEMAP_PLOT_VISIBILITY_ATR, Boolean.toString(friezeFreeMap.getPlotVisibility()));
-        friezeFreeMapElement.setAttribute(FREEMAP_PLOT_SIZE_ATR, Double.toString(friezeFreeMap.getPlotSize()));
-        //
-        var portraitsGroupElement = doc.createElement(PORTRAITS_GROUP);
-        friezeFreeMap.getPortraits().forEach(portrait -> portraitsGroupElement.appendChild(createFreeMapPortraitElement(doc, portrait)));
-        friezeFreeMapElement.appendChild(portraitsGroupElement);
-        //
-        var plotsGroupElement = doc.createElement(PLOTS_GROUP);
-        friezeFreeMap.getPlots().forEach(plot -> plotsGroupElement.appendChild(createPlotElement(doc, plot)));
-        friezeFreeMapElement.appendChild(plotsGroupElement);
-        //
-        var placesGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
-        friezeFreeMap.getPlaces().forEach(place -> placesGroupElement.appendChild(createFreeMapPlaceElement(doc, place)));
-        friezeFreeMapElement.appendChild(placesGroupElement);
-        //
-        var linksGroupElement = doc.createElement(LINKS_GROUP);
-        friezeFreeMap.getStayLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
-        friezeFreeMap.getTravelLinks().forEach(link -> linksGroupElement.appendChild(createLinkElement(doc, link)));
-        friezeFreeMapElement.appendChild(linksGroupElement);
-        //
-        return friezeFreeMapElement;
-    }
-
-    private static Element createFreeMapPortraitElement(Document doc, FreeMapPortrait portrait) {
-        var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
-        portraitElement.setAttribute(PERSON_ATR, Long.toString(portrait.getPerson().getId()));
-        portraitElement.setAttribute(X_POS_ATR, Double.toString(portrait.getX()));
-        portraitElement.setAttribute(Y_POS_ATR, Double.toString(portrait.getY()));
-        portraitElement.setAttribute(RADIUS_ATR, Double.toString(portrait.getRadius()));
-        return portraitElement;
-    }
-
-    private static Element createPlotElement(Document doc, Plot plot) {
-        var plotElement = doc.createElement(PLOT_ELEMENT);
-        plotElement.setAttribute(TYPE_ATR, plot.getType().name());
-        plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getLinkedElementID()));
-        plotElement.setAttribute(X_POS_ATR, Double.toString(plot.getX()));
-        plotElement.setAttribute(Y_POS_ATR, Double.toString(plot.getY()));
-        return plotElement;
-    }
-
-    private static Element createLinkElement(Document doc, FreeMapLink link) {
-        var linkElement = doc.createElement(LINK_ELEMENT);
-        linkElement.setAttribute(TYPE_ATR, link.getType().name());
-        linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginPlot().getLinkedElementID()));
-        linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndPlot().getLinkedElementID()));
-        if (link instanceof StayLink stayLink) {
-            linkElement.setAttribute(END_ID_ATR, Long.toString(stayLink.getStayPeriod().getId()));
-        } else if (link instanceof TravelLink travelLink) {
-            linkElement.setAttribute(END_ID_ATR, Long.toString(travelLink.getPerson().getId()));
-        }
-        linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndPlot().getLinkedElementID()));
-        return linkElement;
-    }
-
-    private static Element createFreeMapPlaceElement(Document doc, FreeMapPlace freeMapPlace) {
-        var placeElement = doc.createElement(FREEMAP_PLACE_ELEMENT);
-        placeElement.setAttribute(HEIGHT_ATR, Double.toString(freeMapPlace.getHeight()));
-        placeElement.setAttribute(PLACE_ID_ATR, Long.toString(freeMapPlace.getPlace().getId()));
-        placeElement.setAttribute(Y_POS_ATR, Double.toString(freeMapPlace.getYPos()));
-        return placeElement;
-    }
 
     private static Element createPictureChronologyElement(Document doc, PictureChronology pictureChronology) {
         var pictureChronologyElement = doc.createElement(PICTURE_CHRONOLOGY_ELEMENT);

@@ -51,8 +51,8 @@ public class FreeMapLink implements Selectable, IFriezeObject {
     private Color color;
     private boolean isSelected = false;
 
-    protected FreeMapLink(Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor, LinkShape aLinkShape) {
-        id = FriezeObjectFactory.getNextID();
+    protected FreeMapLink(long anID, Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor, LinkShape aLinkShape) {
+        id = anID;
         FriezeObjectFactory.addObject(FreeMapLink.this);
         //
         propertyChangeSupport = new PropertyChangeSupport(FreeMapLink.this);
@@ -66,12 +66,20 @@ public class FreeMapLink implements Selectable, IFriezeObject {
         linkShape = aLinkShape;
     }
 
+    protected FreeMapLink(Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor, LinkShape aLinkShape) {
+        this(FriezeObjectFactory.getNextID(), aPerson, aBeginPlot, aEndPlot, type, aColor, aLinkShape);
+    }
+
+    protected FreeMapLink(long anID, Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor) {
+        this(anID, aPerson, aBeginPlot, aEndPlot, type, aColor, LinkShape.QUAD_LINE);
+    }
+
     protected FreeMapLink(Person aPerson, AbstractFreeMapConnector aBeginPlot, AbstractFreeMapConnector aEndPlot, LinkType type, Color aColor) {
-        this(aPerson, aBeginPlot, aEndPlot, type, aColor, LinkShape.QUAD_LINE);
+        this(FriezeObjectFactory.getNextID(), aPerson, aBeginPlot, aEndPlot, type, aColor, LinkShape.QUAD_LINE);
     }
 
     protected FreeMapLink(Person aPerson, AbstractFreeMapConnector beginPlot, AbstractFreeMapConnector endPlot, LinkType linkType) {
-        this(aPerson, beginPlot, endPlot, linkType, DEFAULT_COLOR);
+        this(FriezeObjectFactory.getNextID(), aPerson, beginPlot, endPlot, linkType, DEFAULT_COLOR);
     }
 
     @Override
@@ -108,6 +116,10 @@ public class FreeMapLink implements Selectable, IFriezeObject {
         return endConnector;
     }
 
+    public Person getPerson() {
+        return person;
+    }
+
     public LinkType getType() {
         return linkType;
     }
@@ -135,8 +147,8 @@ public class FreeMapLink implements Selectable, IFriezeObject {
         propertyChangeSupport.firePropertyChange(LINK_SHAPE_CHANGED, this, linkShape);
     }
 
-    protected AbstractFreeMapConnector createConnector() {
-        var newConnector = new FreeMapLinkConnector(this, (endConnector.getDate() - beginConnector.getDate()) / 2.0 + beginConnector.getDate(), beginConnector.getPlotSize());
+    protected AbstractFreeMapConnector createConnector(long anID) {
+        var newConnector = new FreeMapLinkConnector(anID, this, (endConnector.getDate() - beginConnector.getDate()) / 2.0 + beginConnector.getDate(), beginConnector.getPlotSize());
         // todo, manage person properly
         intermediateConnectors.add(newConnector);
         propertyChangeSupport.firePropertyChange(CONNECTOR_ADDED, this, newConnector);

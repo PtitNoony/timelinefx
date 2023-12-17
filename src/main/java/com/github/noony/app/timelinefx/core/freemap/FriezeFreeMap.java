@@ -119,8 +119,6 @@ public final class FriezeFreeMap implements FriezeObject {
     private double availableWidth;
     private double timeRatio;
     //
-//    private final double drawingXOffset = MAP_PADDING;
-    //
 //    private TimeMode timeMode;
 
     protected FriezeFreeMap(long anID, Frieze aFrieze, Map<String, String> inputParameters, List<FreeMapDateHandle> dateHandles,
@@ -170,7 +168,6 @@ public final class FriezeFreeMap implements FriezeObject {
         updateLayout();
         //
         distributePlaces();
-//        distributePortraits();
 // removed until new modes are created, at the moment part of updateLayout
 //        displayTimeAsProportional();
     }
@@ -179,10 +176,6 @@ public final class FriezeFreeMap implements FriezeObject {
         this(anID, aFrieze, new HashMap<>(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), allStays);
     }
 
-//    protected FriezeFreeMap(long anID, Frieze aFrieze, Map<String, String> inputParameters,
-//            List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
-//        this(anID, aFrieze, inputParameters, dateHandles, stays, false);
-//    }
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
@@ -207,14 +200,6 @@ public final class FriezeFreeMap implements FriezeObject {
 
     public String getName() {
         return name;
-    }
-
-    public double getFreeMapWidth() {
-        return width;
-    }
-
-    public double getFreeMapHeight() {
-        return height;
     }
 
     public double getFreeMapDrawingWidth() {
@@ -333,30 +318,6 @@ public final class FriezeFreeMap implements FriezeObject {
         return places.values().stream().flatMap(x -> x.getPlots().stream()).collect(Collectors.toList());
     }
 
-//    /**
-//     * Costly method
-//     *
-//     * @return
-//     */
-//    public List<FreeMapStayLink> getStayLinks() {
-//        return freeMapPersons.values().stream().flatMap(x -> x.getFreeMapStayLinks().stream()).collect(Collectors.toList());
-//    }
-//    /**
-//     * Costly method
-//     *
-//     * @return
-//     */
-//    public List<FreeMapTravelLink> getTravelLinks() {
-//        return freeMapPersons.values().stream().flatMap(x -> x.getFreeMapTravelLinks().stream()).collect(Collectors.toList());
-//    }
-    // TODO :: usefull ?
-//    public int getPersonIndexAtPlace(Person aPerson, Place aPlace) {
-//        var freeMapPlace = places.get(aPlace);
-//        if (freeMapPlace == null) {
-//            return -1;
-//        }
-//        return freeMapPlace.indexOf(aPerson);
-//    }
     public double getPlotSize() {
         return plotSize;
     }
@@ -543,7 +504,6 @@ public final class FriezeFreeMap implements FriezeObject {
         freeMapPerson.addStay(stayPeriod, freeMapPlace);
     }
 
-
     private void addFreeMapStay(FreeMapStay freeMapStay) {
         var person = freeMapStay.getPerson();
         // TODO make sure the person is already added
@@ -563,7 +523,7 @@ public final class FriezeFreeMap implements FriezeObject {
         createDateHandle(startDate, FreeMapDateHandle.TimeType.START);
         var endDate = freeMapStay.getEndDate();
         var endDateHandle = endDateHandles.get(endDate);
-        if(endDateHandle==null){
+        if (endDateHandle == null) {
             throw new IllegalStateException("Cannot ");
         }
         //

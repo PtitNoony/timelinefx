@@ -150,14 +150,14 @@ public class TimeLineProject {
         try {
             FileOutputStream outputStream;
             try (InputStream inputstream = getClass().getResourceAsStream(Person.DEFAULT_PICTURE_NAME)) {
+                assert inputstream != null;
                 String outputPath = portraitsFolder + File.separator + Person.DEFAULT_PICTURE_NAME;
                 File outputFile = new File(outputPath);
                 LOG.log(Level.INFO, "> savePortraitResources :: {0}", outputPath);
                 outputStream = new FileOutputStream(outputFile);
-                assert inputstream != null;
                 outputStream.write(inputstream.readAllBytes());
+                outputStream.close();
             }
-            outputStream.close();
         } catch (FileNotFoundException ex) {
             LOG.log(Level.SEVERE, "Resource file not found :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
             LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});

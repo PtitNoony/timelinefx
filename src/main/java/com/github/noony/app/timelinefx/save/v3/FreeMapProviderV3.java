@@ -60,8 +60,6 @@ public class FreeMapProviderV3 {
     private static final String FREEMAP_PORTRAITS_GROUP = "freeMapPortraits";
     private static final String FREEMAP_STAYS_GROUP = "freeMapStays";
     private static final String FREEMAP_PARAMETERS_GROUP = "freeMapParameters";
-//    private static final String PLOTS_GROUP = "plots";
-//    private static final String LINKS_GROUP = "links";
     private static final String FREEMAP_ELEMENT = "freeMap";
     private static final String PARAMETER_ELEMENT = "parameter";
     private static final String PARAMETER_NAME_ATR = "name";
@@ -72,21 +70,11 @@ public class FreeMapProviderV3 {
     private static final String FREEMAP_DATE_HANDLE_ELEMENT = "freeMapDateHandle";
     private static final String FREEMAP_CONNECTOR_ELEMENT = "connector";
     private static final String FREEMAP_PORTRAIT_LINK_ELEMENT = "portraitLink";
-    private static final String PLOT_ELEMENT = "plot";
-    private static final String LINK_ELEMENT = "link";
     //
-//    private static final String FREEMAP_PERSON_WIDTH_ATR = "personWidth";
     private static final String FREEMAP_PLACE_NAME_WIDTH_ATR = "placeNameWidth";
     private static final String FREEMAP_FONT_SIZE_ATR = "fontSize";
-//    private static final String FREEMAP_PLOT_SEPARATION_ATR = "plotSeparation";
-//    private static final String FREEMAP_PLOT_VISIBILITY_ATR = "plotVisibility";
-//    private static final String FREEMAP_PLOT_SIZE_ATR = "plotSize";
     private static final String FREEMAP_LINKED_ELEMENT_ID_ATR = "linkedElementID";
     private static final String FREEMAP_IS_MERGED_ATR = "isMerged";
-    //
-//    private static final String FREEMAP_STAY_TYPE_ATTRIBUTE = "freeMapStayType";
-//    private static final String FREEMAP_STAY_TYPE_SIMPLE_VALIE = "simple";
-//    private static final String FREEMAP_STAY_TYPE_COMPLEX_VALUE = "complex";
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -232,39 +220,12 @@ public class FreeMapProviderV3 {
         connectorElement.setAttribute(FREEMAP_LINKED_ELEMENT_ID_ATR, Long.toString(connector.getLinkedElementID()));
         connectorElement.setAttribute(COLOR_ATR, connector.getColor().toString());
         connectorElement.setAttribute(DATE_ATR, Double.toString(connector.getDate()));
-        // doublon
-//        connectorElement.setAttribute(LINKED_OBJECT_ID_ATR, Long.toString(connector.getLinkedElementID()));
         connectorElement.setAttribute(X_POS_ATR, Double.toString(connector.getX()));
         connectorElement.setAttribute(Y_POS_ATR, Double.toString(connector.getY()));
         connectorElement.setAttribute(PLOT_SIZE_ATR, Double.toString(connector.getPlotSize()));
         return connectorElement;
     }
 
-    ///
-    ///
-    ///
-    ////
-//    private static Element createPlotElement(Document doc, FreeMapPlot plot) {
-//        var plotElement = doc.createElement(PLOT_ELEMENT);
-//        plotElement.setAttribute(TYPE_ATR, plot.getType().name());
-//        plotElement.setAttribute(STAY_ID_ATR, Long.toString(plot.getLinkedElementID()));
-//        plotElement.setAttribute(X_POS_ATR, Double.toString(plot.getX()));
-//        plotElement.setAttribute(Y_POS_ATR, Double.toString(plot.getY()));
-//        return plotElement;
-//    }
-//    private static Element createLinkElement(Document doc, FreeMapSimpleLink link) {
-//        var linkElement = doc.createElement(LINK_ELEMENT);
-//        linkElement.setAttribute(TYPE_ATR, link.getType().name());
-//        linkElement.setAttribute(START_ID_ATR, Long.toString(link.getBeginConnector().getLinkedElementID()));
-//        linkElement.setAttribute(END_ID_ATR, Long.toString(link.getEndConnector().getLinkedElementID()));
-//        if (link instanceof FreeMapStayLink stayLink) {
-//            linkElement.setAttribute(END_ID_ATR, Long.toString(stayLink.getStayPeriod().getId()));
-//        } else if (link instanceof FreeMapTravelLink travelLink) {
-//            linkElement.setAttribute(END_ID_ATR, Long.toString(travelLink.getPerson().getId()));
-//        }
-//        linkElement.setAttribute(STAY_ID_ATR, Long.toString(link.getEndConnector().getLinkedElementID()));
-//        return linkElement;
-//    }
     //
     //
     //
@@ -298,40 +259,12 @@ public class FreeMapProviderV3 {
                 pair -> freeMapStays.addAll(
                         parseFreeMapPersonStep02(pair.getValue(), pair.getKey(), freeMapPlaces))
         );
-
         // create FreeMap
         var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, freeMapParameters, dateHandles, freeMapPersons, freeMapPlaces, freeMapStays);
         freeMap.setName(freeMapName);
         // create Portraits
         freeMapPersonsAndElements.forEach(pair -> parseFreeMapPersonStep03(pair.getValue(), pair.getKey(), freeMapPlaces, freeMapStays));
-
-//        //
-//        var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, false);
-//        if (freemapElement.hasAttribute(NAME_ATR)) {
-//            freeMap.setName(freemapElement.getAttribute(NAME_ATR));
-//        }
-//        // !! IMPORTANT : set all the properties before updating plots, places...
-//        //
-//        NodeList portraitsGroups = freemapElement.getElementsByTagName(PORTRAITS_GROUP);
-//        if (portraitsGroups.getLength() < 1) {
-//            throw new IllegalStateException();
-//        }
-//        if (portraitsGroups.getLength() > 0) {
-//            parsePortraits((Element) portraitsGroups.item(0), freeMap);
-//        }
-//        //
-//        NodeList freemapPlacesGroups = freemapElement.getElementsByTagName(FREEMAP_PLACES_GROUP);
-//        if (freemapPlacesGroups.getLength() < 1) {
-//            throw new IllegalStateException();
-//        }
-//        parseFreemapPlaces((Element) freemapPlacesGroups.item(0), freeMap);
-//        //
-//        NodeList plotsGroups = freemapElement.getElementsByTagName(PLOTS_GROUP);
-//        if (plotsGroups.getLength() < 1) {
-//            throw new IllegalStateException();
-//        }
-//        parsePlots((Element) plotsGroups.item(0), frieze, freeMap);
-//        //
+        //
         frieze.addFriezeFreeMap(freeMap);
     }
 

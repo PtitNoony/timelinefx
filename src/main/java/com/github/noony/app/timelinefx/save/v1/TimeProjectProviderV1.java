@@ -640,8 +640,8 @@ public class TimeProjectProviderV1 implements TimelineProjectProvider {
     private static Element createFreeMapElement(Document doc, FriezeFreeMap friezeFreeMap) {
         Element friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
         friezeFreeMapElement.setAttribute(NAME_ATR, friezeFreeMap.getName());
-        friezeFreeMapElement.setAttribute(WIDTH_ATR, Double.toString(friezeFreeMap.getFreeMapWidth()));
-        friezeFreeMapElement.setAttribute(HEIGHT_ATR, Double.toString(friezeFreeMap.getFreeMapHeight()));
+        friezeFreeMapElement.setAttribute(WIDTH_ATR, Double.toString(friezeFreeMap.getWidth()));
+        friezeFreeMapElement.setAttribute(HEIGHT_ATR, Double.toString(friezeFreeMap.getHeight()));
         friezeFreeMapElement.setAttribute(FREEMAP_PERSON_WIDTH_ATR, Double.toString(friezeFreeMap.getPersonWidth()));
         friezeFreeMapElement.setAttribute(FREEMAP_PLACE_NAME_WIDTH_ATR, Double.toString(friezeFreeMap.getPlaceNamesWidth()));
         friezeFreeMapElement.setAttribute(FREEMAP_FONT_SIZE_ATR, Double.toString(friezeFreeMap.getFontSize()));

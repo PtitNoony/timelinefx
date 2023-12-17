@@ -47,6 +47,8 @@ public class FriezeFreeFormDrawing {
 
     public static final double MAIN_CONTAINER_PADDING = 8;
 
+    private static final double INITIAL_BACKGROUND_SIZE = 500;
+
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final VBox mainNode;
@@ -96,8 +98,8 @@ public class FriezeFreeFormDrawing {
         //
         scalableNodes = new LinkedList<>();
         //
-        drawingWidth = friezeFreeMap.getFreeMapWidth() + 2 * (MAIN_CONTAINER_PADDING);
-        drawingHeight = friezeFreeMap.getFreeMapHeight() + DEFAULT_TIME_HEIGHT + 2 * (MAIN_CONTAINER_PADDING);
+        drawingWidth = friezeFreeMap.getWidth() + 2 * (MAIN_CONTAINER_PADDING);
+        drawingHeight = friezeFreeMap.getHeight() + DEFAULT_TIME_HEIGHT + 2 * (MAIN_CONTAINER_PADDING);
         //
         propertyChangeSupport = new PropertyChangeSupport(FriezeFreeFormDrawing.this);
         //
@@ -113,10 +115,10 @@ public class FriezeFreeFormDrawing {
         startDateHandleGroup = new Group();
         endDateHandleGroup = new Group();
         //
-        background = new Rectangle(500, 500);
-        innerBackground = new Rectangle(500, 500);
-        placesBackground = new Rectangle(500, 500);
-        personsBackground = new Rectangle(500, 500);
+        background = new Rectangle(INITIAL_BACKGROUND_SIZE, INITIAL_BACKGROUND_SIZE);
+        innerBackground = new Rectangle(INITIAL_BACKGROUND_SIZE, INITIAL_BACKGROUND_SIZE);
+        placesBackground = new Rectangle(INITIAL_BACKGROUND_SIZE, INITIAL_BACKGROUND_SIZE);
+        personsBackground = new Rectangle(INITIAL_BACKGROUND_SIZE, INITIAL_BACKGROUND_SIZE);
         startDatesPane = new Pane();
         endDatesPane = new Pane();
         //
@@ -161,7 +163,7 @@ public class FriezeFreeFormDrawing {
     }
 
     private void updateWidth() {
-        drawingWidth = friezeFreeMap.getFreeMapWidth() * scale;
+        drawingWidth = friezeFreeMap.getWidth() * scale;
 //        mainNode.setMaxWidth(drawingWidth + 2 * MAIN_CONTAINER_PADDING);
         background.setWidth(drawingWidth);
         //
@@ -177,7 +179,7 @@ public class FriezeFreeFormDrawing {
     }
 
     private void updateHeight() {
-        drawingHeight = (friezeFreeMap.getFreeMapHeight()) * scale;//+ 2 * (MAIN_CONTAINER_PADDING + DEFAULT_TIME_HEIGHT);
+        drawingHeight = (friezeFreeMap.getHeight()) * scale;//+ 2 * (MAIN_CONTAINER_PADDING + DEFAULT_TIME_HEIGHT);
 //        mainNode.setMaxHeight(drawingHeight + 2 * MAIN_CONTAINER_PADDING);
         background.setHeight(drawingHeight);
         innerBackground.setHeight(friezeFreeMap.getFreeMapDrawingHeight() * scale);
@@ -315,7 +317,7 @@ public class FriezeFreeFormDrawing {
         endDatesHandles.values().forEach(d -> d.setColor(color));
     }
 
-    protected void requestPortraitSelectionUpdate(FreeMapPortrait aFreeMapPortrait){
+    protected void requestPortraitSelectionUpdate(FreeMapPortrait aFreeMapPortrait) {
         propertyChangeSupport.firePropertyChange(PORTRAIT_SECTION_REQUEST, this, aFreeMapPortrait);
     }
 

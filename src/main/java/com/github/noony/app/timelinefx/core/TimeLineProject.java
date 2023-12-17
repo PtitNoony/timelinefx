@@ -263,6 +263,7 @@ public class TimeLineProject {
     public void addStay(StayPeriod aStay) {
         if (!stays.contains(aStay)) {
             stays.add(aStay);
+            stays.sort(StayPeriod.STAY_COMPARATOR);
             propertyChangeSupport.firePropertyChange(STAY_ADDED, this, aStay);
         }
     }

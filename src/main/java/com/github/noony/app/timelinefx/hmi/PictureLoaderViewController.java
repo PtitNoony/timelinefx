@@ -270,7 +270,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
     }
 
     private void updateActions() {
-        var ready = pictureFile != null & pictureNameField.getText().trim().length() > 0;
+        var ready = pictureFile != null && pictureNameField.getText().trim().length() > 0;
         okButton.setDisable(!ready);
     }
 

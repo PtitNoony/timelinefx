@@ -171,7 +171,7 @@ public class PlaceCreationViewController implements Initializable {
 
     private void updatePlaceName(String name) {
         placeName = name;
-        nameOK = !placeName.isBlank() & !placeName.isEmpty();
+        nameOK = !placeName.isBlank() && !placeName.isEmpty();
         updateStatus();
     }
 
@@ -193,7 +193,7 @@ public class PlaceCreationViewController implements Initializable {
     }
 
     private void updateStatus() {
-        createButton.setDisable(!(nameOK & levelOK & parentOK & colorOK));
+        createButton.setDisable(!(nameOK && levelOK && parentOK && colorOK));
     }
 
 }

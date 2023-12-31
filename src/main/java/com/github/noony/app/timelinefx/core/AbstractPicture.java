@@ -320,7 +320,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
 
     public void movePersonDown(Person aPerson) {
         int index = persons.indexOf(aPerson);
-        if (index != 1 & index < persons.size() - 1) {
+        if (index != 1 && index < persons.size() - 1) {
             Collections.swap(persons, index + 1, index);
             propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
         }

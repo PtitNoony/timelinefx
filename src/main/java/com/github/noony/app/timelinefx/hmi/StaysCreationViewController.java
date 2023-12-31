@@ -91,7 +91,7 @@ public class StaysCreationViewController implements Initializable {
     private TimeLineProject timeline = null;
     //
     // is there a better way ?
-    private final PropertyChangeListener timelineListener = event -> handleTimelineChanges(event);
+    private final PropertyChangeListener timelineListener = StaysCreationViewController.this::handleTimelineChanges;
     //
     private boolean personOK = false;
     private boolean placeOK = false;
@@ -103,6 +103,9 @@ public class StaysCreationViewController implements Initializable {
     //
     private StayPeriod selectedStayPeriod = null;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ToggleGroup stayModeToggelGroup = new ToggleGroup();
@@ -357,7 +360,7 @@ public class StaysCreationViewController implements Initializable {
     }
 
     private void updateCreateStatus() {
-        var ready = personOK & placeOK & startOK & endOK;
+        var ready = personOK && placeOK && startOK && endOK;
         createB.setDisable(!ready);
     }
 

@@ -309,7 +309,7 @@ public class PersonCreationViewController implements Initializable {
 
     private void updatePersonName(String name) {
         personName = name;
-        nameOK = !personName.isBlank() & !personName.isEmpty();
+        nameOK = !personName.isBlank() && !personName.isEmpty();
         updateStatus();
     }
 
@@ -365,7 +365,7 @@ public class PersonCreationViewController implements Initializable {
 
     private void updateStatus() {
         // we are not forcing birth and death dates to be set
-        createButton.setDisable(!(nameOK & colorOK));
+        createButton.setDisable(!(nameOK && colorOK));
         updateImage();
     }
 

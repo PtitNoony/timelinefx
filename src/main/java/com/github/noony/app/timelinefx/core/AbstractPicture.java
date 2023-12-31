@@ -178,7 +178,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
             case TIME_MIN ->
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -229,7 +229,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -258,7 +258,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -272,7 +272,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 return timestamp;
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -286,7 +286,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 return MathUtils.doubleToString(timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
 
     }

@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Portrait;
@@ -252,7 +253,7 @@ public class PersonCreationViewController implements Initializable {
                 deathTimeField.setText(Long.toString(currentEditedPerson.getTimeOfDeath()));
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + currentEditedPerson.getTimeFormat());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + currentEditedPerson.getTimeFormat());
 
         }
         updateStatus();
@@ -435,7 +436,7 @@ public class PersonCreationViewController implements Initializable {
                 });
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 

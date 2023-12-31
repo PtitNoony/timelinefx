@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.utils;
 
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +39,7 @@ public class TimeFormatToString {
                 return minutesToString(time);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format :: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -55,6 +56,10 @@ public class TimeFormatToString {
         }
         result += Long.toString(nbMin) + "min";
         return result;
+    }
+
+    private TimeFormatToString() {
+        // private utility constructor
     }
 
 }

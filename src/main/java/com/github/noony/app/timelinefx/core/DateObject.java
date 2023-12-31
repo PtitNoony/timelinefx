@@ -64,7 +64,7 @@ public class DateObject implements IDateObject {
             case TIME_MIN ->
                 timestamp = anotherDateObject.getTimestamp();
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -82,7 +82,7 @@ public class DateObject implements IDateObject {
             case TIME_MIN ->
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -122,7 +122,7 @@ public class DateObject implements IDateObject {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -151,7 +151,7 @@ public class DateObject implements IDateObject {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -174,7 +174,7 @@ public class DateObject implements IDateObject {
                 return timestamp;
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -188,7 +188,7 @@ public class DateObject implements IDateObject {
                 return MathUtils.doubleToString(timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
 
     }

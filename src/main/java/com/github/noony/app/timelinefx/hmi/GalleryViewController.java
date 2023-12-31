@@ -235,6 +235,8 @@ public class GalleryViewController implements Initializable, ViewController {
                     }
                 });
             }
+            default ->
+                throw new UnsupportedOperationException("Unsupported event in handlePictureLoaderControllerChanges: " + event);
         }
     }
 

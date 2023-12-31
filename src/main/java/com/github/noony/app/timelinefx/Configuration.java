@@ -115,21 +115,11 @@ public class Configuration {
     }
 
     private static void loadPreferenceFile() {
-        InputStream inputStream = null;
         properties = new Properties();
-        try {
-            inputStream = new FileInputStream(preferenceFile);
+        try (InputStream inputStream = new FileInputStream(preferenceFile)) {
             properties.load(inputStream);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Could not load preference file. Exception:: {0}", new Object[]{ex});
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not properly close preference file stream. Exception:: {0}", new Object[]{ex});
-            }
         }
         var propertiesChanged = false;
         // checking for key properties needed
@@ -158,7 +148,6 @@ public class Configuration {
             savePreferences();
         }
     }
-
 
     public static void savePreferences() {
         if (properties == null) {

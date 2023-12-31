@@ -68,18 +68,18 @@ public final class FriezeFreeMap implements FriezeObject {
     public static final String END_DATE_HANDLE_REMOVED = "freeMapEndDateRemoved";
 
     // Default Values for layout
-    private static final double DEFAULT_WIDTH = 900;
-    private static final double DEFAULT_HEIGHT = 600;
+    private static final double DEFAULT_WIDTH = 3508;
+    private static final double DEFAULT_HEIGHT = 2480;
     private static final double DEFAULT_PERSONS_WIDTH = 0;
-    private static final double DEFAULT_PLACE_NAMES_WIDTH = 100;
-    public static final double MAP_PADDING = 20;
+    private static final double DEFAULT_PLACE_NAMES_WIDTH = 500;
+    public static final double MAP_PADDING = 40;
     //
-    public static final double DEFAULT_PORTRAIT_RADIUS = 50;
+    public static final double DEFAULT_PORTRAIT_RADIUS = 180;
     public static final double DEFAULT_TIME_HEIGHT = 25;
-    public static final double DEFAULT_FONT_SIZE = 12;
-    public static final double DEFAULT_PLOT_SIZE = 4;
+    public static final double DEFAULT_FONT_SIZE = 46;
+    public static final double DEFAULT_PLOT_SIZE = 8;
     //
-    private static final double DEFAULT_PLOT_SEPARATION = 8.0;
+    private static final double DEFAULT_PLOT_SEPARATION = 20;
     private static final boolean DEFAULT_PLOT_VISIBILITY = true;
     private static final boolean DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY = true;
 

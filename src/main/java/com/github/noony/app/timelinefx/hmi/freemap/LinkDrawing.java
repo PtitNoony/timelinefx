@@ -44,6 +44,9 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
     private static final Logger LOG = Logger.getGlobal();
 
     private static final double CURVE_DELTA = 18.0;
+    private static final double DEFAULT_STAY_STROKE_WIDTH = 12; // 4
+    private static final double DEFAULT_TRAVEL_STROKE_WIDTH = 5; // 1.5
+    private static final double DEFAULT_PORTRAIT_STROKE_WIDTH = 7; // 2.5
 
     private final PropertyChangeSupport propertyChangeSupport;
 
@@ -83,19 +86,19 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         cubicCurve.setStroke(color);
         switch (link.getType()) {
             case STAY -> {
-                line.setStrokeWidth(4.0);
-                cubicCurve.setStrokeWidth(4.0);
+                line.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH);
+                cubicCurve.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH);
             }
             case TRAVEL -> {
-                line.setStrokeWidth(1.5);
+                line.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH);
                 line.setStrokeDashOffset(45);
-                cubicCurve.setStrokeWidth(1.5);
+                cubicCurve.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH);
                 cubicCurve.setStrokeDashOffset(45);
             }
             case PORTRAIT -> {
-                line.setStrokeWidth(1.0);
+                line.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH);
                 line.setStrokeDashOffset(35);
-                cubicCurve.setStrokeWidth(1.0);
+                cubicCurve.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH);
                 cubicCurve.setStrokeDashOffset(35);
             }
             default ->
@@ -221,13 +224,13 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         if (isSelected) {
             switch (link.getType()) {
                 case STAY -> {
-                    line.setStrokeWidth(6.0 * scale);
-                    cubicCurve.setStrokeWidth(6.0 * scale);
+                    line.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale * 1.5);
+                    cubicCurve.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale * 1.5);
                 }
                 case TRAVEL -> {
-                    line.setStrokeWidth(2.5 * scale);
+                    line.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale * 1.5);
                     line.setStrokeDashOffset(45 * scale);
-                    cubicCurve.setStrokeWidth(2.5 * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale * 1.5);
                     cubicCurve.setStrokeDashOffset(45 * scale);
                 }
                 default ->
@@ -236,19 +239,19 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         } else {
             switch (link.getType()) {
                 case STAY -> {
-                    line.setStrokeWidth(4.0 * scale);
-                    cubicCurve.setStrokeWidth(4.0 * scale);
+                    line.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale);
                 }
                 case TRAVEL -> {
-                    line.setStrokeWidth(1.5 * scale);
+                    line.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale);
                     line.setStrokeDashOffset(45 * scale);
-                    cubicCurve.setStrokeWidth(1.5 * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale);
                     cubicCurve.setStrokeDashOffset(45 * scale);
                 }
                 case PORTRAIT -> {
-                    line.setStrokeWidth(2.5 * scale);
+                    line.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH * scale);
                     line.setStrokeDashOffset(20 * scale);
-                    cubicCurve.setStrokeWidth(2.5 * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH * scale);
                     cubicCurve.setStrokeDashOffset(20 * scale);
                 }
                 default ->

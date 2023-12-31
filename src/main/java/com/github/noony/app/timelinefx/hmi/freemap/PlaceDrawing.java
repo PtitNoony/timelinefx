@@ -85,7 +85,9 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
         nameLabel.setMaxHeight(FreeMapPlace.PLACE_NAME_HEIGHT);
         nameLabel.setMinWidth(place.getNameWidth());
         nameLabel.setMaxWidth(place.getNameWidth());
-        nameLabel.setFont(new Font(16));
+        var newFont = new Font("Vivaldi", aPlace.getFontSize());
+        nameLabel.setFont(newFont);
+        updateNameLabelStyle(aPlace.getFontSize());
         nameLabel.setWrapText(true);
 //        nameLabel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         //
@@ -131,9 +133,9 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
             oldScreenY = event.getScreenY();
             oldTranslateY = getNode().getTranslateY();
         });
-        background.setOnMouseDragged(event -> {
-            getNode().setTranslateY(oldTranslateY + event.getScreenY() - oldScreenY);
-        });
+        background.setOnMouseDragged(event ->
+            getNode().setTranslateY(oldTranslateY + event.getScreenY() - oldScreenY)
+        );
         background.setOnMouseReleased(event -> {
             var translateYScaled = oldTranslateY + event.getScreenY() - oldScreenY;
             place.setY(translateYScaled / getScale());
@@ -155,7 +157,8 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
             }
             case FreeMapPlace.FONT_SIZE_CHANGED -> {
                 var fontSize = (double) event.getNewValue();
-                nameLabel.setFont(new Font(fontSize));
+                updateNameLabelStyle(fontSize);
+                nameLabel.applyCss();
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
@@ -187,7 +190,7 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
             default ->
                 throw new UnsupportedOperationException();
         }
-        nameLabel.setTranslateX(placePlotsWidth + friezeFreeMap.MAP_PADDING * getScale());
+        nameLabel.setTranslateX(placePlotsWidth + FriezeFreeMap.MAP_PADDING * getScale());
         nameLabel.setMinWidth(friezeFreeMap.getPlaceNamesWidth() * getScale());
         nameLabel.setMaxWidth(friezeFreeMap.getPlaceNamesWidth() * getScale());
     }
@@ -198,5 +201,10 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
         backgroundClip.setHeight(height);
         nameLabel.setMinHeight(height);
         nameLabel.setMaxHeight(height);
+    }
+
+    private void updateNameLabelStyle(double fontSizePx) {
+        nameLabel.setStyle("-fx-font-size: " + fontSizePx + ";");
+        nameLabel.applyCss();
     }
 }

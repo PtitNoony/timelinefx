@@ -46,9 +46,9 @@ public class FreeMapPlace implements FriezeObject {
     public static final String FONT_SIZE_CHANGED = "fontSizeChanged";
     public static final String PLOT_SEPARATION_CHANGED = "plotSeparationChanged";
 
-    public static final double PLACE_NAME_HEIGHT = 18;
-    public static final double DEFAULT_HEIGHT = 25;
-    public static final double DEFAULT_PLACE_PADDING = 8;
+    public static final double PLACE_NAME_HEIGHT = 75;
+    public static final double DEFAULT_HEIGHT = 75;
+    public static final double DEFAULT_PLACE_PADDING = 16;
 
     private static final Logger LOG = Logger.getGlobal();
 

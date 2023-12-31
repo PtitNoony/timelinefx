@@ -73,7 +73,7 @@ public final class XMLHandler {
             //
             Document document;
             DocumentBuilderFactory builderFactory;
-            builderFactory = DocumentBuilderFactory.newInstance();
+            builderFactory = DocumentBuilderFactory.newDefaultInstance();
             try {
                 DocumentBuilder builder = builderFactory.newDocumentBuilder();
                 InputSource source = new InputSource(file.getAbsolutePath());

@@ -17,8 +17,8 @@ import java.time.format.DateTimeParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
-import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.tiff.TiffField;
@@ -68,24 +68,24 @@ public class MetadataParser {
                 final PictureInfo picInfo = new PictureInfo(fileName, projectRelativePath, creationDate, xRes, yRes);
                 return picInfo;
             }
-        } catch (ImageReadException | IOException ex) {
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception while reading image :: {0}", new Object[]{ex});
         }
         return null;
     }
 
-    private static LocalDateTime getExifValueDate(final JpegImageMetadata jpegMetadata) {
+    private static LocalDateTime getExifValueDate(final JpegImageMetadata jpegMetadata) throws ImagingException {
         LocalDateTime result = DEFAULT_DATE;
         try {
-            final TiffField exifDate = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+            final TiffField exifDate = jpegMetadata.findExifValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
             if (exifDate != null) {
                 result = LocalDateTime.parse(exifDate.getStringValue(), DT_PARSER);
             }
-            final TiffField tiffDate = jpegMetadata.findEXIFValueWithExactMatch(TiffTagConstants.TIFF_TAG_DATE_TIME);
+            final TiffField tiffDate = jpegMetadata.findExifValueWithExactMatch(TiffTagConstants.TIFF_TAG_DATE_TIME);
             if (tiffDate != null) {
                 result = LocalDateTime.parse(tiffDate.getStringValue(), DT_PARSER);
             }
-        } catch (final ImageReadException | DateTimeParseException e) {
+        } catch (final DateTimeParseException e) {
             LOG.log(Level.SEVERE, null, e);
         }
         return result;

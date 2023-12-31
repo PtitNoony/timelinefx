@@ -178,7 +178,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
             case TIME_MIN ->
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -229,7 +229,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -258,7 +258,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -272,7 +272,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 return timestamp;
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -286,7 +286,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
                 return MathUtils.doubleToString(timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
 
     }
@@ -320,7 +320,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
 
     public void movePersonDown(Person aPerson) {
         int index = persons.indexOf(aPerson);
-        if (index != 1 & index < persons.size() - 1) {
+        if (index != 1 && index < persons.size() - 1) {
             Collections.swap(persons, index + 1, index);
             propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
         }

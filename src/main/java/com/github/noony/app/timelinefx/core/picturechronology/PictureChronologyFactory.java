@@ -38,6 +38,10 @@ public class PictureChronologyFactory {
     private static final Factory<ChronologyPictureMiniature> PICTURE_FACTORY = new Factory<>();
     private static final Factory<ChronologyLink> LINK_FACTORY = new Factory<>();
 
+    //
+    private static final String TRYING_CREATION_MSG = "Trying to create createPictureChronology ";
+    private static final String EXISTING_ID_MSG = " with existing id=";
+
     private PictureChronologyFactory() {
         // private utility constructor
     }
@@ -59,7 +63,7 @@ public class PictureChronologyFactory {
     public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1}", new Object[]{id, pictureChronologyName});
         if (!CHROLOGY_FACTORY.isIdAvailable(id)) {
-            throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with existing id=" + id);
+            throw new IllegalArgumentException(TRYING_CREATION_MSG + pictureChronologyName + EXISTING_ID_MSG + id);
         }
         var pictureChronology = new PictureChronology(id, aProject, pictureChronologyName);
         CHROLOGY_FACTORY.addObject(pictureChronology);
@@ -69,7 +73,7 @@ public class PictureChronologyFactory {
     public static PictureChronology createPictureChronology(long id, TimeLineProject aProject, String pictureChronologyName, TimeFormat aTimeFormat, List<ChronologyPictureMiniature> miniatures, List<ChronologyLink> links) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
         if (!CHROLOGY_FACTORY.isIdAvailable(id)) {
-            throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with existing id=" + id);
+            throw new IllegalArgumentException(TRYING_CREATION_MSG + pictureChronologyName + EXISTING_ID_MSG + id);
         }
         var pictureChronology = new PictureChronology(id, aProject, pictureChronologyName, aTimeFormat, miniatures, links);
         CHROLOGY_FACTORY.addObject(pictureChronology);
@@ -80,7 +84,7 @@ public class PictureChronologyFactory {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createPictureChronology with id={0} pictureChronologyName={1} nbMiniatures={2} nbLinks={3}", new Object[]{id, pictureChronologyName, miniatures.size(), links.size()});
         long nbTimeFormat = miniatures.stream().map(m -> m.getDateObject().getTimeFormat()).distinct().count();
         if (nbTimeFormat > 1) {
-            throw new IllegalArgumentException("Trying to create createPictureChronology " + pictureChronologyName + " with more than 1 time format :: " + nbTimeFormat);
+            throw new IllegalArgumentException(TRYING_CREATION_MSG + pictureChronologyName + " with more than 1 time format :: " + nbTimeFormat);
         }
         TimeFormat timeFormat = miniatures.stream().map(m -> m.getDateObject().getTimeFormat()).findAny().orElse(TimeFormat.TIME_MIN);
         return createPictureChronology(id, aProject, pictureChronologyName, timeFormat, miniatures, links);
@@ -112,7 +116,7 @@ public class PictureChronologyFactory {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating ChronologyPictureMiniature with picture={0} position={1} scale={2}", new Object[]{aPicture, aPosition, aScale});
         if (!PICTURE_FACTORY.isIdAvailable(anID)) {
             var conflitingObject = PICTURE_FACTORY.get(anID);
-            throw new IllegalArgumentException("Trying to create ChronologyPictureMiniature for " + aPicture.getName() + " with existing id=" + anID + " existing Object: " + conflitingObject);
+            throw new IllegalArgumentException("Trying to create ChronologyPictureMiniature for " + aPicture.getName() + EXISTING_ID_MSG + anID + " existing Object: " + conflitingObject);
         }
         var chronologyPictureMiniature = new ChronologyPictureMiniature(anID, aPicture, aPosition, aScale);
         PICTURE_FACTORY.addObject(chronologyPictureMiniature);
@@ -138,7 +142,7 @@ public class PictureChronologyFactory {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating ChronologyLink with id={0} person={1} start={2} end={3}", new Object[]{anID, aPerson, aStartMiniature, anEndMiniature});
         if (!LINK_FACTORY.isIdAvailable(anID)) {
             var conflitingObject = LINK_FACTORY.get(anID);
-            throw new IllegalArgumentException("Trying to create ChronologyLink for " + aPerson.getName() + " with existing id=" + anID + " existing Object: " + conflitingObject);
+            throw new IllegalArgumentException("Trying to create ChronologyLink for " + aPerson.getName() + EXISTING_ID_MSG + anID + " existing Object: " + conflitingObject);
         }
         var chronologyLink = new ChronologyLink(anID, aPerson, aStartMiniature, anEndMiniature, aLinkType, linkParameters);
         LINK_FACTORY.addObject(chronologyLink);

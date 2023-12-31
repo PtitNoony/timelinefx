@@ -34,10 +34,10 @@ import javafx.geometry.Point2D;
  */
 public class ChronologyPictureMiniature implements FriezeObject {
 
-    public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
-    public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
-    public static final String TIME_CHANGED = "ChronologyPictureMiniature" + "__timeChanged";
-    public static final String REQUEST_LINKS_UPDATE = "ChronologyPictureMiniature" + "__requestLinksUpdate";
+    public static final String POSITION_CHANGED = "ChronologyPictureMiniature__positionChanged";
+    public static final String SCALE_CHANGED = "ChronologyPictureMiniature__scaleChanged";
+    public static final String TIME_CHANGED = "ChronologyPictureMiniature__timeChanged";
+    public static final String REQUEST_LINKS_UPDATE = "ChronologyPictureMiniature__requestLinksUpdate";
 
     public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getCurrenltyUsedAbsoluteTime(), c2.getCurrenltyUsedAbsoluteTime());
 

@@ -43,7 +43,7 @@ public class RectangleConnector extends AbstractFxScalableNode {
         connector = abstractConnector;
         connector.addPropertyChangeListener(RectangleConnector.this::handlePropertyChange);
         connectorRectangle = new Rectangle();
-        connectorRectangle.setFill(connector.getColor());
+        connectorRectangle.setFill(DEFAULT_STROKE_COLOR);
         connectorRectangle.setStroke(DEFAULT_STROKE_COLOR);
         addNode(connectorRectangle);
         initInteractivity();

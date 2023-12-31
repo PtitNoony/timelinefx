@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.IDateObject;
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -234,7 +235,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
                 }
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeformatCB.getSelectionModel().getSelectedItem());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeformatCB.getSelectionModel().getSelectedItem());
         }
     }
 
@@ -265,12 +266,12 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
                 }
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeformatCB.getSelectionModel().getSelectedItem());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeformatCB.getSelectionModel().getSelectedItem());
         }
     }
 
     private void updateActions() {
-        var ready = pictureFile != null & pictureNameField.getText().trim().length() > 0;
+        var ready = pictureFile != null && pictureNameField.getText().trim().length() > 0;
         okButton.setDisable(!ready);
     }
 

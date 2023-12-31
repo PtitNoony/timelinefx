@@ -18,14 +18,13 @@ package com.github.noony.app.timelinefx.utils;
 
 import java.awt.AlphaComposite;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
+import static javafx.application.Platform.runLater;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
@@ -45,8 +44,8 @@ public class PngExporter {
     private static final Logger LOG = Logger.getGlobal();
 
     public static final void exportToPNG(Node node, File file) {
-        Platform.runLater(() -> {
-            SnapshotParameters snapShotparams = new SnapshotParameters();
+        runLater(() -> {
+            var snapShotparams = new SnapshotParameters();
             snapShotparams.setFill(Color.BLACK);
             WritableImage temp = node.snapshot(snapShotparams,
                     new WritableImage((int) node.getLayoutBounds().getWidth(),
@@ -64,13 +63,12 @@ public class PngExporter {
     }
 
     public static void saveImage(Image image, String outputPath) {
-        System.err.println(" Saving to  " + outputPath);
-        File outputFile = new File(outputPath);
-        BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+        var outputFile = new File(outputPath);
+        var bImage = SwingFXUtils.fromFXImage(image, null);
         try {
             ImageIO.write(bImage, "png", outputFile);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOG.log(Level.SEVERE, "Error while saving .png: {0}", new Object[]{e});
         }
     }
 
@@ -82,37 +80,36 @@ public class PngExporter {
      * @return
      */
     public static Dimension getScaledDimension(Dimension imgSize, Dimension boundary) {
-        int original_width = imgSize.width;
-        int original_height = imgSize.height;
-        int bound_width = boundary.width;
-        int bound_height = boundary.height;
-        int new_width = original_width;
-        int new_height = original_height;
+        int originalWidth = imgSize.width;
+        int originalHeight = imgSize.height;
+        int boundWidth = boundary.width;
+        int boundHeight = boundary.height;
+        int newWidth = originalWidth;
+        int newHeight = originalHeight;
 
         // first check if we need to scale width
-        if (original_width > bound_width) {
+        if (originalWidth > boundWidth) {
             //scale width to fit
-            new_width = bound_width;
+            newWidth = boundWidth;
             //scale height to maintain aspect ratio
-            new_height = (new_width * original_height) / original_width;
+            newHeight = (newWidth * originalHeight) / originalWidth;
         }
 
         // then check if we need to scale even with the new height
-        if (new_height > bound_height) {
+        if (newHeight > boundHeight) {
             //scale height to fit instead
-            new_height = bound_height;
+            newHeight = boundHeight;
             //scale width to maintain aspect ratio
-            new_width = (new_height * original_width) / original_height;
+            newWidth = (newHeight * originalWidth) / originalHeight;
         }
 
-        return new Dimension(new_width, new_height);
+        return new Dimension(newWidth, newHeight);
     }
 
     public static Image resize(Image originalFxImage, Dimension dimension) {
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(originalFxImage, null);
-        java.awt.Image awtImage = resizeToBig(bufferedImage, (int) dimension.width, (int) dimension.height);
-        Image resizedImage = SwingFXUtils.toFXImage(toBufferedImage(awtImage), null);
-        return resizedImage;
+        var bufferedImage = SwingFXUtils.fromFXImage(originalFxImage, null);
+        java.awt.Image awtImage = resizeToBig(bufferedImage, dimension.width, dimension.height);
+        return SwingFXUtils.toFXImage(toBufferedImage(awtImage), null);
     }
 
     /**
@@ -126,10 +123,10 @@ public class PngExporter {
      * @return
      */
     public static java.awt.Image resizeToBig(java.awt.Image originalImage, int biggerWidth, int biggerHeight) {
-        int type = BufferedImage.TYPE_INT_ARGB;
+        var type = BufferedImage.TYPE_INT_ARGB;
 
-        BufferedImage resizedImage = new BufferedImage(biggerWidth, biggerHeight, type);
-        Graphics2D g = resizedImage.createGraphics();
+        var resizedImage = new BufferedImage(biggerWidth, biggerHeight, type);
+        var g = resizedImage.createGraphics();
 
         g.setComposite(AlphaComposite.Src);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -143,8 +140,7 @@ public class PngExporter {
     }
 
     /**
-     * Converts a given Image into a BufferedImage
-     * https://stackoverflow.com/questions/13605248/java-converting-image-to-bufferedimage/13605485
+     * Converts a given Image into a BufferedImage https://stackoverflow.com/questions/13605248/java-converting-image-to-bufferedimage/13605485
      *
      * @param img The Image to be converted
      * @return The converted BufferedImage
@@ -153,20 +149,24 @@ public class PngExporter {
         if (img instanceof BufferedImage bufferedImage) {
             return bufferedImage;
         }
-        if(img == null){
+        if (img == null) {
             return null;
         }
 
         // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        var bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
         // Draw the image on to the buffered image
-        Graphics2D bGr = bimage.createGraphics();
+        var bGr = bimage.createGraphics();
         bGr.drawImage(img, 0, 0, null);
         bGr.dispose();
 
         // Return the buffered image
         return bimage;
+    }
+
+    private PngExporter() {
+        // private utility constructor
     }
 
 }

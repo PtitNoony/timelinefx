@@ -59,7 +59,6 @@ public class FreeMapLinkConnector implements FreeMapConnector {
         date = aDate;
         plotSize = aPlotSize;
         updateXPosFollowingDateUpdate();
-//        xPos.setValue(sourceLink.getBeginConnector().getX() + (sourceLink.getEndConnector().getX() - sourceLink.getBeginConnector().getX()) / 2.0);
         // Assumption: the link is horizontal
         yPos.setValue(sourceLink.getBeginConnector().getY());
         color = DEFAULT_COLOR;
@@ -144,7 +143,6 @@ public class FreeMapLinkConnector implements FreeMapConnector {
     }
 
     public void setX(double newX) {
-        System.err.println(" :: setX ______");
         var boundedNewX = Math.max(sourceLink.getBeginConnector().getX(), newX);
         boundedNewX = Math.min(sourceLink.getEndConnector().getX(), boundedNewX);
         if (Math.abs(boundedNewX - xPos.doubleValue()) > EPSILON) {
@@ -157,7 +155,6 @@ public class FreeMapLinkConnector implements FreeMapConnector {
             var xMax = sourceLink.getEndConnector().getX();
             var xPercentage = (xPos.getValue() - xMin) / (xMax - xMin);
             var newDate = dateMin + xPercentage * (dateMax - dateMin);
-            System.err.println(" !! old date = " + date + " date=>" + newDate);
             date = newDate;
             propertyChangeSupport.firePropertyChange(PLOT_DATE_CHANGED, this, date);
         }
@@ -192,7 +189,6 @@ public class FreeMapLinkConnector implements FreeMapConnector {
     }
 
     public void setDate(double aDate) {
-        System.err.println(" :: setDate_______");
         if (aDate != date) {
             var dateMin = sourceLink.getBeginConnector().getDate();
             var dateMax = sourceLink.getEndConnector().getDate();
@@ -200,7 +196,6 @@ public class FreeMapLinkConnector implements FreeMapConnector {
                 LOG.log(Level.SEVERE, "Could not set date for {0} since not in the correct bounds. ({1} not in [ {2} - {3} ]",
                         new Object[]{this, date, dateMin, dateMax});
             } else {
-                System.err.println(" !! old date = " + date + " date=>" + aDate);
                 date = aDate;
                 propertyChangeSupport.firePropertyChange(PLOT_DATE_CHANGED, this, date);
                 updateXPosFollowingDateUpdate();
@@ -216,7 +211,6 @@ public class FreeMapLinkConnector implements FreeMapConnector {
         var xMax = sourceLink.getEndConnector().getX();
         var datePercentage = (date - dateMin) / (dateMax - dateMin);
         var newX = xMin + datePercentage * (xMax - xMin);
-//                System.err.println(" !! old x = " + newX + " x=>" + xPos.getValue());
         xPos.setValue(newX);
         propertyChangeSupport.firePropertyChange(POS_CHANGED, xPos.doubleValue(), yPos.doubleValue());
     }

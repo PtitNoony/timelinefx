@@ -20,6 +20,7 @@ import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
 import com.github.noony.app.timelinefx.core.IDateObject;
 import com.github.noony.app.timelinefx.core.IPicture;
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -146,12 +147,6 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     public static final String SCALE_ATR = "scale";
     public static final String INDEX_ATR = "index";
     public static final String PLOT_SIZE_ATR = "plotSize";
-//    public static final String FREEMAP_PERSON_WIDTH_ATR = "personWidth";
-//    public static final String FREEMAP_PLACE_NAME_WIDTH_ATR = "placeNameWidth";
-//    public static final String FREEMAP_FONT_SIZE_ATR = "fontSize";
-//    public static final String FREEMAP_PLOT_SEPARATION_ATR = "plotSeparation";
-//    public static final String FREEMAP_PLOT_VISIBILITY_ATR = "plotVisibility";
-//    public static final String FREEMAP_PLOT_SIZE_ATR = "plotSize";
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -164,7 +159,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
 
     @Override
     public TimeLineProject load(File projectFile, Element e) {
-        var loadMethodName = this.getClass().getSimpleName() + "__load";
+        var loadMethodName = getClass().getSimpleName() + "__load";
         CustomProfiler.start(loadMethodName);
         String projectName = e.getAttribute(NAME_ATR);
         // Load project properties
@@ -234,20 +229,20 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 .stream()
                 .map(portraitFile -> Paths.get(portraitFile.toURI()))
                 .filter(portraitAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> portraitAbsolutePath.compareTo(loaded) == 0))
-                .forEach(portraitAbsolutePath -> {
-                    // FUTURE IMPROVMENT : create actions;
-                    LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath});
-                });
+                .forEach(portraitAbsolutePath
+                        -> // FUTURE IMPROVMENT : create actions
+                        LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath})
+                );
         // * Pictures
         File picturesFolder = project.getPicturesFolder();
         FileUtils.listFiles(picturesFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
                 .stream()
                 .map(pictureFile -> Paths.get(pictureFile.toURI()))
                 .filter(pictureAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> pictureAbsolutePath.compareTo(loaded) == 0))
-                .forEach(pictureAbsolutePath -> {
-                    // FUTURE IMPROVMENT : create actions;
-                    LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath});
-                });
+                .forEach(pictureAbsolutePath
+                        -> // FUTURE IMPROVMENT : create actions
+                        LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath})
+                );
         //
         // FUTURE IMPROVMENT : ENABLE AUTO IMPORT => in config
         //
@@ -308,7 +303,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             StreamResult result = new StreamResult(destFile);
             transformer.transform(source, result);
         } catch (ParserConfigurationException | TransformerException ex) {
-            LOG.log(Level.SEVERE, " Exception while exporting timeline :: {0}", ex);
+            LOG.log(Level.SEVERE, " Exception while exporting timeline :: {0}", new Object[]{ex});
             return false;
         }
         return true;
@@ -408,7 +403,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                     }
                 }
                 default ->
-                    throw new UnsupportedOperationException("Unsupported timefomat : " + timeFormat);
+                    throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
             }
         }
         return person;
@@ -434,7 +429,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                     }
                 }
                 default ->
-                    throw new UnsupportedOperationException("Unsupported timefomat : " + timeFormat);
+                    throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
             }
         } else {
             throw new IllegalStateException("No time format specified for: " + aDateObject);
@@ -557,7 +552,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 long id = Long.parseLong(e.getAttribute(ID_ATR));
                 var stay = StayFactory.getStay(id);
                 if (stay == null) {
-                    throw new UnsupportedOperationException("StayPerido reference does not exist " + id);
+                    throw new UnsupportedOperationException("StayPeriod reference does not exist " + id);
                 }
                 stayPeriods.add(stay);
             }
@@ -582,8 +577,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         String endS = stayElement.getAttribute(END_DATE_ATR);
         LocalDate start = LocalDate.parse(startS);
         LocalDate end = LocalDate.parse(endS);
-        StayPeriodLocalDate stay = StayFactory.createStayPeriodLocalDate(id, person, start, end, place);
-        return stay;
+        return StayFactory.createStayPeriodLocalDate(id, person, start, end, place);
     }
 
     private StayPeriodSimpleTime parseStayPeriodSimpleTime(Element stayElement) {
@@ -601,8 +595,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         }
         var start = Double.parseDouble(stayElement.getAttribute(START_DATE_ATR));
         var end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
-        StayPeriodSimpleTime stay = StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
-        return stay;
+        return StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
     }
 
     private List<PictureChronology> parsePictureChronologies(TimeLineProject project, Element pictureChronologiesRootElement) {
@@ -631,7 +624,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         for (int i = 0; i < miniaturesElements.getLength(); i++) {
             if (miniaturesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT)) {
                 Element e = (Element) miniaturesElements.item(i);
-                var miniature = parseChronologyPictureMiniature(project, e);
+                var miniature = parseChronologyPictureMiniature(e);
                 miniatures.add(miniature);
             } else if (miniaturesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_LINK_ELEMENT)) {
                 Element e = (Element) miniaturesElements.item(i);
@@ -646,7 +639,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         return pictureChronology;
     }
 
-    private ChronologyPictureMiniature parseChronologyPictureMiniature(TimeLineProject project, Element miniatureElement) {
+    private ChronologyPictureMiniature parseChronologyPictureMiniature(Element miniatureElement) {
 //        <pictureChronologyMiniature id="138" pictureRef="125" xPos="897.0" yPos="329.0" scale="0.5"/>
         long id = Long.parseLong(miniatureElement.getAttribute(ID_ATR));
         long pictureRef = Long.parseLong(miniatureElement.getAttribute(PICTURE_REF_ELEMENT));
@@ -672,13 +665,12 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         var person = PersonFactory.getPerson(personRef);
         var paramsAsString = linkElement.getAttribute(PARAMETERS_ATR);
         var parameters = CustomFileUtils.toDoubleArray(paramsAsString);
-        var link = PictureChronologyFactory.createChronologyLink(id, person, from, to, type, parameters);
-        return link;
+        return PictureChronologyFactory.createChronologyLink(id, person, from, to, type, parameters);
     }
 
     private static Element createPlaceElement(Document doc, Place place, String fromPlace) {
         LOG.log(Level.FINE, "> Creating place {0} from {1}", new Object[]{place.getName(), fromPlace});
-        Element placeElement = doc.createElement(PLACE_ELEMENT);
+        var placeElement = doc.createElement(PLACE_ELEMENT);
         placeElement.setAttribute(ID_ATR, Long.toString(place.getId()));
         placeElement.setAttribute(NAME_ATR, place.getName());
         placeElement.setAttribute(PLACE_LEVEL_ATR, place.getLevel().name());
@@ -711,7 +703,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 personElement.setAttribute(DATE_OF_DEATH_ATR, Long.toString(person.getTimeOfDeath()));
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported timefomat : " + person.getTimeFormat());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + person.getTimeFormat());
         }
         person.getPortraits().forEach(portrait -> {
             var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
@@ -735,7 +727,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 targetElement.setAttribute(DATE_ATR, Double.toString(aDateObject.getTimestamp()));
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported timefomat : " + aDateObject.getTimeFormat());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + aDateObject.getTimeFormat());
         }
     }
 
@@ -762,15 +754,15 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
 
     private static Element createFriezeElement(Document doc, Frieze frieze) {
         LOG.log(Level.INFO, "Saving Frieze {0}", new Object[]{frieze.getName()});
-        Element friezeElement = doc.createElement(FRIEZE_ELEMENT);
+        var friezeElement = doc.createElement(FRIEZE_ELEMENT);
         friezeElement.setAttribute(NAME_ATR, frieze.getName());
         friezeElement.setAttribute(ID_ATR, Long.toString(frieze.getId()));
         // Stays
-        Element staysElement = doc.createElement(STAYS_REF_GROUP);
+        var staysElement = doc.createElement(STAYS_REF_GROUP);
         friezeElement.appendChild(staysElement);
         frieze.getStayPeriods().forEach(stay -> staysElement.appendChild(createStayElementInFreize(doc, stay)));
         // FreeMaps
-        Element freemapsElement = doc.createElement(FreeMapProviderV3.FREEMAPS_GROUP);
+        var freemapsElement = doc.createElement(FreeMapProviderV3.FREEMAPS_GROUP);
         friezeElement.appendChild(freemapsElement);
         frieze.getFriezeFreeMaps().forEach(freeMap -> freemapsElement.appendChild(FreeMapProviderV3.saveFreeMapElement(doc, freeMap)));
         return friezeElement;
@@ -792,7 +784,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 stayElement.setAttribute(END_DATE_ATR, Double.toString(stay.getEndDate()));
             }
             default ->
-                throw new UnsupportedOperationException("Unknown time format : " + stay.getTimeFormat());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + stay.getTimeFormat());
         }
         stayElement.setAttribute(TIME_FORMAT_ATR, stay.getTimeFormat().name());
         stayElement.setAttribute(PLACE_ID_ATR, Long.toString(stay.getPlace().getId()));

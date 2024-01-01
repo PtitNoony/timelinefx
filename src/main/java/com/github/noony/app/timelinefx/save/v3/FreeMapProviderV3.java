@@ -263,7 +263,7 @@ public class FreeMapProviderV3 {
         var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, freeMapParameters, dateHandles, freeMapPersons, freeMapPlaces, freeMapStays);
         freeMap.setName(freeMapName);
         // create Portraits
-        freeMapPersonsAndElements.forEach(pair -> parseFreeMapPersonStep03(pair.getValue(), pair.getKey(), freeMapPlaces, freeMapStays));
+        freeMapPersonsAndElements.forEach(pair -> parseFreeMapPersonStep03(pair.getValue(), pair.getKey(), freeMapStays));
         //
         frieze.addFriezeFreeMap(freeMap);
     }
@@ -381,16 +381,11 @@ public class FreeMapProviderV3 {
             throw new IllegalStateException("Could not parse FreeMapStay: could not find corresponding StayPeriod " + stayPeriodID);
         }
         var freeMapStay = FreeMapStayFactory.createFreeMapStay(freeMapStayID, stayPeriod, startID, endID, freeMapPerson, place);
-
-        /*
-       //
-        freeMapStay.getIntermediateConnectors().forEach(interConnector -> stayElement.appendChild(saveConnectorElement(doc, interConnector)));
-
-         */
+        //
         return freeMapStay;
     }
 
-    private static void parseFreeMapPersonStep03(Element freemapPersonElement, FreeMapPerson freeMapPerson, List<FreeMapPlace> freeMapPlaces, List<FreeMapStay> links) {
+    private static void parseFreeMapPersonStep03(Element freemapPersonElement, FreeMapPerson freeMapPerson, List<FreeMapStay> links) {
         // parse portrais
         var freemapPortraitsGrouptList = freemapPersonElement.getElementsByTagName(FREEMAP_PORTRAITS_GROUP);
         if (freemapPortraitsGrouptList.getLength() != 1) {
@@ -501,6 +496,9 @@ public class FreeMapProviderV3 {
         var colorS = freeMapConnectorElement.getAttribute(COLOR_ATR);
         var xPos = Double.parseDouble(freeMapConnectorElement.getAttribute(X_POS_ATR));
         var yPos = Double.parseDouble(freeMapConnectorElement.getAttribute(Y_POS_ATR));
+        LOG.log(Level.FINE, "parseConnectorElement ignoring field color: {0}.", new Object[]{colorS});
+        LOG.log(Level.FINE, "parseConnectorElement ignoring field xPos: {0}.", new Object[]{xPos});
+        LOG.log(Level.FINE, "parseConnectorElement ignoring field yPos: {0}.", new Object[]{yPos});
         var plotSize = Double.parseDouble(freeMapConnectorElement.getAttribute(PLOT_SIZE_ATR));
         var linkedElementID = Long.parseLong(freeMapConnectorElement.getAttribute(FREEMAP_LINKED_ELEMENT_ID_ATR));
         //

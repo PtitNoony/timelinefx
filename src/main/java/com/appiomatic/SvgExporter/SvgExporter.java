@@ -61,16 +61,20 @@ public class SvgExporter {
 
     private static final ArrayList<String> TEMP_FILE_LIST = new ArrayList<>();
 
-    private static double CANVAS_X = 0;
-    private static double CANVAS_Y = 0;
-    private static String OUTPUT_FILE_NAME = "";
+    private static double canvasX = 0;
+    private static double canvasY = 0;
+    private static String outputFileName = "";
 
-    public static void export(@NotNull Node srcPane, String outputFileName) {
+    private SvgExporter() {
+        // utility constructor
+    }
+
+    public static void export(@NotNull Node srcPane, String anOutputFileName) {
         TEMP_FILE_LIST.clear();
         Bounds canvasBounds = srcPane.localToScene(srcPane.getBoundsInLocal());
-        CANVAS_X = canvasBounds.getMinX();
-        CANVAS_Y = canvasBounds.getMinY();
-        OUTPUT_FILE_NAME = outputFileName;
+        canvasX = canvasBounds.getMinX();
+        canvasY = canvasBounds.getMinY();
+        outputFileName = anOutputFileName;
 
         File outputFile = new File(outputFileName);
 
@@ -93,7 +97,7 @@ public class SvgExporter {
             svgElement.setAttribute("height", canvasBounds.getHeight() + "px");
 
             // Write the content into xml file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(document);
             StreamResult result = new StreamResult(outputFile);
@@ -112,8 +116,8 @@ public class SvgExporter {
 
             Bounds bounds = circleShape.localToScene(circleShape.getBoundsInLocal());
 
-            String cx = Double.toString(bounds.getMinX() + circleShape.getRadius() - CANVAS_X);
-            String cy = Double.toString(bounds.getMinY() + circleShape.getRadius() - CANVAS_Y);
+            String cx = Double.toString(bounds.getMinX() + circleShape.getRadius() - canvasX);
+            String cy = Double.toString(bounds.getMinY() + circleShape.getRadius() - canvasY);
             String r = Double.toString(circleShape.getRadius());
             String fill = getHexColorCodeFromFxColor((Color) circleShape.getFill());
             String stroke = getHexColorCodeFromFxColor((Color) circleShape.getStroke());
@@ -142,8 +146,8 @@ public class SvgExporter {
 
             Bounds bounds = ellipseShape.localToScene(ellipseShape.getBoundsInLocal());
 
-            String cx = Double.toString(bounds.getMinX() + ellipseShape.getRadiusX() - CANVAS_X);
-            String cy = Double.toString(bounds.getMinY() + ellipseShape.getRadiusY() - CANVAS_Y);
+            String cx = Double.toString(bounds.getMinX() + ellipseShape.getRadiusX() - canvasX);
+            String cy = Double.toString(bounds.getMinY() + ellipseShape.getRadiusY() - canvasY);
             String rx = Double.toString(ellipseShape.getRadiusX());
             String ry = Double.toString(ellipseShape.getRadiusY());
             String fill = getHexColorCodeFromFxColor((Color) ellipseShape.getFill());
@@ -173,8 +177,8 @@ public class SvgExporter {
 
             Bounds rectangleSceneBounds = rectangleShape.localToScene(rectangleShape.getBoundsInLocal());
 
-            String x = Double.toString(rectangleSceneBounds.getMinX() - CANVAS_X);
-            String y = Double.toString(rectangleSceneBounds.getMinY() - CANVAS_Y);
+            String x = Double.toString(rectangleSceneBounds.getMinX() - canvasX);
+            String y = Double.toString(rectangleSceneBounds.getMinY() - canvasY);
             String ry = Double.toString(rectangleShape.getArcHeight());
             String width = Double.toString(rectangleShape.getWidth());
             String height = Double.toString(rectangleShape.getHeight());
@@ -216,7 +220,7 @@ public class SvgExporter {
             }
 
             for (int i = 0; i < polygonShape.getPoints().size(); i += 2) {
-                d += (polygonShape.getPoints().get(i) + bounds.getMinX() - CANVAS_X - minX) + "," + (polygonShape.getPoints().get(i + 1) + bounds.getMinY() - CANVAS_Y - minY) + " ";
+                d += (polygonShape.getPoints().get(i) + bounds.getMinX() - canvasX - minX) + "," + (polygonShape.getPoints().get(i + 1) + bounds.getMinY() - canvasY - minY) + " ";
             }
 
             d += "Z";
@@ -254,7 +258,7 @@ public class SvgExporter {
             }
 
             for (int i = 0; i < polylineShape.getPoints().size(); i += 2) {
-                points += (polylineShape.getPoints().get(i) + bounds.getMinX() - CANVAS_X - minX) + "," + (polylineShape.getPoints().get(i + 1) + bounds.getMinY() - CANVAS_Y - minY) + " ";
+                points += (polylineShape.getPoints().get(i) + bounds.getMinX() - canvasX - minX) + "," + (polylineShape.getPoints().get(i + 1) + bounds.getMinY() - canvasY - minY) + " ";
             }
 
             String fill = getHexColorCodeFromFxColor((Color) polylineShape.getFill());
@@ -282,8 +286,8 @@ public class SvgExporter {
             Bounds bounds = starPath.localToScene(starPath.getBoundsInLocal());
 
             String d = "";
-            double x = bounds.getMinX() - CANVAS_X;
-            double y = bounds.getMinY() - CANVAS_Y;
+            double x = bounds.getMinX() - canvasX;
+            double y = bounds.getMinY() - canvasY;
 
             for (PathElement pathElement : starPath.getElements()) {
                 if (pathElement instanceof MoveTo moveTo) {
@@ -327,12 +331,12 @@ public class SvgExporter {
             Text text = (Text) object;
             Bounds textSceneBounds = text.localToScene(text.getBoundsInLocal());
 
-            double pivotX = textSceneBounds.getMinX() + (textSceneBounds.getWidth() / 2.0) - CANVAS_X;
-            double pivotY = textSceneBounds.getMinY() + (textSceneBounds.getHeight() / 2.0) - CANVAS_Y;
+            double pivotX = textSceneBounds.getMinX() + (textSceneBounds.getWidth() / 2.0) - canvasX;
+            double pivotY = textSceneBounds.getMinY() + (textSceneBounds.getHeight() / 2.0) - canvasY;
 
             String textContent = text.getText();
-            String x = Double.toString(textSceneBounds.getMinX() - CANVAS_X);
-            String y = Double.toString(textSceneBounds.getMaxY() - CANVAS_Y - 3);
+            String x = Double.toString(textSceneBounds.getMinX() - canvasX);
+            String y = Double.toString(textSceneBounds.getMaxY() - canvasY - 3);
             String transform = "rotate(" + text.getRotate() + ", " + pivotX + ", " + pivotY + ")";
             String fontSize = Double.toString(text.getFont().getSize()) + "px";
             String fontFamily = text.getFont().getFamily();
@@ -358,18 +362,18 @@ public class SvgExporter {
             ImageView imageView = (ImageView) object;
             Bounds bounds = imageView.localToScene(imageView.getBoundsInLocal());
 
-            String imagePath = new File(OUTPUT_FILE_NAME).getParent() + "/" + UUID.randomUUID().toString() + ".png";
+            String imagePath = new File(outputFileName).getParent() + "/" + UUID.randomUUID().toString() + ".png";
             TEMP_FILE_LIST.add(imagePath);
 
             if (imageView.getImage() != null) {
                 writeImageToFile(imageView.getImage(), imagePath);
 
-                String pivotX = Double.toString(bounds.getMinX() + (bounds.getWidth() / 2.0) - CANVAS_X);
-                String pivotY = Double.toString(bounds.getMinY() + (bounds.getHeight() / 2.0) - CANVAS_Y);
+                String pivotX = Double.toString(bounds.getMinX() + (bounds.getWidth() / 2.0) - canvasX);
+                String pivotY = Double.toString(bounds.getMinY() + (bounds.getHeight() / 2.0) - canvasY);
 
                 String xlinkHref = "data:image/png;base64," + getBase64StringFromImage(imagePath);
-                String x = Double.toString(bounds.getMinX() - CANVAS_X);
-                String y = Double.toString(bounds.getMinY() - CANVAS_Y);
+                String x = Double.toString(bounds.getMinX() - canvasX);
+                String y = Double.toString(bounds.getMinY() - canvasY);
                 String preserveAspectRatio = "none";
                 String width = Double.toString(imageView.getBoundsInLocal().getWidth());
                 String height = Double.toString(imageView.getBoundsInLocal().getHeight());

@@ -25,13 +25,13 @@ import com.github.noony.app.timelinefx.core.StayPeriodLocalDate;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.utils.DateUtils;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +51,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
 
 /**
@@ -191,38 +190,15 @@ public class StaysCreationViewController implements Initializable {
         });
 
         // Converter
-        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
-            DateTimeFormatter dateFormatter
-                    = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-            @Override
-            public String toString(LocalDate date) {
-                if (date != null) {
-                    return dateFormatter.format(date);
-                } else {
-                    return "";
-                }
-            }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string, dateFormatter);
-                } else {
-                    return null;
-                }
-            }
-        };
-        startDateP.setConverter(converter);
+        startDateP.setConverter(DateUtils.CONVERTER);
         startDateP.setPromptText("dd-MM-yyyy");
         //
         startDateP.getEditor().setOnKeyTyped(eh -> {
             try {
-                LocalDate aDate = converter.fromString(startDateP.getEditor().getText());
+                var aDate = DateUtils.CONVERTER.fromString(startDateP.getEditor().getText());
                 startDateP.setValue(aDate);
-                System.err.println(" !! !!! DONE !!");
             } catch (Exception e) {
-                System.err.println(" ^^ ignoring");
+                LOG.log(Level.FINE, "Ignoring date conversion error: {0}", new Object[]{e});
             }
         });
         //

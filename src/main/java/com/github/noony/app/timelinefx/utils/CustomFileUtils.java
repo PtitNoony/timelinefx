@@ -19,12 +19,16 @@ package com.github.noony.app.timelinefx.utils;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author hamon
  */
 public class CustomFileUtils {
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private CustomFileUtils() {
         //private utility constructor
@@ -39,12 +43,8 @@ public class CustomFileUtils {
                 Path relativePath = projectPath.relativize(selectedFilePath);
                 return relativePath.toString();
             } catch (Exception e) {
-                e.printStackTrace();
-                System.err.println(" !!!! projectPath ==> " + projectPath);
-                System.err.println(" !!!! selectedFilePath ==> " + selectedFilePath);
-                System.err.println(" !!!! project ==>  " + project);
+                LOG.log(Level.SEVERE, "Exception while using fromAbsoluteToProjectRelative: {0}", new Object[]{e});
             }
-//            return relativePath.toString();
         } else {
             return file.getAbsolutePath();
         }

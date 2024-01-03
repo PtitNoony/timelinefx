@@ -76,7 +76,7 @@ public class ChronologyLink implements FriezeObject {
         linkType = aLinkType;
         // default values here
         startAnchorSide = DEFAULT_START_LINK_ANCHOR_SIDE;
-        endAnchorSide = DEFAULT_END_LINK_ANCHOR_SIDE.LEFT;
+        endAnchorSide = DEFAULT_END_LINK_ANCHOR_SIDE;
         // create a copy ?
         linkParameters = allLinkParameters;
         //
@@ -193,17 +193,19 @@ public class ChronologyLink implements FriezeObject {
 
     private void handleStartMiniatureChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED -> {
+            case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED ->
                 updateStartPosition();
-            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported event in handleStartMiniatureChanges: " + event);
         }
     }
 
     private void handleEndMiniatureChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED -> {
+            case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED ->
                 updateEndPosition();
-            }
+            default ->
+                throw new UnsupportedOperationException("Unsupported event in handleEndMiniatureChanges: " + event);
         }
     }
 

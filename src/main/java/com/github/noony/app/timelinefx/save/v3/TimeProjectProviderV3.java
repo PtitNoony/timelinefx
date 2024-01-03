@@ -254,6 +254,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     public boolean save(TimeLineProject project, File destFile) {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            docFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             // root elements
             Document doc = docBuilder.newDocument();
@@ -295,7 +296,8 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             //
             rootElement.normalize();
             // write the content into xml file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+            transformerFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");

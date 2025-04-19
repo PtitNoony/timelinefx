@@ -58,6 +58,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -297,7 +298,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             rootElement.normalize();
             // write the content into xml file
             TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
-            transformerFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");

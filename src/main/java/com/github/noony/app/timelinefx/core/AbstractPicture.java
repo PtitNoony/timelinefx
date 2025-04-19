@@ -34,11 +34,13 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public abstract class AbstractPicture extends FriezeObject implements IPicture {
+public abstract class AbstractPicture implements FriezeObject, IPicture {
 
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
+
+    private final Long id;
 
     private final List<Person> persons;
     private final List<Place> places;
@@ -53,7 +55,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     private LocalDate date;
 
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
-        super(anID);
+        id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -69,7 +71,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
     }
 
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
-        super(anID);
+        id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -82,6 +84,11 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
         date = null;
         //
         name = aName;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     @Override
@@ -171,7 +178,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
             case TIME_MIN ->
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -187,10 +194,12 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     @Override
     public void setDate(LocalDate aDate) {
-        if (aDate != null && !date.equals(aDate)) {
-            date = aDate;
-            timeFormat = TimeFormat.LOCAL_TIME;
-            propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+        if (aDate != null) {
+            if (date != null && !date.equals(aDate)) {
+                date = aDate;
+                timeFormat = TimeFormat.LOCAL_TIME;
+                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
+            }
         }
     }
 
@@ -220,7 +229,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -249,7 +258,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -263,7 +272,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
                 return timestamp;
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 
@@ -277,7 +286,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
                 return MathUtils.doubleToString(timestamp);
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
 
     }
@@ -311,7 +320,7 @@ public abstract class AbstractPicture extends FriezeObject implements IPicture {
 
     public void movePersonDown(Person aPerson) {
         int index = persons.indexOf(aPerson);
-        if (index != 1 & index < persons.size() - 1) {
+        if (index != 1 && index < persons.size() - 1) {
             Collections.swap(persons, index + 1, index);
             propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
         }

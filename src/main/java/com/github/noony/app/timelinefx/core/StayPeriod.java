@@ -24,7 +24,7 @@ import java.util.Comparator;
  *
  * @author arnaud
  */
-public abstract class StayPeriod extends FriezeObject {
+public abstract class StayPeriod implements FriezeObject {
 
     public static final Comparator<? super StayPeriod> STAY_COMPARATOR = Comparator.comparingDouble(StayPeriod::getStartDate);
 
@@ -33,14 +33,20 @@ public abstract class StayPeriod extends FriezeObject {
     public static final String START_DATE_CHANGED = "StayPeriod__startDateChanged";
     public static final String END_DATE_CHANGED = "StayPeriod__endDateChanged";
     private final PropertyChangeSupport propertyChangeSupport;
+    private final Long id;
     private Person person;
     private Place place;
 
-    public StayPeriod(long id, Person aPerson, Place aPlace) {
-        super(id);
+    protected StayPeriod(long anId, Person aPerson, Place aPlace) {
+        id = anId;
         propertyChangeSupport = new PropertyChangeSupport(StayPeriod.this);
         person = aPerson;
         place = aPlace;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public void addListener(PropertyChangeListener listener) {

@@ -37,6 +37,7 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
     private final FreeMapPlace place;
     private final FriezeFreeMap friezeFreeMap;
     //
+    private final Rectangle debugBackground;
     private final Rectangle background;
     private final Rectangle backgroundClip;
     //
@@ -52,13 +53,18 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
     private double oldScreenY;
     private double oldTranslateY;
 
-    public PlaceDrawing(FreeMapPlace aPlace, FriezeFreeMap aFriezeFreeMap) {
+    protected PlaceDrawing(FreeMapPlace aPlace, FriezeFreeMap aFriezeFreeMap) {
         super();
         place = aPlace;
         friezeFreeMap = aFriezeFreeMap;
         drawingMode = PlaceDrawingMode.MIN_MAX;
         minX = place.getMinX();
         maxX = place.getMaxX();
+        //
+        debugBackground = new Rectangle();
+        debugBackground.setFill(Color.BLUEVIOLET);
+        debugBackground.setWidth(100);
+        debugBackground.setHeight(20);
         //
         background = new Rectangle();
         background.setFill(Color.GRAY);
@@ -77,14 +83,18 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
         nameLabel.setTextAlignment(TextAlignment.CENTER);
         nameLabel.setMinHeight(FreeMapPlace.PLACE_NAME_HEIGHT);
         nameLabel.setMaxHeight(FreeMapPlace.PLACE_NAME_HEIGHT);
-        nameLabel.setMinWidth(place.getPlaceNameWidth());
-        nameLabel.setMaxWidth(place.getPlaceNameWidth());
-        nameLabel.setFont(new Font(16));
+        nameLabel.setMinWidth(place.getNameWidth());
+        nameLabel.setMaxWidth(place.getNameWidth());
+        var newFont = new Font("Vivaldi", aPlace.getFontSize());
+        nameLabel.setFont(newFont);
+        updateNameLabelStyle(aPlace.getFontSize());
         nameLabel.setWrapText(true);
+//        nameLabel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         //
         place.addListener(PlaceDrawing.this::handlePropertyChange);
         //
         placePlotsGroup.getChildren().add(background);
+//        addNode(debugBackground);
         addNode(placePlotsGroup);
         addNode(nameGroup);
         nameGroup.getChildren().add(nameLabel);
@@ -123,9 +133,9 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
             oldScreenY = event.getScreenY();
             oldTranslateY = getNode().getTranslateY();
         });
-        background.setOnMouseDragged(event -> {
-            getNode().setTranslateY(oldTranslateY + event.getScreenY() - oldScreenY);
-        });
+        background.setOnMouseDragged(event ->
+            getNode().setTranslateY(oldTranslateY + event.getScreenY() - oldScreenY)
+        );
         background.setOnMouseReleased(event -> {
             var translateYScaled = oldTranslateY + event.getScreenY() - oldScreenY;
             place.setY(translateYScaled / getScale());
@@ -147,7 +157,8 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
             }
             case FreeMapPlace.FONT_SIZE_CHANGED -> {
                 var fontSize = (double) event.getNewValue();
-                nameLabel.setFont(new Font(fontSize));
+                updateNameLabelStyle(fontSize);
+                nameLabel.applyCss();
             }
             default ->
                 throw new UnsupportedOperationException(event.getPropertyName());
@@ -159,14 +170,14 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
     }
 
     private void updateWidth() {
-        var placePlotsWidth = place.getWidth() * getScale();
+        var placePlotsWidth = place.getPlaceStayWidth() * getScale();
         switch (drawingMode) {
-            case FULL -> {
-                backgroundClip.setX(0);
-                backgroundClip.setWidth(placePlotsWidth);
-                background.setX(0);
-                background.setWidth(placePlotsWidth);
-            }
+//            case FULL -> {
+//                backgroundClip.setX(0);
+//                backgroundClip.setWidth(placePlotsWidth);
+//                background.setX(0);
+//                background.setWidth(placePlotsWidth);
+//            }
             case MIN_MAX -> {
                 var x = minX;
                 var w = (maxX - minX) * getScale();
@@ -179,7 +190,7 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
             default ->
                 throw new UnsupportedOperationException();
         }
-        nameLabel.setTranslateX(placePlotsWidth);
+        nameLabel.setTranslateX(placePlotsWidth + FriezeFreeMap.MAP_PADDING * getScale());
         nameLabel.setMinWidth(friezeFreeMap.getPlaceNamesWidth() * getScale());
         nameLabel.setMaxWidth(friezeFreeMap.getPlaceNamesWidth() * getScale());
     }
@@ -190,5 +201,10 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
         backgroundClip.setHeight(height);
         nameLabel.setMinHeight(height);
         nameLabel.setMaxHeight(height);
+    }
+
+    private void updateNameLabelStyle(double fontSizePx) {
+        nameLabel.setStyle("-fx-font-size: " + fontSizePx + ";");
+        nameLabel.applyCss();
     }
 }

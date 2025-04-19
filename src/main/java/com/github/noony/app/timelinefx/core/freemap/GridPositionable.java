@@ -22,6 +22,11 @@ package com.github.noony.app.timelinefx.core.freemap;
  */
 public interface GridPositionable {
 
+    public static final String POS_CHANGED = "posChanged";
+    public static final String PLOT_SIZE_CHANGED = "plotSizeChanged";
+    public static final String PLOT_VISIBILITY_CHANGED = "plotVisibilityChanged";
+    public static final String PLOT_COLOR_CHANGED = "plotColorChanged";
+
     public static final double EPSILON = 0.000000001;
 
     void setVisible(boolean visibility);

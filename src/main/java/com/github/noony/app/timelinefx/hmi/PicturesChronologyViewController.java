@@ -97,6 +97,8 @@ public class PicturesChronologyViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // init
+        AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         PortraitFactory.addPropertyChangeListener(this::handlePortraitFactoryChanges);
         loadPictureChronologyConfiguratorView();
@@ -111,6 +113,10 @@ public class PicturesChronologyViewController implements Initializable {
         });
         updateChronologiesTab();
         chronologyNameField.setText("");
+        //
+        if(AppInstanceConfiguration.getSelectedProject()!=null){
+            setTimelineProject(AppInstanceConfiguration.getSelectedProject());
+        }
     }
 
     @FXML
@@ -130,7 +136,20 @@ public class PicturesChronologyViewController implements Initializable {
         System.err.println(" handleInsertPortrait");
     }
 
-    protected void setProject(TimeLineProject aProject) {
+
+    private void handleAppConfigChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case AppInstanceConfiguration.TIMELINE_SELECTED_CHANGED ->
+                setTimelineProject((TimeLineProject) event.getNewValue());
+            case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED -> {
+                // nothing to do
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void setTimelineProject(TimeLineProject aProject) {
         project = aProject;
         if (picturesGalleryTiles != null) {
             picturesGalleryTiles.removePropertyChangeListener(galleryTilesListener);
@@ -183,9 +202,7 @@ public class PicturesChronologyViewController implements Initializable {
 
     private void handleProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED,
-                    TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED,
-                    TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED, TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED, TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
@@ -216,7 +233,7 @@ public class PicturesChronologyViewController implements Initializable {
     private void handlePortraitFactoryChanges(PropertyChangeEvent event) {
         if (portraitGalleryTiles != null) {
             switch (event.getPropertyName()) {
-                case PortraitFactory.PORTRAIT_ADDED -> {
+                case PortraitFactory.PORTRAIT_CREATED -> {
                     var portrait = (Portrait) event.getNewValue();
                     portraitGalleryTiles.addFileObject(portrait);
                 }
@@ -230,7 +247,8 @@ public class PicturesChronologyViewController implements Initializable {
         switch (event.getPropertyName()) {
             case GalleryTiles.TILE_CLICKED -> {
                 Picture pic = (Picture) event.getNewValue();
-                ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(pic);
+                var chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(pic);
+                LOG.log(Level.FINE, "Created picture minitature : {0}.", new Object[]{chronologyPictureMiniature});
             }
             case GalleryTiles.TILE_SELECTED -> {
                 // nothing to do for now
@@ -244,7 +262,8 @@ public class PicturesChronologyViewController implements Initializable {
         switch (event.getPropertyName()) {
             case GalleryTiles.TILE_CLICKED -> {
                 Portrait portrait = (Portrait) event.getNewValue();
-                ChronologyPictureMiniature chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(portrait);
+                var chronologyPictureMiniature = currentPictureChronology.createChronologyPicture(portrait);
+                LOG.log(Level.FINE, "Created picture minitature : {0}.", new Object[]{chronologyPictureMiniature});
             }
             case GalleryTiles.TILE_SELECTED -> {
                 // nothing to do for now
@@ -315,7 +334,7 @@ public class PicturesChronologyViewController implements Initializable {
             loadMiniatureConfiguratorView();
         }
         setPropertyTabContent(miniaturePropertyRootView, "Miniature");
-        miniaturePropertyController.setChronologyMiniature(miniature);
+        miniaturePropertyController.setChronologyMiniature(currentPictureChronology, miniature);
     }
 
     private void displayLinkPropertyTab(ChronologyLink link) {
@@ -329,11 +348,15 @@ public class PicturesChronologyViewController implements Initializable {
     private void setPropertyTabContent(Node aNode, String title) {
         if (itemPropertyTab == null) {
             itemPropertyTab = new Tab(title, aNode);
+//            itemPropertyTab.
             itemPropertyTab.setClosable(false);
             propertiesTabPane.getTabs().add(itemPropertyTab);
         } else {
             itemPropertyTab.setContent(aNode);
             itemPropertyTab.setText(title);
+            if (!propertiesTabPane.getTabs().contains(itemPropertyTab)) {
+                propertiesTabPane.getTabs().add(itemPropertyTab);
+            }
         }
         propertiesTabPane.getSelectionModel().select(itemPropertyTab);
     }

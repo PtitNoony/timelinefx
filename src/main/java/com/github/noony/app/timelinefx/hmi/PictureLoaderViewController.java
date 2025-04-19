@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.IDateObject;
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
@@ -27,6 +28,7 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -94,11 +96,15 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Loading PictureLoaderViewController");
+        AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         peopleCheckListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         placesCheckListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         timeformatCB.setItems(FXCollections.observableArrayList(TimeFormat.values()));
         editionMode = EditionMode.CREATION;
         reset();
+        if (AppInstanceConfiguration.getSelectedProject() != null) {
+            setTimelineProject(AppInstanceConfiguration.getSelectedProject());
+        }
     }
 
     public void reset() {
@@ -121,6 +127,10 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         fileField.setText("");
         pictureNameField.setText("");
         updateActions();
+        //
+        if (AppInstanceConfiguration.getSelectedProject() != null) {
+            setTimelineProject(AppInstanceConfiguration.getSelectedProject());
+        }
     }
 
     @Override
@@ -156,7 +166,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
         editionMode = mode;
     }
 
-    protected void setProject(TimeLineProject aProject) {
+    private void setTimelineProject(TimeLineProject aProject) {
         project = aProject;
     }
 
@@ -183,6 +193,18 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
             fileField.setText(pictureFile.getAbsolutePath());
             updateActions();
             displayImage();
+        }
+    }
+
+    private void handleAppConfigChanges(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
+            case AppInstanceConfiguration.TIMELINE_SELECTED_CHANGED ->
+                setTimelineProject((TimeLineProject) event.getNewValue());
+            case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED -> {
+                // nothing to do
+            }
+            default ->
+                throw new AssertionError();
         }
     }
 
@@ -213,7 +235,7 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
                 }
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeformatCB.getSelectionModel().getSelectedItem());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeformatCB.getSelectionModel().getSelectedItem());
         }
     }
 
@@ -244,12 +266,12 @@ public class PictureLoaderViewController implements Initializable, ViewControlle
                 }
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeformatCB.getSelectionModel().getSelectedItem());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeformatCB.getSelectionModel().getSelectedItem());
         }
     }
 
     private void updateActions() {
-        var ready = pictureFile != null & pictureNameField.getText().trim().length() > 0;
+        var ready = pictureFile != null && pictureNameField.getText().trim().length() > 0;
         okButton.setDisable(!ready);
     }
 

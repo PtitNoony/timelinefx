@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx;
 
 import com.github.noony.app.timelinefx.hmi.ConfigurationViewController;
+import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -67,11 +68,16 @@ public class Configuration {
     private static File preferenceFile = null;
     private static Properties properties = null;
 
+    private Configuration() {
+        // utility constructor
+    }
+
     public static void addPropertyChangeListener(PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
 
     public static void loadPreferences() {
+        CustomProfiler.start("loadPreferences");
         var userDirFile = new File(DEFAULT_TIMELINES_FOLDER_PATH + File.separator + PREFERENCE_FILE_NAME);
         if (userDirFile.exists()) {
             preferenceFile = userDirFile;
@@ -79,6 +85,7 @@ public class Configuration {
             preferenceFile = getUserHomePreferenceFile();
         }
         loadPreferenceFile();
+        CustomProfiler.stop("loadPreferences");
     }
 
     private static File getUserHomePreferenceFile() {
@@ -101,28 +108,18 @@ public class Configuration {
                 var createdFile = tmpPreferenceFile.createNewFile();
                 LOG.log(Level.INFO, "Created preference file: {0}", new Object[]{createdFile});
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, "Could not create user home preference file : ", new Object[]{ex});
+                LOG.log(Level.SEVERE, "Could not create user home preference file: {0}", new Object[]{ex});
             }
         }
         return tmpPreferenceFile;
     }
 
     private static void loadPreferenceFile() {
-        InputStream inputStream = null;
         properties = new Properties();
-        try {
-            inputStream = new FileInputStream(preferenceFile);
+        try (InputStream inputStream = new FileInputStream(preferenceFile)) {
             properties.load(inputStream);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, null, ex);
-            }
+            LOG.log(Level.SEVERE, "Could not load preference file. Exception:: {0}", new Object[]{ex});
         }
         var propertiesChanged = false;
         // checking for key properties needed
@@ -157,20 +154,11 @@ public class Configuration {
             LOG.log(Level.SEVERE, "Could not save preferences since they have not been loaded yet.");
             return;
         }
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(preferenceFile);
+
+        try (OutputStream outputStream = new FileOutputStream(preferenceFile);) {
             properties.store(outputStream, "..");
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, null, ex);
-            }
+            LOG.log(Level.SEVERE, "Could not save preferences. Exception:: {0}", new Object[]{ex});
         }
     }
 
@@ -188,6 +176,10 @@ public class Configuration {
 
     public static String getMiniaturesFolder() {
         return properties.getProperty(MINIATURES_FOLDER_PROPERTY_NAME);
+    }
+
+    public static boolean withProfiling() {
+        return true;
     }
 
     public static Style getTheme() {

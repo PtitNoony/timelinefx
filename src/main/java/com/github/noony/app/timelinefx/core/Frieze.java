@@ -21,6 +21,7 @@ import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ import static javafx.application.Platform.runLater;
  *
  * @author hamon
  */
-public class Frieze extends FriezeObject {
+public class Frieze implements FriezeObject {
 
     public static final String CLASS_NAME = "Frieze";
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
@@ -53,6 +54,7 @@ public class Frieze extends FriezeObject {
     private static final long DEFAULT_MIN_DATE = 0;
     private static final long DEFAULT_MAX_DATE = 500;
 
+    private final Long id;
     private final TimeLineProject project;
     private final List<StayPeriod> stayPeriods;
     private final List<Place> places;
@@ -74,9 +76,14 @@ public class Frieze extends FriezeObject {
     //
     private double minDateWindow = minDate;
     private double maxDateWindow = maxDate;
+    //
+    private double constraintMinDate = Double.NEGATIVE_INFINITY;
+    private double constraintMaxDate = Double.POSITIVE_INFINITY;
+    //
+    private ItemSelectionPropagation itemSelectionPropagation = ItemSelectionPropagation.RECURSIVE;
 
     protected Frieze(long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
-        super(anID);
+        id = anID;
         project = aProject;
         name = friezeName;
         stayPeriods = new LinkedList<>();
@@ -96,7 +103,12 @@ public class Frieze extends FriezeObject {
         project.addFrieze(Frieze.this);
         project.addListener(Frieze.this::handleTimeLineProjectChanges);
         // TODO : optimize
-        staysToConsider.stream().forEachOrdered(Frieze.this::addStayPeriod);
+        staysToConsider.stream().forEachOrdered(Frieze.this::addStay);
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public Frieze(long anID, TimeLineProject aProject, String friezeName) {
@@ -116,7 +128,7 @@ public class Frieze extends FriezeObject {
         return project;
     }
 
-    public void addPerson(Person aPerson) {
+    private void addPerson(Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
             var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).toList();
@@ -128,8 +140,18 @@ public class Frieze extends FriezeObject {
             // notify place added
             // may be needed before adding stays for some variable updates
             propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
-            runLater(() -> stays.forEach(this::addStayPeriod));
+            runLater(() -> stays.forEach(this::addStay));
         }
+    }
+
+    public void addAllStays(StayPeriod... stays) {
+        for (StayPeriod s : stays) {
+            addStay(s);
+        }
+    }
+
+    public void addAllStays(Collection<? extends StayPeriod> stays) {
+        stays.forEach(this::addStay);
     }
 
     /**
@@ -137,14 +159,14 @@ public class Frieze extends FriezeObject {
      *
      * @param stay a stay to be represented in this Frieze
      */
-    public void addStayPeriod(StayPeriod stay) {
+    public void addStay(StayPeriod stay) {
         if (!stayPeriods.contains(stay)) {
             stayPeriods.add(stay);
             //
             stay.addListener(stayChangesListener);
             //
-            Place place = stay.getPlace();
-            Person person = stay.getPerson();
+            var place = stay.getPlace();
+            var person = stay.getPerson();
             // add place
             if (!places.contains(place)) {
                 places.add(place);
@@ -175,11 +197,26 @@ public class Frieze extends FriezeObject {
             if (!endDates.contains(stay.getEndDate())) {
                 endDates.add(stay.getEndDate());
             }
-            minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-            maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            //
+            updateMinMaxDates();
             //
             propertyChangeSupport.firePropertyChange(STAY_ADDED, this, stay);
         }
+    }
+
+    private void updateMinMaxDates() {
+        minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
+        maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+    }
+
+    public void removeAllStays(StayPeriod... stays) {
+        for (StayPeriod s : stays) {
+            removeStay(s);
+        }
+    }
+
+    public void removeAllStays(Collection<? extends StayPeriod> stays) {
+        stays.forEach(this::removeStay);
     }
 
     public void removeStay(StayPeriod stay) {
@@ -188,8 +225,7 @@ public class Frieze extends FriezeObject {
             stay.removeListener(stayChangesListener);
             //TODO : check if person list and place list is unchanged
             //
-            minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-            maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            updateMinMaxDates();
             //
             var startDate = stay.getStartDate();
             var endDate = stay.getEndDate();
@@ -217,13 +253,23 @@ public class Frieze extends FriezeObject {
         }
     }
 
+    public void updatePeopleSelection(Person aPerson, boolean selected) {
+        if (selected) {
+            addPerson(aPerson);
+        } else {
+            removePerson(aPerson);
+        }
+    }
+
     public void updatePlaceSelection(Place aPlace, boolean selected) {
+        //
+        //System.err.println(" C'est ici qu'il faut faire l'update");
         if (selected) {
             if (!places.contains(aPlace)) {
                 places.add(aPlace);
                 propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
+                project.getStays().stream().filter(s -> s.getPlace() == aPlace & persons.contains(s.getPerson())).forEach(this::addStay);
             }
-            project.getStays().stream().filter(s -> s.getPlace() == aPlace & persons.contains(s.getPerson())).forEach(this::addStayPeriod);
         } else {
             removePlace(aPlace);
         }
@@ -245,6 +291,10 @@ public class Frieze extends FriezeObject {
     }
 
     public void addListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
@@ -277,7 +327,7 @@ public class Frieze extends FriezeObject {
     }
 
     public FriezeFreeMap createFriezeFreeMap() {
-        var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this);
+        var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this, true);
         friezeFreeMaps.add(friezeFreeMap);
         return friezeFreeMap;
     }
@@ -348,21 +398,22 @@ public class Frieze extends FriezeObject {
 
     private void handleTimeLineProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED,  TimeLineProject.PLACE_ADDED -> {
+            case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PLACE_ADDED -> {
                 // Nothing to do
             }
-            case TimeLineProject.PERSON_ADDED ->
-                addPerson((Person) event.getNewValue());
-            case TimeLineProject.STAY_ADDED ->
-                addStayPeriod((StayPeriod) event.getNewValue());
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.STAY_ADDED -> {
+                // Nothing to do
+            }
+//            case TimeLineProject.STAY_ADDED ->
+//                addStay((StayPeriod) event.getNewValue());
             case TimeLineProject.STAY_REMOVED ->
                 removeStay((StayPeriod) event.getNewValue());
             case TimeLineProject.PLACE_REMOVED -> {
-                Place placeRemoved = (Place) event.getNewValue();
+                var placeRemoved = (Place) event.getNewValue();
                 removePlace(placeRemoved);
             }
             case TimeLineProject.PERSON_REMOVED -> {
-                Person personRemoved = (Person) event.getNewValue();
+                var personRemoved = (Person) event.getNewValue();
                 removePerson(personRemoved);
             }
             default ->
@@ -394,11 +445,12 @@ public class Frieze extends FriezeObject {
     private void removePlace(Place placeRemoved) {
         places.remove(placeRemoved);
         personsAtPlaces.remove(placeRemoved);
-        List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPlace() == placeRemoved).toList();
-        impactedStays.forEach(this::removeStay);
+        var staysToRemove = stayPeriods.stream().filter(s -> s.getPlace() == placeRemoved).toList();
+        // for concurrency accces...
+        staysToRemove.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PLACE_REMOVED, this, placeRemoved);
         //
-        placeRemoved.getPlaces().forEach(this::removePlace);
+        //placeRemoved.getPlaces().forEach(this::removePlace);
     }
 
     private void removePerson(Person personRemoved) {

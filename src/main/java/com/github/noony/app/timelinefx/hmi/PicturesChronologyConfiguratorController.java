@@ -19,7 +19,10 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
+import com.github.noony.app.timelinefx.hmi.picturechronology.ChronologyPictureMiniatureDrawing;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
+import static com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing.MINIATURE_SELECTED;
+import static com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing.MINIATURE_UNSELECTED;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import java.beans.PropertyChangeEvent;
@@ -156,6 +159,12 @@ public class PicturesChronologyConfiguratorController implements Initializable {
                 if (pictureChronologyDrawing != null) {
                     zoomField.setText(MathUtils.doubleToString(pictureChronologyDrawing.getScale()));
                 }
+            }
+            case ChronologyPictureMiniatureDrawing.MINIATURE_REQUEST_SELECTION -> {
+                // nothing to do
+            }
+            case MINIATURE_SELECTED, MINIATURE_UNSELECTED -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException("Could not handle PictureChronologyDrawing event in " + this.getClass().getSimpleName() + ":: " + event.getPropertyName());

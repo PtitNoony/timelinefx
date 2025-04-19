@@ -117,7 +117,7 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
         //
         updateLayout();
         //
-        chronologyPictureMiniature.addListener(ChronologyPictureMiniatureDrawing.this::handleChronologyPictureMiniatureChanges);
+        chronologyPictureMiniature.addListener(this::handleChronologyPictureMiniatureChanges);
     }
 
     @Override
@@ -136,10 +136,6 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
 
     public void addListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     protected void setPictureVisibility(boolean visibility) {
@@ -179,6 +175,7 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
         });
         frontGlass.setOnMouseClicked(event -> {
             if (event.getClickCount() >= 2 && event.getButton().equals(MouseButton.SECONDARY)) {
+
                 propertyChangeSupport.firePropertyChange(MINIATURE_REQUEST_REMOVAL, this, chronologyPictureMiniature);
                 return;
             }
@@ -231,7 +228,7 @@ public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
             }
             case ChronologyPictureMiniature.SCALE_CHANGED ->
                 updateMiniatureScale((double) event.getNewValue());
-            case ChronologyPictureMiniature.TIME_CHANGED -> {
+            case ChronologyPictureMiniature.TIME_CHANGED, ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
                 //nothing to do
             }
             default ->

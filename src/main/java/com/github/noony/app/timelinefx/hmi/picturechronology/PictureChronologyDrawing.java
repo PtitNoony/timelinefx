@@ -60,7 +60,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
         miniatureDrawings = new HashMap<>();
         personsDrawings = new HashMap<>();
         //
-        pictureChronology.addListener(PictureChronologyDrawing.this::handlePictureChronologyChanges);
+        pictureChronology.addListener(this::handlePictureChronologyChanges);
         personListener = PictureChronologyDrawing.this::handlePersonEvents;
         //
         drawingGroup = new Group();
@@ -113,7 +113,7 @@ public class PictureChronologyDrawing extends FxScalableParent {
 
     private void removeChronologyPictureMiniature(ChronologyPictureMiniature aChronologyPictureMiniature) {
         var miniatureDrawing = miniatureDrawings.remove(aChronologyPictureMiniature);
-        miniatureDrawing.removeListener(this::handlePictureChronologyChanges);
+//        miniatureDrawing.removeListener(this::handlePictureChronologyChanges);
         unregisterScalableNode(miniatureDrawing);
         picturesGroup.getChildren().remove(miniatureDrawing.getNode());
         // IMPR in the future, rely on the PictureChronology calculations?
@@ -200,15 +200,13 @@ public class PictureChronologyDrawing extends FxScalableParent {
 
     private void selectMiniature(ChronologyPictureMiniatureDrawing miniatureDrawing) {
         if (selectedMiniature == miniatureDrawing) {
-//            selectedMiniature.displayControls(false);
             selectedMiniature = null;
             firePropertyChange(MINIATURE_UNSELECTED, miniatureDrawing.getChronologyPictureMiniature());
         } else {
             if (selectedMiniature != null) {
-//                selectedLink.displayControls(false);
+                // place holder for future action on item to be unselected
             }
             selectedMiniature = miniatureDrawing;
-//            selectedMiniature.displayControls(true);
             firePropertyChange(MINIATURE_SELECTED, selectedMiniature.getChronologyPictureMiniature());
         }
     }

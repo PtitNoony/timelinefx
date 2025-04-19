@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Portrait;
@@ -252,7 +253,7 @@ public class PersonCreationViewController implements Initializable {
                 deathTimeField.setText(Long.toString(currentEditedPerson.getTimeOfDeath()));
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + currentEditedPerson.getTimeFormat());
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + currentEditedPerson.getTimeFormat());
 
         }
         updateStatus();
@@ -309,7 +310,7 @@ public class PersonCreationViewController implements Initializable {
 
     private void updatePersonName(String name) {
         personName = name;
-        nameOK = !personName.isBlank() & !personName.isEmpty();
+        nameOK = !personName.isBlank() && !personName.isEmpty();
         updateStatus();
     }
 
@@ -365,7 +366,7 @@ public class PersonCreationViewController implements Initializable {
 
     private void updateStatus() {
         // we are not forcing birth and death dates to be set
-        createButton.setDisable(!(nameOK & colorOK));
+        createButton.setDisable(!(nameOK && colorOK));
         updateImage();
     }
 
@@ -385,7 +386,7 @@ public class PersonCreationViewController implements Initializable {
                 }
             }
         } else if (currentProject != null) {
-            var path = currentProject.getPortraitsFolder().getAbsolutePath() + File.separatorChar + Person.DEFAULT_PICTURE_NAME;
+            var path = currentProject.getPortraitsAbsoluteFolder().getAbsolutePath() + File.separatorChar + Person.DEFAULT_PICTURE_NAME;
             try {
                 image = new Image(path);
                 imageView.setImage(image);
@@ -435,7 +436,7 @@ public class PersonCreationViewController implements Initializable {
                 });
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time format: " + timeFormat);
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
     }
 

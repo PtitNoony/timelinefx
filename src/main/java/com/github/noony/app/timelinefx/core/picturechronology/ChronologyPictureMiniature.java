@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import javafx.geometry.Point2D;
@@ -31,15 +32,17 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public class ChronologyPictureMiniature extends FriezeObject {
+public class ChronologyPictureMiniature implements FriezeObject {
 
-    public static final String POSITION_CHANGED = "ChronologyPictureMiniature" + "__positionChanged";
-    public static final String SCALE_CHANGED = "ChronologyPictureMiniature" + "__scaleChanged";
-    public static final String TIME_CHANGED = "ChronologyPictureMiniature" + "__timeChanged";
+    public static final String POSITION_CHANGED = "ChronologyPictureMiniature__positionChanged";
+    public static final String SCALE_CHANGED = "ChronologyPictureMiniature__scaleChanged";
+    public static final String TIME_CHANGED = "ChronologyPictureMiniature__timeChanged";
+    public static final String REQUEST_LINKS_UPDATE = "ChronologyPictureMiniature__requestLinksUpdate";
 
     public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getCurrenltyUsedAbsoluteTime(), c2.getCurrenltyUsedAbsoluteTime());
 
     private final PropertyChangeSupport propertyChangeSupport;
+    private final long id;
 
     private final IPicture picture;
     private final DateObject dateObject;
@@ -47,8 +50,8 @@ public class ChronologyPictureMiniature extends FriezeObject {
     private double scale;
     private boolean usesCustomTime;
 
-    protected ChronologyPictureMiniature(long id, IPicture aPicture, Point2D aPosition, double aScale) {
-        super(id);
+    protected ChronologyPictureMiniature(long anId, IPicture aPicture, Point2D aPosition, double aScale) {
+        id = anId;
         propertyChangeSupport = new PropertyChangeSupport(ChronologyPictureMiniature.this);
         picture = aPicture;
         position = aPosition;
@@ -56,6 +59,11 @@ public class ChronologyPictureMiniature extends FriezeObject {
         dateObject = new DateObject(aPicture);
         dateObject.addPropertyChangeListener(e -> propertyChangeSupport.firePropertyChange(TIME_CHANGED, e, dateObject.getAbsoluteTime()));
         usesCustomTime = false;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public void addListener(PropertyChangeListener listener) {
@@ -91,6 +99,22 @@ public class ChronologyPictureMiniature extends FriezeObject {
             dateObject.setValue(aTimeValue);
         } else {
             picture.setValue(aTimeValue);
+        }
+    }
+
+    public void setCurrenltyUsedTimeValue(LocalDate aDate) {
+        if (usesCustomTime) {
+            dateObject.setDate(aDate);
+        } else {
+            picture.setDate(aDate);
+        }
+    }
+
+    public LocalDate getCurrenltyUsedTimeValue() {
+        if (usesCustomTime) {
+            return dateObject.getDate();
+        } else {
+            return picture.getDate();
         }
     }
 
@@ -146,6 +170,10 @@ public class ChronologyPictureMiniature extends FriezeObject {
 
     public double getHeight() {
         return scale * picture.getHeight();
+    }
+
+    public void requestAssociatedLinksUpdate() {
+        propertyChangeSupport.firePropertyChange(REQUEST_LINKS_UPDATE, null, this);
     }
 
     @Override

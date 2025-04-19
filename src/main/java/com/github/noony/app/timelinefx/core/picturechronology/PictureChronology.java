@@ -22,6 +22,7 @@ import com.github.noony.app.timelinefx.core.IPicture;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
 import com.github.noony.app.timelinefx.core.Picture;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,7 +40,7 @@ import javafx.util.Pair;
  *
  * @author hamon
  */
-public class PictureChronology extends FriezeObject implements IDrawableObject {
+public class PictureChronology implements FriezeObject, IDrawableObject {
 
     public static final String DEFAULT_NAME = "PictureChronologyNoName";
 
@@ -56,6 +57,7 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     public static final double PERSON_CONTOUR_WIDTH = 6;
 
     private final PropertyChangeSupport propertyChangeSupport;
+    private final long id;
 
     private final ChronologyLinkType chronologyLinkType = ChronologyLink.DEFAULT_LINK_TYPE;
 
@@ -64,18 +66,21 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     private final Map<String, ChronologyLink> chronologyLinks;
     private final List<Person> persons;
     //
+    private final TimeFormat timeFormat;
+    //
     private String name;
     private double width;
     private double height;
 
-    protected PictureChronology(long anID, TimeLineProject aProject, String aName, List<ChronologyPictureMiniature> exisitingMiniatures, List<ChronologyLink> existingLinks) {
-        super(anID);
+    protected PictureChronology(long anID, TimeLineProject aProject, String aName, TimeFormat aTimeFormat, List<ChronologyPictureMiniature> exisitingMiniatures, List<ChronologyLink> existingLinks) {
+        id = anID;
         propertyChangeSupport = new PropertyChangeSupport(PictureChronology.this);
         project = aProject;
         project.addPictureChronology(PictureChronology.this);
         chronologyPictures = new LinkedList<>();
         chronologyLinks = new HashMap<>();
         persons = new LinkedList<>();
+        timeFormat = aTimeFormat;
         name = aName;
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
@@ -95,7 +100,16 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
     }
 
     protected PictureChronology(long anID, TimeLineProject aProject, String aName) {
-        this(anID, aProject, aName, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        this(anID, aProject, aName, TimeFormat.LOCAL_TIME, Collections.emptyList(), Collections.emptyList());
+    }
+
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    public TimeFormat getTimeFormat() {
+        return timeFormat;
     }
 
     public void addChronologyPicture(ChronologyPictureMiniature aChronologyPicture) {
@@ -213,6 +227,15 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
         });
     }
 
+    private void updateLinksConnectedTo(ChronologyPictureMiniature aPictureMiniature) {
+        chronologyLinks.values().stream()
+                .filter(link -> link.getStartMiniature() == aPictureMiniature || link.getEndMiniature() == aPictureMiniature)
+                .forEach(link -> {
+                    var linkParameters = ChronologyLinkType.getDefaultParameters(chronologyLinkType, link);
+                    link.updateLinkParameters(linkParameters);
+                });
+    }
+
     private void handleChronologyPictureChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case ChronologyPictureMiniature.POSITION_CHANGED, ChronologyPictureMiniature.SCALE_CHANGED -> {
@@ -220,6 +243,9 @@ public class PictureChronology extends FriezeObject implements IDrawableObject {
             }
             case ChronologyPictureMiniature.TIME_CHANGED -> {
                 updateLinks();
+            }
+            case ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
+                updateLinksConnectedTo((ChronologyPictureMiniature) event.getNewValue());
             }
             default ->
                 throw new UnsupportedOperationException("handlePictureMiniatureChanges :: " + event.getPropertyName());

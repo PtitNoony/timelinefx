@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javafx.application.Platform.runLater;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -49,6 +52,15 @@ public class StageFactory {
     //
     private static final boolean DEFAULT_LAF = false;
     private static final Map<Scene, JMetro> SCENE_STYLES = new HashMap<>();
+    //
+    /**
+     * Font size in pt
+     */
+    private static final DoubleProperty FONT_SIZE = new SimpleDoubleProperty(12);
+
+    private StageFactory() {
+        // utility constructor
+    }
 
     public static Stage createStage(Window aParentWindow, StageStyle stageStyle) {
         var stage = new Stage();
@@ -72,6 +84,7 @@ public class StageFactory {
         } else {
             scene.getStylesheets().add("/styles/Styles.css");
         }
+        root.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", FONT_SIZE));
         return scene;
     }
 
@@ -85,6 +98,7 @@ public class StageFactory {
         } else {
             scene.getStylesheets().add("/styles/Styles.css");
         }
+        root.styleProperty().bind(Bindings.format("-fx-font-size: %.2fpt;", FONT_SIZE));
         return scene;
     }
 

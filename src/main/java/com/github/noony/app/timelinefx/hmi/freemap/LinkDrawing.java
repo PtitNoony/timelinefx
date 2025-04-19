@@ -16,17 +16,19 @@
  */
 package com.github.noony.app.timelinefx.hmi.freemap;
 
-import com.github.noony.app.timelinefx.core.freemap.Link;
-import com.github.noony.app.timelinefx.core.freemap.LinkType;
-import com.github.noony.app.timelinefx.core.freemap.Plot;
+import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
 import com.github.noony.app.timelinefx.core.freemap.Selectable;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
@@ -37,15 +39,20 @@ import javafx.scene.shape.StrokeType;
  */
 public class LinkDrawing implements Selectable, IFxScalableNode {
 
-    private static final Color DEFAULT_COLOR = Color.BLUEVIOLET;
+    public static final String SECONDARY_CLICKED = "secondaryCliked";
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private static final double CURVE_DELTA = 18.0;
+    private static final double DEFAULT_STAY_STROKE_WIDTH = 12; // 4
+    private static final double DEFAULT_TRAVEL_STROKE_WIDTH = 5; // 1.5
+    private static final double DEFAULT_PORTRAIT_STROKE_WIDTH = 7; // 2.5
 
     private final PropertyChangeSupport propertyChangeSupport;
 
-    private final Link link;
-    private final Plot beginPlot;
-    private final Plot endPlot;
+    private final FreeMapLink link;
+    private final FreeMapConnector beginConnector;
+    private final FreeMapConnector endConnector;
     //
     private double scale = 1.0;
     //
@@ -60,13 +67,13 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
     private double endX = 1.0;
     private double endY = 1.0;
 
-    public LinkDrawing(Link aLink) {
+    protected LinkDrawing(FreeMapLink aLink) {
         propertyChangeSupport = new PropertyChangeSupport(LinkDrawing.this);
         //
         link = aLink;
         //
-        beginPlot = link.getBeginPlot();
-        endPlot = link.getEndPlot();
+        beginConnector = link.getBeginConnector();
+        endConnector = link.getEndConnector();
         color = link.getColor();
         //
         line = new Line();
@@ -79,25 +86,34 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         cubicCurve.setStroke(color);
         switch (link.getType()) {
             case STAY -> {
-                line.setStrokeWidth(4.0);
-                cubicCurve.setStrokeWidth(4.0);
+                line.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH);
+                cubicCurve.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH);
             }
             case TRAVEL -> {
-                line.setStrokeWidth(1.5);
+                line.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH);
                 line.setStrokeDashOffset(45);
-                cubicCurve.setStrokeWidth(1.5);
+                cubicCurve.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH);
                 cubicCurve.setStrokeDashOffset(45);
             }
-            default -> throw new IllegalStateException();
+            case PORTRAIT -> {
+                line.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH);
+                line.setStrokeDashOffset(35);
+                cubicCurve.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH);
+                cubicCurve.setStrokeDashOffset(35);
+            }
+            default ->
+                throw new IllegalStateException();
         }
-        startX = beginPlot.getX();
-        startY = beginPlot.getY();
-        endX = endPlot.getX();
-        endY = endPlot.getY();
+        startX = beginConnector.getX();
+        startY = beginConnector.getY();
+        endX = endConnector.getX();
+        endY = endConnector.getY();
         updateLayout();
         //
-        beginPlot.addPropertyChangeListener(LinkDrawing.this::handleStartPlotChanged);
-        endPlot.addPropertyChangeListener(LinkDrawing.this::handleEndPlotChanged);
+        beginConnector.addPropertyChangeListener(LinkDrawing.this::handleStartPlotChanged);
+        endConnector.addPropertyChangeListener(LinkDrawing.this::handleEndPlotChanged);
+        line.setOnMouseClicked(this::handleLinkClicked);
+        cubicCurve.setOnMouseClicked(this::handleLinkClicked);
     }
 
     @Override
@@ -122,18 +138,6 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         updateLayout();
     }
 
-    public Plot getBeginPlot() {
-        return beginPlot;
-    }
-
-    public Plot getEndPlot() {
-        return endPlot;
-    }
-
-    public LinkType getType() {
-        return link.getType();
-    }
-
     public void setColor(Color aColor) {
         color = aColor;
         updateLayout();
@@ -156,33 +160,36 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
 
     private void handleStartPlotChanged(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED -> {
+            case FreeMapPlot.POS_CHANGED -> {
                 updateX1((double) event.getOldValue());
                 updateY1((double) event.getNewValue());
             }
-            case Plot.SELECTION_CHANGED, Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
+            case FreeMapPlot.SELECTION_CHANGED, FreeMapPlot.PLOT_SIZE_CHANGED, FreeMapPlot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
             }
-            case Plot.PLOT_DATE_CHANGED -> {
+            case FreeMapPlot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
             }
-            default -> throw new UnsupportedOperationException(event.getPropertyName());
+            default ->
+                throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
+    // TODO revise type ?
     private void handleEndPlotChanged(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Plot.POS_CHANGED -> {
+            case FreeMapPlot.POS_CHANGED -> {
                 updateX2((double) event.getOldValue());
                 updateY2((double) event.getNewValue());
             }
-            case Plot.SELECTION_CHANGED, Plot.PLOT_SIZE_CHANGED, Plot.PLOT_VISIBILITY_CHANGED -> {
+            case FreeMapPlot.SELECTION_CHANGED, FreeMapPlot.PLOT_SIZE_CHANGED, FreeMapPlot.PLOT_VISIBILITY_CHANGED -> {
                 // nothing to do
             }
-            case Plot.PLOT_DATE_CHANGED -> {
+            case FreeMapPlot.PLOT_DATE_CHANGED -> {
                 // nothing to do since X position shall be updated when plot added in the new dateHandle
             }
-            default -> throw new UnsupportedOperationException(event.getPropertyName());
+            default ->
+                throw new UnsupportedOperationException(event.getPropertyName());
         }
     }
 
@@ -217,30 +224,38 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         if (isSelected) {
             switch (link.getType()) {
                 case STAY -> {
-                    line.setStrokeWidth(6.0 * scale);
-                    cubicCurve.setStrokeWidth(6.0 * scale);
+                    line.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale * 1.5);
+                    cubicCurve.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale * 1.5);
                 }
                 case TRAVEL -> {
-                    line.setStrokeWidth(2.5 * scale);
+                    line.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale * 1.5);
                     line.setStrokeDashOffset(45 * scale);
-                    cubicCurve.setStrokeWidth(2.5 * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale * 1.5);
                     cubicCurve.setStrokeDashOffset(45 * scale);
                 }
-                default -> throw new IllegalStateException();
+                default ->
+                    throw new IllegalStateException();
             }
         } else {
             switch (link.getType()) {
                 case STAY -> {
-                    line.setStrokeWidth(4.0 * scale);
-                    cubicCurve.setStrokeWidth(4.0 * scale);
+                    line.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_STAY_STROKE_WIDTH * scale);
                 }
                 case TRAVEL -> {
-                    line.setStrokeWidth(1.5 * scale);
+                    line.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale);
                     line.setStrokeDashOffset(45 * scale);
-                    cubicCurve.setStrokeWidth(1.5 * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_TRAVEL_STROKE_WIDTH * scale);
                     cubicCurve.setStrokeDashOffset(45 * scale);
                 }
-                default -> throw new IllegalStateException();
+                case PORTRAIT -> {
+                    line.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH * scale);
+                    line.setStrokeDashOffset(20 * scale);
+                    cubicCurve.setStrokeWidth(DEFAULT_PORTRAIT_STROKE_WIDTH * scale);
+                    cubicCurve.setStrokeDashOffset(20 * scale);
+                }
+                default ->
+                    throw new IllegalStateException();
             }
         }
         //
@@ -265,6 +280,14 @@ public class LinkDrawing implements Selectable, IFxScalableNode {
         line.setEndY(scaledEndY);
         cubicCurve.setEndY(scaledEndY);
         cubicCurve.setControlY2(scaledEndY);
+    }
+
+    private void handleLinkClicked(MouseEvent event) {
+        LOG.log(Level.FINE, "Linked {0} clicked. {1}", new Object[]{link.getInfo(), event});
+        if (event.getButton() == MouseButton.SECONDARY) {
+            propertyChangeSupport.firePropertyChange(SECONDARY_CLICKED, this, link);
+            // improvment could be to feed the click position
+        }
     }
 
 }

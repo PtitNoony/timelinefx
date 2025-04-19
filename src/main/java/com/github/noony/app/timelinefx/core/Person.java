@@ -25,21 +25,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.scene.paint.Color;
 
 /**
  *
  * @author hamon
  */
-public class Person extends FriezeObject {
+public class Person implements FriezeObject {
 
     public static final String DEFAULT_PICTURE_NAME = "LegoHead.png";
 
     public static final String SELECTION_CHANGED = "selectionChanged";
     public static final String VISIBILITY_CHANGED = "visibilityChanged";
     public static final String NAME_CHANGED = "nameChanged";
-    public static final String PICTURE_CHANGED = "pictureChanged";
     public static final String DATE_OF_BIRTH_CHANGED = "dateOfBirthChanged";
     public static final String DATE_OF_DEATH_CHANGED = "dateOfDeathChanged";
     public static final String COLOR_CHANGED = "colorChanged";
@@ -55,6 +53,8 @@ public class Person extends FriezeObject {
     private static final long DEFAULT_TIME = -1;
 
     private final PropertyChangeSupport propertyChangeSupport;
+    //
+    private final Long id;
     //
     private final TimeLineProject project;
     private final List<Portrait> portraits;
@@ -72,7 +72,7 @@ public class Person extends FriezeObject {
     private boolean visible;
 
     protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
-        super(personId);
+        id = personId;
         project = aProject;
         portraits = new LinkedList<>();
         name = personName;
@@ -86,7 +86,7 @@ public class Person extends FriezeObject {
     }
 
     protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, long aToB, long aToD) {
-        super(personId);
+        id = personId;
         project = aProject;
         portraits = new LinkedList<>();
         name = personName;
@@ -103,11 +103,20 @@ public class Person extends FriezeObject {
         this(aProject, personId, personName, DEFAULT_COLOR, 0, 0);
     }
 
+    @Override
+    public long getId() {
+        return id;
+    }
+
     public TimeLineProject getProject() {
         return project;
     }
 
     public Portrait getDefaultPortrait() {
+        // Checking it here to only create a default portrait when it really becomes necessary
+        if (defaultPortrait == null) {
+            defaultPortrait = PortraitFactory.createPortrait(this);
+        }
         return defaultPortrait;
     }
 
@@ -122,19 +131,23 @@ public class Person extends FriezeObject {
         if (aPortrait != null && aPortrait != defaultPortrait) {
             addPortrait(aPortrait);
             defaultPortrait = aPortrait;
-            propertyChangeSupport.firePropertyChange(DEFAULT_PORTRAIT_CHANGED, null, defaultPortrait);
+            propertyChangeSupport.firePropertyChange(DEFAULT_PORTRAIT_CHANGED, this, defaultPortrait);
         }
     }
 
     public void addPortrait(Portrait aPortrait) {
         if (!portraits.contains(aPortrait)) {
             portraits.add(aPortrait);
-            propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, null, aPortrait);
+            propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, aPortrait);
         }
     }
 
     public List<Portrait> getPortraits() {
         return Collections.unmodifiableList(portraits);
+    }
+
+    public Portrait getPortrait(long aPortraiID) {
+        return portraits.stream().filter(p -> p.getId() == aPortraiID).findAny().orElse(null);
     }
 
     public void removePortrait(Portrait aPortrait) {
@@ -181,7 +194,7 @@ public class Person extends FriezeObject {
     public void setDateOfBirth(LocalDate newDoB) {
         if (newDoB == null) {
             // for the time being we do not support clearing date of birth
-            LOG.log(Level.INFO,"Clearing date of birth is not supported yet in {0}", new Object[]{this});
+            LOG.log(Level.INFO, "Clearing date of birth is not supported yet in {0}", new Object[]{this});
         } else if (dateOfBirth == null) {
             dateOfBirth = newDoB;
             timeFormat = TimeFormat.LOCAL_TIME;
@@ -246,7 +259,7 @@ public class Person extends FriezeObject {
     public void setDateOfDeath(LocalDate newDoD) {
         if (newDoD == null) {
             // for the time being we do not support clearing date of death
-            LOG.log(Level.INFO,"Clearing date of death is not supported yet in {0}", new Object[]{this});
+            LOG.log(Level.INFO, "Clearing date of death is not supported yet in {0}", new Object[]{this});
         } else if (dateOfDeath == null) {
             dateOfDeath = newDoD;
             timeFormat = TimeFormat.LOCAL_TIME;

@@ -1,55 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
     <action>
-        <actionName>run</actionName>
+        <actionName>profile</actionName>
         <packagings>
                 <packaging>jar</packaging>
             </packagings>
         <goals>
             <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.1.0:exec</goal>
             
             <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
         </goals>
         <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
         <properties>
-                <exec.args>-classpath %classpath ${packageClassName} -Xlint:unchecked</exec.args>
+                <exec.vmArgs></exec.vmArgs>
+                <exec.args>--enable-preview ${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
+                
+                <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
+                
             
             
         </properties>
     </action>
-    <action>
-        <actionName>debug</actionName>
-        <packagings>
-                <packaging>jar</packaging>
-            </packagings>
-        <goals>
-            <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+    
             
-        </goals>
-        <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName} -Xlint:unchecked</exec.args>
-                <exec.executable>java</exec.executable>
-            
-            
-            <jpda.listen>true</jpda.listen>
-        </properties>
-    </action>
-    <action>
-        <actionName>profile</actionName>
-        <packagings>
-            <packaging>jar</packaging>
-        </packagings>
-        <goals>
-            <goal>process-classes</goal>
-            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
-        </goals>
-        <properties>
-            
-            <exec.args>-classpath %classpath ${packageClassName} -Xlint:unchecked</exec.args>
-            <exec.executable>java</exec.executable>
-        </properties>
-    </action>        
 </actions>

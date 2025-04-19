@@ -88,4 +88,9 @@ public class StayPeriodLocalDate extends StayPeriod {
     public String getDisplayString() {
         return "Stay: " + getPerson().getName() + " @ " + getPlace().getName() + " [" + startDate + " -> " + endDate + "]";
     }
+
+    @Override
+    public String toString() {
+        return getDisplayString();
+    }
 }

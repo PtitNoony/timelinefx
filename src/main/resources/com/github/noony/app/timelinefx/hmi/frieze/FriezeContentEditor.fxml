@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.CheckListView?>
+<?import org.controlsfx.control.CheckTreeView?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.frieze.FriezeContentEditorController">
+   <children>
+      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Properties">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0">
+                     <children>
+                        <VBox spacing="8.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+                           <children>
+                              <HBox spacing="8.0">
+                                 <children>
+                                    <Label maxHeight="1.7976931348623157E308" text="Name:" underline="true" HBox.hgrow="SOMETIMES">
+   
+                                    </Label>
+                                    <TextField fx:id="nameField" />
+                                 </children>
+                              </HBox>
+                              <GridPane fx:id="timeGrid" hgap="8.0" vgap="8.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label maxWidth="1.7976931348623157E308" text="Time properties" underline="true" />
+                                    <Label text="Project start:" GridPane.rowIndex="1" />
+                                    <Label text="Project end:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <Label text="Frieze's stays star:t" GridPane.rowIndex="2" />
+                                    <Label text="Frieze's stays end:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <CheckBox mnemonicParsing="false" text="Constraint frieze start:" GridPane.rowIndex="3" />
+                                    <CheckBox mnemonicParsing="false" text="Constraint frieze end:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                 </children>
+                              </GridPane>
+                              <Separator prefWidth="200.0" />
+                              <Label text="FreeMaps" underline="true">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <ListView fx:id="freemapListView" editable="true" VBox.vgrow="SOMETIMES" />
+                              <HBox alignment="CENTER" spacing="8.0" VBox.vgrow="NEVER">
+                                 <children>
+                                            <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#handleFreeMapCreation" text="New" />
+                                    <Button fx:id="deleteFreemapButton" disable="true" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleDeleteFreeMap" text="Delete" />
+                                 </children>
+                              </HBox>
+                              <Separator prefWidth="200.0" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Frieze's content">
+            <content>
+                  <SplitPane dividerPositions="0.2, 0.5">
+                     <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <VBox alignment="CENTER" layoutX="4.0" layoutY="4.0" spacing="8.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="8.0">
+                                 <children>
+                                    <Label text="People">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                            <CheckListView fx:id="personCheckListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES" />
+                                    <Button fx:id="clearPeopleSelectionB" mnemonicParsing="false" onAction="#handleClearPeopleSelection" text="Clear Selection" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <VBox alignment="CENTER" layoutX="4.0" layoutY="4.0" spacing="8.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="8.0">
+                                 <children>
+                                    <Label text="Places">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                            <CheckTreeView fx:id="placesCheckTreeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES" />
+                                    <Button fx:id="clearPlaceSelectionB" mnemonicParsing="false" onAction="#handleClearPlaceSelection" text="Clear Selection" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <VBox spacing="8.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="8.0">
+                                 <children>
+                                    <Label text="Stays">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckListView fx:id="staysCheckListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </items>
+                  </SplitPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

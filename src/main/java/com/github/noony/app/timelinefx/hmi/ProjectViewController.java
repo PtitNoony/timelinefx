@@ -48,6 +48,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -76,6 +77,8 @@ public final class ProjectViewController implements Initializable {
     private AnchorPane mainAnchorPane;
     @FXML
     private MenuBar menuBar;
+    @FXML
+    private MenuItem createFriezeMenuItem;
     @FXML
     private HBox toolbarHBox;
     @FXML
@@ -258,6 +261,7 @@ public final class ProjectViewController implements Initializable {
         timeLineProject = aTimeLineProject;
         friezeMenuItems.clear();
         friezesMenu.getItems().clear();
+        friezesMenu.getItems().add(createFriezeMenuItem);
         //
         if (timeLineProject == null) {
             // TODO: each view

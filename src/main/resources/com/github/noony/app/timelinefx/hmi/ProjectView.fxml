@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectViewController">
+<BorderPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.ProjectViewController">
     <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -27,7 +27,7 @@
                       <Menu disable="true" mnemonicParsing="false" text="Edit" />
                   <Menu fx:id="friezesMenu" mnemonicParsing="false" text="Friezes">
                      <items>
-                              <MenuItem mnemonicParsing="false" onAction="#handleFriezeCreation" text="Create New Frieze" />
+                              <MenuItem fx:id="createFriezeMenuItem" mnemonicParsing="false" onAction="#handleFriezeCreation" text="Create New Frieze" />
                      </items>
                   </Menu>
                       <Menu mnemonicParsing="false" text="View">

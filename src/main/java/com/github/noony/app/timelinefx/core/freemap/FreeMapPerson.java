@@ -52,7 +52,7 @@ public class FreeMapPerson implements FriezeObject {
     //
     private static final Map<Long, List<FreeMapPerson>> FACTORY_CONTENT = new HashMap<>();
 
-    public static final FreeMapPerson createFreeMapPerson(long aFriezeFreeMapID, Person aPerson) {
+    public static final FreeMapPerson createFreeMapPerson(final long aFriezeFreeMapID, final Person aPerson) {
         var freeMapPersons = FACTORY_CONTENT.getOrDefault(aFriezeFreeMapID, new LinkedList<>());
         if (freeMapPersons.isEmpty()) {
             FACTORY_CONTENT.put(aFriezeFreeMapID, freeMapPersons);
@@ -63,6 +63,10 @@ public class FreeMapPerson implements FriezeObject {
         var freeMapPerson = new FreeMapPerson(aPerson);
         freeMapPersons.add(freeMapPerson);
         return freeMapPerson;
+    }
+
+    public static final boolean removeFreeMapPerson(final FreeMapPerson freeMapPerson) {
+        return FACTORY_CONTENT.remove(freeMapPerson.getId()) == null;
     }
 
     public static final void resetFactory() {
@@ -214,7 +218,7 @@ public class FreeMapPerson implements FriezeObject {
         var stayToRemove = optStayToRemove.get();
         stays.remove(stayToRemove);
         stays.sort(FreeMapSimpleStay.STAY_START_COMPARATOR);
-        propertyChangeSupport.firePropertyChange(FREEMAP_STAY_REMOVED, this, stayPeriod);
+        propertyChangeSupport.firePropertyChange(FREEMAP_STAY_REMOVED, this, stayToRemove);
         //
         // TODO remove ?
 //        propertyChangeSupport.firePropertyChange(LINK_REMOVED, this, removedLink);

@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
 
@@ -53,6 +55,8 @@ public class Frieze implements FriezeObject {
     // TODO : merge with other use
     private static final long DEFAULT_MIN_DATE = 0;
     private static final long DEFAULT_MAX_DATE = 500;
+
+    private static final Logger LOG = Logger.getGlobal();
 
     private final Long id;
     private final TimeLineProject project;
@@ -254,6 +258,7 @@ public class Frieze implements FriezeObject {
     }
 
     public void updatePeopleSelection(Person aPerson, boolean selected) {
+        LOG.log(Level.INFO, "updatePeopleSelection p:{0}, isSelected:{1}", new Object[]{aPerson, selected});
         if (selected) {
             addPerson(aPerson);
         } else {
@@ -275,7 +280,8 @@ public class Frieze implements FriezeObject {
         }
     }
 
-    public void updatePersonSelection(Person aPerson, boolean selected) {
+    public void updatePersonSelection(final Person aPerson, final boolean selected) {
+        LOG.log(Level.INFO, "Updating frieze for person: {0}, selected{1}.",new Object[]{aPerson, selected});
         if (selected) {
             addPerson(aPerson);
         } else {
@@ -453,12 +459,18 @@ public class Frieze implements FriezeObject {
         //placeRemoved.getPlaces().forEach(this::removePlace);
     }
 
-    private void removePerson(Person personRemoved) {
-        persons.remove(personRemoved);
+    private boolean removePerson(final Person personRemoved) {
+        LOG.log(Level.INFO, "Removing person: {0} from {1}.", new Object[]{personRemoved, this});
+        var removed = persons.remove(personRemoved);
+        if (!removed) {
+            return false;
+        }
         personsAtPlaces.forEach((place, list) -> list.remove(personRemoved));
         List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPerson() == personRemoved).toList();
         impactedStays.forEach(this::removeStay);
+        LOG.log(Level.INFO, " > Done removing person: {0},\t >> propagating change.", new Object[]{personRemoved, this});
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
+        return true;
     }
 
     private void updateDatesOnRemoval(double dateRemoved, boolean isStartDate) {
@@ -502,6 +514,11 @@ public class Frieze implements FriezeObject {
         if (maxWindowsAtMaxDate && oldMaxDate != maxDate) {
             setMaxDateWindow(maxDate);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Frieze [" + name + "].";
     }
 
 }

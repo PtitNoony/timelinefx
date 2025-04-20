@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -111,7 +112,7 @@ public class FriezeContentEditorController implements Initializable {
     private PropertyChangeListener placeCheckTreeItemChangeListener;
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(final URL url, final ResourceBundle rb) {
         //
         tabPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         //
@@ -162,6 +163,7 @@ public class FriezeContentEditorController implements Initializable {
         personCheckListView.getCheckModel().getCheckedItems().addListener((ListChangeListener.Change<? extends Person> change) -> {
             LOG.log(Level.FINE, "Handling personCheckListView add/remove change {0}", change);
             while (change.next()) {
+                LOG.log(Level.INFO, "personCheckListView processing change {0}.", new Object[]{change});
                 if (change.wasAdded()) {
                     change.getAddedSubList().forEach(p -> frieze.updatePeopleSelection(p, true));
                 } else if (change.wasRemoved()) {
@@ -201,21 +203,21 @@ public class FriezeContentEditorController implements Initializable {
     }
 
     @FXML
-    protected void handleDeleteFreeMap(ActionEvent event) {
+    protected void handleDeleteFreeMap(final ActionEvent event) {
         LOG.log(Level.INFO, "handleDeleteFreeMap {0}", event);
         var freeMap = freemapListView.getSelectionModel().getSelectedItem();
         deleteFreeMap(freeMap);
     }
 
     @FXML
-    protected void handleClearPeopleSelection(ActionEvent event) {
+    protected void handleClearPeopleSelection(final ActionEvent event) {
         LOG.log(Level.INFO, "handleClearPeopleSelection {0}", event);
         personCheckListView.getSelectionModel().clearSelection();
         // no update needed since it will occur via property change
     }
 
     @FXML
-    protected void handleClearPlaceSelection(ActionEvent event) {
+    protected void handleClearPlaceSelection(final ActionEvent event) {
         LOG.log(Level.INFO, "handleClearPeopleSelection {0}", event);
         placesCheckTreeView.getSelectionModel().clearSelection();
         // no update needed since it will occur via property change
@@ -225,15 +227,18 @@ public class FriezeContentEditorController implements Initializable {
         return freemapListView.getSelectionModel().getSelectedItem();
     }
 
-    private void setTimeline(TimeLineProject aTimeLineProject) {
+    private void setTimeline(final TimeLineProject aTimeLineProject) {
         if (timeLineProject != null) {
             timeLineProject.removeListener(projectListener);
         }
         timeLineProject = aTimeLineProject;
         timeLineProject.addListener(projectListener);
+        updatePeoplePane();
+        updatePlacesPane();
+        updatePeoplePane();
     }
 
-    private void setFrieze(Frieze aFrieze) {
+    private void setFrieze(final Frieze aFrieze) {
         if (aFrieze == frieze) {
             return;
         } else if (frieze != null) {
@@ -286,23 +291,49 @@ public class FriezeContentEditorController implements Initializable {
     }
 
     private void updatePeoplePane() {
+        System.err.println(" ---- START updatePeoplePane");
+        if (timeLineProject != null) {
+            personCheckListView.getItems().setAll(timeLineProject.getPersons());
+            var peopleToRemove = personCheckListView.getItems().stream()
+                    .filter(p -> !timeLineProject.getPersons().contains(p))
+                    .collect(Collectors.toList());
+            personCheckListView.getItems().removeAll(peopleToRemove);
+        } else {
+            personCheckListView.getItems().clear();
+        }
         //TODO remove old listeners
         if (frieze == null) {
-            personCheckListView.getItems().clear();
+            personCheckListView.getCheckModel().clearChecks();
             return;
         }
         var people = frieze.getPersons();
-        personCheckListView.getItems().setAll(people);
+        //personCheckListView.getItems().setAll(people);
         // Not Optimal...
         runLater(() -> {
             people.forEach(p -> personCheckListView.getCheckModel().check(p));
             personCheckListView.getCheckModel().getCheckedItems().addListener((ListChangeListener.Change<? extends Person> change) -> {
                 while (change.next()) {
-                    change.getAddedSubList().forEach(p -> frieze.updatePersonSelection(p, true));
-                    change.getRemoved().forEach(p -> frieze.updatePersonSelection(p, false));
+                    LOG.log(Level.INFO, "updating personCheckListView on change: {0}.", new Object[]{change});
+                    change.getAddedSubList().forEach(p -> {
+                        LOG.log(Level.INFO, "updating personCheckListView added: {0}.", new Object[]{p});
+                        frieze.updatePersonSelection(p, true);
+                    });
+                    change.getRemoved().forEach(p -> {
+                        LOG.log(Level.INFO, "updating personCheckListView removed: {0}.", new Object[]{p});
+                        frieze.updatePersonSelection(p, false);
+                    });
                 }
+                LOG.log(Level.INFO, "DONE updating personCheckListView on change: {0}.", new Object[]{change});
             });
         });
+    }
+
+    private void addPeopleToPeoplePane(final Person personToAdd) {
+        personCheckListView.getItems().add(personToAdd);
+    }
+
+    private void removePersonFromPeoplePane(final Person personToRemove) {
+        personCheckListView.getItems().add(personToRemove);
     }
 
     private void updatePlacesPane() {
@@ -343,7 +374,7 @@ public class FriezeContentEditorController implements Initializable {
         frieze.getStayPeriods().forEach(staysCheckListView.getCheckModel()::check);
     }
 
-    private void handleAppInstanceConfigChanges(PropertyChangeEvent event) {
+    private void handleAppInstanceConfigChanges(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case AppInstanceConfiguration.FRIEZE_SELECTED_CHANGED ->
                 setFrieze((Frieze) event.getNewValue());
@@ -371,7 +402,7 @@ public class FriezeContentEditorController implements Initializable {
         return rootPlaceItem;
     }
 
-    private CheckBoxTreeItem<Place> createTreeItemPlace(Place place) {
+    private CheckBoxTreeItem<Place> createTreeItemPlace(final Place place) {
         var placeItem = new CheckBoxTreeItem<>(place);
         placeItem.setIndependent(true);
         placeItem.setExpanded(true);
@@ -388,7 +419,7 @@ public class FriezeContentEditorController implements Initializable {
         return placeItem;
     }
 
-    private void createFreeMapView(FriezeFreeMap aFreeMap) {
+    private void createFreeMapView(final FriezeFreeMap aFreeMap) {
         if (freemapListView.getItems().contains(aFreeMap)) {
             LOG.log(Level.SEVERE, "View for {0} already created.", new Object[]{aFreeMap});
             return;
@@ -410,7 +441,7 @@ public class FriezeContentEditorController implements Initializable {
         tabPane.getTabs().add(tab);
     }
 
-    private void deleteFreeMap(FriezeFreeMap aFreeMap) {
+    private void deleteFreeMap(final FriezeFreeMap aFreeMap) {
         if (frieze != null) {
             frieze.removeFriezeFreeMap(aFreeMap);
         }
@@ -452,10 +483,12 @@ public class FriezeContentEditorController implements Initializable {
         }
     }
 
-    private void handleProjectChanges(PropertyChangeEvent event) {
+    private void handleProjectChanges(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED ->
-                updatePeoplePane();
+            case TimeLineProject.PERSON_ADDED ->
+                addPeopleToPeoplePane((Person) event.getNewValue());
+            case TimeLineProject.PERSON_REMOVED ->
+                removePersonFromPeoplePane((Person) event.getNewValue());
             case TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED ->
                 updatePlacesPane();
             case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
@@ -466,10 +499,11 @@ public class FriezeContentEditorController implements Initializable {
         }
     }
 
-    private void handleFriezeChanges(PropertyChangeEvent event) {
+    private void handleFriezeChanges(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case Frieze.PERSON_ADDED, Frieze.PERSON_REMOVED ->
-                updatePeoplePane();
+            case Frieze.PERSON_ADDED, Frieze.PERSON_REMOVED -> {
+                // mothing to do since update shall has been done via this class
+            }
             case Frieze.PLACE_ADDED, Frieze.PLACE_REMOVED ->
                 updatePlacesPane();
             case Frieze.STAY_ADDED, Frieze.STAY_REMOVED, Frieze.STAY_UPDATED ->
@@ -489,7 +523,7 @@ public class FriezeContentEditorController implements Initializable {
         }
     }
 
-    private void handlePlaceCheckTreeItemChanges(PropertyChangeEvent event) {
+    private void handlePlaceCheckTreeItemChanges(final PropertyChangeEvent event) {
 //        switch(event.getPropertyName()){
 //            case CheckBoxTreeItem.checkBoxSelectionChangedEvent().getName():
 //                break;

@@ -532,7 +532,7 @@ public final class FriezeFreeMap implements FriezeObject {
         freeMapPerson.addFreeMapStay(freeMapStay);
     }
 
-    private void updateStay(StayPeriod stayPeriod) {
+    private void updateStay(final StayPeriod stayPeriod) {
         var person = stayPeriod.getPerson();
         var freeMapPerson = freeMapPersons.get(person);
         if (freeMapPerson == null) {
@@ -546,7 +546,7 @@ public final class FriezeFreeMap implements FriezeObject {
 //        freeMapPerson.updateStay(stayPeriod);
     }
 
-    private void removeStay(StayPeriod stayPeriod) {
+    private void removeStay(final StayPeriod stayPeriod) {
         var person = stayPeriod.getPerson();
         // TODO make sure the person is already added
         var freeMapPerson = freeMapPersons.get(person);
@@ -559,22 +559,29 @@ public final class FriezeFreeMap implements FriezeObject {
         updateDateHandles();
     }
 
-    private void removePerson(Person person) {
+    private void removePerson(final Person person) {
+        LOG.log(Level.INFO, "Person to remove: {0}.", new Object[]{person});
         var periods = frieze.getStayPeriods(person);
         var freeMapPerson = freeMapPersons.remove(person);
         persons.remove(freeMapPerson);
         periods.forEach(this::removeStay);
         if (freeMapPerson == null) {
             LOG.log(Level.SEVERE, "Could not remove freemapPerson ({0}) which does not exits.", new Object[]{person});
+            //throw new IllegalStateException();
             return;
         }
         places.forEach((place, freemapPlace) -> freemapPlace.removePerson(person));
+        // not so nice
+        var freeMapRemovedFromFactory = FreeMapPerson.removeFreeMapPerson(freeMapPerson);
+        LOG.log(Level.INFO, "> removing person from FreeMapFactory : {0}.", new Object[]{freeMapRemovedFromFactory});
+//        System.err.println(" !! \n\n");
         //
         propertyChangeSupport.firePropertyChange(FREE_MAP_PERSON_REMOVED, this, freeMapPerson);
 //        var removedPortrait = portraits.remove(person);
 //        if (removedPortrait != null) {
 //            propertyChangeSupport.firePropertyChange(FREE_MAP_PORTRAIT_REMOVED, this, removedPortrait);
 //        }
+        LOG.log(Level.INFO, "> done removing person: {0}.", new Object[]{person});
     }
 
     private void addPlace(Place aPlace) {
@@ -703,6 +710,7 @@ public final class FriezeFreeMap implements FriezeObject {
     }
 
     private void handleFriezeChanges(PropertyChangeEvent event) {
+        LOG.log(Level.INFO, "Processing event {0} - {1} from {2}.", new Object[]{event.getPropertyName(), event.getNewValue(), event.getSource()});
         switch (event.getPropertyName()) {
             case Frieze.DATE_WINDOW_CHANGED ->
                 updateDatePositions();
@@ -712,6 +720,7 @@ public final class FriezeFreeMap implements FriezeObject {
             }
             case Frieze.PERSON_REMOVED -> {
                 var personRemoved = (Person) event.getNewValue();
+                LOG.log(Level.INFO, "Removing person {0}.", new Object[]{event});
                 removePerson(personRemoved);
             }
             case Frieze.PLACE_ADDED -> {

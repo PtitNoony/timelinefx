@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.StayPeriod;
@@ -28,9 +29,9 @@ import java.util.List;
  */
 public interface FreeMapStay extends FreeMapLink {
 
-    public static final Comparator<? super FreeMapStay> STAY_START_COMPARATOR = comparingDouble(FreeMapStay::getStartDate);
+    static final Comparator<? super FreeMapStay> STAY_START_COMPARATOR = comparingDouble(FreeMapStay::getStartDate);
 
-    public static final Comparator<? super FreeMapStay> STAY_END_COMPARATOR = comparingDouble(FreeMapStay::getEndDate);
+    static final Comparator<? super FreeMapStay> STAY_END_COMPARATOR = comparingDouble(FreeMapStay::getEndDate);
 
     double getStartDate();
 

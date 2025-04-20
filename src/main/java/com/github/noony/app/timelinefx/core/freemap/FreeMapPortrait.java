@@ -152,6 +152,12 @@ public class FreeMapPortrait implements FriezeObject {
             case FreeMapPerson.PORTRAIT_LINK_ADDED, FreeMapPerson.PORTRAIT_LINK_REMOVED -> {
                 // nothing to do.
             }
+            case FreeMapPerson.FREEMAP_STAY_REMOVED -> {
+                // nothing to do.
+            }
+            case FreeMapPerson.TRAVEL_LINK_ADDED, FreeMapPerson.TRAVEL_LINK_REMOVED -> {
+                // nothing to do.
+            }
             default ->
                 throw new UnsupportedOperationException("Unsupported change : " + event);
         }

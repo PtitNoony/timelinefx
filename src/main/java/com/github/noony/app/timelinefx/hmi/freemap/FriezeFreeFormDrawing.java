@@ -239,13 +239,14 @@ public class FriezeFreeFormDrawing {
         updateLayout();
     }
 
-    private void removePersonDrawing(FreeMapPerson person) {
-        var personDrawing = personDrawings.get(person);
+    private void removePersonDrawing(FreeMapPerson freeMapPerson) {
+        var personDrawing = personDrawings.get(freeMapPerson);
         if (personDrawing != null) {
             scalableNodes.remove(personDrawing);
             personsGroup.getChildren().remove(personDrawing.getNode());
             updateLayout();
         }
+        freeMapPerson.getFreeMapPortraits().forEach(this::removePortraitDrawing);
     }
 
     protected void createPortraitDrawing(FreeMapPortrait portrait) {

@@ -291,7 +291,6 @@ public class FriezeContentEditorController implements Initializable {
     }
 
     private void updatePeoplePane() {
-        System.err.println(" ---- START updatePeoplePane");
         if (timeLineProject != null) {
             personCheckListView.getItems().setAll(timeLineProject.getPersons());
             var peopleToRemove = personCheckListView.getItems().stream()

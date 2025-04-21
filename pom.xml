@@ -13,11 +13,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.release>24</maven.compiler.release>
         <javafx.version>21.0.4</javafx.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <javafx.dep.version>21</javafx.dep.version>
+        <javafx.dep.version>24</javafx.dep.version>
     </properties>
 
     
@@ -363,6 +361,9 @@
                 <configuration>
                     <release>${maven.compiler.release}</release>
                     <showDeprecation>true</showDeprecation>
+                    <compilerArgs>
+                        <arg>-Xlint</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>

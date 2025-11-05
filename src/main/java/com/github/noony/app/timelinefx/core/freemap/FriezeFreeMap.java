@@ -25,7 +25,9 @@ import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -394,12 +396,25 @@ public final class FriezeFreeMap implements FriezeObject {
 // </editor-fold>
     //
     public final void distributePlaces() {
+        // Get the total number of places
         var nbPlaces = places.size();
-        var freeMapPlaces = places.values().stream().sorted((p1, p2) -> Double.compare(p1.getYPos(), p2.getYPos())).collect(Collectors.toList());
-        var placesHeight = freeMapPlaces.stream().mapToDouble(FreeMapPlace::getHeight).sum();
-        var separation = (getPersonHeight() - placesHeight) / (1 + 2 * nbPlaces);
-        var currentHeight = 0;
-        for (var index = 0; index < nbPlaces; index++) {
+
+        // Sort places by Y position and calculate total height in a single pass
+        var freeMapPlaces = new ArrayList<>(places.values());
+        freeMapPlaces.sort(Comparator.comparingDouble(FreeMapPlace::getYPos));
+
+        // Compute total height in a single loop
+        double placesHeight = 0;
+        for (FreeMapPlace place : freeMapPlaces) {
+            placesHeight += place.getHeight();
+        }
+
+        // Calculate separation
+        double separation = (getPersonHeight() - placesHeight) / (1 + 2 * nbPlaces);
+
+        // Assign Y positions
+        double currentHeight = 0;
+        for (int index = 0; index < nbPlaces; index++) {
             FreeMapPlace freeMapPlace = freeMapPlaces.get(index);
             freeMapPlace.setY(separation * (index + 1) + currentHeight);
             currentHeight += freeMapPlace.getHeight();

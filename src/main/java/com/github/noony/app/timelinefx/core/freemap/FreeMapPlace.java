@@ -46,8 +46,8 @@ public class FreeMapPlace implements FriezeObject {
     public static final String FONT_SIZE_CHANGED = "fontSizeChanged";
     public static final String PLOT_SEPARATION_CHANGED = "plotSeparationChanged";
 
-    public static final double PLACE_NAME_HEIGHT = 75;
-    public static final double DEFAULT_HEIGHT = 75;
+    public static final double PLACE_NAME_HEIGHT = 35;
+    public static final double DEFAULT_HEIGHT = 35;
     public static final double DEFAULT_PLACE_PADDING = 16;
 
     private static final Logger LOG = Logger.getGlobal();
@@ -95,7 +95,8 @@ public class FreeMapPlace implements FriezeObject {
     //
     private double placeStayWidth;
     private double height = DEFAULT_HEIGHT;
-    private double plotSeparation;
+    private double requestedMinPlotSeparation;
+    private double currentPlotSeparation;
     //
     private double minX = DEFAULT_MIN_X;
     private double maxX = DEFAULT_MAX_X;
@@ -106,7 +107,8 @@ public class FreeMapPlace implements FriezeObject {
         place = aPlace;
         registeredPlots = new LinkedList<>();
         persons = new LinkedList<>();
-        plotSeparation = aPlotSeparation;
+        requestedMinPlotSeparation = aPlotSeparation;
+        currentPlotSeparation = requestedMinPlotSeparation;
         placeNameWidth = aNameWidth;
         fontSize = aFontSize;
     }
@@ -124,31 +126,38 @@ public class FreeMapPlace implements FriezeObject {
         return place.getName();
     }
 
-    // TODO update layout
-//    public void setNameWidth(double newNameWidth) {
-//        placeNameWidth = newNameWidth;
-//        propertyChangeSupport.firePropertyChange(NAME_WIDTH_CHANGED, this, placeNameWidth);
-//    }
+    /**
+     *
+     * @return the width in pixel of the place name component
+     */
     public double getNameWidth() {
         return placeNameWidth;
     }
 
+    /**
+     *
+     * @param newFontSize the new font size for the place name
+     */
     public void setFontSize(double newFontSize) {
         fontSize = newFontSize;
         propertyChangeSupport.firePropertyChange(FONT_SIZE_CHANGED, this, fontSize);
     }
 
+    /**
+     *
+     * @return the place's name font size
+     */
     public double getFontSize() {
         return fontSize;
     }
 
     public void setPlotSeparation(double newPlotSeparation) {
-        plotSeparation = newPlotSeparation;
-        propertyChangeSupport.firePropertyChange(PLOT_SEPARATION_CHANGED, this, plotSeparation);
+        requestedMinPlotSeparation = newPlotSeparation;
+        propertyChangeSupport.firePropertyChange(PLOT_SEPARATION_CHANGED, this, requestedMinPlotSeparation);
     }
 
     public double getPlotSeparation() {
-        return plotSeparation;
+        return requestedMinPlotSeparation;
     }
 
     public void addListener(PropertyChangeListener listener) {
@@ -185,10 +194,10 @@ public class FreeMapPlace implements FriezeObject {
             persons.add(person);
         }
         var index = indexOf(person);
-        plot.setY(yPos + (index + 1) * plotSeparation);
+        plot.setY(yPos + (index + 1) * requestedMinPlotSeparation);
         plot.addPropertyChangeListener(this::handlePlotChange);
         updateMinMaxX();
-        setHeight(Math.max(PLACE_NAME_HEIGHT, plotSeparation * (persons.size() + 1)));
+        setHeight(Math.max(PLACE_NAME_HEIGHT, requestedMinPlotSeparation * (persons.size() + 1)));
     }
 
     public double getMinX() {
@@ -250,11 +259,11 @@ public class FreeMapPlace implements FriezeObject {
             registeredPlots.stream().forEach(plot -> {
                 var personPlot = plot.getPerson();
                 var index = indexOf(personPlot);
-                plot.setY(yPos + (index + 1) * plotSeparation);
+                plot.setY(yPos + (index + 1) * requestedMinPlotSeparation);
                 plot.addPropertyChangeListener(this::handlePlotChange);
             });
             updateMinMaxX();
-            setHeight(Math.max(PLACE_NAME_HEIGHT, plotSeparation * (persons.size() + 1)));
+            setHeight(Math.max(PLACE_NAME_HEIGHT, requestedMinPlotSeparation * (persons.size() + 1)));
         }
     }
 
@@ -284,6 +293,10 @@ public class FreeMapPlace implements FriezeObject {
         if (Math.abs(oldMax - maxX) + Math.abs(oldMin - minX) > GridPositionable.EPSILON) {
             propertyChangeSupport.firePropertyChange(MIN_MAX_X_CHANGED, minX, maxX);
         }
+    }
+
+    private void updatePersonsVerticalPositions(){
+
     }
 
 }

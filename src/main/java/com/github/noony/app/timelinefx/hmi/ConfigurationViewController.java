@@ -40,7 +40,7 @@ import jfxtras.styles.jmetro.Style;
  *
  * @author hamon
  */
-public class ConfigurationViewController implements Initializable {
+public final class ConfigurationViewController implements Initializable {
 
     public static final String CLOSE_REQUESTED = "closeRequested1";
 

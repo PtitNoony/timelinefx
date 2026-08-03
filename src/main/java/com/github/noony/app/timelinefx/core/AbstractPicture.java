@@ -16,7 +16,6 @@
  */
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.IDateObject.DATE_CHANGED;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.beans.PropertyChangeListener;
@@ -34,7 +33,7 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public abstract class AbstractPicture implements FriezeObject, IPicture {
+public abstract class AbstractPicture implements IPicture {
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -54,6 +53,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
     private double timestamp;
     private LocalDate date;
 
+    @SuppressWarnings("this-escape")
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
@@ -70,6 +70,7 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
         name = aName;
     }
 
+    @SuppressWarnings("this-escape")
     protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
@@ -301,11 +302,12 @@ public abstract class AbstractPicture implements FriezeObject, IPicture {
         return getProject().getProjectFolder().getAbsolutePath() + File.separator + filePath;
     }
 
-    // TODO add to interface ???
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }

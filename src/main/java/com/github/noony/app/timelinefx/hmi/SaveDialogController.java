@@ -30,7 +30,7 @@ import javafx.fxml.Initializable;
  *
  * @author hamon
  */
-public class SaveDialogController implements Initializable {
+public final class SaveDialogController implements Initializable {
 
     private static final Logger LOG = Logger.getGlobal();
     //

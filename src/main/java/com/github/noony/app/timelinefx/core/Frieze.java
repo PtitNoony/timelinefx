@@ -36,7 +36,7 @@ import static javafx.application.Platform.runLater;
  *
  * @author hamon
  */
-public class Frieze implements FriezeObject {
+public final class Frieze implements FriezeObject {
 
     public static final String CLASS_NAME = "Frieze";
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
@@ -281,7 +281,7 @@ public class Frieze implements FriezeObject {
     }
 
     public void updatePersonSelection(final Person aPerson, final boolean selected) {
-        LOG.log(Level.INFO, "Updating frieze for person: {0}, selected{1}.",new Object[]{aPerson, selected});
+        LOG.log(Level.INFO, "Updating frieze for person: {0}, selected{1}.", new Object[]{aPerson, selected});
         if (selected) {
             addPerson(aPerson);
         } else {

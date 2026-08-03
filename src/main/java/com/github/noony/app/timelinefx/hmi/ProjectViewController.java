@@ -490,6 +490,7 @@ public final class ProjectViewController implements Initializable {
                 hideModalStage();
             case ProjectCreationWizardController.CREATE -> {
                 hideModalStage();
+                @SuppressWarnings("unchecked")
                 var configParams = (Map<String, String>) event.getNewValue();
                 String projectName = configParams.get(TimeLineProject.PROJECT_NAME_KEY);
                 TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);

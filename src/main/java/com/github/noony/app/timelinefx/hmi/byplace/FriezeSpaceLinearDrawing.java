@@ -35,7 +35,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author hamon
  */
-public class FriezeSpaceLinearDrawing {
+public final class FriezeSpaceLinearDrawing {
 
     private static final Logger LOG = Logger.getGlobal();
 

@@ -39,7 +39,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class PlaceEditionViewController implements Initializable {
+public final class PlaceEditionViewController implements Initializable {
 
     public static final String PLACE_EDITED = "placeEdited";
     public static final String CANCEL_PLACE_EDITION = "cancelPlaceEdition";

@@ -35,7 +35,7 @@ import javafx.stage.WindowEvent;
  *
  * @author hamon
  */
-public class SaveWindow {
+public final class SaveWindow {
 
     public static final String SAVE = "save";
     public static final String CANCEL = "cancel";

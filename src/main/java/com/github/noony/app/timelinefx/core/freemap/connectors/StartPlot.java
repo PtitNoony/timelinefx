@@ -26,16 +26,9 @@ import com.github.noony.app.timelinefx.core.freemap.FreeMapStay;
  */
 public class StartPlot extends FreeMapPlot {
 
-    private final FreeMapStay period;
-
     protected StartPlot(long anID, FreeMapStay stayPeriod, FreeMapPerson freeMapPerson, FreeMapPlace freeMapPlace, double plotSize) {
         super(anID, freeMapPerson, freeMapPlace, stayPeriod.getStartDate(), PlotType.START, stayPeriod.getId(), plotSize);
-        period = stayPeriod;
     }
-
-//    public StayPeriod getStayPeriod() {
-//        return period;
-//    }
 
     @Override
     public String getInfo() {

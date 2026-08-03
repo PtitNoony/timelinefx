@@ -55,7 +55,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
-public class PicturesChronologyViewController implements Initializable {
+public final class PicturesChronologyViewController implements Initializable {
 
     private static final Logger LOG = Logger.getGlobal();
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);

@@ -36,7 +36,7 @@ import javafx.stage.DirectoryChooser;
  *
  * @author hamon
  */
-public class ProjectCreationWizardController implements Initializable {
+public final class ProjectCreationWizardController implements Initializable {
 
     public static final String CANCEL = "cancel";
     public static final String CREATE = "create";

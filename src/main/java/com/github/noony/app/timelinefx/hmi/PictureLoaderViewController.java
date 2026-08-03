@@ -57,7 +57,7 @@ import org.controlsfx.control.CheckListView;
  *
  * @author arnaud
  */
-public class PictureLoaderViewController implements Initializable, ViewController {
+public final class PictureLoaderViewController implements Initializable, ViewController {
 
     public static final String CANCEL_EVENT = "cancel";
     public static final String OK_EVENT = "ok";

@@ -65,7 +65,7 @@ import javafx.stage.FileChooser;
  *
  * @author hamon
  */
-public class PersonCreationViewController implements Initializable {
+public final class PersonCreationViewController implements Initializable {
 
     public static final String CANCEL_PERSON_CREATION = "cancelPersonCreation";
     public static final String PERSON_CREATED = "personCreated";

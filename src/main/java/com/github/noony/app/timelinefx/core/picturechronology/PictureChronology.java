@@ -40,7 +40,7 @@ import javafx.util.Pair;
  *
  * @author hamon
  */
-public class PictureChronology implements FriezeObject, IDrawableObject {
+public final class PictureChronology implements FriezeObject, IDrawableObject {
 
     public static final String DEFAULT_NAME = "PictureChronologyNoName";
 
@@ -203,7 +203,7 @@ public class PictureChronology implements FriezeObject, IDrawableObject {
                 var startMiniature = personMiniatures.get(i);
                 var endMiniature = personMiniatures.get(i + 1);
                 var linkKey = person.getId() + "__" + startMiniature.getId() + "__" + endMiniature.getId();
-                linksNeeded.put(linkKey, new Pair(startMiniature, endMiniature));
+                linksNeeded.put(linkKey, new Pair<>(startMiniature, endMiniature));
             }
         });
         // remove useless links

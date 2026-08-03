@@ -314,7 +314,7 @@ public class FreeMapProviderV3 {
         for (int i = 0; i < freemapPersonsElements.getLength(); i++) {
             var personElement = (Element) freemapPersonsElements.item(i);
             var freeMapPerson = parseFreeMapPersonStep01(personElement, parentFreeMapID);
-            freeMapPersons.add(new Pair(freeMapPerson, personElement));
+            freeMapPersons.add(new Pair<>(freeMapPerson, personElement));
         }
         return freeMapPersons;
     }

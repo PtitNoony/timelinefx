@@ -48,6 +48,7 @@ public class FreeMapPlot implements FreeMapConnector {
     private Color color;
     private double plotSize;
 
+    @SuppressWarnings("this-escape")
     protected FreeMapPlot(long anID, FreeMapPerson aPerson, FreeMapPlace aPlace, double aDate, PlotType aType, long aPeriodID, double aPlotSize) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPlot.this);

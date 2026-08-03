@@ -32,7 +32,7 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public class ChronologyLink implements FriezeObject {
+public final class ChronologyLink implements FriezeObject {
 
     public static final ChronologyLinkType DEFAULT_LINK_TYPE = ChronologyLinkType.CUBIC;
 

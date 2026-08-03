@@ -19,7 +19,8 @@ package com.github.noony.app.timelinefx.core;
 import java.util.List;
 
 /**
- * An IPicture is a drawable object which has date attributes and is linked to an image * file.
+ * An IPicture is a drawable object which has date attributes and is linked to
+ * an image * file.
  *
  * @author hamon
  */

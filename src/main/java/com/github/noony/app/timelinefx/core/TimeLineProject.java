@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  *
  * @author hamon
  */
-public class TimeLineProject {
+public final class TimeLineProject {
 
     public static final String PERSON_ADDED = "personAdded";
     public static final String PLACE_ADDED = "placeAdded";

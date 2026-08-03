@@ -41,7 +41,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author hamon
  */
-public class FriezeFreeFormDrawing {
+public final class FriezeFreeFormDrawing {
 
     public static final String PORTRAIT_SECTION_REQUEST = "portraitSelectionRequest";
 

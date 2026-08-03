@@ -27,7 +27,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * @author hamon
  */
-public class RectangleConnector extends AbstractFxScalableNode {
+public final class RectangleConnector extends AbstractFxScalableNode {
 
     private static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
 

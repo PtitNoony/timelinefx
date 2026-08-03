@@ -35,7 +35,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class FreeMapSimpleStay implements FreeMapStay {
+public final class FreeMapSimpleStay implements FreeMapStay {
 
     private final long id;
     //

@@ -57,7 +57,7 @@ import org.controlsfx.control.SearchableComboBox;
  *
  * @author hamon
  */
-public class StaysCreationViewController implements Initializable {
+public final class StaysCreationViewController implements Initializable {
 
     private static final Logger LOG = Logger.getGlobal();
 

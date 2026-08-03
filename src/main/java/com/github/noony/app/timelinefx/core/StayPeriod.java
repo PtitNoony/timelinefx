@@ -37,6 +37,7 @@ public abstract class StayPeriod implements FriezeObject {
     private Person person;
     private Place place;
 
+    @SuppressWarnings("this-escape")
     protected StayPeriod(long anId, Person aPerson, Place aPlace) {
         id = anId;
         propertyChangeSupport = new PropertyChangeSupport(StayPeriod.this);

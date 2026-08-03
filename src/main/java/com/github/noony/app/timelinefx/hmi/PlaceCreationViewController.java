@@ -38,7 +38,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class PlaceCreationViewController implements Initializable {
+public final class PlaceCreationViewController implements Initializable {
 
     public static final String PLACE_CREATED = "placeCreated";
     public static final String PLACE_EDITIED = "placeEdited";

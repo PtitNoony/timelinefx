@@ -33,7 +33,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author hamon
  */
-public class PictureChronologyDrawing extends FxScalableParent {
+public final class PictureChronologyDrawing extends FxScalableParent {
 
     public static final String LINK_SELECTED = "linkSelected";
     public static final String LINK_UNSELECTED = "linkUnselected";

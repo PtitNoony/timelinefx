@@ -32,7 +32,7 @@ import javafx.scene.Node;
  *
  * @author hamon
  */
-public class PersonChronologyPicturesDrawing implements IFxScalableNode {
+public final class PersonChronologyPicturesDrawing implements IFxScalableNode {
 
     private final PictureChronologyDrawing chronologyDrawing;
     private final PictureChronology chronology;

@@ -36,7 +36,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class FreeMapMergedStay implements FreeMapStay {
+public final class FreeMapMergedStay implements FreeMapStay {
 
     private final long id;
     private final List<FreeMapStay> stays;

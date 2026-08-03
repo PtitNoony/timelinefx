@@ -235,12 +235,12 @@ public final class ContentEditionViewController implements Initializable {
 
     private TreeItem<Place> createRootPlaceItem() {
         var rootPlace = PlaceFactory.PLACES_PLACE;
-        var rootPlaceItem = new TreeItem(rootPlace);
+        var rootPlaceItem = new TreeItem<Place>(rootPlace);
         return rootPlaceItem;
     }
 
     private TreeItem<Place> createTreeItemPlace(Place place) {
-        var placeItem = new TreeItem(place);
+        var placeItem = new TreeItem<Place>(place);
         place.getPlaces().forEach(p -> placeItem.getChildren().add(createTreeItemPlace(p)));
         placeItem.setExpanded(true);
         return placeItem;

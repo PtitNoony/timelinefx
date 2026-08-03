@@ -39,7 +39,7 @@ import javafx.scene.Group;
  *
  * @author hamon
  */
-public class FreeMapPersonDrawing extends AbstractFxScalableNode {
+public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
 
     private final FreeMapPerson freeMapPerson;
     private final FriezeFreeMap freeMap;

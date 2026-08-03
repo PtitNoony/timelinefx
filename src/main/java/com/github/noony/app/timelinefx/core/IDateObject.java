@@ -16,6 +16,7 @@
  */
 package com.github.noony.app.timelinefx.core;
 
+import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -53,7 +54,8 @@ public interface IDateObject {
 
     /**
      *
-     * @return the instance date value, or null if not set or if the time format is not compatible
+     * @return the instance date value, or null if not set or if the time format is
+     *         not compatible
      */
     LocalDate getDate();
 
@@ -89,7 +91,8 @@ public interface IDateObject {
 
     /**
      *
-     * @return an absolute time value to compare dateObjects no matter their time format
+     * @return an absolute time value to compare dateObjects no matter their time
+     *         format
      */
     double getAbsoluteTime();
 
@@ -98,4 +101,18 @@ public interface IDateObject {
      * @return a string representation of the time no matter the time format
      */
     String getAbsoluteTimeAsString();
+
+    /**
+     * PropertyChangeListener to be added
+     * 
+     * @param listener
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    /**
+     * PropertyChangeListener to be removed
+     * 
+     * @param listener
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener);
 }

@@ -24,7 +24,7 @@ import com.github.noony.app.timelinefx.hmi.freemap.LinkShape;
  *
  * @author hamon
  */
-public class PortraitLink extends FreeMapSimpleLink {
+public final class PortraitLink extends FreeMapSimpleLink {
 
     private final FreeMapPortrait freeMapPortrait;
 

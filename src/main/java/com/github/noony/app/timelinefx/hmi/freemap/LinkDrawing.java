@@ -37,7 +37,7 @@ import javafx.scene.shape.StrokeType;
 /**
  * @author hamon
  */
-public class LinkDrawing implements Selectable, IFxScalableNode {
+public final class LinkDrawing implements Selectable, IFxScalableNode {
 
     public static final String SECONDARY_CLICKED = "secondaryCliked";
 

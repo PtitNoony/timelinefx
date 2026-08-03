@@ -27,7 +27,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class FreeMapBasicConnector implements FreeMapConnector {
+public final class FreeMapBasicConnector implements FreeMapConnector {
 
     public static final String PLOT_DATE_CHANGED = "plotDateChanged";
 

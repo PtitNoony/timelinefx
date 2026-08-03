@@ -32,7 +32,7 @@ import javafx.geometry.Point2D;
  *
  * @author hamon
  */
-public class ChronologyPictureMiniature implements FriezeObject {
+public final class ChronologyPictureMiniature implements FriezeObject {
 
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature__positionChanged";
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature__scaleChanged";

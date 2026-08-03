@@ -33,7 +33,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class FreeMapPortrait implements FriezeObject {
+public final class FreeMapPortrait implements FriezeObject {
 
     public static final String POSITION_CHANGED = "positionChanged";
     public static final String RADIUS_CHANGED = "portraitRadiusChanged";

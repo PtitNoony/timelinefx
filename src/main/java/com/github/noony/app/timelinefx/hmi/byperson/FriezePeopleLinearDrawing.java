@@ -35,7 +35,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author hamon
  */
-public class FriezePeopleLinearDrawing implements IFriezeView {
+public final class FriezePeopleLinearDrawing implements IFriezeView {
 
     private final Frieze frieze;
 

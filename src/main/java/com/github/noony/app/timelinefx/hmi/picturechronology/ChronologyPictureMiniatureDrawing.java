@@ -41,7 +41,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author hamon
  */
-public class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
+public final class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
 
     public static final String MINIATURE_REQUEST_REMOVAL = "miniatureRequestRemoval";
     public static final String MINIATURE_REQUEST_SELECTION = "miniatureRequestSelection";

@@ -52,7 +52,7 @@ import javafx.scene.text.TextAlignment;
  *
  * @author hamon
  */
-public class GalleryTiles implements IFxNode {
+public final class GalleryTiles implements IFxNode {
 
     public static final double TILE_WIDTH = 250;
     public static final double TILE_HEIGHT = 200;

@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class Place implements FriezeObject {
+public final class Place implements FriezeObject {
 
     public static final String SELECTION_CHANGED = "selectionChanged";
     public static final String CONTENT_CHANGED = "contentChanged";

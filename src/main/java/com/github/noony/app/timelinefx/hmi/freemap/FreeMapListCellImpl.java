@@ -26,7 +26,7 @@ import javafx.util.StringConverter;
  *
  * @author hamon
  */
-public class FreeMapListCellImpl extends TextFieldListCell<FriezeFreeMap> {
+public final class FreeMapListCellImpl extends TextFieldListCell<FriezeFreeMap> {
 
     private static class FreeMapStringConverter extends StringConverter<FriezeFreeMap> {
 

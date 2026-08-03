@@ -36,7 +36,7 @@ import javafx.scene.shape.Circle;
  *
  * @author hamon
  */
-public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
+public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -56,6 +56,9 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
     private double oldScreenY;
     private double oldTranslateX;
     private double oldTranslateY;
+    //
+    private double tmpImgPos;
+    private double tmpImgFit;
 
     public FreeMapPortraitDrawing(FreeMapPortrait aPortrait, FriezeFreeFormDrawing aFriezeFreeFormDrawing) {
         super();
@@ -160,34 +163,36 @@ public class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             var portrait = freeMapPortrait.getPortrait();
             var project = portrait.getPerson().getProject();
             //
-            var filePathS = project.getProjectFolder().getAbsolutePath() + File.separatorChar + portrait.getProjectRelativePath();
-            LOG.log(Level.FINE, "Trying to load file {0}", new Object[]{filePathS});
+            var filePathS = project.getProjectFolder().getAbsolutePath() + File.separatorChar
+                    + portrait.getProjectRelativePath();
+            LOG.log(Level.FINE, "Trying to load file {0}", new Object[] { filePathS });
             FileInputStream inputstream = new FileInputStream(filePathS);
             image = new Image(inputstream);
             imageView.setImage(image);
         } catch (FileNotFoundException ex) {
-            LOG.log(Level.SEVERE, " Ex :: {0}", new Object[]{ex});
+            LOG.log(Level.SEVERE, " Ex :: {0}", new Object[] { ex });
             throw new IllegalStateException();
         }
     }
 
     @Override
     protected void updateLayout() {
-        // TODO optim calcul
+        tmpImgPos = freeMapPortrait.getRadius() * getScale();
+        tmpImgFit = freeMapPortrait.getRadius() * 2.0 * getScale();
         setNodeTranslateX(xPos * getScale());
         setNodeTranslateY(yPos * getScale());
         //
         circle.setStrokeWidth(4 * getScale());
-        circle.setRadius(freeMapPortrait.getRadius() * getScale());
+        circle.setRadius(tmpImgPos);
         //
         smallerCircle.setStrokeWidth(6 * getScale());
         smallerCircle.setRadius((freeMapPortrait.getRadius() - 2) * getScale());
         //
-        imageView.setX(-freeMapPortrait.getRadius() * getScale());
-        imageView.setY(-freeMapPortrait.getRadius() * getScale());
-        imageView.setFitWidth(freeMapPortrait.getRadius() * 2.0 * getScale());
-        imageView.setFitHeight(freeMapPortrait.getRadius() * 2.0 * getScale());
+        imageView.setX(-tmpImgPos);
+        imageView.setY(-tmpImgPos);
+        imageView.setFitWidth(tmpImgFit);
+        imageView.setFitHeight(tmpImgFit);
         //
-        imageClip.setRadius(freeMapPortrait.getRadius() * getScale());
+        imageClip.setRadius(tmpImgPos);
     }
 }

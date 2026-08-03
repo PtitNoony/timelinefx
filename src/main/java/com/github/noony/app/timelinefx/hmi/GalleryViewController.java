@@ -56,7 +56,7 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author arnaud
  */
-public class GalleryViewController implements Initializable, ViewController {
+public final class GalleryViewController implements Initializable, ViewController {
 
     // TODO find a place to store that
     public static final double MARGN = 8.0;

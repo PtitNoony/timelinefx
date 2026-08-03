@@ -26,7 +26,7 @@ import javafx.scene.shape.Polygon;
  *
  * @author hamon
  */
-public class DateHandleDrawing extends AbstractFxScalableNode {
+public final class DateHandleDrawing extends AbstractFxScalableNode {
 
     public static final Color DEFAULT_COLOR = Color.CHARTREUSE;
 

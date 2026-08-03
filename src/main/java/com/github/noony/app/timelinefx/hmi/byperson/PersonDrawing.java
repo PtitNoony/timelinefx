@@ -36,7 +36,7 @@ import javafx.scene.text.TextAlignment;
  *
  * @author hamon
  */
-public class PersonDrawing extends FXDrawing {
+public final class PersonDrawing extends FXDrawing {
 
     public static final double DEFAULT_HEIGHT = 24;
     public static final double DEFAULT_WIDTH = 500;

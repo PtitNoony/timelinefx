@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public class DateObject implements IDateObject {
+public final class DateObject implements IDateObject {
 
     private static final Logger LOG = Logger.getGlobal();
 
@@ -110,14 +110,16 @@ public class DateObject implements IDateObject {
                         propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
                     }
                 } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Could not set date value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
+                    LOG.log(Level.WARNING, "Could not set date value to {0}, with '{1}': error: {2}",
+                            new Object[] { this, aTimeValue, e.getMessage() });
                 }
             }
             case TIME_MIN -> {
                 try {
                     timestamp = Double.parseDouble(aTimeValue);
                 } catch (NumberFormatException e) {
-                    LOG.log(Level.WARNING, "Could not set timestamp value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
+                    LOG.log(Level.WARNING, "Could not set timestamp value to {0}, with '{1}': error: {2}",
+                            new Object[] { this, aTimeValue, e.getMessage() });
                 }
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
@@ -193,11 +195,12 @@ public class DateObject implements IDateObject {
 
     }
 
-    // TODO add to interface ???
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }

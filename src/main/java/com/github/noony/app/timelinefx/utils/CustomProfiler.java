@@ -34,31 +34,11 @@ public class CustomProfiler {
 
     private static final boolean WITH_PROFILE = true;
 
-//    private static CustomProfiler singletonInstance = null;
     private static final Map<String, Profile> profiles = new HashMap<>(); // Fast access to profiles by name
     private static final List<Profile> profilesStack = new LinkedList<>();// Profiles as created chronologically
 
-//    /**
-//     * Get access to the singleton instance (create it if necessary).
-//     *
-//     * @return
-//     */
-//    public static CustomProfiler getInstance() {
-//        if (singletonInstance == null) {
-//            singletonInstance = new CustomProfiler();
-//        }
-//        return singletonInstance;
-//    }
     /**
-     * Protected constructor for singleton
-     */
-//    protected CustomProfiler() {
-//        profiles = new HashMap<>();
-//        profilesStack = new ArrayList<>();
-//    }
-    /**
-     * Start a profile. If the profile does not exist, it will be created. If it exists, a new round of measure is
-     * taken.
+     * Start a profile. If the profile does not exist, it will be created. If it exists, a new round of measure is taken.
      *
      * @param name The name of the profile. If possible, less than Profiler.THEORETICAL_MAX_NAME_LENGTH characters
      *
@@ -175,9 +155,9 @@ public class CustomProfiler {
         }
 
         private String getFormattedStats(String format) {
-            final long avgTime = callCount == 0 ? 0 : (long) totalTime / callCount;
+            final long avgTime = callCount == 0 ? 0 : totalTime / callCount;
             final long delta = maxTime - minTime;
-            final double deltaRatio = avgTime == 0 ? 0 : 100.0 * ((double) 0.5 * delta / (double) avgTime);
+            final double deltaRatio = avgTime == 0 ? 0 : 100.0 * (0.5 * delta / (double) avgTime);
 
             return String
                     .format(format, name, callCount, totalTime, avgTime, minTime, maxTime, delta, (int) deltaRatio);

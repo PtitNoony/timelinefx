@@ -56,6 +56,7 @@ public class FxScalableParent implements IFxScalableNode {
     //
     private double viewingScale = 1.0;
 
+    @SuppressWarnings("this-escape")
     public FxScalableParent(IDrawableObject aDrawableObject) {
         drawableObject = aDrawableObject;
         //

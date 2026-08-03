@@ -17,6 +17,7 @@
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,6 +67,14 @@ public class Event {
 
     public LocalDate getLocalDate() {
         return localDate;
+    }
+
+    public List<Person> getPersons() {
+        return Collections.unmodifiableList(persons);
+    }
+
+    public List<Place> getPlaces() {
+        return Collections.unmodifiableList(places);
     }
 
 }

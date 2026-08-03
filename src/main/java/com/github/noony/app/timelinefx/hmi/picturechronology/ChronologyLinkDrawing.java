@@ -40,7 +40,7 @@ import javafx.scene.shape.Shape;
  *
  * @author hamon
  */
-public class ChronologyLinkDrawing implements IFxScalableNode {
+public final class ChronologyLinkDrawing implements IFxScalableNode {
 
     // TODO : think about classes
     public static final String LINK_CLICKED = "linkClicked";

@@ -52,6 +52,8 @@ public class FreeMapSimpleLink implements FreeMapLink {
     private Color color;
     private boolean isSelected = false;
 
+
+    @SuppressWarnings("this-escape")
     protected FreeMapSimpleLink(long anID, FreeMapPerson aPerson, FreeMapConnector aBeginPlot, FreeMapConnector aEndPlot, LinkType type, Color aColor, LinkShape aLinkShape) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(FreeMapSimpleLink.this);

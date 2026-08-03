@@ -31,7 +31,7 @@ import javafx.scene.paint.Color;
  *
  * @author hamon
  */
-public class Person implements FriezeObject {
+public final class Person implements FriezeObject {
 
     public static final String DEFAULT_PICTURE_NAME = "LegoHead.png";
 

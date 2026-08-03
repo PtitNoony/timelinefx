@@ -12,7 +12,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.4.2</version>
+        <version>3.5.0</version>
         <configuration>
           <archive>
             <manifest>
@@ -24,7 +24,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.13</version>
+        <version>0.8.14</version>
         <executions>
           <execution>
             <goals>
@@ -70,7 +70,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -104,7 +104,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.6.2</version>
         <executions>
           <execution>
             <goals>
@@ -118,7 +118,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.14.1</version>
         <configuration>
           <release>${maven.compiler.release}</release>
           <showDeprecation>true</showDeprecation>
@@ -143,13 +143,13 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.38</version>
+      <version>1.18.46</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.13.1</version>
+      <version>6.0.1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -164,24 +164,32 @@
           <artifactId>apiguardian-api</artifactId>
           <groupId>org.apiguardian</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>jspecify</artifactId>
+          <groupId>org.jspecify</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <version>5.13.1</version>
+      <version>6.0.1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <artifactId>apiguardian-api</artifactId>
           <groupId>org.apiguardian</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>jspecify</artifactId>
+          <groupId>org.jspecify</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.13.1</version>
+      <version>6.0.1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -192,14 +200,18 @@
           <artifactId>apiguardian-api</artifactId>
           <groupId>org.apiguardian</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>jspecify</artifactId>
+          <groupId>org.jspecify</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.release>24</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>24.0.2</javafx.version>
-    <javafx.dep.version>24.0.2</javafx.dep.version>
+    <javafx.version>25.0.3</javafx.version>
+    <javafx.dep.version>25.0.3</javafx.dep.version>
     <mainClass>com.github.noony.app.timelinefx.Main</mainClass>
   </properties>
 </project>

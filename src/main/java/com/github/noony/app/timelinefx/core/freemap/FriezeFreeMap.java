@@ -85,6 +85,11 @@ public final class FriezeFreeMap implements FriezeObject {
     private static final boolean DEFAULT_PLOT_VISIBILITY = true;
     private static final boolean DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY = true;
 
+    public static final FriezeFreeMapProperties DEFAULT_PROPERTIES = new FriezeFreeMapProperties(
+            new Dimension2D(DEFAULT_WIDTH, DEFAULT_HEIGHT), DEFAULT_PERSONS_WIDTH, DEFAULT_PLACE_NAMES_WIDTH,
+            DEFAULT_FONT_SIZE, DEFAULT_PLOT_SEPARATION, DEFAULT_PLOT_SIZE, DEFAULT_PLOT_VISIBILITY,
+            DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY, DEFAULT_PORTRAIT_RADIUS);
+
     private static final String DEFAULT_NAME = "FreeMap";
 
     private static final Logger LOG = Logger.getGlobal();
@@ -123,7 +128,7 @@ public final class FriezeFreeMap implements FriezeObject {
     //
 //    private TimeMode timeMode;
 
-    protected FriezeFreeMap(long anID, Frieze aFrieze, Map<String, String> inputParameters, List<FreeMapDateHandle> dateHandles,
+    protected FriezeFreeMap(long anID, Frieze aFrieze, FriezeFreeMapProperties properties, List<FreeMapDateHandle> dateHandles,
             List<FreeMapPerson> somePersons, List<FreeMapPlace> somePlaces, List<FreeMapStay> someStays, boolean allStays) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(FriezeFreeMap.this);
@@ -136,7 +141,7 @@ public final class FriezeFreeMap implements FriezeObject {
         //
         name = DEFAULT_NAME;
         //
-        loadParameters(inputParameters);
+        applyProperties(properties);
         //
         minDate = frieze.getMinDate();
         maxDate = frieze.getMaxDate();
@@ -175,7 +180,7 @@ public final class FriezeFreeMap implements FriezeObject {
     }
 
     protected FriezeFreeMap(long anID, Frieze aFrieze, boolean allStays) {
-        this(anID, aFrieze, new HashMap<>(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), allStays);
+        this(anID, aFrieze, DEFAULT_PROPERTIES, new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), new LinkedList<>(), allStays);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -374,6 +379,7 @@ public final class FriezeFreeMap implements FriezeObject {
     }
 
     public void setPlotSeparation(double plotSeparation) {
+        this.plotSeparation = plotSeparation;
         places.values().forEach(place -> place.setPlotSeparation(plotSeparation));
         distributePlaces();
     }
@@ -449,31 +455,31 @@ public final class FriezeFreeMap implements FriezeObject {
      * @return a new map containing the frieze parameters
      */
     public Map<String, String> getParemeters() {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put(FRIEZE_WIDTH, Double.toString(width));
-        parameters.put(FRIEZE_HEIGHT, Double.toString(height));
-        parameters.put(PERSONS_WIDTH, Double.toString(portraitWidth));
-        parameters.put(PLACE_NAMES_WIDTH, Double.toString(placeNamesWidth));
-        parameters.put(FONT_SIZE, Double.toString(fontSize));
-        parameters.put(PLOT_SEPARATION, Double.toString(plotSeparation));
-        parameters.put(PLOT_SIZE, Double.toString(plotSize));
-        parameters.put(PLOT_VISIBILITY, Boolean.toString(plotVisibiltiy));
-        parameters.put(PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(portraitConnectorsVisibiltiy));
-        parameters.put(PORTRAIT_RADIUS, Double.toString(portraitRadius));
-        return parameters;
+        return getProperties().toParameterMap();
     }
 
-    private void loadParameters(Map<String, String> parameters) {
-        width = Double.parseDouble(parameters.getOrDefault(FRIEZE_WIDTH, Double.toString(DEFAULT_WIDTH)));
-        height = Double.parseDouble(parameters.getOrDefault(FRIEZE_HEIGHT, Double.toString(DEFAULT_HEIGHT)));
-        portraitWidth = Double.parseDouble(parameters.getOrDefault(PERSONS_WIDTH, Double.toString(DEFAULT_PERSONS_WIDTH)));
-        placeNamesWidth = Double.parseDouble(parameters.getOrDefault(PLACE_NAMES_WIDTH, Double.toString(DEFAULT_PLACE_NAMES_WIDTH)));
-        fontSize = Double.parseDouble(parameters.getOrDefault(FONT_SIZE, Double.toString(DEFAULT_FONT_SIZE)));
-        plotSeparation = getPlotSeparationParamerter(parameters);
-        plotSize = Double.parseDouble(parameters.getOrDefault(PLOT_SIZE, Double.toString(DEFAULT_PLOT_SIZE)));
-        plotVisibiltiy = Boolean.parseBoolean(parameters.getOrDefault(PLOT_VISIBILITY, Boolean.toString(DEFAULT_PLOT_VISIBILITY)));
-        portraitConnectorsVisibiltiy = Boolean.parseBoolean(parameters.getOrDefault(PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY)));
-        portraitRadius = Double.parseDouble(parameters.getOrDefault(PORTRAIT_RADIUS, Double.toString(DEFAULT_PORTRAIT_RADIUS)));
+    public FriezeFreeMapProperties getProperties() {
+        return new FriezeFreeMapProperties(new Dimension2D(width, height), portraitWidth, placeNamesWidth,
+                fontSize, plotSeparation, plotSize, plotVisibiltiy, portraitConnectorsVisibiltiy, portraitRadius);
+    }
+
+    public void setProperties(FriezeFreeMapProperties properties) {
+        applyProperties(properties);
+        updateLayout();
+        distributePlaces();
+    }
+
+    private void applyProperties(FriezeFreeMapProperties properties) {
+        width = properties.dimension().getWidth();
+        height = properties.dimension().getHeight();
+        portraitWidth = properties.personWidth();
+        placeNamesWidth = properties.placeNameWidth();
+        fontSize = properties.fontSize();
+        plotSeparation = properties.plotSeparation();
+        plotSize = properties.plotSize();
+        plotVisibiltiy = properties.plotVisibility();
+        portraitConnectorsVisibiltiy = properties.portraitConnectorVisibility();
+        portraitRadius = properties.portraitRadius();
     }
 
     private void addPerson(Person person) {
@@ -803,11 +809,6 @@ public final class FriezeFreeMap implements FriezeObject {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "_" + getName();
-    }
-
-    public static double getPlotSeparationParamerter(Map<String, String> parameters) {
-        return Double.parseDouble(parameters.getOrDefault(PLOT_SEPARATION, Double.toString(DEFAULT_PLOT_SEPARATION)));
-
     }
 
 }

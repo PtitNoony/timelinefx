@@ -14,7 +14,7 @@ This version is for Java 17.
 ## Disclaimer
 
 This small project is (still) in its early stages.
-There are a lot of improvments yet to be made.
+There are a lot of improvements yet to be made.
 
 SO, feel free to request changes!!
 I welcome ideas for missing features/architectures...

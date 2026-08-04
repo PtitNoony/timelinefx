@@ -19,7 +19,6 @@ package com.github.noony.app.timelinefx.core.freemap;
 import com.github.noony.app.timelinefx.core.Factory;
 import com.github.noony.app.timelinefx.core.Frieze;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,14 +65,14 @@ public class FriezeFreeMapFactory {
         return friezeFreeMap;
     }
 
-    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, Map<String, String> inputParameters,
+    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, FriezeFreeMapProperties properties,
             List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
         //
         if (!FACTORY.isIdAvailable(anID)) {
             throw new IllegalArgumentException("Trying to create a friezeFreeMap with existing id=" + anID);
         }
         LOG.log(Level.WARNING, "Creating a friezeFreeMap (id={0} with Frieze={1} with its full content.", new Object[]{anID, aFrieze});
-        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, inputParameters, dateHandles, persons, places, stays, false);
+        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, properties, dateHandles, persons, places, stays, false);
         FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
     }

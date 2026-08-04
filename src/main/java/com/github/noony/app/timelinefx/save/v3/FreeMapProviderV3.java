@@ -28,8 +28,8 @@ import com.github.noony.app.timelinefx.core.freemap.FreeMapPortraitFactory;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapStay;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapStayFactory;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
-import static com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap.getPlotSeparationParamerter;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapProperties;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnectorFactory;
 import com.github.noony.app.timelinefx.core.freemap.links.FreeMapLinkFactory;
@@ -244,14 +244,15 @@ public class FreeMapProviderV3 {
         var freeMapName = freemapElement.getAttribute(NAME_ATR);
         // parse parameters
         var freeMapParameters = parseFreeMapParameters(freemapElement);
-        LOG.log(Level.INFO, "Parsed Freemap {0}_{1} parameters: {2}", new Object[]{freeMapID, freeMapName, freeMapParameters});
+        var freeMapProperties = FriezeFreeMapProperties.fromParameterMap(freeMapParameters, FriezeFreeMap.DEFAULT_PROPERTIES);
+        LOG.log(Level.INFO, "Parsed Freemap {0}_{1} parameters: {2}", new Object[]{freeMapID, freeMapName, freeMapProperties});
         // parse date handles
         var dateHandles = parseFreeMapDateHandles(freemapElement, freeMapID);
         // parse FreeMapPersons, step 01: only creation and portrait loading (no stays)
         var freeMapPersonsAndElements = parseFreeMapPersons(freemapElement, freeMapID);
         var freeMapPersons = freeMapPersonsAndElements.stream().map(aPair -> aPair.getKey()).collect(Collectors.toList());
         // parse FreemapPlaces
-        var freeMapPlaces = parseFreeMapPlaces(freemapElement, freeMapID, freeMapParameters, freeMapPersons);
+        var freeMapPlaces = parseFreeMapPlaces(freemapElement, freeMapID, freeMapProperties, freeMapPersons);
         //
         // parse FreeMapStays
         List<FreeMapStay> freeMapStays = new LinkedList<>();
@@ -260,7 +261,7 @@ public class FreeMapProviderV3 {
                         parseFreeMapPersonStep02(pair.getValue(), pair.getKey(), freeMapPlaces))
         );
         // create FreeMap
-        var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, freeMapParameters, dateHandles, freeMapPersons, freeMapPlaces, freeMapStays);
+        var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, freeMapProperties, dateHandles, freeMapPersons, freeMapPlaces, freeMapStays);
         freeMap.setName(freeMapName);
         // create Portraits
         freeMapPersonsAndElements.forEach(pair -> parseFreeMapPersonStep03(pair.getValue(), pair.getKey(), freeMapStays));
@@ -446,7 +447,7 @@ public class FreeMapProviderV3 {
         return portraitLink;
     }
 
-    private static List<FreeMapPlace> parseFreeMapPlaces(Element freemapElement, long parentFreeMapID, Map<String, String> freeMapParameters, List<FreeMapPerson> freeMapPersons) {
+    private static List<FreeMapPlace> parseFreeMapPlaces(Element freemapElement, long parentFreeMapID, FriezeFreeMapProperties freeMapProperties, List<FreeMapPerson> freeMapPersons) {
         var freemapPlacesElementList = freemapElement.getElementsByTagName(FREEMAP_PLACES_GROUP);
         if (freemapPlacesElementList.getLength() != 1) {
             throw new IllegalStateException("Error while parsing FreeMapPlaces: " + FREEMAP_PERSONS_GROUP + " count = " + freemapPlacesElementList.getLength());
@@ -457,13 +458,13 @@ public class FreeMapProviderV3 {
         var freemapPlacesElements = freemapPlacesElement.getElementsByTagName(FREEMAP_PLACE_ELEMENT);
         for (int i = 0; i < freemapPlacesElements.getLength(); i++) {
             var placeElement = (Element) freemapPlacesElements.item(i);
-            var freeMapPlace = parseFreeMapPlace(placeElement, parentFreeMapID, freeMapParameters, freeMapPersons);
+            var freeMapPlace = parseFreeMapPlace(placeElement, parentFreeMapID, freeMapProperties, freeMapPersons);
             freeMapPlaces.add(freeMapPlace);
         }
         return freeMapPlaces;
     }
 
-    private static FreeMapPlace parseFreeMapPlace(Element freemapPlaceElement, long parentFreeMapID, Map<String, String> freeMapParameters, List<FreeMapPerson> freeMapPersons) {
+    private static FreeMapPlace parseFreeMapPlace(Element freemapPlaceElement, long parentFreeMapID, FriezeFreeMapProperties freeMapProperties, List<FreeMapPerson> freeMapPersons) {
         var placeID = Long.parseLong(freemapPlaceElement.getAttribute(PLACE_ID_ATR));
         var height = Double.parseDouble(freemapPlaceElement.getAttribute(HEIGHT_ATR));
         var yPos = Double.parseDouble(freemapPlaceElement.getAttribute(Y_POS_ATR));
@@ -472,7 +473,7 @@ public class FreeMapProviderV3 {
         //
         var place = PlaceFactory.getPlace(placeID);
         //
-        var freeMapPlace = FreeMapPlace.createFreeMapPlace(parentFreeMapID, place, getPlotSeparationParamerter(freeMapParameters), nameWidth, fontSize);
+        var freeMapPlace = FreeMapPlace.createFreeMapPlace(parentFreeMapID, place, freeMapProperties.plotSeparation(), nameWidth, fontSize);
         //
         freeMapPlace.setHeight(height);
         freeMapPlace.setY(yPos);

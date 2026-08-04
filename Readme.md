@@ -8,7 +8,7 @@ A JavaFx to build timelines, chronologies...
 
 ## Java Version
 
-This version is for Java 17.
+This version is for Java 26.
 
 
 ## Disclaimer

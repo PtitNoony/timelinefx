@@ -65,14 +65,14 @@ public class FriezeFreeMapFactory {
         return friezeFreeMap;
     }
 
-    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, FriezeFreeMapProperties properties,
+    public static FriezeFreeMap createFriezeFreeMap(final long anID, Frieze aFrieze, FriezeFreeMapProperties properties,
             List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
         //
         if (!FACTORY.isIdAvailable(anID)) {
             throw new IllegalArgumentException("Trying to create a friezeFreeMap with existing id=" + anID);
         }
         LOG.log(Level.WARNING, "Creating a friezeFreeMap (id={0} with Frieze={1} with its full content.", new Object[]{anID, aFrieze});
-        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, properties, dateHandles, persons, places, stays, false);
+        final var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, properties, dateHandles, persons, places, stays, false);
         FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
     }

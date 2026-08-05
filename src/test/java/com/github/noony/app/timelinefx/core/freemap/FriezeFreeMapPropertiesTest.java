@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Note: these tests deliberately stay at the {@link FriezeFreeMapProperties} level rather than going through
@@ -40,8 +41,8 @@ public class FriezeFreeMapPropertiesTest {
      */
     @Test
     public void testParameterMapRoundTrip() {
-        var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
-        var roundTripped = FriezeFreeMapProperties.fromParameterMap(defaults.toParameterMap(), defaults);
+        final var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
+        final var roundTripped = FriezeFreeMapProperties.fromParameterMap(defaults.toParameterMap(), defaults);
         assertEquals(defaults, roundTripped);
     }
 
@@ -50,10 +51,10 @@ public class FriezeFreeMapPropertiesTest {
      */
     @Test
     public void testFromParameterMapUsesDefaultsForMissingKeys() {
-        var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
-        Map<String, String> partialParameters = new HashMap<>();
+        final var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
+        final Map<String, String> partialParameters = new HashMap<>();
         partialParameters.put(FriezeFreeMap.FONT_SIZE, "99.0");
-        var properties = FriezeFreeMapProperties.fromParameterMap(partialParameters, defaults);
+        final var properties = FriezeFreeMapProperties.fromParameterMap(partialParameters, defaults);
         assertEquals(99.0, properties.fontSize());
         assertEquals(defaults.personWidth(), properties.personWidth());
         assertEquals(defaults.plotSeparation(), properties.plotSeparation());

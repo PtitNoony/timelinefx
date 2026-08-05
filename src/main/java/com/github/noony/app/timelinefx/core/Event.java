@@ -65,7 +65,7 @@ public class Event {
      * @param eventName the event's name
      * @param aDate the event's time value
      */
-    public Event(final String eventName, long aDate) {
+    public Event(final String eventName, final long aDate) {
         name = eventName;
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -80,7 +80,7 @@ public class Event {
      * @param eventName the event's name
      * @param aDate the event's date
      */
-    public Event(final String eventName, LocalDate aDate) {
+    public Event(final String eventName, final LocalDate aDate) {
         name = eventName;
         persons = new LinkedList<>();
         places = new LinkedList<>();

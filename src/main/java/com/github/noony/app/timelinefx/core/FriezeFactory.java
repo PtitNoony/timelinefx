@@ -72,7 +72,7 @@ public final class FriezeFactory {
      * @param staysToConsider the stays to include in the frieze
      * @return the created frieze
      */
-    public static Frieze createFrieze(final TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+    public static Frieze createFrieze(final TimeLineProject aProject, final String friezeName, List<StayPeriod> staysToConsider) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze with TimeLineProject={0} friezeName={1} staysToConsider={2} ", new Object[]{aProject.getName(), friezeName, staysToConsider});
         final var frieze = new Frieze(FACTORY.getNextID(), aProject, friezeName, staysToConsider);
         FACTORY.addObject(frieze);
@@ -88,7 +88,7 @@ public final class FriezeFactory {
      * @param staysToConsider the stays to include in the frieze
      * @return the created frieze
      */
-    public static Frieze createFrieze(final long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+    public static Frieze createFrieze(final long anID, final TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
         if (!FACTORY.isIdAvailable(anID)) {
             throw new IllegalArgumentException("trying to create a frieze " + friezeName + " with existing id=" + anID);
         }
@@ -105,7 +105,7 @@ public final class FriezeFactory {
      * @param friezeName the frieze's name
      * @return the created frieze
      */
-    public static Frieze createFrieze(final TimeLineProject aProject, String friezeName) {
+    public static Frieze createFrieze(final TimeLineProject aProject, final String friezeName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating a frieze with TimeLineProject={0} friezeName={1}", new Object[]{aProject.getName(), friezeName});
         final var frieze = new Frieze(FACTORY.getNextID(), aProject, friezeName);
         FACTORY.addObject(frieze);

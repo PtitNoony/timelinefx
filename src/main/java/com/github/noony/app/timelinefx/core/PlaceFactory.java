@@ -94,7 +94,7 @@ public final class PlaceFactory {
      * @param parentPlace the place's parent, or null for a root place
      * @return the created place
      */
-    public static Place createPlace(final String placeName, PlaceLevel placeLevel, Place parentPlace) {
+    public static Place createPlace(final String placeName, final PlaceLevel placeLevel, Place parentPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} ", new Object[]{placeName, placeLevel, parentPlace});
         final var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
         final var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace);
@@ -114,7 +114,7 @@ public final class PlaceFactory {
      * @param color the place's color
      * @return the created place
      */
-    public static Place createPlace(final String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
+    public static Place createPlace(final String placeName, final PlaceLevel placeLevel, Place parentPlace, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} color={3} ", new Object[]{placeName, placeLevel, parentPlace, color});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
         final var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace, color);
@@ -135,7 +135,7 @@ public final class PlaceFactory {
      * @param color the place's color
      * @return the created place
      */
-    public static Place createPlace(final long id, String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
+    public static Place createPlace(final long id, final String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create place " + placeName + " with existing id=" + id);
         }

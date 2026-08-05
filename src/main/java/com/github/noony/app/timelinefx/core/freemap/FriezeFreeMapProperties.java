@@ -68,7 +68,7 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
      * @return a new instance parsed from {@code parameters}, defaulting missing/unparseable keys to
      * {@code defaults}
      */
-    public static FriezeFreeMapProperties fromParameterMap(final Map<String, String> parameters, FriezeFreeMapProperties defaults) {
+    public static FriezeFreeMapProperties fromParameterMap(final Map<String, String> parameters, final FriezeFreeMapProperties defaults) {
         final var width = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(defaults.dimension().getWidth())));
         final var height = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_HEIGHT, Double.toString(defaults.dimension().getHeight())));
         final var personWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PERSONS_WIDTH, Double.toString(defaults.personWidth())));

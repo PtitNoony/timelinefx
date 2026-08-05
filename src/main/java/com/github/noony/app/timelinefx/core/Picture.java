@@ -31,7 +31,7 @@ public class Picture extends AbstractPicture {
      */
     private final TimeLineProject project;
 
-    protected Picture(final TimeLineProject aProject, long id, String pictureName, LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    protected Picture(final TimeLineProject aProject, final long id, String pictureName, LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         super(id, pictureName, picturePath, pictureWidth, pictureHeight, pictureCreationDate);
         project = aProject;
     }

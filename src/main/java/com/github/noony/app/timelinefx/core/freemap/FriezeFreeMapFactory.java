@@ -78,7 +78,7 @@ public class FriezeFreeMapFactory {
      * @param stays the stays to restore
      * @return the created free map
      */
-    public static FriezeFreeMap createFriezeFreeMap(final long anID, Frieze aFrieze, FriezeFreeMapProperties properties,
+    public static FriezeFreeMap createFriezeFreeMap(final long anID, final Frieze aFrieze, FriezeFreeMapProperties properties,
             List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
         //
         if (!FACTORY.isIdAvailable(anID)) {

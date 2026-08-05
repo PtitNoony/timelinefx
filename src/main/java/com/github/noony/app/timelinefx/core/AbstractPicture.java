@@ -97,7 +97,7 @@ public abstract class AbstractPicture implements IPicture {
     private LocalDate date;
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(final long anID, String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected AbstractPicture(final long anID, final String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
@@ -114,7 +114,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(final long anID, String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
+    protected AbstractPicture(final long anID, final String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();

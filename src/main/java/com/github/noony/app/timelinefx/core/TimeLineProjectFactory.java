@@ -48,7 +48,7 @@ public final class TimeLineProjectFactory {
      * @param configParams optional configuration overrides (folder locations, etc.)
      * @return the created project
      */
-    public static TimeLineProject createProject(final String name, Map<String, String> configParams) {
+    public static TimeLineProject createProject(final String name, final Map<String, String> configParams) {
         final TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
         FriezeObjectFactory.reset();
         return timeLineProject;

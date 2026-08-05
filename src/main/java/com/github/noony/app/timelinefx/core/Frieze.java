@@ -216,7 +216,7 @@ public final class Frieze implements FriezeObject {
     //
     private ItemSelectionPropagation itemSelectionPropagation = ItemSelectionPropagation.RECURSIVE;
 
-    protected Frieze(final long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+    protected Frieze(final long anID, final TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
         id = anID;
         project = aProject;
         name = friezeName;
@@ -252,7 +252,7 @@ public final class Frieze implements FriezeObject {
      * @param aProject the project the frieze belongs to
      * @param friezeName the frieze's name
      */
-    public Frieze(final long anID, TimeLineProject aProject, String friezeName) {
+    public Frieze(final long anID, final TimeLineProject aProject, String friezeName) {
         this(anID, aProject, friezeName, Collections.emptyList());
     }
 
@@ -419,7 +419,7 @@ public final class Frieze implements FriezeObject {
      * @param aPlace the place whose selection changed
      * @param selected whether the place is now selected
      */
-    public void updatePlaceSelection(final Place aPlace, boolean selected) {
+    public void updatePlaceSelection(final Place aPlace, final boolean selected) {
         //
         //System.err.println(" C'est ici qu'il faut faire l'update");
         if (selected) {
@@ -710,7 +710,7 @@ public final class Frieze implements FriezeObject {
         return true;
     }
 
-    private void updateDatesOnRemoval(final double dateRemoved, boolean isStartDate) {
+    private void updateDatesOnRemoval(final double dateRemoved, final boolean isStartDate) {
         final var notInStartDates = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
         final var notInEndDates = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
         if (isStartDate && notInStartDates) {
@@ -726,7 +726,7 @@ public final class Frieze implements FriezeObject {
 
     }
 
-    private void updateDatesOnCreation(final double dateAdded, boolean isStartDate) {
+    private void updateDatesOnCreation(final double dateAdded, final boolean isStartDate) {
         // start by updating min max
         final var minWindowsAtMinDate = minDate == minDateWindow;
         final var maxWindowsAtMaxDate = maxDate == maxDateWindow;

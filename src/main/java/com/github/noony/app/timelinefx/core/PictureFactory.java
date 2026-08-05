@@ -90,7 +90,7 @@ public final class PictureFactory {
      * @param pictureName the picture's name
      * @return the created picture
      */
-    public static Picture createPicture(final TimeLineProject project, File originalPictureFile, String pictureName) {
+    public static Picture createPicture(final TimeLineProject project, final File originalPictureFile, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, originalPictureFile});
         final File pictureFile;
         pictureFile = new File(project.getPicturesFolder(), originalPictureFile.getName());
@@ -122,7 +122,7 @@ public final class PictureFactory {
      * @param pictureHeight the picture's height
      * @return the created picture
      */
-    public static Picture createPicture(final TimeLineProject project, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    public static Picture createPicture(final TimeLineProject project, final long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));

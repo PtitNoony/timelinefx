@@ -72,7 +72,7 @@ public abstract class StayPeriod implements FriezeObject {
     private Place place;
 
     @SuppressWarnings("this-escape")
-    protected StayPeriod(final long anId, final Person aPerson, Place aPlace) {
+    protected StayPeriod(final long anId, final Person aPerson, final Place aPlace) {
         id = anId;
         propertyChangeSupport = new PropertyChangeSupport(StayPeriod.this);
         person = aPerson;
@@ -167,7 +167,7 @@ public abstract class StayPeriod implements FriezeObject {
      */
     public abstract String getDisplayString();
 
-    protected void firePropertyChange(final String eventName, final Object oldValue, Object newValue) {
+    protected void firePropertyChange(final String eventName, final Object oldValue, final Object newValue) {
         propertyChangeSupport.firePropertyChange(eventName, oldValue, newValue);
     }
 }

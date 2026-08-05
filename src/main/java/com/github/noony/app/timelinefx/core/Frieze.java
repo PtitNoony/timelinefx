@@ -216,7 +216,7 @@ public final class Frieze implements FriezeObject {
     //
     private ItemSelectionPropagation itemSelectionPropagation = ItemSelectionPropagation.RECURSIVE;
 
-    protected Frieze(final long anID, final TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+    protected Frieze(final long anID, final TimeLineProject aProject, final String friezeName, List<StayPeriod> staysToConsider) {
         id = anID;
         project = aProject;
         name = friezeName;
@@ -252,7 +252,7 @@ public final class Frieze implements FriezeObject {
      * @param aProject the project the frieze belongs to
      * @param friezeName the frieze's name
      */
-    public Frieze(final long anID, final TimeLineProject aProject, String friezeName) {
+    public Frieze(final long anID, final TimeLineProject aProject, final String friezeName) {
         this(anID, aProject, friezeName, Collections.emptyList());
     }
 

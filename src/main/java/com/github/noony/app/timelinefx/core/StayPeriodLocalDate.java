@@ -46,7 +46,7 @@ public class StayPeriodLocalDate extends StayPeriod {
      */
     private LocalDate endDate;
 
-    protected StayPeriodLocalDate(final long id, final Person aPerson, LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
+    protected StayPeriodLocalDate(final long id, final Person aPerson, final LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
         super(id, aPerson, aPlace);
         previousStartDate = aStartDate;
         previousEndDate = anEndDate;

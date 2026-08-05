@@ -171,7 +171,7 @@ public final class Person implements FriezeObject {
      */
     private boolean visible;
 
-    protected Person(final TimeLineProject aProject, final Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
+    protected Person(final TimeLineProject aProject, final Long personId, final String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();
@@ -185,7 +185,7 @@ public final class Person implements FriezeObject {
         visible = true;
     }
 
-    protected Person(final TimeLineProject aProject, final Long personId, String personName, Color aColor, long aToB, long aToD) {
+    protected Person(final TimeLineProject aProject, final Long personId, final String personName, Color aColor, long aToB, long aToD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();
@@ -199,7 +199,7 @@ public final class Person implements FriezeObject {
         visible = true;
     }
 
-    protected Person(final TimeLineProject aProject, final Long personId, String personName) {
+    protected Person(final TimeLineProject aProject, final Long personId, final String personName) {
         this(aProject, personId, personName, DEFAULT_COLOR, 0, 0);
     }
 

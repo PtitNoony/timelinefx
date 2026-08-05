@@ -80,7 +80,7 @@ public final class PersonFactory {
      * @param color the person's color
      * @return the created person
      */
-    public static Person createPerson(final TimeLineProject project, final String personName, Color color) {
+    public static Person createPerson(final TimeLineProject project, final String personName, final Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
         final var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
         FACTORY.addObject(person);
@@ -96,7 +96,7 @@ public final class PersonFactory {
      * @param color the person's color
      * @return the created person
      */
-    public static Person createPerson(final TimeLineProject project, final long id, String personName, Color color) {
+    public static Person createPerson(final TimeLineProject project, final long id, final String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");

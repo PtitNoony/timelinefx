@@ -101,7 +101,7 @@ public final class Place implements FriezeObject {
     private boolean selected;
     //
 
-    protected Place(final long placeId, final String placeName, PlaceLevel placeLevel, Place parentPlace, Color aColor) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, Place parentPlace, Color aColor) {
         id = placeId;
         name = placeName;
         parent = parentPlace;
@@ -120,7 +120,7 @@ public final class Place implements FriezeObject {
         }
     }
 
-    protected Place(final long placeId, final String placeName, PlaceLevel placeLevel, Place parentPlace) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, Place parentPlace) {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
     }
 

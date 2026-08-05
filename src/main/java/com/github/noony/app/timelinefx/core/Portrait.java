@@ -52,21 +52,21 @@ public class Portrait extends AbstractPicture {
      */
     private final ArrayList<Person> persons;
 
-    protected Portrait(final long aPortraitID, final Person aPerson, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, long aTimestamp) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aTimestamp);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(final long aPortraitID, final Person aPerson, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aDate);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(final long aPortraitID, final Person aPerson, String aFilePath, int aWidth, int aHeight) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight) {
         this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
     }
 

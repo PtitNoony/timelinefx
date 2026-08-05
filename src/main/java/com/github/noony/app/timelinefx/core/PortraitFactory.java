@@ -117,7 +117,7 @@ public final class PortraitFactory {
      * @param filePath the portrait picture's project-relative file path
      * @return the created portrait
      */
-    public static Portrait createPortrait(final long id, final Person person, String filePath) {
+    public static Portrait createPortrait(final long id, final Person person, final String filePath) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with id={0} person={1} filePath={2}.", new Object[]{id, person, filePath});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create portrait " + filePath + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");

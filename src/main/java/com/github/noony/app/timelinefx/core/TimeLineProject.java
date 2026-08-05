@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -47,19 +48,32 @@ public final class TimeLineProject {
 
     public static final String PERSON_ADDED = "personAdded";
     public static final String PLACE_ADDED = "placeAdded";
+
     public static final String HIGH_LEVEL_PLACE_ADDED = "highLevelPlaceAdded";
+
     public static final String STAY_ADDED = "stayAdded";
+
     public static final String PERSON_REMOVED = "personRemoved";
+
     public static final String PLACE_REMOVED = "placeRemoved";
+
     public static final String STAY_REMOVED = "stayRemoved";
     //
+
     public static final String PROJECT_NAME_KEY = "projectNameKey";
+
     public static final String PROJECT_FOLDER_KEY = "projectFolderKey";
+
     public static final String PICTURES_FOLDER_KEY = "picturesFolderKey";
+
     public static final String MINIATURES_FOLDER_KEY = "miniaturesFolderKey";
+
     public static final String PORTRAIT_FOLDER_KEY = "portraitsFolderKey";
+
     public static final String DEFAULT_PORTRAIT_FOLDER = "portraits";
+
     public static final String DEFAULT_PICTURES_FOLDER = "pictures";
+
     public static final String DEFAULT_MINIATURES_FOLDER = "miniatures";
 
     private static final Logger LOG = Logger.getGlobal();
@@ -69,21 +83,29 @@ public final class TimeLineProject {
     private final String name;
 
     // Reference files
-    private File projectFolder = null;
-    private File portraitsFolder = null;
-    private File picturesFolder = null;
-    private File miniaturesFolder = null;
-    private File projectFile = null;
+    private File projectFolder;
+
+    private File portraitsFolder;
+
+    private File picturesFolder;
+
+    private File miniaturesFolder;
+
+    private File projectFile;
 
     private final List<Place> highLevelPlaces;
+
     private final Map<String, Place> allPlaces;
 
     private final List<Person> persons;
+
     private final List<StayPeriod> stays;
+
     private final List<Frieze> friezes;
+
     private final List<PictureChronology> pictureChronologies;
 
-    protected TimeLineProject(String projectName, Map<String, String> configParams) {
+    protected TimeLineProject(final String projectName, Map<String, String> configParams) {
         name = projectName;
         initFolders(configParams);
         propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
@@ -95,17 +117,17 @@ public final class TimeLineProject {
         pictureChronologies = new LinkedList<>();
     }
 
-    private void initFolders(Map<String, String> configParams) {
-        var projectFolderLocation = configParams.getOrDefault(PROJECT_FOLDER_KEY, Configuration.getProjectsParentFolder() + File.separator + name);
-        var portraitsFolderLocation = configParams.getOrDefault(PORTRAIT_FOLDER_KEY, DEFAULT_PORTRAIT_FOLDER);
-        var picturesFolderLocation = configParams.getOrDefault(PICTURES_FOLDER_KEY, DEFAULT_PICTURES_FOLDER);
-        var miniaturesFolderLocation = configParams.getOrDefault(MINIATURES_FOLDER_KEY, DEFAULT_MINIATURES_FOLDER);
+    private void initFolders(final Map<String, String> configParams) {
+        final var projectFolderLocation = configParams.getOrDefault(PROJECT_FOLDER_KEY, Configuration.getProjectsParentFolder() + File.separator + name);
+        final var portraitsFolderLocation = configParams.getOrDefault(PORTRAIT_FOLDER_KEY, DEFAULT_PORTRAIT_FOLDER);
+        final var picturesFolderLocation = configParams.getOrDefault(PICTURES_FOLDER_KEY, DEFAULT_PICTURES_FOLDER);
+        final var miniaturesFolderLocation = configParams.getOrDefault(MINIATURES_FOLDER_KEY, DEFAULT_MINIATURES_FOLDER);
         //
         projectFolder = new File(projectFolderLocation);
         LOG.log(Level.INFO, "Creating Project {0} in folder: {1}.", new Object[]{name, projectFolder});
         if (!projectFolder.exists()) {
             try {
-                Path path = projectFolder.toPath();
+                final Path path = projectFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Could not create project folder : {0}", new Object[]{ex});
@@ -113,21 +135,21 @@ public final class TimeLineProject {
         }
         projectFile = new File(projectFolderLocation + File.separator + name + ".xml");
         //
-        String portraitsRoot = projectFolderLocation + File.separator + portraitsFolderLocation;
+        final String portraitsRoot = projectFolderLocation + File.separator + portraitsFolderLocation;
         portraitsFolder = new File(portraitsRoot);
         if (!portraitsFolder.exists()) {
             try {
-                Path path = portraitsFolder.toPath();
+                final Path path = portraitsFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Could not create portrait folder : {0}.", new Object[]{ex});
             }
         }
-        String picturesRoot = projectFolderLocation + File.separator + picturesFolderLocation;
+        final String picturesRoot = projectFolderLocation + File.separator + picturesFolderLocation;
         picturesFolder = new File(picturesRoot);
         if (!picturesFolder.exists()) {
             try {
-                Path path = picturesFolder.toPath();
+                final Path path = picturesFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Could not create pictures folder : {0}.", new Object[]{ex});
@@ -136,7 +158,7 @@ public final class TimeLineProject {
         miniaturesFolder = new File(projectFolderLocation + File.separator + miniaturesFolderLocation);
         if (!miniaturesFolder.exists()) {
             try {
-                Path path = miniaturesFolder.toPath();
+                final Path path = miniaturesFolder.toPath();
                 Files.createDirectories(path);
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Could not create miniature folder : {0}.", new Object[]{ex});
@@ -150,8 +172,8 @@ public final class TimeLineProject {
         try {
             try (InputStream inputstream = getClass().getResourceAsStream(Person.DEFAULT_PICTURE_NAME)) {
                 assert inputstream != null;
-                String outputPath = portraitsFolder + File.separator + Person.DEFAULT_PICTURE_NAME;
-                File outputFile = new File(outputPath);
+                final String outputPath = portraitsFolder + File.separator + Person.DEFAULT_PICTURE_NAME;
+                final File outputFile = new File(outputPath);
                 LOG.log(Level.INFO, "> savePortraitResources :: {0}", outputPath);
                 try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
                     outputStream.write(inputstream.readAllBytes());
@@ -194,11 +216,11 @@ public final class TimeLineProject {
         return projectFile.getAbsolutePath();
     }
 
-    public void addListener(PropertyChangeListener listener) {
+    public void addListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void removeListener(PropertyChangeListener listener) {
+    public void removeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
@@ -206,7 +228,7 @@ public final class TimeLineProject {
         return name;
     }
 
-    public boolean addPlace(Place aPlace) {
+    public boolean addPlace(final Place aPlace) {
         if (aPlace == null) {
             return false;
         } else if (aPlace.isRootPlace()) {
@@ -222,7 +244,7 @@ public final class TimeLineProject {
         }
     }
 
-    public boolean addHighLevelPlace(Place aPlace) {
+    public boolean addHighLevelPlace(final Place aPlace) {
         if (!highLevelPlaces.contains(aPlace)) {
             highLevelPlaces.add(aPlace);
             highLevelPlaces.sort(Place.COMPARATOR);
@@ -236,7 +258,7 @@ public final class TimeLineProject {
         return false;
     }
 
-    public boolean removeHighLevelPlace(Place aPlace) {
+    public boolean removeHighLevelPlace(final Place aPlace) {
         // TODO fire
         return highLevelPlaces.remove(aPlace);
     }
@@ -245,7 +267,7 @@ public final class TimeLineProject {
         return Collections.unmodifiableList(highLevelPlaces);
     }
 
-    public Place getPlaceByName(String placeName) {
+    public Place getPlaceByName(final String placeName) {
         return allPlaces.get(placeName);
     }
 
@@ -259,7 +281,7 @@ public final class TimeLineProject {
         stays.forEach(this::addStay);
     }
 
-    public void addStay(StayPeriod aStay) {
+    public void addStay(final StayPeriod aStay) {
         if (!stays.contains(aStay)) {
             stays.add(aStay);
             stays.sort(StayPeriod.STAY_COMPARATOR);
@@ -267,7 +289,7 @@ public final class TimeLineProject {
         }
     }
 
-    public void removeStay(StayPeriod aStay) {
+    public void removeStay(final StayPeriod aStay) {
         if (stays.contains(aStay)) {
             stays.remove(aStay);
             propertyChangeSupport.firePropertyChange(STAY_REMOVED, this, aStay);
@@ -278,7 +300,7 @@ public final class TimeLineProject {
         return Collections.unmodifiableList(stays);
     }
 
-    protected boolean addFrieze(Frieze frieze) {
+    protected boolean addFrieze(final Frieze frieze) {
         if (!friezes.contains(frieze)) {
             frieze.addListener(this::handleFriezeChange);
             friezes.add(frieze);
@@ -290,7 +312,7 @@ public final class TimeLineProject {
         return false;
     }
 
-    public boolean addPictureChronology(PictureChronology pictureChronology) {
+    public boolean addPictureChronology(final PictureChronology pictureChronology) {
         if (!pictureChronologies.contains(pictureChronology)) {
             pictureChronology.addListener(this::handlePicturesChronologyChange);
             pictureChronologies.add(pictureChronology);
@@ -320,7 +342,7 @@ public final class TimeLineProject {
         return allPlaces.values().stream().sorted(Place.COMPARATOR).collect(Collectors.toList());
     }
 
-    public boolean addPerson(Person aPerson) {
+    public boolean addPerson(final Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
             persons.sort(Person.COMPARATOR);
@@ -330,7 +352,7 @@ public final class TimeLineProject {
         return false;
     }
 
-    private void handleFriezeChange(PropertyChangeEvent event) {
+    private void handleFriezeChange(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case Frieze.PLACE_ADDED ->
                 addPlace((Place) event.getNewValue());
@@ -349,7 +371,7 @@ public final class TimeLineProject {
         }
     }
 
-    private void handlePicturesChronologyChange(PropertyChangeEvent event) {
+    private void handlePicturesChronologyChange(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case PictureChronology.PICTURE_ADDED, PictureChronology.PICTURE_REMOVED, PictureChronology.NAME_CHANGED, PictureChronology.LAYOUT_CHANGED, PictureChronology.LINK_ADDED, PictureChronology.LINK_REMOVED -> {
                 // nothing to do
@@ -359,7 +381,7 @@ public final class TimeLineProject {
         }
     }
 
-    public void removePlace(Place deletedPlace) {
+    public void removePlace(final Place deletedPlace) {
         allPlaces.remove(deletedPlace.getName());
         highLevelPlaces.remove(deletedPlace);
         //
@@ -373,19 +395,20 @@ public final class TimeLineProject {
         propertyChangeSupport.firePropertyChange(PLACE_REMOVED, this, deletedPlace);
     }
 
-    public void removePerson(Person deletedPerson) {
+    public void removePerson(final Person deletedPerson) {
         if (persons.contains(deletedPerson)) {
             persons.remove(deletedPerson);
-            List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPerson() == deletedPerson).toList();
+            final List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPerson() == deletedPerson).toList();
             staysToRemove.forEach(this::removeStay);
             //
             propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, deletedPerson);
         }
     }
 
-    private void removeChildrenPlaces(Place aParentPlace) {
-        List<Place> directChildren = allPlaces.values().stream()
-                .filter(place -> (place.getParent().equals(aParentPlace))).toList();
+    private void removeChildrenPlaces(final Place aParentPlace) {
+        final List<Place> directChildren = allPlaces.values().stream()
+                .filter(place -> place.getParent().equals(aParentPlace))
+                .toList();
         directChildren.forEach(child -> {
             allPlaces.remove(child.getName());
             removeStaysAt(child);
@@ -393,8 +416,8 @@ public final class TimeLineProject {
         directChildren.forEach(this::removeChildrenPlaces);
     }
 
-    private void removeStaysAt(Place aPlace) {
-        List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPlace() == aPlace).toList();
+    private void removeStaysAt(final Place aPlace) {
+        final List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPlace() == aPlace).toList();
         staysToRemove.forEach(this::removeStay);
     }
 

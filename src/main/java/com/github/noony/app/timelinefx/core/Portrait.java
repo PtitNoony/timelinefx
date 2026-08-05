@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
@@ -35,23 +36,24 @@ public class Portrait extends AbstractPicture {
     private static final Logger LOG = Logger.getGlobal();
 
     private final Person person;
+
     private final ArrayList<Person> persons;
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
+    protected Portrait(final long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aTimestamp);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected Portrait(final long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aDate);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight) {
+    protected Portrait(final long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight) {
         this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
     }
 
@@ -61,13 +63,13 @@ public class Portrait extends AbstractPicture {
     }
 
     @Override
-    public boolean addPerson(Person aPerson) {
+    public boolean addPerson(final Person aPerson) {
         LOG.log(Level.INFO, "No person can be added to a portrait. ({0}, {1})", new Object[]{this, aPerson});
         return false;
     }
 
     @Override
-    public boolean removePerson(Person aPerson) {
+    public boolean removePerson(final Person aPerson) {
         LOG.log(Level.INFO, "No person can be removed from a portrait. ({0}, {1})", new Object[]{this, aPerson});
         return false;
     }
@@ -78,7 +80,7 @@ public class Portrait extends AbstractPicture {
     }
 
     @Override
-    public int compareTo(IFileObject other) {
+    public int compareTo(final IFileObject other) {
         if (other == null) {
             return 1;
         } else if (other instanceof Portrait portrait) {
@@ -92,12 +94,12 @@ public class Portrait extends AbstractPicture {
     }
 
     @Override
-    public boolean addPlace(Place aPlace) {
+    public boolean addPlace(final Place aPlace) {
         return false;
     }
 
     @Override
-    public boolean removePlace(Place aPlace) {
+    public boolean removePlace(final Place aPlace) {
         return false;
     }
 

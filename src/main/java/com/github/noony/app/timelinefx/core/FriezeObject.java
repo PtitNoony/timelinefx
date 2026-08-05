@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
@@ -22,12 +23,12 @@ package com.github.noony.app.timelinefx.core;
  */
 public interface FriezeObject {
 
-    long NO_ID = -1;
+    final long NO_ID = -1;
 
     /**
      * Each IFriezeObject instance has a unique id in its project's scope
      *
      * @return the object unique ID
      */
-    long getId();
+    abstract long getId();
 }

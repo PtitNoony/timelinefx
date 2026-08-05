@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
@@ -23,11 +24,14 @@ package com.github.noony.app.timelinefx.core;
 public class StayPeriodSimpleTime extends StayPeriod {
 
     private double previousStartTime;
+
     private double previousEndTime;
+
     private double startTime;
+
     private double endTime;
 
-    protected StayPeriodSimpleTime(Long anId, Person aPerson, double aStartTime, double anEndTime, Place aPlace) {
+    protected StayPeriodSimpleTime(final Long anId, Person aPerson, double aStartTime, double anEndTime, Place aPlace) {
         super(anId, aPerson, aPlace);
         previousStartTime = aStartTime;
         previousEndTime = anEndTime;
@@ -55,7 +59,7 @@ public class StayPeriodSimpleTime extends StayPeriod {
         return endTime;
     }
 
-    public void setStartDate(double aStartDate) {
+    public void setStartDate(final double aStartDate) {
         if (startTime != aStartDate) {
             previousStartTime = startTime;
             startTime = aStartDate;
@@ -63,7 +67,7 @@ public class StayPeriodSimpleTime extends StayPeriod {
         }
     }
 
-    public void setEndDate(double aEndDate) {
+    public void setEndDate(final double aEndDate) {
         if (endTime != aEndDate) {
             previousEndTime = endTime;
             endTime = aEndDate;

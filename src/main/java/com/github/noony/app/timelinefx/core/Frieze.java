@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
@@ -40,45 +41,74 @@ public final class Frieze implements FriezeObject {
 
     public static final String CLASS_NAME = "Frieze";
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
+
     public static final String NAME_CHANGED = CLASS_NAME + "__nameChanged";
+
     public static final String STAY_ADDED = CLASS_NAME + "__stayAdded";
+
     public static final String STAY_REMOVED = CLASS_NAME + "__stayRemoved";
+
     public static final String STAY_UPDATED = CLASS_NAME + "__stayUpdated";
+
     public static final String PERSON_ADDED = CLASS_NAME + "__personAdded";
+
     public static final String PLACE_ADDED = CLASS_NAME + "__placeAdded";
+
     public static final String PERSON_REMOVED = CLASS_NAME + "__personRemoved";
+
     public static final String PLACE_REMOVED = CLASS_NAME + "__placeRemoved";
+
     public static final String START_DATE_ADDED = CLASS_NAME + "__startDateAdded";
+
     public static final String START_DATE_REMOVED = CLASS_NAME + "__startDateRemoved";
+
     public static final String END_DATE_ADDED = CLASS_NAME + "__endDateAdded";
+
     public static final String END_DATE_REMOVED = CLASS_NAME + "__endDateRemoved";
     // TODO : merge with other use
+
     private static final long DEFAULT_MIN_DATE = 0;
+
     private static final long DEFAULT_MAX_DATE = 500;
 
     private static final Logger LOG = Logger.getGlobal();
 
     private final Long id;
     private final TimeLineProject project;
+
     private final List<StayPeriod> stayPeriods;
+
     private final List<Place> places;
+
     private final List<Person> persons;
+
     private final Map<Place, List<Person>> personsAtPlaces;
+
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final List<FriezeFreeMap> friezeFreeMaps;
     //
+
     private final List<Double> dates;
+
     private final List<Double> startDates;
+
     private final List<Double> endDates;
     //
+
     private final PropertyChangeListener stayChangesListener;
     //
+
     private String name;
     //
+
     private double minDate = DEFAULT_MIN_DATE;
+
     private double maxDate = DEFAULT_MAX_DATE;
     //
+
     private double minDateWindow = minDate;
+
     private double maxDateWindow = maxDate;
     //
     private double constraintMinDate = Double.NEGATIVE_INFINITY;
@@ -86,7 +116,7 @@ public final class Frieze implements FriezeObject {
     //
     private ItemSelectionPropagation itemSelectionPropagation = ItemSelectionPropagation.RECURSIVE;
 
-    protected Frieze(long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
+    protected Frieze(final long anID, TimeLineProject aProject, String friezeName, List<StayPeriod> staysToConsider) {
         id = anID;
         project = aProject;
         name = friezeName;
@@ -115,11 +145,11 @@ public final class Frieze implements FriezeObject {
         return id;
     }
 
-    public Frieze(long anID, TimeLineProject aProject, String friezeName) {
+    public Frieze(final long anID, TimeLineProject aProject, String friezeName) {
         this(anID, aProject, friezeName, Collections.emptyList());
     }
 
-    public void setName(String aName) {
+    public void setName(final String aName) {
         name = aName;
         propertyChangeSupport.firePropertyChange(NAME_CHANGED, this, name);
     }
@@ -135,10 +165,10 @@ public final class Frieze implements FriezeObject {
     private void addPerson(Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
-            var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).toList();
-            var tmpPlaces = stays.stream().map(StayPeriod::getPlace).distinct().toList();
+            final var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).toList();
+            final var tmpPlaces = stays.stream().map(StayPeriod::getPlace).distinct().toList();
             tmpPlaces.forEach(place -> {
-                var tempPersons = personsAtPlaces.computeIfAbsent(place, k -> new LinkedList<>());
+                final var tempPersons = personsAtPlaces.computeIfAbsent(place, k -> new LinkedList<>());
                 tempPersons.add(aPerson);
             });
             // notify place added
@@ -223,7 +253,7 @@ public final class Frieze implements FriezeObject {
         stays.forEach(this::removeStay);
     }
 
-    public void removeStay(StayPeriod stay) {
+    public void removeStay(final StayPeriod stay) {
         if (stayPeriods.contains(stay)) {
             stayPeriods.remove(stay);
             stay.removeListener(stayChangesListener);
@@ -231,10 +261,10 @@ public final class Frieze implements FriezeObject {
             //
             updateMinMaxDates();
             //
-            var startDate = stay.getStartDate();
-            var endDate = stay.getEndDate();
-            var removeStart = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
-            var removeEnd = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
+            final var startDate = stay.getStartDate();
+            final var endDate = stay.getEndDate();
+            final var removeStart = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
+            final var removeEnd = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
             maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
             if (removeStart) {
                 startDates.remove(startDate);
@@ -266,7 +296,7 @@ public final class Frieze implements FriezeObject {
         }
     }
 
-    public void updatePlaceSelection(Place aPlace, boolean selected) {
+    public void updatePlaceSelection(final Place aPlace, boolean selected) {
         //
         //System.err.println(" C'est ici qu'il faut faire l'update");
         if (selected) {
@@ -289,18 +319,18 @@ public final class Frieze implements FriezeObject {
         }
     }
 
-    public List<Person> getPersonsAtPlace(Place p) {
+    public List<Person> getPersonsAtPlace(final Place p) {
         if (personsAtPlaces.containsKey(p)) {
             return Collections.unmodifiableList(personsAtPlaces.get(p));
         }
         return Collections.emptyList();
     }
 
-    public void addListener(PropertyChangeListener listener) {
+    public void addListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void removeListener(PropertyChangeListener listener) {
+    public void removeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
@@ -308,15 +338,15 @@ public final class Frieze implements FriezeObject {
         return Collections.unmodifiableList(stayPeriods);
     }
 
-    public List<StayPeriod> getStayPeriods(Person person) {
+    public List<StayPeriod> getStayPeriods(final Person person) {
         return stayPeriods.stream().filter(s -> s.getPerson().equals(person)).collect(Collectors.toList());
     }
 
-    public List<StayPeriod> getStayPeriods(Place aPlace) {
+    public List<StayPeriod> getStayPeriods(final Place aPlace) {
         return stayPeriods.stream().filter(s -> s.getPlace().equals(aPlace)).collect(Collectors.toList());
     }
 
-    public int getStayIndex(StayPeriod stayPeriod) {
+    public int getStayIndex(final StayPeriod stayPeriod) {
         return persons.indexOf(stayPeriod.getPerson());
     }
 
@@ -333,18 +363,18 @@ public final class Frieze implements FriezeObject {
     }
 
     public FriezeFreeMap createFriezeFreeMap() {
-        var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this, true);
+        final var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this, true);
         friezeFreeMaps.add(friezeFreeMap);
         return friezeFreeMap;
     }
 
-    public void addFriezeFreeMap(FriezeFreeMap friezeFreeMap) {
+    public void addFriezeFreeMap(final FriezeFreeMap friezeFreeMap) {
         if (!friezeFreeMaps.contains(friezeFreeMap)) {
             friezeFreeMaps.add(friezeFreeMap);
         }
     }
 
-    public void removeFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
+    public void removeFriezeFreeMap(final FriezeFreeMap aFriezeFreeMap) {
         friezeFreeMaps.remove(aFriezeFreeMap);
     }
 
@@ -384,12 +414,12 @@ public final class Frieze implements FriezeObject {
         return maxDateWindow;
     }
 
-    public void setMinDateWindow(double newMinDateWindow) {
+    public void setMinDateWindow(final double newMinDateWindow) {
         minDateWindow = newMinDateWindow;
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
 
-    public void setMaxDateWindow(double newMaxDateWindow) {
+    public void setMaxDateWindow(final double newMaxDateWindow) {
         maxDateWindow = newMaxDateWindow;
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
@@ -402,7 +432,7 @@ public final class Frieze implements FriezeObject {
         return stayPeriods.isEmpty() ? TimeFormat.TIME_MIN : stayPeriods.get(0).getTimeFormat();
     }
 
-    private void handleTimeLineProjectChanges(PropertyChangeEvent event) {
+    private void handleTimeLineProjectChanges(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PLACE_ADDED -> {
                 // Nothing to do
@@ -427,10 +457,10 @@ public final class Frieze implements FriezeObject {
         }
     }
 
-    private void handleStayPeriodChanges(PropertyChangeEvent event) {
+    private void handleStayPeriodChanges(final PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
             case StayPeriod.START_DATE_CHANGED -> {
-                var stay = (StayPeriod) event.getSource();
+                final var stay = (StayPeriod) event.getSource();
                 // First update the relevant dates before notifying of the stay change
                 updateDatesOnRemoval((long) event.getOldValue(), true);
                 updateDatesOnCreation((long) event.getNewValue(), true);
@@ -448,10 +478,10 @@ public final class Frieze implements FriezeObject {
         }
     }
 
-    private void removePlace(Place placeRemoved) {
+    private void removePlace(final Place placeRemoved) {
         places.remove(placeRemoved);
         personsAtPlaces.remove(placeRemoved);
-        var staysToRemove = stayPeriods.stream().filter(s -> s.getPlace() == placeRemoved).toList();
+        final var staysToRemove = stayPeriods.stream().filter(s -> s.getPlace() == placeRemoved).toList();
         // for concurrency accces...
         staysToRemove.forEach(this::removeStay);
         propertyChangeSupport.firePropertyChange(PLACE_REMOVED, this, placeRemoved);
@@ -466,16 +496,16 @@ public final class Frieze implements FriezeObject {
             return false;
         }
         personsAtPlaces.forEach((place, list) -> list.remove(personRemoved));
-        List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPerson() == personRemoved).toList();
+        final List<StayPeriod> impactedStays = stayPeriods.stream().filter(s -> s.getPerson() == personRemoved).toList();
         impactedStays.forEach(this::removeStay);
         LOG.log(Level.INFO, " > Done removing person: {0},\t >> propagating change.", new Object[]{personRemoved, this});
         propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, personRemoved);
         return true;
     }
 
-    private void updateDatesOnRemoval(double dateRemoved, boolean isStartDate) {
-        var notInStartDates = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
-        var notInEndDates = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
+    private void updateDatesOnRemoval(final double dateRemoved, boolean isStartDate) {
+        final var notInStartDates = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
+        final var notInEndDates = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
         if (isStartDate && notInStartDates) {
             startDates.remove(dateRemoved);
             propertyChangeSupport.firePropertyChange(START_DATE_REMOVED, this, dateRemoved);
@@ -489,12 +519,12 @@ public final class Frieze implements FriezeObject {
 
     }
 
-    private void updateDatesOnCreation(double dateAdded, boolean isStartDate) {
+    private void updateDatesOnCreation(final double dateAdded, boolean isStartDate) {
         // start by updating min max
-        var minWindowsAtMinDate = minDate == minDateWindow;
-        var maxWindowsAtMaxDate = maxDate == maxDateWindow;
-        var oldMinDate = minDate;
-        var oldMaxDate = maxDate;
+        final var minWindowsAtMinDate = minDate == minDateWindow;
+        final var maxWindowsAtMaxDate = maxDate == maxDateWindow;
+        final var oldMinDate = minDate;
+        final var oldMaxDate = maxDate;
         minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
         maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
         //

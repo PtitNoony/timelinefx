@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.utils.MathUtils;
@@ -34,11 +35,14 @@ public final class DateObject implements IDateObject {
 
     private final PropertyChangeSupport propertyChangeSupport;
     //
+
     private TimeFormat timeFormat;
+
     private double timestamp;
+
     private LocalDate date;
 
-    public DateObject(LocalDate aDate) {
+    public DateObject(final LocalDate aDate) {
         propertyChangeSupport = new PropertyChangeSupport(DateObject.this);
         //
         timeFormat = TimeFormat.LOCAL_TIME;
@@ -46,7 +50,7 @@ public final class DateObject implements IDateObject {
         timestamp = -1;
     }
 
-    public DateObject(double aTimestamp) {
+    public DateObject(final double aTimestamp) {
         propertyChangeSupport = new PropertyChangeSupport(DateObject.this);
         //
         timeFormat = TimeFormat.TIME_MIN;
@@ -54,7 +58,7 @@ public final class DateObject implements IDateObject {
         date = null;
     }
 
-    public DateObject(IDateObject anotherDateObject) {
+    public DateObject(final IDateObject anotherDateObject) {
         propertyChangeSupport = new PropertyChangeSupport(DateObject.this);
         //
         timeFormat = anotherDateObject.getTimeFormat();
@@ -74,7 +78,7 @@ public final class DateObject implements IDateObject {
     }
 
     @Override
-    public void setTimeFormat(TimeFormat aTimeFormat) {
+    public void setTimeFormat(final TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
         switch (timeFormat) {
             case LOCAL_TIME ->
@@ -97,21 +101,21 @@ public final class DateObject implements IDateObject {
     }
 
     @Override
-    public void setValue(String aTimeValue) {
+    public void setValue(final String aTimeValue) {
         if (aTimeValue == null) {
             return;
         }
         switch (timeFormat) {
             case LOCAL_TIME -> {
                 try {
-                    var newDate = LocalDate.parse(aTimeValue);
+                    final var newDate = LocalDate.parse(aTimeValue);
                     if (!newDate.isEqual(date)) {
                         date = newDate;
                         propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
                     }
                 } catch (Exception e) {
                     LOG.log(Level.WARNING, "Could not set date value to {0}, with '{1}': error: {2}",
-                            new Object[] { this, aTimeValue, e.getMessage() });
+                            new Object[]{this, aTimeValue, e.getMessage()});
                 }
             }
             case TIME_MIN -> {
@@ -119,7 +123,7 @@ public final class DateObject implements IDateObject {
                     timestamp = Double.parseDouble(aTimeValue);
                 } catch (NumberFormatException e) {
                     LOG.log(Level.WARNING, "Could not set timestamp value to {0}, with '{1}': error: {2}",
-                            new Object[] { this, aTimeValue, e.getMessage() });
+                            new Object[]{this, aTimeValue, e.getMessage()});
                 }
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
             }
@@ -129,7 +133,7 @@ public final class DateObject implements IDateObject {
     }
 
     @Override
-    public void setDate(LocalDate aDate) {
+    public void setDate(final LocalDate aDate) {
         if (aDate != null && !date.equals(aDate)) {
             date = aDate;
             timeFormat = TimeFormat.LOCAL_TIME;
@@ -138,7 +142,7 @@ public final class DateObject implements IDateObject {
     }
 
     @Override
-    public void setDate(IDateObject aDateObject) {
+    public void setDate(final IDateObject aDateObject) {
         if (aDateObject == null) {
             return;
         }
@@ -158,7 +162,7 @@ public final class DateObject implements IDateObject {
     }
 
     @Override
-    public void setTimestamp(double aTimestamp) {
+    public void setTimestamp(final double aTimestamp) {
         if (aTimestamp != timestamp) {
             timestamp = aTimestamp;
             timeFormat = TimeFormat.TIME_MIN;
@@ -196,12 +200,12 @@ public final class DateObject implements IDateObject {
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 

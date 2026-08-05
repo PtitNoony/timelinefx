@@ -14,13 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.scene.paint.Color;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  *
@@ -53,14 +56,14 @@ public final class PlaceFactory {
         return new ArrayList<>(ROOT_PLACES);
     }
 
-    public static Place getPlace(long placeID) {
+    public static Place getPlace(final long placeID) {
         return FACTORY.get(placeID);
     }
 
-    public static Place createPlace(String placeName, PlaceLevel placeLevel, Place parentPlace) {
+    public static Place createPlace(final String placeName, PlaceLevel placeLevel, Place parentPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} ", new Object[]{placeName, placeLevel, parentPlace});
-        var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
-        var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace);
+        final var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
+        final var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace);
         if (place.isRootPlace()) {
             addRootPlace(place);
         }
@@ -68,10 +71,10 @@ public final class PlaceFactory {
         return place;
     }
 
-    public static Place createPlace(String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
+    public static Place createPlace(final String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} color={3} ", new Object[]{placeName, placeLevel, parentPlace, color});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
-        var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace, color);
+        final var place = new Place(FACTORY.getNextID(), placeName, placeLevel, trueParentPlace, color);
         if (place.isRootPlace()) {
             addRootPlace(place);
         }
@@ -79,13 +82,13 @@ public final class PlaceFactory {
         return place;
     }
 
-    public static Place createPlace(long id, String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
+    public static Place createPlace(final long id, String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create place " + placeName + " with existing id=" + id);
         }
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place (id={0} with placeName={1} placeLevel={2} parentPlace={3} ", new Object[]{id, placeName, placeLevel, parentPlace});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
-        var place = new Place(id, placeName, placeLevel, trueParentPlace, color);
+        final var place = new Place(id, placeName, placeLevel, trueParentPlace, color);
         if (place.isRootPlace()) {
             addRootPlace(place);
         }
@@ -93,7 +96,7 @@ public final class PlaceFactory {
         return place;
     }
 
-    private static void addRootPlace(Place aRootPlace) {
+    private static void addRootPlace(final Place aRootPlace) {
         ROOT_PLACES.add(aRootPlace);
         ROOT_PLACES.sort(Place.COMPARATOR);
     }

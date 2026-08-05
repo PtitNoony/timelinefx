@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.save.XMLHandler;
@@ -36,27 +37,27 @@ public final class TimeLineProjectFactory {
         // private utility constructor
     }
 
-    public static TimeLineProject createProject(String name, Map<String, String> configParams) {
-        TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
+    public static TimeLineProject createProject(final String name, Map<String, String> configParams) {
+        final TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
         FriezeObjectFactory.reset();
         return timeLineProject;
     }
 
-    public static TimeLineProject loadProject(File aFile) {
-        File timelineFile;
+    public static TimeLineProject loadProject(final File aFile) {
+        final File timelineFile;
         if (aFile == null) {
             throw new IllegalStateException("Project File cannot be null.");
         } else if (aFile.isFile()) {
             timelineFile = aFile;
             LOG.log(Level.INFO, "Project Folder:: {0}.", new Object[]{timelineFile.getParent()});
         } else {
-            File fileFound = Arrays.stream(Objects.requireNonNull(aFile.listFiles())).filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
+            final File fileFound = Arrays.stream(Objects.requireNonNull(aFile.listFiles())).filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
             if (fileFound == null) {
                 throw new IllegalStateException("No save file was found in " + aFile);
             }
             timelineFile = fileFound;
         }
-        var timeline = XMLHandler.loadFile(timelineFile);
+        final var timeline = XMLHandler.loadFile(timelineFile);
         LOG.log(Level.FINE, "Project created: {0}", new Object[]{timeline});
         return timeline;
     }

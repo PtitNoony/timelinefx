@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.util.ArrayList;
@@ -36,9 +37,11 @@ public class Factory<T extends FriezeObject> {
     public static final Level CREATION_LOGGING_LEVEL = Level.FINE;
 
     private static final Logger LOG = Logger.getGlobal();
+
     private final Map<Long, T> objects = new HashMap<>();
     //
-    private long nextUniqueId = 0L;
+
+    private long nextUniqueId;
 
     public Factory() {
         // private utility constructor
@@ -57,7 +60,7 @@ public class Factory<T extends FriezeObject> {
      *
      * @param object the object the be added
      */
-    public final void addObject(T object) {
+    public final void addObject(final T object) {
         if (objects.containsKey(object.getId())) {
             throw new IllegalStateException();
         }
@@ -71,7 +74,7 @@ public class Factory<T extends FriezeObject> {
      * @return the next available unique id
      */
     public final long getNextID() {
-        long result = nextUniqueId;
+        final long result = nextUniqueId;
         incrID();
         return result;
     }
@@ -81,7 +84,7 @@ public class Factory<T extends FriezeObject> {
      * @param id an id
      * @return the corresponding FriezeObject if it exists, null otherwise.
      */
-    public final T get(long id) {
+    public final T get(final long id) {
         return objects.get(id);
     }
 
@@ -90,7 +93,7 @@ public class Factory<T extends FriezeObject> {
      * @param id an id
      * @return whether the id is already used by an object.
      */
-    public final boolean isIdAvailable(long id) {
+    public final boolean isIdAvailable(final long id) {
         return !objects.containsKey(id);
     }
 

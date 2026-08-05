@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
@@ -26,11 +27,11 @@ public interface IDrawableObject {
      *
      * @return the object's width
      */
-    double getWidth();
+    abstract double getWidth();
 
     /**
      *
      * @return the object's height
      */
-    double getHeight();
+    abstract double getHeight();
 }

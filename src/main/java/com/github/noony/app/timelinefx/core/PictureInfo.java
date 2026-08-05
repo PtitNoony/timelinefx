@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDateTime;
@@ -14,12 +15,16 @@ import java.time.LocalDateTime;
 public class PictureInfo {
 
     private final String name;
+
     private final String path;
+
     private final LocalDateTime creationDate;
+
     private final int width;
+
     private final int height;
 
-    public PictureInfo(String name, String path, LocalDateTime creationDate, int width, int height) {
+    public PictureInfo(final String name, String path, LocalDateTime creationDate, int width, int height) {
         this.name = name;
         this.path = path;
         this.creationDate = creationDate;

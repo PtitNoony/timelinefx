@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -43,19 +44,24 @@ public final class Place implements FriezeObject {
 
     private final Long id;
     private final List<Place> places;
+
     private String name;
+
     private Place parent;
+
     private PlaceLevel level;
+
     private boolean isRootPlace;
 
     private final PropertyChangeSupport propertyChangeSupport;
 
     // where to split into an HCI comp ?
     private Color color;
+
     private boolean selected;
     //
 
-    protected Place(long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace, Color aColor) {
+    protected Place(final long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace, Color aColor) {
         id = placeId;
         name = placeName;
         parent = parentPlace;
@@ -74,7 +80,7 @@ public final class Place implements FriezeObject {
         }
     }
 
-    protected Place(long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace) {
+    protected Place(final long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace) {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
     }
 
@@ -83,12 +89,12 @@ public final class Place implements FriezeObject {
         return id;
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void setSelected(boolean isSelected) {
-        var update = selected != isSelected;
+    public void setSelected(final boolean isSelected) {
+        final var update = selected != isSelected;
         selected = isSelected;
         if (update) {
             propertyChangeSupport.firePropertyChange(SELECTION_CHANGED, null, selected);
@@ -99,7 +105,7 @@ public final class Place implements FriezeObject {
         return name;
     }
 
-    public void setName(String aName) {
+    public void setName(final String aName) {
         name = aName;
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }
@@ -108,8 +114,8 @@ public final class Place implements FriezeObject {
         return level;
     }
 
-    public boolean setLevel(PlaceLevel aLevel) {
-        boolean placeConflict = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
+    public boolean setLevel(final PlaceLevel aLevel) {
+        final boolean placeConflict = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
         if (placeConflict) {
             LOG.log(Level.SEVERE, "New level cannot be set because of children levels : {0}", new Object[]{aLevel});
             return false;
@@ -127,8 +133,8 @@ public final class Place implements FriezeObject {
         return parent;
     }
 
-    public void setParent(Place aParentPlace) {
-        Place oldParent = parent;
+    public void setParent(final Place aParentPlace) {
+        final Place oldParent = parent;
         parent = aParentPlace;
         isRootPlace = parent == null || PlaceFactory.PLACES_PLACE.equals(parent);
         if (oldParent != null && oldParent != parent) {
@@ -154,8 +160,8 @@ public final class Place implements FriezeObject {
         }
     }
 
-    public boolean removePlace(Place place) {
-        boolean result = places.remove(place);
+    public boolean removePlace(final Place place) {
+        final boolean result = places.remove(place);
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
         return result;
     }
@@ -164,7 +170,7 @@ public final class Place implements FriezeObject {
         return color;
     }
 
-    public void setColor(Color aColor) {
+    public void setColor(final Color aColor) {
         color = aColor;
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }

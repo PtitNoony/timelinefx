@@ -14,17 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
  *
  * @author hamon
  */
-public class Messages {
+public final class Messages {
 
-    public static final  String UNSUPPORTED_TIME_FORMAT = "Unsupported time format: ";
+    public static final String UNSUPPORTED_TIME_FORMAT = "Unsupported time format: ";
 
-    private Messages(){
+    private Messages() {
         // utility class
     }
 

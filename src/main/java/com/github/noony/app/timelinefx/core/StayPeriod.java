@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -29,16 +30,23 @@ public abstract class StayPeriod implements FriezeObject {
     public static final Comparator<? super StayPeriod> STAY_COMPARATOR = Comparator.comparingDouble(StayPeriod::getStartDate);
 
     public static final String PERSON_CHANGED = "StayPeriod__personChanged";
+
     public static final String PLACE_CHANGED = "StayPeriod__placeChanged";
+
     public static final String START_DATE_CHANGED = "StayPeriod__startDateChanged";
+
     public static final String END_DATE_CHANGED = "StayPeriod__endDateChanged";
+
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final Long id;
+
     private Person person;
+
     private Place place;
 
     @SuppressWarnings("this-escape")
-    protected StayPeriod(long anId, Person aPerson, Place aPlace) {
+    protected StayPeriod(final long anId, Person aPerson, Place aPlace) {
         id = anId;
         propertyChangeSupport = new PropertyChangeSupport(StayPeriod.this);
         person = aPerson;
@@ -50,11 +58,11 @@ public abstract class StayPeriod implements FriezeObject {
         return id;
     }
 
-    public void addListener(PropertyChangeListener listener) {
+    public void addListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void removeListener(PropertyChangeListener listener) {
+    public void removeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
@@ -66,7 +74,7 @@ public abstract class StayPeriod implements FriezeObject {
         return place;
     }
 
-    public void setPerson(Person aPerson) {
+    public void setPerson(final Person aPerson) {
         if (aPerson == null) {
             return;
         }
@@ -76,7 +84,7 @@ public abstract class StayPeriod implements FriezeObject {
         }
     }
 
-    public void setPlace(Place aPlace) {
+    public void setPlace(final Place aPlace) {
         if (aPlace == null) {
             return;
         }
@@ -98,7 +106,7 @@ public abstract class StayPeriod implements FriezeObject {
 
     public abstract String getDisplayString();
 
-    protected void firePropertyChange(String eventName, Object oldValue, Object newValue) {
+    protected void firePropertyChange(final String eventName, Object oldValue, Object newValue) {
         propertyChangeSupport.firePropertyChange(eventName, oldValue, newValue);
     }
 }

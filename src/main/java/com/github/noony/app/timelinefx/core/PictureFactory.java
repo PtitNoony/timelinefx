@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  *
@@ -39,6 +40,7 @@ public final class PictureFactory {
     private static final Logger LOG = Logger.getGlobal();
 
     private static final Factory<Picture> FACTORY = new Factory<>();
+
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(FACTORY);
 
     private PictureFactory() {
@@ -53,13 +55,13 @@ public final class PictureFactory {
         return FACTORY.getObjects();
     }
 
-    public static Picture getPicture(long pictureID) {
+    public static Picture getPicture(final long pictureID) {
         return FACTORY.get(pictureID);
     }
 
-    public static Picture createPicture(TimeLineProject project, File originalPictureFile, String pictureName) {
+    public static Picture createPicture(final TimeLineProject project, File originalPictureFile, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, originalPictureFile});
-        File pictureFile;
+        final File pictureFile;
         pictureFile = new File(project.getPicturesFolder(), originalPictureFile.getName());
         if (!pictureFile.exists()) {
             try {
@@ -69,30 +71,30 @@ public final class PictureFactory {
                 LOG.log(Level.SEVERE, "Error while copying picture file to: {0} : {1}", new Object[]{pictureFile, ex});
             }
         }
-        var picInfo = MetadataParser.parseMetadata(project, pictureFile);
+        final var picInfo = MetadataParser.parseMetadata(project, pictureFile);
         assert picInfo != null;
-        var picture = new Picture(project, FACTORY.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
+        final var picture = new Picture(project, FACTORY.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
         FACTORY.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
     }
 
-    public static Picture createPicture(TimeLineProject project, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    public static Picture createPicture(final TimeLineProject project, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));
         }
-        var picture = new Picture(project, id, pictureName, pictureCreationDate.toLocalDate(), picturePath, pictureWidth, pictureHeight);
+        final var picture = new Picture(project, id, pictureName, pictureCreationDate.toLocalDate(), picturePath, pictureWidth, pictureHeight);
         FACTORY.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
     }
 
-    public static void addPropertyChangeListener(PropertyChangeListener listener) {
+    public static void addPropertyChangeListener(final PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
 
-    public static void removePropertyChangeListener(PropertyChangeListener listener) {
+    public static void removePropertyChangeListener(final PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
     }
 

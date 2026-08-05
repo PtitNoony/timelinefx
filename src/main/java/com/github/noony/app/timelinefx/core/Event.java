@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
@@ -28,14 +29,18 @@ import java.util.List;
 public class Event {
 
     private final String name;
+
     private final List<Person> persons;
+
     private final List<Place> places;
 
     private final TimeFormat timeFormat;
+
     private final LocalDate localDate;
+
     private final long date;
 
-    public Event(String eventName, long aDate) {
+    public Event(final String eventName, long aDate) {
         name = eventName;
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -44,7 +49,7 @@ public class Event {
         timeFormat = TimeFormat.TIME_MIN;
     }
 
-    public Event(String eventName, LocalDate aDate) {
+    public Event(final String eventName, LocalDate aDate) {
         name = eventName;
         persons = new LinkedList<>();
         places = new LinkedList<>();

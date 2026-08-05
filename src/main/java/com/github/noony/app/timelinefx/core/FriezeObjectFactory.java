@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
  *
  * @author arnaud
  */
-public class FriezeObjectFactory {
+public final class FriezeObjectFactory {
 
 
     private FriezeObjectFactory() {

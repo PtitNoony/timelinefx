@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -43,35 +44,51 @@ public final class Person implements FriezeObject {
     public static final String COLOR_CHANGED = "colorChanged";
 
     public static final String PORTRAIT_ADDED = "portraitAdded";
+
     public static final String PORTRAIT_REMOVED = "portraitRemoved";
+
     public static final String DEFAULT_PORTRAIT_CHANGED = "defaultPortaitChanged";
 
     public static final Comparator<Person> COMPARATOR = Comparator.comparing(Person::getName);
 
     private static final Color DEFAULT_COLOR = Color.CHOCOLATE;
+
     private static final Logger LOG = Logger.getGlobal();
+
     private static final long DEFAULT_TIME = -1;
 
     private final PropertyChangeSupport propertyChangeSupport;
     //
     private final Long id;
     //
+
     private final TimeLineProject project;
+
     private final List<Portrait> portraits;
     //
+
     private String name;
+
     private Color color;
+
     private TimeFormat timeFormat;
+
     private LocalDate dateOfBirth;
+
     private LocalDate dateOfDeath;
+
     private long timeOfBirth;
+
     private long timeOfDeath;
-    private Portrait defaultPortrait = null;
+
+    private Portrait defaultPortrait;
     //
+
     private boolean selected;
+
     private boolean visible;
 
-    protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
+    protected Person(final TimeLineProject aProject, Long personId, String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();
@@ -85,7 +102,7 @@ public final class Person implements FriezeObject {
         visible = true;
     }
 
-    protected Person(TimeLineProject aProject, Long personId, String personName, Color aColor, long aToB, long aToD) {
+    protected Person(final TimeLineProject aProject, Long personId, String personName, Color aColor, long aToB, long aToD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();
@@ -99,7 +116,7 @@ public final class Person implements FriezeObject {
         visible = true;
     }
 
-    protected Person(TimeLineProject aProject, Long personId, String personName) {
+    protected Person(final TimeLineProject aProject, Long personId, String personName) {
         this(aProject, personId, personName, DEFAULT_COLOR, 0, 0);
     }
 
@@ -120,14 +137,14 @@ public final class Person implements FriezeObject {
         return defaultPortrait;
     }
 
-    public void setName(String aName) {
+    public void setName(final String aName) {
         if (!name.equals(aName)) {
             name = aName;
             propertyChangeSupport.firePropertyChange(NAME_CHANGED, this, name);
         }
     }
 
-    public void setDefaultPortrait(Portrait aPortrait) {
+    public void setDefaultPortrait(final Portrait aPortrait) {
         if (aPortrait != null && aPortrait != defaultPortrait) {
             addPortrait(aPortrait);
             defaultPortrait = aPortrait;
@@ -135,7 +152,7 @@ public final class Person implements FriezeObject {
         }
     }
 
-    public void addPortrait(Portrait aPortrait) {
+    public void addPortrait(final Portrait aPortrait) {
         if (!portraits.contains(aPortrait)) {
             portraits.add(aPortrait);
             propertyChangeSupport.firePropertyChange(PORTRAIT_ADDED, this, aPortrait);
@@ -150,17 +167,17 @@ public final class Person implements FriezeObject {
         return portraits.stream().filter(p -> p.getId() == aPortraiID).findAny().orElse(null);
     }
 
-    public void removePortrait(Portrait aPortrait) {
+    public void removePortrait(final Portrait aPortrait) {
         if (portraits.remove(aPortrait)) {
             propertyChangeSupport.firePropertyChange(PORTRAIT_REMOVED, null, aPortrait);
         }
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
@@ -168,7 +185,7 @@ public final class Person implements FriezeObject {
         return name;
     }
 
-    public void setColor(Color aColor) {
+    public void setColor(final Color aColor) {
         if (!color.equals(aColor)) {
             color = aColor;
             propertyChangeSupport.firePropertyChange(COLOR_CHANGED, this, color);
@@ -183,7 +200,7 @@ public final class Person implements FriezeObject {
         return timeFormat;
     }
 
-    public void setTimeFormat(TimeFormat aTimeFormat) {
+    public void setTimeFormat(final TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
     }
 
@@ -191,7 +208,7 @@ public final class Person implements FriezeObject {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate newDoB) {
+    public void setDateOfBirth(final LocalDate newDoB) {
         if (newDoB == null) {
             // for the time being we do not support clearing date of birth
             LOG.log(Level.INFO, "Clearing date of birth is not supported yet in {0}", new Object[]{this});
@@ -244,7 +261,7 @@ public final class Person implements FriezeObject {
         }
     }
 
-    public void setTimeOfBirth(long newToB) {
+    public void setTimeOfBirth(final long newToB) {
         if (timeOfBirth != newToB) {
             timeOfBirth = newToB;
             timeFormat = TimeFormat.TIME_MIN;
@@ -256,7 +273,7 @@ public final class Person implements FriezeObject {
         return dateOfDeath;
     }
 
-    public void setDateOfDeath(LocalDate newDoD) {
+    public void setDateOfDeath(final LocalDate newDoD) {
         if (newDoD == null) {
             // for the time being we do not support clearing date of death
             LOG.log(Level.INFO, "Clearing date of death is not supported yet in {0}", new Object[]{this});
@@ -275,7 +292,7 @@ public final class Person implements FriezeObject {
         return timeOfDeath;
     }
 
-    public void setTimeOfDeath(long newToD) {
+    public void setTimeOfDeath(final long newToD) {
         if (timeOfDeath != newToD) {
             timeOfDeath = newToD;
             timeFormat = TimeFormat.TIME_MIN;
@@ -283,8 +300,8 @@ public final class Person implements FriezeObject {
         }
     }
 
-    public void setSelected(boolean isSelected) {
-        var update = selected != isSelected;
+    public void setSelected(final boolean isSelected) {
+        final var update = selected != isSelected;
         selected = isSelected;
         if (update) {
             propertyChangeSupport.firePropertyChange(SELECTION_CHANGED, null, selected);
@@ -295,8 +312,8 @@ public final class Person implements FriezeObject {
         return selected;
     }
 
-    public void setVisible(boolean isVisible) {
-        var update = visible != isVisible;
+    public void setVisible(final boolean isVisible) {
+        final var update = visible != isVisible;
         visible = isVisible;
         if (update) {
             propertyChangeSupport.firePropertyChange(VISIBILITY_CHANGED, this, visible);

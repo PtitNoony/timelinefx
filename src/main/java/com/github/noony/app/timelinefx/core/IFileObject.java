@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
@@ -22,16 +23,16 @@ package com.github.noony.app.timelinefx.core;
  */
 public interface IFileObject extends FriezeObject {
 
-    String getName();
+    abstract String getName();
 
     //TODO :: in FriezeObject ?
-    void setName(String aName);
+    abstract void setName(String aName);
 
-    TimeLineProject getProject();
+    abstract TimeLineProject getProject();
 
-    String getProjectRelativePath();
+    abstract String getProjectRelativePath();
 
-    String getAbsolutePath();
+    abstract String getAbsolutePath();
 
-    int compareTo(IFileObject other);
+    abstract int compareTo(IFileObject other);
 }

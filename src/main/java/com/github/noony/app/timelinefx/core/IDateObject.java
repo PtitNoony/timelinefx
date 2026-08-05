@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -26,93 +27,93 @@ import java.time.format.DateTimeFormatter;
  */
 public interface IDateObject {
 
-    DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
+    final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
 
-    DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
+    final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
      * The default time stamp
      */
-    long DEFAULT_TIMESTAMP = 0;
+    final long DEFAULT_TIMESTAMP = 0;
 
     /**
      * Name of the property change event for date change
      */
-    String DATE_CHANGED = "pictureDateChanged";
+    final String DATE_CHANGED = "pictureDateChanged";
 
     /**
      *
      * @return the TimeFormat used by the instance
      */
-    TimeFormat getTimeFormat();
+    abstract TimeFormat getTimeFormat();
 
     /**
      *
      * @param aTimeFormat the new time format to be used by the instance
      */
-    void setTimeFormat(TimeFormat aTimeFormat);
+    abstract void setTimeFormat(TimeFormat aTimeFormat);
 
     /**
      *
      * @return the instance date value, or null if not set or if the time format is
      *         not compatible
      */
-    LocalDate getDate();
+    abstract LocalDate getDate();
 
     /**
      *
      * @return the instance time stamp
      */
-    double getTimestamp();
+    abstract double getTimestamp();
 
     /**
      *
      * @param aTimeValue updates the time value based on the input parameter
      */
-    void setValue(String aTimeValue);
+    abstract void setValue(String aTimeValue);
 
     /**
      *
      * @param aDate the instance's new date value
      */
-    void setDate(LocalDate aDate);
+    abstract void setDate(LocalDate aDate);
 
     /**
      *
      * @param aTimestamp the instance new time stamp
      */
-    void setTimestamp(double aTimestamp);
+    abstract void setTimestamp(double aTimestamp);
 
     /**
      *
      * @param aDateObject the date object containing the date to be retreived
      */
-    void setDate(IDateObject aDateObject);
+    abstract void setDate(IDateObject aDateObject);
 
     /**
      *
      * @return an absolute time value to compare dateObjects no matter their time
      *         format
      */
-    double getAbsoluteTime();
+    abstract double getAbsoluteTime();
 
     /**
      *
      * @return a string representation of the time no matter the time format
      */
-    String getAbsoluteTimeAsString();
+    abstract String getAbsoluteTimeAsString();
 
     /**
      * PropertyChangeListener to be added
-     * 
+     *
      * @param listener
      */
-    void addPropertyChangeListener(PropertyChangeListener listener);
+    abstract void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * PropertyChangeListener to be removed
-     * 
+     *
      * @param listener
      */
-    void removePropertyChangeListener(PropertyChangeListener listener);
+    abstract void removePropertyChangeListener(PropertyChangeListener listener);
 }

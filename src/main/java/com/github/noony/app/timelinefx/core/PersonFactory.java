@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  *
@@ -39,35 +40,35 @@ public final class PersonFactory {
         FACTORY.reset();
     }
 
-    public static Person getPerson(long id) {
+    public static Person getPerson(final long id) {
         return FACTORY.get(id);
     }
 
-    public static Person createPerson(TimeLineProject project, String personName) {
+    public static Person createPerson(final TimeLineProject project, String personName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0}  ", new Object[]{personName});
-        var person = new Person(project, FACTORY.getNextID(), personName);
+        final var person = new Person(project, FACTORY.getNextID(), personName);
         FACTORY.addObject(person);
         return person;
     }
 
-    public static Person createPerson(TimeLineProject project, String personName, Color color) {
+    public static Person createPerson(final TimeLineProject project, String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
-        var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
+        final var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
         FACTORY.addObject(person);
         return person;
     }
 
-    public static Person createPerson(TimeLineProject project, long id, String personName, Color color) {
+    public static Person createPerson(final TimeLineProject project, long id, String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");
         }
-        var person = new Person(project, id, personName, color, null, null);
+        final var person = new Person(project, id, personName, color, null, null);
         FACTORY.addObject(person);
         return person;
     }
 
-    public static List< Person> getPERSONS() {
+    public static List<Person> getPERSONS() {
         return FACTORY.getObjects().stream().sorted(Person.COMPARATOR).toList();
     }
 

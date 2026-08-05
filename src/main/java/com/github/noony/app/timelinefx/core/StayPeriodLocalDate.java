@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
@@ -25,11 +26,14 @@ import java.time.LocalDate;
 public class StayPeriodLocalDate extends StayPeriod {
 
     private LocalDate previousStartDate;
+
     private LocalDate previousEndDate;
+
     private LocalDate startDate;
+
     private LocalDate endDate;
 
-    protected StayPeriodLocalDate(long id, Person aPerson, LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
+    protected StayPeriodLocalDate(final long id, Person aPerson, LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
         super(id, aPerson, aPlace);
         previousStartDate = aStartDate;
         previousEndDate = anEndDate;
@@ -62,7 +66,7 @@ public class StayPeriodLocalDate extends StayPeriod {
         return TimeFormat.LOCAL_TIME;
     }
 
-    public void setStartDate(LocalDate aStartDate) {
+    public void setStartDate(final LocalDate aStartDate) {
         if (aStartDate == null) {
             return;
         }
@@ -73,7 +77,7 @@ public class StayPeriodLocalDate extends StayPeriod {
         }
     }
 
-    public void setEndDate(LocalDate aEndDate) {
+    public void setEndDate(final LocalDate aEndDate) {
         if (aEndDate == null) {
             return;
         }

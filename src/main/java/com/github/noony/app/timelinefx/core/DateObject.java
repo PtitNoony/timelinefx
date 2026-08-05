@@ -26,22 +26,44 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Standalone {@link IDateObject} implementation, used where a date/time value is needed
+ * without being attached to a picture or stay.
  *
  * @author hamon
  */
 public final class DateObject implements IDateObject {
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Support object used to fire property change events.
+     */
     private final PropertyChangeSupport propertyChangeSupport;
     //
 
+    /**
+     * Whether {@link #date} or {@link #timestamp} holds this instance's value.
+     */
     private TimeFormat timeFormat;
 
+    /**
+     * This instance's raw numeric time value, used when {@link #timeFormat} is {@code TIME_MIN}.
+     */
     private double timestamp;
 
+    /**
+     * This instance's calendar date value, used when {@link #timeFormat} is {@code LOCAL_TIME}.
+     */
     private LocalDate date;
 
+    /**
+     * Creates a date object holding a calendar date.
+     *
+     * @param aDate the date value
+     */
     public DateObject(final LocalDate aDate) {
         propertyChangeSupport = new PropertyChangeSupport(DateObject.this);
         //
@@ -50,6 +72,11 @@ public final class DateObject implements IDateObject {
         timestamp = -1;
     }
 
+    /**
+     * Creates a date object holding a raw numeric timestamp.
+     *
+     * @param aTimestamp the timestamp value
+     */
     public DateObject(final double aTimestamp) {
         propertyChangeSupport = new PropertyChangeSupport(DateObject.this);
         //
@@ -58,6 +85,11 @@ public final class DateObject implements IDateObject {
         date = null;
     }
 
+    /**
+     * Creates a date object copying the value of another one.
+     *
+     * @param anotherDateObject the date object to copy
+     */
     public DateObject(final IDateObject anotherDateObject) {
         propertyChangeSupport = new PropertyChangeSupport(DateObject.this);
         //

@@ -20,17 +20,30 @@ package com.github.noony.app.timelinefx.core;
 import java.time.LocalDate;
 
 /**
+ * A {@link StayPeriod} whose start/end dates are represented as calendar dates.
  *
  * @author hamon
  */
 public class StayPeriodLocalDate extends StayPeriod {
 
+    /**
+     * The start date before the last change, used to fire change notifications.
+     */
     private LocalDate previousStartDate;
 
+    /**
+     * The end date before the last change, used to fire change notifications.
+     */
     private LocalDate previousEndDate;
 
+    /**
+     * The stay's start date.
+     */
     private LocalDate startDate;
 
+    /**
+     * The stay's end date.
+     */
     private LocalDate endDate;
 
     protected StayPeriodLocalDate(final long id, Person aPerson, LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
@@ -66,6 +79,9 @@ public class StayPeriodLocalDate extends StayPeriod {
         return TimeFormat.LOCAL_TIME;
     }
 
+    /**
+     * @param aStartDate the stay's new start date
+     */
     public void setStartDate(final LocalDate aStartDate) {
         if (aStartDate == null) {
             return;
@@ -77,6 +93,9 @@ public class StayPeriodLocalDate extends StayPeriod {
         }
     }
 
+    /**
+     * @param aEndDate the stay's new end date
+     */
     public void setEndDate(final LocalDate aEndDate) {
         if (aEndDate == null) {
             return;

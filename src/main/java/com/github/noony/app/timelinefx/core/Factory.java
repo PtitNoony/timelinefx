@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Generic registry assigning unique ids to, and keeping track of, instances of {@code T}.
  *
  * @author hamon
  * @param <T> Any class implementing FriezeObject
@@ -36,13 +37,25 @@ public class Factory<T extends FriezeObject> {
      */
     public static final Level CREATION_LOGGING_LEVEL = Level.FINE;
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Objects registered in this factory, keyed by id.
+     */
     private final Map<Long, T> objects = new HashMap<>();
     //
 
+    /**
+     * The next id to be handed out by {@link #getNextID()}.
+     */
     private long nextUniqueId;
 
+    /**
+     * Default constructor.
+     */
     public Factory() {
         // private utility constructor
     }
@@ -97,6 +110,9 @@ public class Factory<T extends FriezeObject> {
         return !objects.containsKey(id);
     }
 
+    /**
+     * @return all the objects currently registered in this factory
+     */
     public List<T> getObjects() {
         return new ArrayList<>(objects.values());
     }

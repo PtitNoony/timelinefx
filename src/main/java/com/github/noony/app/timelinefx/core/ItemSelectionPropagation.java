@@ -18,9 +18,13 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * How selecting an item should propagate to its related items.
  *
  * @author hamon
  */
 public enum ItemSelectionPropagation {
+    /**
+     * Selection does not propagate, or propagates to related items.
+     */
     NONE, RECURSIVE
 }

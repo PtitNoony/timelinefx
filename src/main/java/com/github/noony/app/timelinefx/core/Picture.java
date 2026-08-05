@@ -20,11 +20,15 @@ package com.github.noony.app.timelinefx.core;
 import java.time.LocalDate;
 
 /**
+ * A picture that belongs to a project (as opposed to a portrait).
  *
  * @author hamon
  */
 public class Picture extends AbstractPicture {
 
+    /**
+     * The project this picture belongs to.
+     */
     private final TimeLineProject project;
 
     protected Picture(final TimeLineProject aProject, long id, String pictureName, LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {

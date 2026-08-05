@@ -18,11 +18,15 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Shared user-facing message strings.
  *
  * @author hamon
  */
 public final class Messages {
 
+    /**
+     * Message prefix used when an unsupported {@link TimeFormat} is encountered.
+     */
     public static final String UNSUPPORTED_TIME_FORMAT = "Unsupported time format: ";
 
     private Messages() {

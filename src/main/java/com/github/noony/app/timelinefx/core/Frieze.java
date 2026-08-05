@@ -34,81 +34,181 @@ import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
 
 /**
+ * A subset of a project's places, persons and stays, laid out over a shared time window.
  *
  * @author hamon
  */
 public final class Frieze implements FriezeObject {
 
+    /**
+     * Prefix used to namespace this class's property change event names.
+     */
     public static final String CLASS_NAME = "Frieze";
+    /**
+     * Name of the property change event fired when the visible date window changes.
+     */
     public static final String DATE_WINDOW_CHANGED = CLASS_NAME + "__dateWindowChanged";
 
+    /**
+     * Name of the property change event fired when this frieze's name changes.
+     */
     public static final String NAME_CHANGED = CLASS_NAME + "__nameChanged";
 
+    /**
+     * Name of the property change event fired when a stay is added.
+     */
     public static final String STAY_ADDED = CLASS_NAME + "__stayAdded";
 
+    /**
+     * Name of the property change event fired when a stay is removed.
+     */
     public static final String STAY_REMOVED = CLASS_NAME + "__stayRemoved";
 
+    /**
+     * Name of the property change event fired when a stay's dates change.
+     */
     public static final String STAY_UPDATED = CLASS_NAME + "__stayUpdated";
 
+    /**
+     * Name of the property change event fired when a person is added.
+     */
     public static final String PERSON_ADDED = CLASS_NAME + "__personAdded";
 
+    /**
+     * Name of the property change event fired when a place is added.
+     */
     public static final String PLACE_ADDED = CLASS_NAME + "__placeAdded";
 
+    /**
+     * Name of the property change event fired when a person is removed.
+     */
     public static final String PERSON_REMOVED = CLASS_NAME + "__personRemoved";
 
+    /**
+     * Name of the property change event fired when a place is removed.
+     */
     public static final String PLACE_REMOVED = CLASS_NAME + "__placeRemoved";
 
+    /**
+     * Name of the property change event fired when a start date is added.
+     */
     public static final String START_DATE_ADDED = CLASS_NAME + "__startDateAdded";
 
+    /**
+     * Name of the property change event fired when a start date is removed.
+     */
     public static final String START_DATE_REMOVED = CLASS_NAME + "__startDateRemoved";
 
+    /**
+     * Name of the property change event fired when an end date is added.
+     */
     public static final String END_DATE_ADDED = CLASS_NAME + "__endDateAdded";
 
+    /**
+     * Name of the property change event fired when an end date is removed.
+     */
     public static final String END_DATE_REMOVED = CLASS_NAME + "__endDateRemoved";
     // TODO : merge with other use
 
+    /**
+     * Fallback minimum date used when the frieze has no stays.
+     */
     private static final long DEFAULT_MIN_DATE = 0;
 
+    /**
+     * Fallback maximum date used when the frieze has no stays.
+     */
     private static final long DEFAULT_MAX_DATE = 500;
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
     private final Long id;
+    /**
+     * The project this frieze belongs to.
+     */
     private final TimeLineProject project;
 
+    /**
+     * The stays represented in this frieze.
+     */
     private final List<StayPeriod> stayPeriods;
 
+    /**
+     * The places represented in this frieze.
+     */
     private final List<Place> places;
 
+    /**
+     * The persons represented in this frieze.
+     */
     private final List<Person> persons;
 
+    /**
+     * The persons present at each place.
+     */
     private final Map<Place, List<Person>> personsAtPlaces;
 
+    /**
+     * Support object used to fire property change events.
+     */
     private final PropertyChangeSupport propertyChangeSupport;
 
+    /**
+     * The free maps built from this frieze.
+     */
     private final List<FriezeFreeMap> friezeFreeMaps;
     //
 
+    /**
+     * All the start/end dates represented in this frieze.
+     */
     private final List<Double> dates;
 
+    /**
+     * The start dates represented in this frieze.
+     */
     private final List<Double> startDates;
 
+    /**
+     * The end dates represented in this frieze.
+     */
     private final List<Double> endDates;
     //
 
+    /**
+     * Listener attached to every stay in this frieze, to react to date changes.
+     */
     private final PropertyChangeListener stayChangesListener;
     //
 
+    /**
+     * This frieze's display name.
+     */
     private String name;
     //
 
+    /**
+     * The earliest date across this frieze's stays.
+     */
     private double minDate = DEFAULT_MIN_DATE;
 
+    /**
+     * The latest date across this frieze's stays.
+     */
     private double maxDate = DEFAULT_MAX_DATE;
     //
 
+    /**
+     * The earliest date currently visible.
+     */
     private double minDateWindow = minDate;
 
+    /**
+     * The latest date currently visible.
+     */
     private double maxDateWindow = maxDate;
     //
     private double constraintMinDate = Double.NEGATIVE_INFINITY;
@@ -145,19 +245,35 @@ public final class Frieze implements FriezeObject {
         return id;
     }
 
+    /**
+     * Creates a frieze containing all of the project's stays.
+     *
+     * @param anID the id to assign to the new frieze
+     * @param aProject the project the frieze belongs to
+     * @param friezeName the frieze's name
+     */
     public Frieze(final long anID, TimeLineProject aProject, String friezeName) {
         this(anID, aProject, friezeName, Collections.emptyList());
     }
 
+    /**
+     * @param aName this frieze's new name
+     */
     public void setName(final String aName) {
         name = aName;
         propertyChangeSupport.firePropertyChange(NAME_CHANGED, this, name);
     }
 
+    /**
+     * @return this frieze's name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the project this frieze belongs to
+     */
     public TimeLineProject getProject() {
         return project;
     }
@@ -253,6 +369,9 @@ public final class Frieze implements FriezeObject {
         stays.forEach(this::removeStay);
     }
 
+    /**
+     * @param stay the stay to remove from this frieze
+     */
     public void removeStay(final StayPeriod stay) {
         if (stayPeriods.contains(stay)) {
             stayPeriods.remove(stay);
@@ -296,6 +415,10 @@ public final class Frieze implements FriezeObject {
         }
     }
 
+    /**
+     * @param aPlace the place whose selection changed
+     * @param selected whether the place is now selected
+     */
     public void updatePlaceSelection(final Place aPlace, boolean selected) {
         //
         //System.err.println(" C'est ici qu'il faut faire l'update");
@@ -319,6 +442,10 @@ public final class Frieze implements FriezeObject {
         }
     }
 
+    /**
+     * @param p a place
+     * @return an unmodifiable list of the persons present at the given place
+     */
     public List<Person> getPersonsAtPlace(final Place p) {
         if (personsAtPlaces.containsKey(p)) {
             return Collections.unmodifiableList(personsAtPlaces.get(p));
@@ -326,108 +453,188 @@ public final class Frieze implements FriezeObject {
         return Collections.emptyList();
     }
 
+    /**
+     * @param listener the listener to add
+     */
     public void addListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    /**
+     * @param listener the listener to remove
+     */
     public void removeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    /**
+     * @return an unmodifiable list of the stays in this frieze
+     */
     public List<StayPeriod> getStayPeriods() {
         return Collections.unmodifiableList(stayPeriods);
     }
 
+    /**
+     * @param person a person
+     * @return the stays for the given person
+     */
     public List<StayPeriod> getStayPeriods(final Person person) {
         return stayPeriods.stream().filter(s -> s.getPerson().equals(person)).collect(Collectors.toList());
     }
 
+    /**
+     * @param aPlace a place
+     * @return the stays at the given place
+     */
     public List<StayPeriod> getStayPeriods(final Place aPlace) {
         return stayPeriods.stream().filter(s -> s.getPlace().equals(aPlace)).collect(Collectors.toList());
     }
 
+    /**
+     * @param stayPeriod a stay
+     * @return the index of the stay's person in this frieze's persons list
+     */
     public int getStayIndex(final StayPeriod stayPeriod) {
         return persons.indexOf(stayPeriod.getPerson());
     }
 
+    /**
+     * @return the number of stays in this frieze
+     */
     public int getNbStays() {
         return stayPeriods.size();
     }
 
+    /**
+     * @return the number of persons in this frieze
+     */
     public int getNbPersons() {
         return persons.size();
     }
 
+    /**
+     * @return an unmodifiable list of the persons in this frieze
+     */
     public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
     }
 
+    /**
+     * Creates a new free map view of this frieze, containing all of its content.
+     *
+     * @return the created free map
+     */
     public FriezeFreeMap createFriezeFreeMap() {
         final var friezeFreeMap = FriezeFreeMapFactory.createFriezeFreeMap(this, true);
         friezeFreeMaps.add(friezeFreeMap);
         return friezeFreeMap;
     }
 
+    /**
+     * @param friezeFreeMap the free map to attach to this frieze
+     */
     public void addFriezeFreeMap(final FriezeFreeMap friezeFreeMap) {
         if (!friezeFreeMaps.contains(friezeFreeMap)) {
             friezeFreeMaps.add(friezeFreeMap);
         }
     }
 
+    /**
+     * @param aFriezeFreeMap the free map to detach from this frieze
+     */
     public void removeFriezeFreeMap(final FriezeFreeMap aFriezeFreeMap) {
         friezeFreeMaps.remove(aFriezeFreeMap);
     }
 
+    /**
+     * @return an unmodifiable list of the free maps built from this frieze
+     */
     public List<FriezeFreeMap> getFriezeFreeMaps() {
         return Collections.unmodifiableList(friezeFreeMaps);
     }
 
+    /**
+     * @return an unmodifiable list of all the start/end dates in this frieze
+     */
     public List<Double> getDates() {
         return Collections.unmodifiableList(dates);
     }
 
+    /**
+     * @return an unmodifiable list of the start dates in this frieze
+     */
     public List<Double> getStartDates() {
         return Collections.unmodifiableList(startDates);
     }
 
+    /**
+     * @return an unmodifiable list of the end dates in this frieze
+     */
     public List<Double> getEndDates() {
         return Collections.unmodifiableList(endDates);
     }
 
+    /**
+     * @return the earliest date across this frieze's stays
+     */
     public double getMinDate() {
         return minDate;
     }
 
+    /**
+     * @return the latest date across this frieze's stays
+     */
     public double getMaxDate() {
         return maxDate;
     }
 
+    /**
+     * @return the number of distinct dates in this frieze
+     */
     public int getNbDates() {
         return dates.size();
     }
 
+    /**
+     * @return the earliest date currently visible
+     */
     public double getMinDateWindow() {
         return minDateWindow;
     }
 
+    /**
+     * @return the latest date currently visible
+     */
     public double getMaxDateWindow() {
         return maxDateWindow;
     }
 
+    /**
+     * @param newMinDateWindow the new earliest visible date
+     */
     public void setMinDateWindow(final double newMinDateWindow) {
         minDateWindow = newMinDateWindow;
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
 
+    /**
+     * @param newMaxDateWindow the new latest visible date
+     */
     public void setMaxDateWindow(final double newMaxDateWindow) {
         maxDateWindow = newMaxDateWindow;
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
 
+    /**
+     * @return an unmodifiable list of the places in this frieze
+     */
     public List<Place> getPlaces() {
         return Collections.unmodifiableList(places);
     }
 
+    /**
+     * @return the time format used by this frieze's stays, or {@code TIME_MIN} if it has none
+     */
     public TimeFormat getTimeFormat() {
         return stayPeriods.isEmpty() ? TimeFormat.TIME_MIN : stayPeriods.get(0).getTimeFormat();
     }

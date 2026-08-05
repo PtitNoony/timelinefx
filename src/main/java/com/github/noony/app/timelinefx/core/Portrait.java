@@ -26,17 +26,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * A person's portrait picture. Unlike a {@link Picture}, a portrait always belongs to exactly one person.
  *
  * @author hamon
  */
 public class Portrait extends AbstractPicture {
 
+    /**
+     * Orders portraits by id.
+     */
     public static final Comparator<Portrait> COMPARATOR = Comparator.comparingLong(FriezeObject::getId);
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * The person this portrait belongs to.
+     */
     private final Person person;
 
+    /**
+     * Single-element list containing {@link #person}, returned by {@link #getPersons()}.
+     */
     private final ArrayList<Person> persons;
 
     protected Portrait(final long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
@@ -89,6 +102,9 @@ public class Portrait extends AbstractPicture {
         return getAbsolutePath().compareTo(other.getAbsolutePath());
     }
 
+    /**
+     * @return the person this portrait belongs to
+     */
     public Person getPerson() {
         return person;
     }

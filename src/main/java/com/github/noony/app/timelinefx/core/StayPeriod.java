@@ -22,27 +22,53 @@ import java.beans.PropertyChangeSupport;
 import java.util.Comparator;
 
 /**
+ * A person's stay at a place, over a period of time represented either as calendar dates
+ * ({@link StayPeriodLocalDate}) or as raw numeric values ({@link StayPeriodSimpleTime}).
  *
  * @author arnaud
  */
 public abstract class StayPeriod implements FriezeObject {
 
+    /**
+     * Orders stays by start date.
+     */
     public static final Comparator<? super StayPeriod> STAY_COMPARATOR = Comparator.comparingDouble(StayPeriod::getStartDate);
 
+    /**
+     * Name of the property change event fired when the stay's person changes.
+     */
     public static final String PERSON_CHANGED = "StayPeriod__personChanged";
 
+    /**
+     * Name of the property change event fired when the stay's place changes.
+     */
     public static final String PLACE_CHANGED = "StayPeriod__placeChanged";
 
+    /**
+     * Name of the property change event fired when the stay's start date changes.
+     */
     public static final String START_DATE_CHANGED = "StayPeriod__startDateChanged";
 
+    /**
+     * Name of the property change event fired when the stay's end date changes.
+     */
     public static final String END_DATE_CHANGED = "StayPeriod__endDateChanged";
 
+    /**
+     * Support object used to fire property change events.
+     */
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final Long id;
 
+    /**
+     * The person staying.
+     */
     private Person person;
 
+    /**
+     * The place stayed at.
+     */
     private Place place;
 
     @SuppressWarnings("this-escape")
@@ -58,22 +84,37 @@ public abstract class StayPeriod implements FriezeObject {
         return id;
     }
 
+    /**
+     * @param listener the listener to add
+     */
     public void addListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    /**
+     * @param listener the listener to remove
+     */
     public void removeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
+    /**
+     * @return the person staying
+     */
     public Person getPerson() {
         return person;
     }
 
+    /**
+     * @return the place stayed at
+     */
     public Place getPlace() {
         return place;
     }
 
+    /**
+     * @param aPerson the stay's new person
+     */
     public void setPerson(final Person aPerson) {
         if (aPerson == null) {
             return;
@@ -84,6 +125,9 @@ public abstract class StayPeriod implements FriezeObject {
         }
     }
 
+    /**
+     * @param aPlace the stay's new place
+     */
     public void setPlace(final Place aPlace) {
         if (aPlace == null) {
             return;
@@ -94,16 +138,34 @@ public abstract class StayPeriod implements FriezeObject {
         }
     }
 
+    /**
+     * @return the start date before the last change
+     */
     public abstract double getPreviousStartDate();
 
+    /**
+     * @return the end date before the last change
+     */
     public abstract double getPreviousEndDate();
 
+    /**
+     * @return the stay's start date
+     */
     public abstract double getStartDate();
 
+    /**
+     * @return the stay's end date
+     */
     public abstract double getEndDate();
 
+    /**
+     * @return the time format used to represent this stay's dates
+     */
     public abstract TimeFormat getTimeFormat();
 
+    /**
+     * @return a human-readable description of this stay
+     */
     public abstract String getDisplayString();
 
     protected void firePropertyChange(final String eventName, Object oldValue, Object newValue) {

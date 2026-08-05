@@ -22,13 +22,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * Contract for objects holding a date/time value that can be represented either as a
+ * calendar date or as a raw numeric timestamp.
  *
  * @author hamon
  */
 public interface IDateObject {
 
+    /**
+     * Formatter used to parse/format {@link #DEFAULT_DATE_FORMATTER}-style dates.
+     */
     final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
 
+    /**
+     * Formatter used to parse/format date-time values.
+     */
     final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
@@ -106,14 +114,14 @@ public interface IDateObject {
     /**
      * PropertyChangeListener to be added
      *
-     * @param listener
+     * @param listener the listener to add
      */
     abstract void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * PropertyChangeListener to be removed
      *
-     * @param listener
+     * @param listener the listener to remove
      */
     abstract void removePropertyChangeListener(PropertyChangeListener listener);
 }

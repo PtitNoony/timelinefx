@@ -18,17 +18,30 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * A {@link StayPeriod} whose start/end times are represented as raw numeric values.
  *
  * @author hamon
  */
 public class StayPeriodSimpleTime extends StayPeriod {
 
+    /**
+     * The start time before the last change, used to fire change notifications.
+     */
     private double previousStartTime;
 
+    /**
+     * The end time before the last change, used to fire change notifications.
+     */
     private double previousEndTime;
 
+    /**
+     * The stay's start time.
+     */
     private double startTime;
 
+    /**
+     * The stay's end time.
+     */
     private double endTime;
 
     protected StayPeriodSimpleTime(final Long anId, Person aPerson, double aStartTime, double anEndTime, Place aPlace) {
@@ -59,6 +72,9 @@ public class StayPeriodSimpleTime extends StayPeriod {
         return endTime;
     }
 
+    /**
+     * @param aStartDate the stay's new start time
+     */
     public void setStartDate(final double aStartDate) {
         if (startTime != aStartDate) {
             previousStartTime = startTime;
@@ -67,6 +83,9 @@ public class StayPeriodSimpleTime extends StayPeriod {
         }
     }
 
+    /**
+     * @param aEndDate the stay's new end time
+     */
     public void setEndDate(final double aEndDate) {
         if (endTime != aEndDate) {
             previousEndTime = endTime;

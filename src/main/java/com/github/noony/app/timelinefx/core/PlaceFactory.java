@@ -26,40 +26,74 @@ import javafx.scene.paint.Color;
 import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
+ * Entry point for creating and retrieving {@link Place} instances.
  *
  * @author hamon
  */
 public final class PlaceFactory {
 
+    /**
+     * The implicit root place all top-level places are attached to.
+     */
     public static final Place PLACES_PLACE = new Place(-1, "PLACES", PlaceLevel.UNIVERSE, null);
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Registry of created places.
+     */
     private static final Factory<Place> FACTORY = new Factory<>();
 
+    /**
+     * The places with no parent (or whose parent is {@link #PLACES_PLACE}).
+     */
     private static final List<Place> ROOT_PLACES = new LinkedList<>();
 
     private PlaceFactory() {
         // private utility constructor
     }
 
+    /**
+     * Resets the factory, discarding all created places.
+     */
     public static void reset() {
         FACTORY.reset();
         ROOT_PLACES.clear();
     }
 
+    /**
+     * @return all created places, sorted by name
+     */
     public static List<Place> getPlaces() {
         return FACTORY.getObjects().stream().sorted(Place.COMPARATOR).collect(Collectors.toList());
     }
 
+    /**
+     * @return the root places
+     */
     public static List<Place> getRootPlaces() {
         return new ArrayList<>(ROOT_PLACES);
     }
 
+    /**
+     * @param placeID a place's id
+     * @return the place with the given id, or null if none exists
+     */
     public static Place getPlace(final long placeID) {
         return FACTORY.get(placeID);
     }
 
+    /**
+     * Creates a new place with the default color.
+     *
+     * @param placeName the place's name
+     * @param placeLevel the place's level
+     * @param parentPlace the place's parent, or null for a root place
+     * @return the created place
+     */
     public static Place createPlace(final String placeName, PlaceLevel placeLevel, Place parentPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} ", new Object[]{placeName, placeLevel, parentPlace});
         final var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
@@ -71,6 +105,15 @@ public final class PlaceFactory {
         return place;
     }
 
+    /**
+     * Creates a new place.
+     *
+     * @param placeName the place's name
+     * @param placeLevel the place's level
+     * @param parentPlace the place's parent, or null for a root place
+     * @param color the place's color
+     * @return the created place
+     */
     public static Place createPlace(final String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating place with placeName={0} placeLevel={1} parentPlace={2} color={3} ", new Object[]{placeName, placeLevel, parentPlace, color});
         var trueParentPlace = parentPlace != null ? parentPlace : PLACES_PLACE;
@@ -82,6 +125,16 @@ public final class PlaceFactory {
         return place;
     }
 
+    /**
+     * Creates a new place with a specific id.
+     *
+     * @param id the id to assign to the new place
+     * @param placeName the place's name
+     * @param placeLevel the place's level
+     * @param parentPlace the place's parent, or null for a root place
+     * @param color the place's color
+     * @return the created place
+     */
     public static Place createPlace(final long id, String placeName, PlaceLevel placeLevel, Place parentPlace, Color color) {
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create place " + placeName + " with existing id=" + id);

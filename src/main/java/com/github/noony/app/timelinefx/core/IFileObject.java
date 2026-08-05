@@ -18,21 +18,41 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Contract for a domain object backed by a file relative to its project.
  *
  * @author hamon
  */
 public interface IFileObject extends FriezeObject {
 
+    /**
+     * @return the object's display name
+     */
     abstract String getName();
 
     //TODO :: in FriezeObject ?
+    /**
+     * @param aName the object's new display name
+     */
     abstract void setName(String aName);
 
+    /**
+     * @return the project this object belongs to
+     */
     abstract TimeLineProject getProject();
 
+    /**
+     * @return the object's file path, relative to the project's folder
+     */
     abstract String getProjectRelativePath();
 
+    /**
+     * @return the object's absolute file path
+     */
     abstract String getAbsolutePath();
 
+    /**
+     * @param other the object to compare with
+     * @return a negative, zero, or positive value as this object precedes, equals, or follows {@code other}
+     */
     abstract int compareTo(IFileObject other);
 }

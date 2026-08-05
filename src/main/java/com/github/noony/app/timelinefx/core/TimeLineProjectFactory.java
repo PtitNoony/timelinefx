@@ -26,23 +26,40 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Entry point for creating a new {@link TimeLineProject} or loading one from disk.
  *
  * @author hamon
  */
 public final class TimeLineProjectFactory {
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
     private TimeLineProjectFactory() {
         // private utility constructor
     }
 
+    /**
+     * Creates a new, empty project.
+     *
+     * @param name the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     * @return the created project
+     */
     public static TimeLineProject createProject(final String name, Map<String, String> configParams) {
         final TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
         FriezeObjectFactory.reset();
         return timeLineProject;
     }
 
+    /**
+     * Loads a project from a save file, or from the single save file found in a folder.
+     *
+     * @param aFile the project's save file, or its containing folder
+     * @return the loaded project
+     */
     public static TimeLineProject loadProject(final File aFile) {
         final File timelineFile;
         if (aFile == null) {

@@ -58,7 +58,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     final String PLACE_REMOVED = "picturePlaceRemoved";
 
     /**
-     * Searches the various factories to find the corresponding object
+     * Searches the various factories to find the corresponding object.
      *
      * @param pictureID an object's id
      * @return the IPicture instance with the same id, null if none exists
@@ -72,12 +72,14 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     }
 
     /**
+     * Gets the persons on the picture.
      *
      * @return an unmodifiable list of the persons on the IPicture
      */
     abstract List<Person> getPersons();
 
     /**
+     * Adds a person to the picture.
      *
      * @param aPerson the person to be added
      * @return true if the person was added successfully
@@ -85,6 +87,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     abstract boolean addPerson(Person aPerson);
 
     /**
+     * Removes a person from the picture.
      *
      * @param aPerson the person to be removed
      * @return true if the person was removed successfully
@@ -92,12 +95,14 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     abstract boolean removePerson(Person aPerson);
 
     /**
+     * Gets the places on the picture.
      *
      * @return the places on the IPicture
      */
     abstract List<Place> getPlaces();
 
     /**
+     * Adds a place to the picture.
      *
      * @param aPlace the place to be added
      * @return true if the place was added successfully
@@ -105,6 +110,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     abstract boolean addPlace(Place aPlace);
 
     /**
+     * Removes a place from the picture.
      *
      * @param aPlace the place to be removed
      * @return true if the place was removed successfully

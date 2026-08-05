@@ -30,35 +30,66 @@ import org.apache.commons.io.FileUtils;
 import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
+ * Entry point for creating and retrieving {@link Picture} instances.
  *
  * @author hamon
  */
 public final class PictureFactory {
 
+    /**
+     * Name of the property change event fired when a picture is created.
+     */
     public static final String PICTURE_ADDED = "pictureAdded";
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Registry of created pictures.
+     */
     private static final Factory<Picture> FACTORY = new Factory<>();
 
+    /**
+     * Support object used to fire property change events.
+     */
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(FACTORY);
 
     private PictureFactory() {
         // private utility constructor
     }
 
+    /**
+     * Resets the factory, discarding all created pictures.
+     */
     public static void reset() {
         FACTORY.reset();
     }
 
+    /**
+     * @return all created pictures
+     */
     public static List<Picture> getPictures() {
         return FACTORY.getObjects();
     }
 
+    /**
+     * @param pictureID a picture's id
+     * @return the picture with the given id, or null if none exists
+     */
     public static Picture getPicture(final long pictureID) {
         return FACTORY.get(pictureID);
     }
 
+    /**
+     * Creates a new picture by copying an existing file into the project's pictures folder.
+     *
+     * @param project the project the picture belongs to
+     * @param originalPictureFile the source picture file to copy
+     * @param pictureName the picture's name
+     * @return the created picture
+     */
     public static Picture createPicture(final TimeLineProject project, File originalPictureFile, String pictureName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, originalPictureFile});
         final File pictureFile;
@@ -79,6 +110,18 @@ public final class PictureFactory {
         return picture;
     }
 
+    /**
+     * Creates a new picture with a specific id, referencing an already-existing file.
+     *
+     * @param project the project the picture belongs to
+     * @param id the id to assign to the new picture
+     * @param pictureName the picture's name
+     * @param pictureCreationDate the picture's creation date
+     * @param picturePath the picture file's path
+     * @param pictureWidth the picture's width
+     * @param pictureHeight the picture's height
+     * @return the created picture
+     */
     public static Picture createPicture(final TimeLineProject project, long id, String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
         if (!FACTORY.isIdAvailable(id)) {
@@ -90,10 +133,16 @@ public final class PictureFactory {
         return picture;
     }
 
+    /**
+     * @param listener the listener to add
+     */
     public static void addPropertyChangeListener(final PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);
     }
 
+    /**
+     * @param listener the listener to remove
+     */
     public static void removePropertyChangeListener(final PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
     }

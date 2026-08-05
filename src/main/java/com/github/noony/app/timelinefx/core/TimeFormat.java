@@ -18,11 +18,15 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * How a date/time value is represented: as a calendar date or as a raw numeric value.
  *
  * @author arnaud
  */
 public enum TimeFormat {
-    
+
+    /**
+     * A calendar {@code LocalDate}, or a raw numeric time value.
+     */
     LOCAL_TIME, TIME_MIN
-    
+
 }

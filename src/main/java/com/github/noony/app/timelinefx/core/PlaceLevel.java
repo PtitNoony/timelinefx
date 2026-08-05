@@ -18,19 +18,29 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * The nesting level of a {@link Place}, from the smallest (address) to the largest (universe).
  *
  * @author hamon
  */
 public enum PlaceLevel {
 
+    /**
+     * The available levels, ordered from smallest to largest.
+     */
     ADDRESS(10), TOWN(20), DEPARTMENT(30), REGION(40), COUNTRY(50), CONTINENT(60), PLANET(70), ORBIT(75), SYSTEM(80), INTER_SYSTEM_SPACE(90), GALAXY(100), UNIVERSE(1000);
 
+    /**
+     * The numeric value used to compare levels.
+     */
     private final int level;
 
     PlaceLevel(final int level) {
         this.level = level;
     }
 
+    /**
+     * @return this level's numeric value
+     */
     public int getLevelValue() {
         return level;
     }

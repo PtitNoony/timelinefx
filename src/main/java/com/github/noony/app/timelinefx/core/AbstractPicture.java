@@ -31,35 +31,69 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Base implementation shared by {@link Picture} and {@link Portrait}.
  *
  * @author hamon
  */
 public abstract class AbstractPicture implements IPicture {
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Support object used to fire property change events.
+     */
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final Long id;
 
+    /**
+     * The persons appearing on this picture.
+     */
     private final List<Person> persons;
 
+    /**
+     * The places appearing on this picture.
+     */
     private final List<Place> places;
 
+    /**
+     * The picture file's path, relative to the project.
+     */
     private final String filePath;
 
+    /**
+     * The picture's width.
+     */
     private final int width;
 
+    /**
+     * The picture's height.
+     */
     private final int height;
     //
 
+    /**
+     * The picture's display name.
+     */
     private String name;
     //
 
+    /**
+     * Whether {@link #date} or {@link #timestamp} holds this picture's time value.
+     */
     private TimeFormat timeFormat;
 
+    /**
+     * This picture's raw numeric time value, used when {@link #timeFormat} is {@code TIME_MIN}.
+     */
     private double timestamp;
 
+    /**
+     * This picture's calendar date value, used when {@link #timeFormat} is {@code LOCAL_TIME}.
+     */
     private LocalDate date;
 
     @SuppressWarnings("this-escape")
@@ -321,6 +355,9 @@ public abstract class AbstractPicture implements IPicture {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
+    /**
+     * @param aPerson the person to move up in the persons list
+     */
     public void movePersonUp(final Person aPerson) {
         final int index = persons.indexOf(aPerson);
         if (index > 0) {
@@ -329,6 +366,9 @@ public abstract class AbstractPicture implements IPicture {
         }
     }
 
+    /**
+     * @param aPerson the person to move down in the persons list
+     */
     public void movePersonDown(final Person aPerson) {
         int index = persons.indexOf(aPerson);
         if (index != 1 && index < persons.size() - 1) {

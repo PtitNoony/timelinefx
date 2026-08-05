@@ -18,11 +18,15 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * The side of an element an anchor attaches to.
  *
  * @author hamon
  */
 public enum AnchorSide {
 
+    /**
+     * The four cardinal sides, or no anchoring.
+     */
     TOP, BOTTOM, LEFT, RIGHT, NONE
 
 }

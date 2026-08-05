@@ -18,6 +18,7 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Utility entry point for resetting all the object factories in the {@code core} package at once.
  *
  * @author arnaud
  */

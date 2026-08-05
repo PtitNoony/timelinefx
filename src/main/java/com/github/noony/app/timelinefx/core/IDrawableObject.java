@@ -18,6 +18,7 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Contract for objects with a drawable width and height.
  *
  * @author hamon
  */

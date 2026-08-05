@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 NoOnY
+ * Copyright (C) 2019 NoOnY
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,24 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.noony.app.timelinefx.core;
-
 /**
- * Base contract for domain objects identified by a unique id within their project.
- *
- * @author hamon
+ * Core domain model: projects, friezes, places, persons, stays and pictures.
  */
-public interface FriezeObject {
-
-    /**
-     * Value used for objects that have not been assigned a real id yet.
-     */
-    final long NO_ID = -1;
-
-    /**
-     * Each IFriezeObject instance has a unique id in its project's scope
-     *
-     * @return the object unique ID
-     */
-    abstract long getId();
-}
+package com.github.noony.app.timelinefx.core;

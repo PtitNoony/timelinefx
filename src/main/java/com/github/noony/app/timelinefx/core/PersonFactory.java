@@ -14,60 +14,102 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
+ * Entry point for creating and retrieving {@link Person} instances.
  *
  * @author hamon
  */
 public final class PersonFactory {
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Registry of created persons.
+     */
     private static final Factory<Person> FACTORY = new Factory<>();
 
     private PersonFactory() {
         // private utility constructor
     }
 
+    /**
+     * Resets the factory, discarding all created persons.
+     */
     public static void reset() {
         FACTORY.reset();
     }
 
-    public static Person getPerson(long id) {
+    /**
+     * @param id a person's id
+     * @return the person with the given id, or null if none exists
+     */
+    public static Person getPerson(final long id) {
         return FACTORY.get(id);
     }
 
-    public static Person createPerson(TimeLineProject project, String personName) {
+    /**
+     * Creates a new person with the default color.
+     *
+     * @param project the project the person belongs to
+     * @param personName the person's name
+     * @return the created person
+     */
+    public static Person createPerson(final TimeLineProject project, final String personName) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0}  ", new Object[]{personName});
-        var person = new Person(project, FACTORY.getNextID(), personName);
+        final var person = new Person(project, FACTORY.getNextID(), personName);
         FACTORY.addObject(person);
         return person;
     }
 
-    public static Person createPerson(TimeLineProject project, String personName, Color color) {
+    /**
+     * Creates a new person.
+     *
+     * @param project the project the person belongs to
+     * @param personName the person's name
+     * @param color the person's color
+     * @return the created person
+     */
+    public static Person createPerson(final TimeLineProject project, final String personName, final Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
-        var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
+        final var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
         FACTORY.addObject(person);
         return person;
     }
 
-    public static Person createPerson(TimeLineProject project, long id, String personName, Color color) {
+    /**
+     * Creates a new person with a specific id.
+     *
+     * @param project the project the person belongs to
+     * @param id the id to assign to the new person
+     * @param personName the person's name
+     * @param color the person's color
+     * @return the created person
+     */
+    public static Person createPerson(final TimeLineProject project, final long id, final String personName, Color color) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");
         }
-        var person = new Person(project, id, personName, color, null, null);
+        final var person = new Person(project, id, personName, color, null, null);
         FACTORY.addObject(person);
         return person;
     }
 
-    public static List< Person> getPERSONS() {
+    /**
+     * @return all created persons, sorted by name
+     */
+    public static List<Person> getPERSONS() {
         return FACTORY.getObjects().stream().sorted(Person.COMPARATOR).toList();
     }
 

@@ -14,24 +14,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Contract for a domain object backed by a file relative to its project.
  *
  * @author hamon
  */
 public interface IFileObject extends FriezeObject {
 
+    /**
+     * @return the object's display name
+     */
     String getName();
 
     //TODO :: in FriezeObject ?
+    /**
+     * @param aName the object's new display name
+     */
     void setName(String aName);
 
+    /**
+     * @return the project this object belongs to
+     */
     TimeLineProject getProject();
 
+    /**
+     * @return the object's file path, relative to the project's folder
+     */
     String getProjectRelativePath();
 
+    /**
+     * @return the object's absolute file path
+     */
     String getAbsolutePath();
 
+    /**
+     * @param other the object to compare with
+     * @return a negative, zero, or positive value as this object precedes, equals, or follows {@code other}
+     */
     int compareTo(IFileObject other);
 }

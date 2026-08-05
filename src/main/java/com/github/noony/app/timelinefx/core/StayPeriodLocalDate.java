@@ -14,22 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
 
 /**
+ * A {@link StayPeriod} whose start/end dates are represented as calendar dates.
  *
  * @author hamon
  */
 public class StayPeriodLocalDate extends StayPeriod {
 
+    /**
+     * The start date before the last change, used to fire change notifications.
+     */
     private LocalDate previousStartDate;
+
+    /**
+     * The end date before the last change, used to fire change notifications.
+     */
     private LocalDate previousEndDate;
+
+    /**
+     * The stay's start date.
+     */
     private LocalDate startDate;
+
+    /**
+     * The stay's end date.
+     */
     private LocalDate endDate;
 
-    protected StayPeriodLocalDate(long id, Person aPerson, LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
+    protected StayPeriodLocalDate(final long id, final Person aPerson, final LocalDate aStartDate, LocalDate anEndDate, Place aPlace) {
         super(id, aPerson, aPlace);
         previousStartDate = aStartDate;
         previousEndDate = anEndDate;
@@ -37,8 +54,7 @@ public class StayPeriodLocalDate extends StayPeriod {
         endDate = anEndDate;
     }
 
-    @Override
-    public double getPreviousStartDate() {
+    @Override public double getPreviousStartDate() {
         return previousStartDate.toEpochDay();
     }
 
@@ -62,7 +78,10 @@ public class StayPeriodLocalDate extends StayPeriod {
         return TimeFormat.LOCAL_TIME;
     }
 
-    public void setStartDate(LocalDate aStartDate) {
+    /**
+     * @param aStartDate the stay's new start date
+     */
+    public void setStartDate(final LocalDate aStartDate) {
         if (aStartDate == null) {
             return;
         }
@@ -73,7 +92,10 @@ public class StayPeriodLocalDate extends StayPeriod {
         }
     }
 
-    public void setEndDate(LocalDate aEndDate) {
+    /**
+     * @param aEndDate the stay's new end date
+     */
+    public void setEndDate(final LocalDate aEndDate) {
         if (aEndDate == null) {
             return;
         }

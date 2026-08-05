@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.save.XMLHandler;
@@ -25,38 +26,55 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Entry point for creating a new {@link TimeLineProject} or loading one from disk.
  *
  * @author hamon
  */
 public final class TimeLineProjectFactory {
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
     private TimeLineProjectFactory() {
         // private utility constructor
     }
 
-    public static TimeLineProject createProject(String name, Map<String, String> configParams) {
-        TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
+    /**
+     * Creates a new, empty project.
+     *
+     * @param name the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     * @return the created project
+     */
+    public static TimeLineProject createProject(final String name, final Map<String, String> configParams) {
+        final TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
         FriezeObjectFactory.reset();
         return timeLineProject;
     }
 
-    public static TimeLineProject loadProject(File aFile) {
-        File timelineFile;
+    /**
+     * Loads a project from a save file, or from the single save file found in a folder.
+     *
+     * @param aFile the project's save file, or its containing folder
+     * @return the loaded project
+     */
+    public static TimeLineProject loadProject(final File aFile) {
+        final File timelineFile;
         if (aFile == null) {
             throw new IllegalStateException("Project File cannot be null.");
         } else if (aFile.isFile()) {
             timelineFile = aFile;
             LOG.log(Level.INFO, "Project Folder:: {0}.", new Object[]{timelineFile.getParent()});
         } else {
-            File fileFound = Arrays.stream(Objects.requireNonNull(aFile.listFiles())).filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
+            final File fileFound = Arrays.stream(Objects.requireNonNull(aFile.listFiles())).filter(file -> file.getName().endsWith("xml")).findAny().orElse(null);
             if (fileFound == null) {
                 throw new IllegalStateException("No save file was found in " + aFile);
             }
             timelineFile = fileFound;
         }
-        var timeline = XMLHandler.loadFile(timelineFile);
+        final var timeline = XMLHandler.loadFile(timelineFile);
         LOG.log(Level.FINE, "Project created: {0}", new Object[]{timeline});
         return timeline;
     }

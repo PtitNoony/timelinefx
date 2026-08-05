@@ -14,14 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * The side of an element an anchor attaches to.
  *
  * @author hamon
  */
 public enum AnchorSide {
 
+    /**
+     * The four cardinal sides, or no anchoring.
+     */
     TOP, BOTTOM, LEFT, RIGHT, NONE
 
 }

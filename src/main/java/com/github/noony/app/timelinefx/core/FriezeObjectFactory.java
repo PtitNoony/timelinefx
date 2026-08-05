@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Utility entry point for resetting all the object factories in the {@code core} package at once.
  *
  * @author arnaud
  */
-public class FriezeObjectFactory {
+public final class FriezeObjectFactory {
 
 
     private FriezeObjectFactory() {

@@ -14,25 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
 
 /**
+ * A picture that belongs to a project (as opposed to a portrait).
  *
  * @author hamon
  */
 public class Picture extends AbstractPicture {
 
+    /**
+     * The project this picture belongs to.
+     */
     private final TimeLineProject project;
 
-    protected Picture(TimeLineProject aProject, long id, String pictureName, LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    protected Picture(final TimeLineProject aProject, final long id, final String pictureName, LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         super(id, pictureName, picturePath, pictureWidth, pictureHeight, pictureCreationDate);
         project = aProject;
     }
 
-    @Override
-    public TimeLineProject getProject() {
+    @Override public TimeLineProject getProject() {
         return project;
     }
 

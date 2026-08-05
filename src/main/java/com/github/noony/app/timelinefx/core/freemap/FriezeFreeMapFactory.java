@@ -65,14 +65,27 @@ public class FriezeFreeMapFactory {
         return friezeFreeMap;
     }
 
-    public static FriezeFreeMap createFriezeFreeMap(long anID, Frieze aFrieze, FriezeFreeMapProperties properties,
+    /**
+     * Creates a {@link FriezeFreeMap} with a fully specified content, as used when restoring one from a
+     * saved project.
+     *
+     * @param anID the id to assign to the new free map
+     * @param aFrieze the frieze the free map belongs to
+     * @param properties the free map's layout properties
+     * @param dateHandles the date handles to restore
+     * @param persons the persons to restore
+     * @param places the places to restore
+     * @param stays the stays to restore
+     * @return the created free map
+     */
+    public static FriezeFreeMap createFriezeFreeMap(final long anID, final Frieze aFrieze, final FriezeFreeMapProperties properties,
             List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
         //
         if (!FACTORY.isIdAvailable(anID)) {
             throw new IllegalArgumentException("Trying to create a friezeFreeMap with existing id=" + anID);
         }
         LOG.log(Level.WARNING, "Creating a friezeFreeMap (id={0} with Frieze={1} with its full content.", new Object[]{anID, aFrieze});
-        var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, properties, dateHandles, persons, places, stays, false);
+        final var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, properties, dateHandles, persons, places, stays, false);
         FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
     }

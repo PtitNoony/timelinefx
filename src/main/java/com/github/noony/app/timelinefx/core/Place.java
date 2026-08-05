@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -27,35 +28,80 @@ import java.util.logging.Logger;
 import javafx.scene.paint.Color;
 
 /**
+ * A named location, optionally nested under a parent place (e.g. a town within a country).
  *
  * @author hamon
  */
 public final class Place implements FriezeObject {
 
+    /**
+     * Name of the property change event fired when this place's selection changes.
+     */
     public static final String SELECTION_CHANGED = "selectionChanged";
+    /**
+     * Name of the property change event fired when this place's content (name, level, color, parent) changes.
+     */
     public static final String CONTENT_CHANGED = "contentChanged";
 
+    /**
+     * The color assigned to a place when none is specified.
+     */
     public static final Color DEFAULT_COLOR = Color.GREY;
 
+    /**
+     * Orders places by name.
+     */
     public static final Comparator<Place> COMPARATOR = Comparator.comparing(Place::getName);
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
     private final Long id;
+    /**
+     * The places directly nested under this one.
+     */
     private final List<Place> places;
+
+    /**
+     * This place's display name.
+     */
     private String name;
+
+    /**
+     * This place's parent, or null for a root place.
+     */
     private Place parent;
+
+    /**
+     * This place's nesting level.
+     */
     private PlaceLevel level;
+
+    /**
+     * Whether this place has no parent (or its parent is the implicit root place).
+     */
     private boolean isRootPlace;
 
+    /**
+     * Support object used to fire property change events.
+     */
     private final PropertyChangeSupport propertyChangeSupport;
 
     // where to split into an HCI comp ?
+    /**
+     * This place's display color.
+     */
     private Color color;
+
+    /**
+     * Whether this place is currently selected.
+     */
     private boolean selected;
     //
 
-    protected Place(long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace, Color aColor) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, Place parentPlace, Color aColor) {
         id = placeId;
         name = placeName;
         parent = parentPlace;
@@ -74,42 +120,60 @@ public final class Place implements FriezeObject {
         }
     }
 
-    protected Place(long placeId, String placeName, PlaceLevel placeLevel, Place parentPlace) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, Place parentPlace) {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    /**
+     * @param listener the listener to add
+     */
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    public void setSelected(boolean isSelected) {
-        var update = selected != isSelected;
+    /**
+     * @param isSelected whether this place is now selected
+     */
+    public void setSelected(final boolean isSelected) {
+        final var update = selected != isSelected;
         selected = isSelected;
         if (update) {
             propertyChangeSupport.firePropertyChange(SELECTION_CHANGED, null, selected);
         }
     }
 
+    /**
+     * @return this place's name
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String aName) {
+    /**
+     * @param aName this place's new name
+     */
+    public void setName(final String aName) {
         name = aName;
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }
 
+    /**
+     * @return this place's nesting level
+     */
     public PlaceLevel getLevel() {
         return level;
     }
 
-    public boolean setLevel(PlaceLevel aLevel) {
-        boolean placeConflict = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
+    /**
+     * @param aLevel this place's new nesting level
+     * @return true if the level was set, false if it conflicts with a child place's level
+     */
+    public boolean setLevel(final PlaceLevel aLevel) {
+        final boolean placeConflict = places.stream().anyMatch(p -> p.getLevel().getLevelValue() >= aLevel.getLevelValue());
         if (placeConflict) {
             LOG.log(Level.SEVERE, "New level cannot be set because of children levels : {0}", new Object[]{aLevel});
             return false;
@@ -119,16 +183,25 @@ public final class Place implements FriezeObject {
         return true;
     }
 
+    /**
+     * @return whether this place has no parent (or its parent is the implicit root place)
+     */
     public boolean isRootPlace() {
         return isRootPlace;
     }
 
+    /**
+     * @return this place's parent, or null for a root place
+     */
     public Place getParent() {
         return parent;
     }
 
-    public void setParent(Place aParentPlace) {
-        Place oldParent = parent;
+    /**
+     * @param aParentPlace this place's new parent
+     */
+    public void setParent(final Place aParentPlace) {
+        final Place oldParent = parent;
         parent = aParentPlace;
         isRootPlace = parent == null || PlaceFactory.PLACES_PLACE.equals(parent);
         if (oldParent != null && oldParent != parent) {
@@ -140,6 +213,9 @@ public final class Place implements FriezeObject {
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }
 
+    /**
+     * @return an unmodifiable list of the places directly nested under this one
+     */
     public List<Place> getPlaces() {
         return Collections.unmodifiableList(places);
     }
@@ -154,17 +230,27 @@ public final class Place implements FriezeObject {
         }
     }
 
-    public boolean removePlace(Place place) {
-        boolean result = places.remove(place);
+    /**
+     * @param place the place to remove
+     * @return true if the place was removed, false if it wasn't a direct child of this one
+     */
+    public boolean removePlace(final Place place) {
+        final boolean result = places.remove(place);
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
         return result;
     }
 
+    /**
+     * @return this place's display color
+     */
     public Color getColor() {
         return color;
     }
 
-    public void setColor(Color aColor) {
+    /**
+     * @param aColor this place's new display color
+     */
+    public void setColor(final Color aColor) {
         color = aColor;
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }
@@ -174,6 +260,9 @@ public final class Place implements FriezeObject {
         return name;
     }
 
+    /**
+     * @return whether this place is currently selected
+     */
     public boolean isSelected() {
         return selected;
     }

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
@@ -25,49 +26,62 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * A person's portrait picture. Unlike a {@link Picture}, a portrait always belongs to exactly one person.
  *
  * @author hamon
  */
 public class Portrait extends AbstractPicture {
 
+    /**
+     * Orders portraits by id.
+     */
     public static final Comparator<Portrait> COMPARATOR = Comparator.comparingLong(FriezeObject::getId);
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * The person this portrait belongs to.
+     */
     private final Person person;
+
+    /**
+     * Single-element list containing {@link #person}, returned by {@link #getPersons()}.
+     */
     private final ArrayList<Person> persons;
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, long aTimestamp) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, long aTimestamp) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aTimestamp);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aDate);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(long aPortraitID, Person aPerson, String aFilePath, int aWidth, int aHeight) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight) {
         this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
     }
 
-    @Override
-    public List<Person> getPersons() {
+    @Override public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
     }
 
     @Override
-    public boolean addPerson(Person aPerson) {
+    public boolean addPerson(final Person aPerson) {
         LOG.log(Level.INFO, "No person can be added to a portrait. ({0}, {1})", new Object[]{this, aPerson});
         return false;
     }
 
     @Override
-    public boolean removePerson(Person aPerson) {
+    public boolean removePerson(final Person aPerson) {
         LOG.log(Level.INFO, "No person can be removed from a portrait. ({0}, {1})", new Object[]{this, aPerson});
         return false;
     }
@@ -78,7 +92,7 @@ public class Portrait extends AbstractPicture {
     }
 
     @Override
-    public int compareTo(IFileObject other) {
+    public int compareTo(final IFileObject other) {
         if (other == null) {
             return 1;
         } else if (other instanceof Portrait portrait) {
@@ -87,17 +101,20 @@ public class Portrait extends AbstractPicture {
         return getAbsolutePath().compareTo(other.getAbsolutePath());
     }
 
+    /**
+     * @return the person this portrait belongs to
+     */
     public Person getPerson() {
         return person;
     }
 
     @Override
-    public boolean addPlace(Place aPlace) {
+    public boolean addPlace(final Place aPlace) {
         return false;
     }
 
     @Override
-    public boolean removePlace(Place aPlace) {
+    public boolean removePlace(final Place aPlace) {
         return false;
     }
 

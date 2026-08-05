@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.utils.MathUtils;
@@ -30,31 +31,73 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Base implementation shared by {@link Picture} and {@link Portrait}.
  *
  * @author hamon
  */
 public abstract class AbstractPicture implements IPicture {
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Support object used to fire property change events.
+     */
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final Long id;
 
+    /**
+     * The persons appearing on this picture.
+     */
     private final List<Person> persons;
+
+    /**
+     * The places appearing on this picture.
+     */
     private final List<Place> places;
+
+    /**
+     * The picture file's path, relative to the project.
+     */
     private final String filePath;
+
+    /**
+     * The picture's width.
+     */
     private final int width;
+
+    /**
+     * The picture's height.
+     */
     private final int height;
     //
+
+    /**
+     * The picture's display name.
+     */
     private String name;
     //
+
+    /**
+     * Whether {@link #date} or {@link #timestamp} holds this picture's time value.
+     */
     private TimeFormat timeFormat;
+
+    /**
+     * This picture's raw numeric time value, used when {@link #timeFormat} is {@code TIME_MIN}.
+     */
     private double timestamp;
+
+    /**
+     * This picture's calendar date value, used when {@link #timeFormat} is {@code LOCAL_TIME}.
+     */
     private LocalDate date;
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected AbstractPicture(final long anID, final String aName, final String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
@@ -71,7 +114,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(long anID, String aName, String aFilePath, int aWidth, int aHeight, double aTimestamp) {
+    protected AbstractPicture(final long anID, final String aName, final String aFilePath, int aWidth, int aHeight, double aTimestamp) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
@@ -87,8 +130,7 @@ public abstract class AbstractPicture implements IPicture {
         name = aName;
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 
@@ -98,7 +140,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void setName(String aName) {
+    public void setName(final String aName) {
         if (!Objects.equals(aName, name)) {
             name = aName;
             propertyChangeSupport.firePropertyChange(NAME_CHANGED, null, name);
@@ -111,7 +153,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public boolean addPerson(Person aPerson) {
+    public boolean addPerson(final Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
             propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
@@ -121,7 +163,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public boolean removePerson(Person aPerson) {
+    public boolean removePerson(final Person aPerson) {
         if (persons.contains(aPerson)) {
             persons.remove(aPerson);
             propertyChangeSupport.firePropertyChange(PERSON_REMOVED, this, aPerson);
@@ -136,7 +178,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public boolean addPlace(Place aPlace) {
+    public boolean addPlace(final Place aPlace) {
         if (!places.contains(aPlace)) {
             places.add(aPlace);
             propertyChangeSupport.firePropertyChange(PLACE_ADDED, this, aPlace);
@@ -146,7 +188,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public boolean removePlace(Place aPlace) {
+    public boolean removePlace(final Place aPlace) {
         if (places.contains(aPlace)) {
             places.remove(aPlace);
             propertyChangeSupport.firePropertyChange(PLACE_REMOVED, this, aPlace);
@@ -171,7 +213,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void setTimeFormat(TimeFormat aTimeFormat) {
+    public void setTimeFormat(final TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
         switch (timeFormat) {
             case LOCAL_TIME ->
@@ -194,7 +236,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void setDate(LocalDate aDate) {
+    public void setDate(final LocalDate aDate) {
         if (aDate != null) {
             if (date != null && !date.equals(aDate)) {
                 date = aDate;
@@ -205,14 +247,14 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void setValue(String aTimeValue) {
+    public void setValue(final String aTimeValue) {
         if (aTimeValue == null) {
             return;
         }
         switch (timeFormat) {
             case LOCAL_TIME -> {
                 try {
-                    var newDate = LocalDate.parse(aTimeValue);
+                    final var newDate = LocalDate.parse(aTimeValue);
                     if (!newDate.isEqual(date)) {
                         date = newDate;
                         propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
@@ -235,7 +277,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void setTimestamp(double aTimestamp) {
+    public void setTimestamp(final double aTimestamp) {
         if (aTimestamp != timestamp) {
             timestamp = aTimestamp;
             timeFormat = TimeFormat.TIME_MIN;
@@ -244,7 +286,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void setDate(IDateObject aDateObject) {
+    public void setDate(final IDateObject aDateObject) {
         if (aDateObject == null) {
             return;
         }
@@ -303,24 +345,30 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    public void movePersonUp(Person aPerson) {
-        int index = persons.indexOf(aPerson);
+    /**
+     * @param aPerson the person to move up in the persons list
+     */
+    public void movePersonUp(final Person aPerson) {
+        final int index = persons.indexOf(aPerson);
         if (index > 0) {
             Collections.swap(persons, index, index - 1);
             propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
         }
     }
 
-    public void movePersonDown(Person aPerson) {
+    /**
+     * @param aPerson the person to move down in the persons list
+     */
+    public void movePersonDown(final Person aPerson) {
         int index = persons.indexOf(aPerson);
         if (index != 1 && index < persons.size() - 1) {
             Collections.swap(persons, index + 1, index);
@@ -329,11 +377,11 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @Override
-    public int compareTo(IFileObject other) {
+    public int compareTo(final IFileObject other) {
         if (other == null) {
             return 1;
         }
-        var timeComparison = Double.compare(getAbsoluteTime(), getAbsoluteTime());
+        final var timeComparison = Double.compare(getAbsoluteTime(), getAbsoluteTime());
         if (timeComparison != 0) {
             return timeComparison;
         }

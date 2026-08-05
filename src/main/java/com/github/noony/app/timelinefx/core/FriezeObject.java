@@ -14,14 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * Base contract for domain objects identified by a unique id within their project.
  *
  * @author hamon
  */
 public interface FriezeObject {
 
+    /**
+     * Value used for objects that have not been assigned a real id yet.
+     */
     long NO_ID = -1;
 
     /**

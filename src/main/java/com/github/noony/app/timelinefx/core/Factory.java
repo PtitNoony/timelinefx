@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Generic registry assigning unique ids to, and keeping track of, instances of {@code T}.
  *
  * @author hamon
  * @param <T> Any class implementing FriezeObject
@@ -35,11 +37,25 @@ public class Factory<T extends FriezeObject> {
      */
     public static final Level CREATION_LOGGING_LEVEL = Level.FINE;
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
+
+    /**
+     * Objects registered in this factory, keyed by id.
+     */
     private final Map<Long, T> objects = new HashMap<>();
     //
-    private long nextUniqueId = 0L;
 
+    /**
+     * The next id to be handed out by {@link #getNextID()}.
+     */
+    private long nextUniqueId;
+
+    /**
+     * Default constructor.
+     */
     public Factory() {
         // private utility constructor
     }
@@ -57,7 +73,7 @@ public class Factory<T extends FriezeObject> {
      *
      * @param object the object the be added
      */
-    public final void addObject(T object) {
+    public final void addObject(final T object) {
         if (objects.containsKey(object.getId())) {
             throw new IllegalStateException();
         }
@@ -71,7 +87,7 @@ public class Factory<T extends FriezeObject> {
      * @return the next available unique id
      */
     public final long getNextID() {
-        long result = nextUniqueId;
+        final long result = nextUniqueId;
         incrID();
         return result;
     }
@@ -81,7 +97,7 @@ public class Factory<T extends FriezeObject> {
      * @param id an id
      * @return the corresponding FriezeObject if it exists, null otherwise.
      */
-    public final T get(long id) {
+    public final T get(final long id) {
         return objects.get(id);
     }
 
@@ -90,10 +106,13 @@ public class Factory<T extends FriezeObject> {
      * @param id an id
      * @return whether the id is already used by an object.
      */
-    public final boolean isIdAvailable(long id) {
+    public final boolean isIdAvailable(final long id) {
         return !objects.containsKey(id);
     }
 
+    /**
+     * @return all the objects currently registered in this factory
+     */
     public List<T> getObjects() {
         return new ArrayList<>(objects.values());
     }

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.util.List;
@@ -30,35 +31,40 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * Name of the property change event for name change
      */
     String NAME_CHANGED = "pictureNameChanged";
+
     /**
      * Name of the property change event when a person is added
      */
     String PERSON_ADDED = "picturePersonAdded";
+
     /**
      * Name of the property change event when a person is removed
      */
     String PERSON_REMOVED = "picturePersonRemoved";
+
     /**
      * Name of the property change event when persons are reordered
      */
     String PERSONS_REORDED = "picturePersonsReordered";
+
     /**
      * Name of the property change event when a place is added
      */
     String PLACE_ADDED = "picturePlaceAdded";
+
     /**
      * Name of the property change event when a place is removed
      */
     String PLACE_REMOVED = "picturePlaceRemoved";
 
     /**
-     * Searches the various factories to find the corresponding object
+     * Searches the various factories to find the corresponding object.
      *
      * @param pictureID an object's id
      * @return the IPicture instance with the same id, null if none exists
      */
-    static IPicture getPicture(long pictureID) {
-        var picture = PictureFactory.getPicture(pictureID);
+    static IPicture getPicture(final long pictureID) {
+        final var picture = PictureFactory.getPicture(pictureID);
         if (picture != null) {
             return picture;
         }
@@ -66,12 +72,14 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     }
 
     /**
+     * Gets the persons on the picture.
      *
      * @return an unmodifiable list of the persons on the IPicture
      */
     List<Person> getPersons();
 
     /**
+     * Adds a person to the picture.
      *
      * @param aPerson the person to be added
      * @return true if the person was added successfully
@@ -79,6 +87,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     boolean addPerson(Person aPerson);
 
     /**
+     * Removes a person from the picture.
      *
      * @param aPerson the person to be removed
      * @return true if the person was removed successfully
@@ -86,12 +95,14 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     boolean removePerson(Person aPerson);
 
     /**
+     * Gets the places on the picture.
      *
      * @return the places on the IPicture
      */
     List<Place> getPlaces();
 
     /**
+     * Adds a place to the picture.
      *
      * @param aPlace the place to be added
      * @return true if the place was added successfully
@@ -99,6 +110,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     boolean addPlace(Place aPlace);
 
     /**
+     * Removes a place from the picture.
      *
      * @param aPlace the place to be removed
      * @return true if the place was removed successfully

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
@@ -22,20 +23,49 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * A named point in time, optionally associated with persons and places.
  *
  * @author hamon
  */
 public class Event {
 
+    /**
+     * The event's name.
+     */
     private final String name;
+
+    /**
+     * The persons associated with this event.
+     */
     private final List<Person> persons;
+
+    /**
+     * The places associated with this event.
+     */
     private final List<Place> places;
 
+    /**
+     * Whether {@link #localDate} or {@link #date} holds this event's time value.
+     */
     private final TimeFormat timeFormat;
+
+    /**
+     * This event's calendar date value, or null when {@link #timeFormat} is {@code TIME_MIN}.
+     */
     private final LocalDate localDate;
+
+    /**
+     * This event's raw numeric time value.
+     */
     private final long date;
 
-    public Event(String eventName, long aDate) {
+    /**
+     * Creates an event with a raw numeric time value.
+     *
+     * @param eventName the event's name
+     * @param aDate the event's time value
+     */
+    public Event(final String eventName, final long aDate) {
         name = eventName;
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -44,7 +74,13 @@ public class Event {
         timeFormat = TimeFormat.TIME_MIN;
     }
 
-    public Event(String eventName, LocalDate aDate) {
+    /**
+     * Creates an event with a calendar date.
+     *
+     * @param eventName the event's name
+     * @param aDate the event's date
+     */
+    public Event(final String eventName, final LocalDate aDate) {
         name = eventName;
         persons = new LinkedList<>();
         places = new LinkedList<>();
@@ -53,26 +89,44 @@ public class Event {
         timeFormat = TimeFormat.LOCAL_TIME;
     }
 
+    /**
+     * @return this event's raw numeric time value
+     */
     public long getDate() {
         return date;
     }
 
+    /**
+     * @return this event's name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return this event's time format
+     */
     public TimeFormat getTimeFormat() {
         return timeFormat;
     }
 
+    /**
+     * @return this event's calendar date value, or null if it uses a raw numeric time value
+     */
     public LocalDate getLocalDate() {
         return localDate;
     }
 
+    /**
+     * @return an unmodifiable list of the persons associated with this event
+     */
     public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
     }
 
+    /**
+     * @return an unmodifiable list of the places associated with this event
+     */
     public List<Place> getPlaces() {
         return Collections.unmodifiableList(places);
     }

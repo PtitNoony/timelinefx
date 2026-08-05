@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import java.util.HashMap;
@@ -26,14 +27,27 @@ import javafx.geometry.Dimension2D;
  * and {@link #fromParameterMap(Map, FriezeFreeMapProperties)} keep it interoperable with the existing XML
  * save/load format, which still stores each attribute as a named string parameter.
  *
+ * @param dimension the free map's overall width/height
+ * @param personWidth the width reserved for the persons column
+ * @param placeNameWidth the width reserved for place names
+ * @param fontSize the font size used to draw place/person names
+ * @param plotSeparation the spacing between plots on a place
+ * @param plotSize the size of a single plot
+ * @param plotVisibility whether plots are drawn
+ * @param portraitConnectorVisibility whether portrait connectors are drawn
+ * @param portraitRadius the radius of a person's portrait
  * @author hamon
  */
 public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth, double placeNameWidth,
         double fontSize, double plotSeparation, double plotSize, boolean plotVisibility,
         boolean portraitConnectorVisibility, double portraitRadius) {
 
+    /**
+     * @return this instance's attributes as a {@code Map<String, String>}, keyed by
+     * {@link FriezeFreeMap}'s parameter name constants, for XML persistence.
+     */
     public Map<String, String> toParameterMap() {
-        var parameters = new HashMap<String, String>();
+        final var parameters = new HashMap<String, String>();
         parameters.put(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(dimension.getWidth()));
         parameters.put(FriezeFreeMap.FRIEZE_HEIGHT, Double.toString(dimension.getHeight()));
         parameters.put(FriezeFreeMap.PERSONS_WIDTH, Double.toString(personWidth));
@@ -47,17 +61,24 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
         return parameters;
     }
 
-    public static FriezeFreeMapProperties fromParameterMap(Map<String, String> parameters, FriezeFreeMapProperties defaults) {
-        var width = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(defaults.dimension().getWidth())));
-        var height = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_HEIGHT, Double.toString(defaults.dimension().getHeight())));
-        var personWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PERSONS_WIDTH, Double.toString(defaults.personWidth())));
-        var placeNameWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLACE_NAMES_WIDTH, Double.toString(defaults.placeNameWidth())));
-        var fontSizeValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FONT_SIZE, Double.toString(defaults.fontSize())));
-        var plotSeparationValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLOT_SEPARATION, Double.toString(defaults.plotSeparation())));
-        var plotSizeValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLOT_SIZE, Double.toString(defaults.plotSize())));
-        var plotVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PLOT_VISIBILITY, Boolean.toString(defaults.plotVisibility())));
-        var portraitConnectorVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(defaults.portraitConnectorVisibility())));
-        var portraitRadiusValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_RADIUS, Double.toString(defaults.portraitRadius())));
+    /**
+     * @param parameters a {@code Map<String, String>} as produced by {@link #toParameterMap()}, possibly
+     * missing some keys
+     * @param defaults the values to fall back to for any key missing from {@code parameters}
+     * @return a new instance parsed from {@code parameters}, defaulting missing/unparseable keys to
+     * {@code defaults}
+     */
+    public static FriezeFreeMapProperties fromParameterMap(final Map<String, String> parameters, final FriezeFreeMapProperties defaults) {
+        final var width = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(defaults.dimension().getWidth())));
+        final var height = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_HEIGHT, Double.toString(defaults.dimension().getHeight())));
+        final var personWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PERSONS_WIDTH, Double.toString(defaults.personWidth())));
+        final var placeNameWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLACE_NAMES_WIDTH, Double.toString(defaults.placeNameWidth())));
+        final var fontSizeValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FONT_SIZE, Double.toString(defaults.fontSize())));
+        final var plotSeparationValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLOT_SEPARATION, Double.toString(defaults.plotSeparation())));
+        final var plotSizeValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLOT_SIZE, Double.toString(defaults.plotSize())));
+        final var plotVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PLOT_VISIBILITY, Boolean.toString(defaults.plotVisibility())));
+        final var portraitConnectorVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(defaults.portraitConnectorVisibility())));
+        final var portraitRadiusValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_RADIUS, Double.toString(defaults.portraitRadius())));
         return new FriezeFreeMapProperties(new Dimension2D(width, height), personWidthValue, placeNameWidthValue,
                 fontSizeValue, plotSeparationValue, plotSizeValue, plotVisibilityValue, portraitConnectorVisibilityValue,
                 portraitRadiusValue);

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -21,13 +22,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * Contract for objects holding a date/time value that can be represented either as a
+ * calendar date or as a raw numeric timestamp.
  *
  * @author hamon
  */
 public interface IDateObject {
 
+    /**
+     * Formatter used to parse/format {@link #DEFAULT_DATE_FORMATTER}-style dates.
+     */
     DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
 
+    /**
+     * Formatter used to parse/format date-time values.
+     */
     DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
@@ -104,15 +113,15 @@ public interface IDateObject {
 
     /**
      * PropertyChangeListener to be added
-     * 
-     * @param listener
+     *
+     * @param listener the listener to add
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * PropertyChangeListener to be removed
-     * 
-     * @param listener
+     *
+     * @param listener the listener to remove
      */
     void removePropertyChangeListener(PropertyChangeListener listener);
 }

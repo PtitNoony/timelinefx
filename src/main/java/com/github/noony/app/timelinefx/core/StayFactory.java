@@ -14,70 +14,123 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 import java.time.LocalDate;
 import java.util.logging.Logger;
+import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
+ * Entry point for creating and retrieving {@link StayPeriod} instances.
  *
  * @author hamon
  */
 public final class StayFactory {
 
+    /**
+     * Logger used by this factory.
+     */
     private static final Logger LOG = Logger.getGlobal();
-//    private static final Map<Long, StayPeriod> STAY_PERIOD_SIMPLE_TIMES = new HashMap<>();
-//    private static final Map<Long, StayPeriod> STAY_PERIOD_LOCAL_DATES = new HashMap<>();
+    //    private static final Map<Long, StayPeriod> STAY_PERIOD_SIMPLE_TIMES = new HashMap<>();
+    //    private static final Map<Long, StayPeriod> STAY_PERIOD_LOCAL_DATES = new HashMap<>();
 
 
+    /**
+     * Registry of created stays.
+     */
     private static final Factory<StayPeriod> FACTORY = new Factory<>();
 
     private StayFactory() {
         // private utility constructor
     }
 
+    /**
+     * Resets the factory, discarding all created stays.
+     */
     public static void reset() {
         FACTORY.reset();
-//        STAY_PERIOD_SIMPLE_TIMES.clear();
-//        STAY_PERIOD_LOCAL_DATES.clear();
+        //        STAY_PERIOD_SIMPLE_TIMES.clear();
+        //        STAY_PERIOD_LOCAL_DATES.clear();
     }
 
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(Person person, double startDate, double endDate, Place aPlace) {
+    /**
+     * Creates a new stay with numeric start/end times.
+     *
+     * @param person the person staying
+     * @param startDate the stay's start time
+     * @param endDate the stay's end time
+     * @param aPlace the place stayed at
+     * @return the created stay
+     */
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final Person person, final double startDate, final double endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
-        var stay = new StayPeriodSimpleTime(FACTORY.getNextID(), person, startDate, endDate, aPlace);
+        final var stay = new StayPeriodSimpleTime(FACTORY.getNextID(), person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
         return stay;
     }
 
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(long id, Person person, double startDate, double endDate, Place aPlace) {
+    /**
+     * Creates a new stay with numeric start/end times and a specific id.
+     *
+     * @param id the id to assign to the new stay
+     * @param person the person staying
+     * @param startDate the stay's start time
+     * @param endDate the stay's end time
+     * @param aPlace the place stayed at
+     * @return the created stay
+     */
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final long id, final Person person, final double startDate, double endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " from " + startDate + " to " + endDate + " with existing id=" + id + " (exists : " + id + ")");
         }
-        var stay = new StayPeriodSimpleTime(id, person, startDate, endDate, aPlace);
+        final var stay = new StayPeriodSimpleTime(id, person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
         return stay;
     }
 
-    public static StayPeriodLocalDate createStayPeriodLocalDate(Person person, LocalDate startDate, LocalDate endDate, Place aPlace) {
+    /**
+     * Creates a new stay with calendar start/end dates.
+     *
+     * @param person the person staying
+     * @param startDate the stay's start date
+     * @param endDate the stay's end date
+     * @param aPlace the place stayed at
+     * @return the created stay
+     */
+    public static StayPeriodLocalDate createStayPeriodLocalDate(final Person person, final LocalDate startDate, final LocalDate endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
-        var stay = new StayPeriodLocalDate(FACTORY.getNextID(), person, startDate, endDate, aPlace);
+        final var stay = new StayPeriodLocalDate(FACTORY.getNextID(), person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
         return stay;
     }
 
-    public static StayPeriodLocalDate createStayPeriodLocalDate(long id, Person person, LocalDate startDate, LocalDate endDate, Place aPlace) {
+    /**
+     * Creates a new stay with calendar start/end dates and a specific id.
+     *
+     * @param id the id to assign to the new stay
+     * @param person the person staying
+     * @param startDate the stay's start date
+     * @param endDate the stay's end date
+     * @param aPlace the place stayed at
+     * @return the created stay
+     */
+    public static StayPeriodLocalDate createStayPeriodLocalDate(final long id, final Person person, final LocalDate startDate, LocalDate endDate, Place aPlace) {
         LOG.log(CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " with existing id=" + id + " (exists : " + FACTORY.get(id).getDisplayString() + ")");
         }
-        var stay = new StayPeriodLocalDate(id, person, startDate, endDate, aPlace);
+        final var stay = new StayPeriodLocalDate(id, person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
         return stay;
     }
 
-    public static StayPeriod getStay(long id) {
+    /**
+     * @param id a stay's id
+     * @return the stay with the given id, or null if none exists
+     */
+    public static StayPeriod getStay(final long id) {
         return FACTORY.get(id);
     }
 

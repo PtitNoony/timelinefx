@@ -14,20 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * A {@link StayPeriod} whose start/end times are represented as raw numeric values.
  *
  * @author hamon
  */
 public class StayPeriodSimpleTime extends StayPeriod {
 
+    /**
+     * The start time before the last change, used to fire change notifications.
+     */
     private double previousStartTime;
+
+    /**
+     * The end time before the last change, used to fire change notifications.
+     */
     private double previousEndTime;
+
+    /**
+     * The stay's start time.
+     */
     private double startTime;
+
+    /**
+     * The stay's end time.
+     */
     private double endTime;
 
-    protected StayPeriodSimpleTime(Long anId, Person aPerson, double aStartTime, double anEndTime, Place aPlace) {
+    protected StayPeriodSimpleTime(final Long anId, final Person aPerson, final double aStartTime, double anEndTime, Place aPlace) {
         super(anId, aPerson, aPlace);
         previousStartTime = aStartTime;
         previousEndTime = anEndTime;
@@ -35,8 +52,7 @@ public class StayPeriodSimpleTime extends StayPeriod {
         endTime = anEndTime;
     }
 
-    @Override
-    public double getPreviousStartDate() {
+    @Override public double getPreviousStartDate() {
         return previousStartTime;
     }
 
@@ -55,7 +71,10 @@ public class StayPeriodSimpleTime extends StayPeriod {
         return endTime;
     }
 
-    public void setStartDate(double aStartDate) {
+    /**
+     * @param aStartDate the stay's new start time
+     */
+    public void setStartDate(final double aStartDate) {
         if (startTime != aStartDate) {
             previousStartTime = startTime;
             startTime = aStartDate;
@@ -63,7 +82,10 @@ public class StayPeriodSimpleTime extends StayPeriod {
         }
     }
 
-    public void setEndDate(double aEndDate) {
+    /**
+     * @param aEndDate the stay's new end time
+     */
+    public void setEndDate(final double aEndDate) {
         if (endTime != aEndDate) {
             previousEndTime = endTime;
             endTime = aEndDate;

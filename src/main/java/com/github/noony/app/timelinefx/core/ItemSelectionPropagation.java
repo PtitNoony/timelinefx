@@ -14,12 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * How selecting an item should propagate to its related items.
  *
  * @author hamon
  */
 public enum ItemSelectionPropagation {
+    /**
+     * Selection does not propagate, or propagates to related items.
+     */
     NONE, RECURSIVE
 }

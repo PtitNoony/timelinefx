@@ -14,14 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 /**
+ * How a date/time value is represented: as a calendar date or as a raw numeric value.
  *
  * @author arnaud
  */
 public enum TimeFormat {
-    
+
+    /**
+     * A calendar {@code LocalDate}, or a raw numeric time value.
+     */
     LOCAL_TIME, TIME_MIN
-    
+
 }

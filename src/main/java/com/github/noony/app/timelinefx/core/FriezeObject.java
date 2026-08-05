@@ -27,12 +27,12 @@ public interface FriezeObject {
     /**
      * Value used for objects that have not been assigned a real id yet.
      */
-    final long NO_ID = -1;
+    long NO_ID = -1;
 
     /**
      * Each IFriezeObject instance has a unique id in its project's scope
      *
      * @return the object unique ID
      */
-    abstract long getId();
+    long getId();
 }

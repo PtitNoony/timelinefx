@@ -28,11 +28,11 @@ public interface IDrawableObject {
      *
      * @return the object's width
      */
-    abstract double getWidth();
+    double getWidth();
 
     /**
      *
      * @return the object's height
      */
-    abstract double getHeight();
+    double getHeight();
 }

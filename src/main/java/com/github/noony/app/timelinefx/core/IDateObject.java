@@ -32,96 +32,96 @@ public interface IDateObject {
     /**
      * Formatter used to parse/format {@link #DEFAULT_DATE_FORMATTER}-style dates.
      */
-    final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
+    DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
 
     /**
      * Formatter used to parse/format date-time values.
      */
-    final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
+    DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
      * The default time stamp
      */
-    final long DEFAULT_TIMESTAMP = 0;
+    long DEFAULT_TIMESTAMP = 0;
 
     /**
      * Name of the property change event for date change
      */
-    final String DATE_CHANGED = "pictureDateChanged";
+    String DATE_CHANGED = "pictureDateChanged";
 
     /**
      *
      * @return the TimeFormat used by the instance
      */
-    abstract TimeFormat getTimeFormat();
+    TimeFormat getTimeFormat();
 
     /**
      *
      * @param aTimeFormat the new time format to be used by the instance
      */
-    abstract void setTimeFormat(TimeFormat aTimeFormat);
+    void setTimeFormat(TimeFormat aTimeFormat);
 
     /**
      *
      * @return the instance date value, or null if not set or if the time format is
      *         not compatible
      */
-    abstract LocalDate getDate();
+    LocalDate getDate();
 
     /**
      *
      * @return the instance time stamp
      */
-    abstract double getTimestamp();
+    double getTimestamp();
 
     /**
      *
      * @param aTimeValue updates the time value based on the input parameter
      */
-    abstract void setValue(String aTimeValue);
+    void setValue(String aTimeValue);
 
     /**
      *
      * @param aDate the instance's new date value
      */
-    abstract void setDate(LocalDate aDate);
+    void setDate(LocalDate aDate);
 
     /**
      *
      * @param aTimestamp the instance new time stamp
      */
-    abstract void setTimestamp(double aTimestamp);
+    void setTimestamp(double aTimestamp);
 
     /**
      *
      * @param aDateObject the date object containing the date to be retreived
      */
-    abstract void setDate(IDateObject aDateObject);
+    void setDate(IDateObject aDateObject);
 
     /**
      *
      * @return an absolute time value to compare dateObjects no matter their time
      *         format
      */
-    abstract double getAbsoluteTime();
+    double getAbsoluteTime();
 
     /**
      *
      * @return a string representation of the time no matter the time format
      */
-    abstract String getAbsoluteTimeAsString();
+    String getAbsoluteTimeAsString();
 
     /**
      * PropertyChangeListener to be added
      *
      * @param listener the listener to add
      */
-    abstract void addPropertyChangeListener(PropertyChangeListener listener);
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * PropertyChangeListener to be removed
      *
      * @param listener the listener to remove
      */
-    abstract void removePropertyChangeListener(PropertyChangeListener listener);
+    void removePropertyChangeListener(PropertyChangeListener listener);
 }

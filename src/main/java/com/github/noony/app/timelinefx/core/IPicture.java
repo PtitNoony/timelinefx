@@ -30,32 +30,32 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
     /**
      * Name of the property change event for name change
      */
-    final String NAME_CHANGED = "pictureNameChanged";
+    String NAME_CHANGED = "pictureNameChanged";
 
     /**
      * Name of the property change event when a person is added
      */
-    final String PERSON_ADDED = "picturePersonAdded";
+    String PERSON_ADDED = "picturePersonAdded";
 
     /**
      * Name of the property change event when a person is removed
      */
-    final String PERSON_REMOVED = "picturePersonRemoved";
+    String PERSON_REMOVED = "picturePersonRemoved";
 
     /**
      * Name of the property change event when persons are reordered
      */
-    final String PERSONS_REORDED = "picturePersonsReordered";
+    String PERSONS_REORDED = "picturePersonsReordered";
 
     /**
      * Name of the property change event when a place is added
      */
-    final String PLACE_ADDED = "picturePlaceAdded";
+    String PLACE_ADDED = "picturePlaceAdded";
 
     /**
      * Name of the property change event when a place is removed
      */
-    final String PLACE_REMOVED = "picturePlaceRemoved";
+    String PLACE_REMOVED = "picturePlaceRemoved";
 
     /**
      * Searches the various factories to find the corresponding object.
@@ -63,7 +63,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * @param pictureID an object's id
      * @return the IPicture instance with the same id, null if none exists
      */
-    public static IPicture getPicture(final long pictureID) {
+    static IPicture getPicture(final long pictureID) {
         final var picture = PictureFactory.getPicture(pictureID);
         if (picture != null) {
             return picture;
@@ -76,7 +76,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      *
      * @return an unmodifiable list of the persons on the IPicture
      */
-    abstract List<Person> getPersons();
+    List<Person> getPersons();
 
     /**
      * Adds a person to the picture.
@@ -84,7 +84,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * @param aPerson the person to be added
      * @return true if the person was added successfully
      */
-    abstract boolean addPerson(Person aPerson);
+    boolean addPerson(Person aPerson);
 
     /**
      * Removes a person from the picture.
@@ -92,14 +92,14 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * @param aPerson the person to be removed
      * @return true if the person was removed successfully
      */
-    abstract boolean removePerson(Person aPerson);
+    boolean removePerson(Person aPerson);
 
     /**
      * Gets the places on the picture.
      *
      * @return the places on the IPicture
      */
-    abstract List<Place> getPlaces();
+    List<Place> getPlaces();
 
     /**
      * Adds a place to the picture.
@@ -107,7 +107,7 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * @param aPlace the place to be added
      * @return true if the place was added successfully
      */
-    abstract boolean addPlace(Place aPlace);
+    boolean addPlace(Place aPlace);
 
     /**
      * Removes a place from the picture.
@@ -115,6 +115,6 @@ public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
      * @param aPlace the place to be removed
      * @return true if the place was removed successfully
      */
-    abstract boolean removePlace(Place aPlace);
+    boolean removePlace(Place aPlace);
 
 }

@@ -33,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FriezeFreeMapPropertiesTest {
 
+    private static final double CUSTOM_FONT_SIZE = 99.0;
+
     /**
      * Default constructor.
      */
@@ -54,9 +56,9 @@ public class FriezeFreeMapPropertiesTest {
     @Test public void testFromParameterMapUsesDefaultsForMissingKeys() {
         final var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
         final Map<String, String> partialParameters = new HashMap<>();
-        partialParameters.put(FriezeFreeMap.FONT_SIZE, "99.0");
+        partialParameters.put(FriezeFreeMap.FONT_SIZE, Double.toString(CUSTOM_FONT_SIZE));
         final var properties = FriezeFreeMapProperties.fromParameterMap(partialParameters, defaults);
-        assertEquals(99.0, properties.fontSize());
+        assertEquals(CUSTOM_FONT_SIZE, properties.fontSize());
         assertEquals(defaults.personWidth(), properties.personWidth());
         assertEquals(defaults.plotSeparation(), properties.plotSeparation());
         assertEquals(defaults.portraitRadius(), properties.portraitRadius());

@@ -203,8 +203,7 @@ public final class Person implements FriezeObject {
         this(aProject, personId, personName, DEFAULT_COLOR, 0, 0);
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 

@@ -36,8 +36,7 @@ public class Picture extends AbstractPicture {
         project = aProject;
     }
 
-    @Override
-    public TimeLineProject getProject() {
+    @Override public TimeLineProject getProject() {
         return project;
     }
 

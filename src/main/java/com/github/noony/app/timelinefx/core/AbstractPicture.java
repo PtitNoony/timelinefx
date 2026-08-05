@@ -130,8 +130,7 @@ public abstract class AbstractPicture implements IPicture {
         name = aName;
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 

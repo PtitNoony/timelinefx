@@ -104,8 +104,7 @@ public final class DateObject implements IDateObject {
         }
     }
 
-    @Override
-    public TimeFormat getTimeFormat() {
+    @Override public TimeFormat getTimeFormat() {
         return timeFormat;
     }
 

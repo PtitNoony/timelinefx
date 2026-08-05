@@ -54,8 +54,7 @@ public class StayPeriodLocalDate extends StayPeriod {
         endDate = anEndDate;
     }
 
-    @Override
-    public double getPreviousStartDate() {
+    @Override public double getPreviousStartDate() {
         return previousStartDate.toEpochDay();
     }
 

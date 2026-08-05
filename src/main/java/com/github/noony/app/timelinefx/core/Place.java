@@ -124,8 +124,7 @@ public final class Place implements FriezeObject {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 

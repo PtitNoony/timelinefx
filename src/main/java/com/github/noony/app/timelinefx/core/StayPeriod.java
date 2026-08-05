@@ -79,8 +79,7 @@ public abstract class StayPeriod implements FriezeObject {
         place = aPlace;
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 

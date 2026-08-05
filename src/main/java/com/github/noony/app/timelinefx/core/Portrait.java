@@ -70,8 +70,7 @@ public class Portrait extends AbstractPicture {
         this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
     }
 
-    @Override
-    public List<Person> getPersons() {
+    @Override public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
     }
 

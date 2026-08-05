@@ -42,8 +42,7 @@ public class FriezeFreeMapPropertiesTest {
     /**
      * Test that DEFAULT_PROPERTIES survives a round-trip through toParameterMap/fromParameterMap.
      */
-    @Test
-    public void testParameterMapRoundTrip() {
+    @Test public void testParameterMapRoundTrip() {
         final var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
         final var roundTripped = FriezeFreeMapProperties.fromParameterMap(defaults.toParameterMap(), defaults);
         assertEquals(defaults, roundTripped);
@@ -52,8 +51,7 @@ public class FriezeFreeMapPropertiesTest {
     /**
      * Test that fromParameterMap falls back to the supplied defaults for missing/partial keys.
      */
-    @Test
-    public void testFromParameterMapUsesDefaultsForMissingKeys() {
+    @Test public void testFromParameterMapUsesDefaultsForMissingKeys() {
         final var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
         final Map<String, String> partialParameters = new HashMap<>();
         partialParameters.put(FriezeFreeMap.FONT_SIZE, "99.0");

@@ -27,12 +27,25 @@ import javafx.geometry.Dimension2D;
  * and {@link #fromParameterMap(Map, FriezeFreeMapProperties)} keep it interoperable with the existing XML
  * save/load format, which still stores each attribute as a named string parameter.
  *
+ * @param dimension the free map's overall width/height
+ * @param personWidth the width reserved for the persons column
+ * @param placeNameWidth the width reserved for place names
+ * @param fontSize the font size used to draw place/person names
+ * @param plotSeparation the spacing between plots on a place
+ * @param plotSize the size of a single plot
+ * @param plotVisibility whether plots are drawn
+ * @param portraitConnectorVisibility whether portrait connectors are drawn
+ * @param portraitRadius the radius of a person's portrait
  * @author hamon
  */
 public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth, double placeNameWidth,
         double fontSize, double plotSeparation, double plotSize, boolean plotVisibility,
         boolean portraitConnectorVisibility, double portraitRadius) {
 
+    /**
+     * @return this instance's attributes as a {@code Map<String, String>}, keyed by
+     * {@link FriezeFreeMap}'s parameter name constants, for XML persistence.
+     */
     public Map<String, String> toParameterMap() {
         final var parameters = new HashMap<String, String>();
         parameters.put(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(dimension.getWidth()));
@@ -48,6 +61,13 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
         return parameters;
     }
 
+    /**
+     * @param parameters a {@code Map<String, String>} as produced by {@link #toParameterMap()}, possibly
+     * missing some keys
+     * @param defaults the values to fall back to for any key missing from {@code parameters}
+     * @return a new instance parsed from {@code parameters}, defaulting missing/unparseable keys to
+     * {@code defaults}
+     */
     public static FriezeFreeMapProperties fromParameterMap(final Map<String, String> parameters, FriezeFreeMapProperties defaults) {
         final var width = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(defaults.dimension().getWidth())));
         final var height = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_HEIGHT, Double.toString(defaults.dimension().getHeight())));

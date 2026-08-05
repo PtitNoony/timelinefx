@@ -65,6 +65,19 @@ public class FriezeFreeMapFactory {
         return friezeFreeMap;
     }
 
+    /**
+     * Creates a {@link FriezeFreeMap} with a fully specified content, as used when restoring one from a
+     * saved project.
+     *
+     * @param anID the id to assign to the new free map
+     * @param aFrieze the frieze the free map belongs to
+     * @param properties the free map's layout properties
+     * @param dateHandles the date handles to restore
+     * @param persons the persons to restore
+     * @param places the places to restore
+     * @param stays the stays to restore
+     * @return the created free map
+     */
     public static FriezeFreeMap createFriezeFreeMap(final long anID, Frieze aFrieze, FriezeFreeMapProperties properties,
             List<FreeMapDateHandle> dateHandles, List<FreeMapPerson> persons, List<FreeMapPlace> places, List<FreeMapStay> stays) {
         //

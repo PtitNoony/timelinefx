@@ -286,11 +286,10 @@ public class FreeMapProviderV3 {
     }
 
     private static List<FreeMapDateHandle> parseFreeMapDateHandles(Element freemapElement, long parentFreeMapID) {
-        var freemapDateHandleGrouptList = freemapElement.getElementsByTagName(FREEMAP_DATE_HANDLES_GROUP);
-        if (freemapDateHandleGrouptList.getLength() != 1) {
-            throw new IllegalStateException("Error while parsing FreeMapDateHandles: " + FREEMAP_DATE_HANDLES_GROUP + " count = " + freemapDateHandleGrouptList.getLength());
+        var freemapDateHandleGroupElement = firstDirectChildByTagName(freemapElement, FREEMAP_DATE_HANDLES_GROUP);
+        if (freemapDateHandleGroupElement == null) {
+            throw new IllegalStateException("Error while parsing FreeMapDateHandles: " + FREEMAP_DATE_HANDLES_GROUP + " count = 0");
         }
-        var freemapDateHandleGroupElement = (Element) freemapDateHandleGrouptList.item(0);
 
         List<FreeMapDateHandle> freeMapDateHandles = new LinkedList<>();
         var freemapDateHandlesElements = freemapDateHandleGroupElement.getElementsByTagName(FREEMAP_DATE_HANDLE_ELEMENT);
@@ -307,11 +306,10 @@ public class FreeMapProviderV3 {
     }
 
     private static List<Pair<FreeMapPerson, Element>> parseFreeMapPersons(Element freemapElement, long parentFreeMapID) {
-        var freemapPersonsElementList = freemapElement.getElementsByTagName(FREEMAP_PERSONS_GROUP);
-        if (freemapPersonsElementList.getLength() != 1) {
-            throw new IllegalStateException("Error while parsing FreeMapPersons: " + FREEMAP_PERSONS_GROUP + " count = " + freemapPersonsElementList.getLength());
+        var freemapPersonsElement = firstDirectChildByTagName(freemapElement, FREEMAP_PERSONS_GROUP);
+        if (freemapPersonsElement == null) {
+            throw new IllegalStateException("Error while parsing FreeMapPersons: " + FREEMAP_PERSONS_GROUP + " count = 0");
         }
-        var freemapPersonsElement = (Element) freemapPersonsElementList.item(0);
         //
         List<Pair<FreeMapPerson, Element>> freeMapPersons = new LinkedList<>();
         var freemapPersonsElements = freemapPersonsElement.getElementsByTagName(FREEMAP_PERSON_ELEMENT);
@@ -334,11 +332,10 @@ public class FreeMapProviderV3 {
 
     private static List<FreeMapStay> parseFreeMapPersonStep02(Element freemapPersonElement, FreeMapPerson freeMapPerson, Map<Long, FreeMapPlace> freeMapPlacesById) {
         // parse stays
-        var freemapStaysGrouptList = freemapPersonElement.getElementsByTagName(FREEMAP_STAYS_GROUP);
-        if (freemapStaysGrouptList.getLength() != 1) {
-            throw new IllegalStateException("Error while parsing FreemapStays: " + FREEMAP_STAYS_GROUP + " count = " + freemapStaysGrouptList.getLength());
+        var freemapStaysGroupElement = firstDirectChildByTagName(freemapPersonElement, FREEMAP_STAYS_GROUP);
+        if (freemapStaysGroupElement == null) {
+            throw new IllegalStateException("Error while parsing FreemapStays: " + FREEMAP_STAYS_GROUP + " count = 0");
         }
-        var freemapStaysGroupElement = (Element) freemapStaysGrouptList.item(0);
         //
         List<FreeMapStay> stays = new LinkedList<>();
         var freemapStaysElements = freemapStaysGroupElement.getElementsByTagName(FREEMAP_STAY_ELEMENT);
@@ -391,11 +388,10 @@ public class FreeMapProviderV3 {
 
     private static void parseFreeMapPersonStep03(Element freemapPersonElement, FreeMapPerson freeMapPerson, Map<Long, FreeMapStay> freeMapStaysById) {
         // parse portrais
-        var freemapPortraitsGrouptList = freemapPersonElement.getElementsByTagName(FREEMAP_PORTRAITS_GROUP);
-        if (freemapPortraitsGrouptList.getLength() != 1) {
-            throw new IllegalStateException("Error while parsing FreemapPortraits: " + FREEMAP_PORTRAITS_GROUP + " count = " + freemapPortraitsGrouptList.getLength());
+        var freemapPortraitsGroupElement = firstDirectChildByTagName(freemapPersonElement, FREEMAP_PORTRAITS_GROUP);
+        if (freemapPortraitsGroupElement == null) {
+            throw new IllegalStateException("Error while parsing FreemapPortraits: " + FREEMAP_PORTRAITS_GROUP + " count = 0");
         }
-        var freemapPortraitsGroupElement = (Element) freemapPortraitsGrouptList.item(0);
         //
         var freemapPortraitsElements = freemapPortraitsGroupElement.getElementsByTagName(PORTRAIT_ELEMENT);
         for (int i = 0; i < freemapPortraitsElements.getLength(); i++) {
@@ -430,19 +426,17 @@ public class FreeMapProviderV3 {
     }
 
     private static PortraitLink parsePortraitLink(Element freeMapPortraitElement, FreeMapPortrait aFreeMapPortrait, Map<Long, FreeMapStay> freeMapStaysById) {
-        var portraitLinkElements = freeMapPortraitElement.getElementsByTagName(FREEMAP_PORTRAIT_LINK_ELEMENT);
-        if (portraitLinkElements.getLength() != 1) {
-            throw new IllegalStateException("Not 1 " + FREEMAP_PORTRAIT_LINK_ELEMENT + " in freeMapPortraitElement but" + portraitLinkElements.getLength() + ".");
+        var portraitLinkElement = firstDirectChildByTagName(freeMapPortraitElement, FREEMAP_PORTRAIT_LINK_ELEMENT);
+        if (portraitLinkElement == null) {
+            throw new IllegalStateException("Not 1 " + FREEMAP_PORTRAIT_LINK_ELEMENT + " in freeMapPortraitElement but 0.");
         }
-        var portraitLinkElement = (Element) portraitLinkElements.item(0);
         var anID = Long.parseLong(portraitLinkElement.getAttribute(ID_ATR));
         //
         //
-        var connectorElements = freeMapPortraitElement.getElementsByTagName(FREEMAP_CONNECTOR_ELEMENT);
-        if (connectorElements.getLength() != 1) {
-            throw new IllegalStateException("Not 1 " + FREEMAP_CONNECTOR_ELEMENT + " in freeMapPortraitElement but" + connectorElements.getLength() + ".");
+        var stayConnectorElement = firstDirectChildByTagName(portraitLinkElement, FREEMAP_CONNECTOR_ELEMENT);
+        if (stayConnectorElement == null) {
+            throw new IllegalStateException("Not 1 " + FREEMAP_CONNECTOR_ELEMENT + " in freeMapPortraitElement but 0.");
         }
-        var stayConnectorElement = (Element) connectorElements.item(0);
         var stayConnector = parseConnectorElement(stayConnectorElement, freeMapStaysById);
         //
         var portraitLink = FreeMapLinkFactory.createPortraitLink(anID, aFreeMapPortrait, stayConnector);
@@ -451,11 +445,10 @@ public class FreeMapProviderV3 {
     }
 
     private static List<FreeMapPlace> parseFreeMapPlaces(Element freemapElement, long parentFreeMapID, FriezeFreeMapProperties freeMapProperties, Map<Long, FreeMapPerson> freeMapPersonsById) {
-        var freemapPlacesElementList = freemapElement.getElementsByTagName(FREEMAP_PLACES_GROUP);
-        if (freemapPlacesElementList.getLength() != 1) {
-            throw new IllegalStateException("Error while parsing FreeMapPlaces: " + FREEMAP_PERSONS_GROUP + " count = " + freemapPlacesElementList.getLength());
+        var freemapPlacesElement = firstDirectChildByTagName(freemapElement, FREEMAP_PLACES_GROUP);
+        if (freemapPlacesElement == null) {
+            throw new IllegalStateException("Error while parsing FreeMapPlaces: " + FREEMAP_PERSONS_GROUP + " count = 0");
         }
-        var freemapPlacesElement = (Element) freemapPlacesElementList.item(0);
         //
         List<FreeMapPlace> freeMapPlaces = new LinkedList<>();
         var freemapPlacesElements = freemapPlacesElement.getElementsByTagName(FREEMAP_PLACE_ELEMENT);

@@ -53,6 +53,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -219,17 +220,17 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             }
         });
         //
-        List<Path> absolutePathsLoaded = relativePathLoaded
+        Set<Path> absolutePathsLoaded = relativePathLoaded
                 .stream()
                 .map(p -> Paths.get(CustomFileUtils.fromProjectRelativeToAbsolute(project, p)))
                 .map(p -> p.normalize())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         // * Portraits
         File portraitFolder = project.getPortraitsAbsoluteFolder();
         FileUtils.listFiles(portraitFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
                 .stream()
                 .map(portraitFile -> Paths.get(portraitFile.toURI()))
-                .filter(portraitAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> portraitAbsolutePath.compareTo(loaded) == 0))
+                .filter(portraitAbsolutePath -> !absolutePathsLoaded.contains(portraitAbsolutePath))
                 .forEach(portraitAbsolutePath
                         -> // FUTURE IMPROVMENT : create actions
                         LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath})
@@ -239,7 +240,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         FileUtils.listFiles(picturesFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
                 .stream()
                 .map(pictureFile -> Paths.get(pictureFile.toURI()))
-                .filter(pictureAbsolutePath -> !absolutePathsLoaded.stream().anyMatch(loaded -> pictureAbsolutePath.compareTo(loaded) == 0))
+                .filter(pictureAbsolutePath -> !absolutePathsLoaded.contains(pictureAbsolutePath))
                 .forEach(pictureAbsolutePath
                         -> // FUTURE IMPROVMENT : create actions
                         LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath})

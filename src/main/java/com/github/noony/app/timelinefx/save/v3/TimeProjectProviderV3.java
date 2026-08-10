@@ -313,6 +313,24 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         return true;
     }
 
+    /**
+     * Finds the first direct child element with the given tag name, without recursing into
+     * descendants (unlike {@link Element#getElementsByTagName(String)}, which walks the whole subtree).
+     *
+     * @param parent the element whose direct children are searched
+     * @param tagName the tag name to look for
+     * @return the first matching direct child, or {@code null} if none exists
+     */
+    protected static Element firstDirectChildByTagName(final Element parent, final String tagName) {
+        var children = parent.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i) instanceof Element child && child.getTagName().equals(tagName)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
     private static List<Place> parsePlaces(Element placesRootElement, Place parentPlace) {
         List<Place> places = new LinkedList<>();
         NodeList placeElements = placesRootElement.getChildNodes();
@@ -513,18 +531,18 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         // <frieze name="SW 1-2">
         var name = friezeElement.getAttribute(NAME_ATR);
         var id = Long.parseLong(friezeElement.getAttribute(ID_ATR));
-        var stayGroups = friezeElement.getElementsByTagName(STAYS_REF_GROUP);
-        var stays = parseStaysInFreize((Element) stayGroups.item(0));
+        var staysElement = firstDirectChildByTagName(friezeElement, STAYS_REF_GROUP);
+        if (staysElement == null) {
+            throw new IllegalStateException("Wrong number of STAYS_GROUP : 0");
+        }
+        var stays = parseStaysInFreize(staysElement);
         var frieze = FriezeFactory.createFrieze(id, project, name, stays);
-        if (stayGroups.getLength() != 1) {
-            throw new IllegalStateException("Wrong number of STAYS_GROUP : " + stayGroups.getLength());
-        }
         //
-        var freemapGroups = friezeElement.getElementsByTagName(FreeMapProviderV3.FREEMAPS_GROUP);
-        if (freemapGroups.getLength() != 1) {
-            throw new IllegalStateException("Wrong number of FREEMAPS_GROUP : " + freemapGroups.getLength());
+        var freemapsElement = firstDirectChildByTagName(friezeElement, FreeMapProviderV3.FREEMAPS_GROUP);
+        if (freemapsElement == null) {
+            throw new IllegalStateException("Wrong number of FREEMAPS_GROUP : 0");
         }
-        FreeMapProviderV3.parseFreeMaps((Element) freemapGroups.item(0), frieze);
+        FreeMapProviderV3.parseFreeMaps(freemapsElement, frieze);
         //
         return frieze;
     }

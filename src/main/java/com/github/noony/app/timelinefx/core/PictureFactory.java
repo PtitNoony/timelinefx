@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  * Entry point for creating and retrieving {@link Picture} instances.
@@ -91,13 +90,13 @@ public final class PictureFactory {
      * @return the created picture
      */
     public static Picture createPicture(final TimeLineProject project, final File originalPictureFile, final String pictureName) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, originalPictureFile});
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating picture with pictureName={0} file={1}", new Object[]{pictureName, originalPictureFile});
         final File pictureFile;
         pictureFile = new File(project.getPicturesFolder(), originalPictureFile.getName());
         if (!pictureFile.exists()) {
             try {
                 FileUtils.copyFile(originalPictureFile, pictureFile);
-                LOG.log(CREATION_LOGGING_LEVEL, "Copying picture file to: {0}", new Object[]{pictureFile});
+                LOG.log(Factory.CREATION_LOGGING_LEVEL, "Copying picture file to: {0}", new Object[]{pictureFile});
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE, "Error while copying picture file to: {0} : {1}", new Object[]{pictureFile, ex});
             }
@@ -122,8 +121,8 @@ public final class PictureFactory {
      * @param pictureHeight the picture's height
      * @return the created picture
      */
-    public static Picture createPicture(final TimeLineProject project, final long id, final String pictureName, LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
+    public static Picture createPicture(final TimeLineProject project, final long id, final String pictureName, final LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));
         }

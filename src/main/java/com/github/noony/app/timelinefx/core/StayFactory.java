@@ -19,7 +19,6 @@ package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
 import java.util.logging.Logger;
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  * Entry point for creating and retrieving {@link StayPeriod} instances.
@@ -63,8 +62,8 @@ public final class StayFactory {
      * @param aPlace the place stayed at
      * @return the created stay
      */
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final Person person, final double startDate, final double endDate, Place aPlace) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final Person person, final double startDate, final double endDate, final Place aPlace) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
         final var stay = new StayPeriodSimpleTime(FACTORY.getNextID(), person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
         return stay;
@@ -80,8 +79,8 @@ public final class StayFactory {
      * @param aPlace the place stayed at
      * @return the created stay
      */
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final long id, final Person person, final double startDate, double endDate, Place aPlace) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final long id, final Person person, final double startDate, final double endDate, Place aPlace) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " from " + startDate + " to " + endDate + " with existing id=" + id + " (exists : " + id + ")");
         }
@@ -99,8 +98,8 @@ public final class StayFactory {
      * @param aPlace the place stayed at
      * @return the created stay
      */
-    public static StayPeriodLocalDate createStayPeriodLocalDate(final Person person, final LocalDate startDate, final LocalDate endDate, Place aPlace) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
+    public static StayPeriodLocalDate createStayPeriodLocalDate(final Person person, final LocalDate startDate, final LocalDate endDate, final Place aPlace) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with person={0} startDate={1} endDate={2} aPlace={3}", new Object[]{person, startDate, endDate, aPlace});
         final var stay = new StayPeriodLocalDate(FACTORY.getNextID(), person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
         return stay;
@@ -116,8 +115,8 @@ public final class StayFactory {
      * @param aPlace the place stayed at
      * @return the created stay
      */
-    public static StayPeriodLocalDate createStayPeriodLocalDate(final long id, final Person person, final LocalDate startDate, LocalDate endDate, Place aPlace) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
+    public static StayPeriodLocalDate createStayPeriodLocalDate(final long id, final Person person, final LocalDate startDate, final LocalDate endDate, Place aPlace) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create stay for " + person.getName() + " with existing id=" + id + " (exists : " + FACTORY.get(id).getDisplayString() + ")");
         }

@@ -38,6 +38,7 @@ public final class Place implements FriezeObject {
      * Name of the property change event fired when this place's selection changes.
      */
     public static final String SELECTION_CHANGED = "selectionChanged";
+
     /**
      * Name of the property change event fired when this place's content (name, level, color, parent) changes.
      */
@@ -59,6 +60,7 @@ public final class Place implements FriezeObject {
     private static final Logger LOG = Logger.getGlobal();
 
     private final Long id;
+
     /**
      * The places directly nested under this one.
      */
@@ -101,7 +103,7 @@ public final class Place implements FriezeObject {
     private boolean selected;
     //
 
-    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, Place parentPlace, Color aColor) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, final Place parentPlace, Color aColor) {
         id = placeId;
         name = placeName;
         parent = parentPlace;
@@ -120,7 +122,7 @@ public final class Place implements FriezeObject {
         }
     }
 
-    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, Place parentPlace) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, final Place parentPlace) {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
     }
 
@@ -220,7 +222,7 @@ public final class Place implements FriezeObject {
         return Collections.unmodifiableList(places);
     }
 
-    private boolean addPlace(Place place) {
+    private boolean addPlace(final Place place) {
         if (place.getLevel().getLevelValue() < level.getLevelValue()) {
             places.add(place);
             propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
@@ -268,7 +270,7 @@ public final class Place implements FriezeObject {
     }
 
 
-    public final boolean isLowerThanOrLeveled(Place anotherPlace) {
+    public boolean isLowerThanOrLeveled(final Place anotherPlace) {
         if (level == null) {
             return false;
         } else if (anotherPlace == null) {
@@ -278,7 +280,7 @@ public final class Place implements FriezeObject {
         }
     }
 
-    public final boolean encompasses(Place anotherPlace) {
+    public boolean encompasses(final Place anotherPlace) {
         if (anotherPlace == null || level.getLevelValue() < anotherPlace.level.getLevelValue()) {
             return false;
         }

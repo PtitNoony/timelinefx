@@ -32,7 +32,7 @@ public final class FriezeObjectFactory {
     /**
      * Resets all the factories and restarts the unique ID counter to 0.
      */
-    public static final void reset() {
+    public static void reset() {
         //
         PlaceFactory.reset();
         PersonFactory.reset();

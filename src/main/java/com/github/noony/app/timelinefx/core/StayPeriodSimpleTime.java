@@ -44,7 +44,7 @@ public class StayPeriodSimpleTime extends StayPeriod {
      */
     private double endTime;
 
-    protected StayPeriodSimpleTime(final Long anId, final Person aPerson, final double aStartTime, double anEndTime, Place aPlace) {
+    protected StayPeriodSimpleTime(final Long anId, final Person aPerson, final double aStartTime, final double anEndTime, Place aPlace) {
         super(anId, aPerson, aPlace);
         previousStartTime = aStartTime;
         previousEndTime = anEndTime;

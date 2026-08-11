@@ -44,22 +44,27 @@ public final class Person implements FriezeObject {
      * Name of the property change event fired when this person's selection changes.
      */
     public static final String SELECTION_CHANGED = "selectionChanged";
+
     /**
      * Name of the property change event fired when this person's visibility changes.
      */
     public static final String VISIBILITY_CHANGED = "visibilityChanged";
+
     /**
      * Name of the property change event fired when this person's name changes.
      */
     public static final String NAME_CHANGED = "nameChanged";
+
     /**
      * Name of the property change event fired when this person's date of birth changes.
      */
     public static final String DATE_OF_BIRTH_CHANGED = "dateOfBirthChanged";
+
     /**
      * Name of the property change event fired when this person's date of death changes.
      */
     public static final String DATE_OF_DEATH_CHANGED = "dateOfDeathChanged";
+
     /**
      * Name of the property change event fired when this person's color changes.
      */
@@ -105,6 +110,7 @@ public final class Person implements FriezeObject {
      */
     private final PropertyChangeSupport propertyChangeSupport;
     //
+
     private final Long id;
     //
 
@@ -171,7 +177,7 @@ public final class Person implements FriezeObject {
      */
     private boolean visible;
 
-    protected Person(final TimeLineProject aProject, final Long personId, final String personName, Color aColor, LocalDate aDoB, LocalDate aDoD) {
+    protected Person(final TimeLineProject aProject, final Long personId, final String personName, final Color aColor, LocalDate aDoB, LocalDate aDoD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();
@@ -185,7 +191,7 @@ public final class Person implements FriezeObject {
         visible = true;
     }
 
-    protected Person(final TimeLineProject aProject, final Long personId, final String personName, Color aColor, long aToB, long aToD) {
+    protected Person(final TimeLineProject aProject, final Long personId, final String personName, final Color aColor, long aToB, long aToD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();
@@ -263,7 +269,7 @@ public final class Person implements FriezeObject {
         return Collections.unmodifiableList(portraits);
     }
 
-    public Portrait getPortrait(long aPortraiID) {
+    public Portrait getPortrait(final long aPortraiID) {
         return portraits.stream().filter(p -> p.getId() == aPortraiID).findAny().orElse(null);
     }
 

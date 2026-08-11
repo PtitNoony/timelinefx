@@ -279,16 +279,28 @@ public final class TimeLineProject {
     }
 
     /**
+     * Returns the project's folder.
+     *
      * @return the project's folder
      */
     public File getProjectFolder() {
         return projectFolder;
     }
 
+    /**
+     * Returns the project's portraits folder, as an absolute path.
+     *
+     * @return the project's portraits folder
+     */
     public File getPortraitsAbsoluteFolder() {
         return portraitsFolder;
     }
 
+    /**
+     * Returns the project's portraits folder, as a path relative to the project's folder.
+     *
+     * @return the project's portraits folder, relative to the project's folder
+     */
     public String getPortraitsRelativeFolder() {
         return CustomFileUtils.fromAbsoluteToProjectRelative(this, portraitsFolder);
     }
@@ -406,12 +418,22 @@ public final class TimeLineProject {
         return allPlaces.get(placeName);
     }
 
+    /**
+     * Adds several stays to this project.
+     *
+     * @param stays the stays to add
+     */
     public void addAllStays(final StayPeriod... stays) {
         for (StayPeriod s : stays) {
             addStay(s);
         }
     }
 
+    /**
+     * Adds several stays to this project.
+     *
+     * @param stays the stays to add
+     */
     public void addAllStays(final Collection<? extends StayPeriod> stays) {
         stays.forEach(this::addStay);
     }

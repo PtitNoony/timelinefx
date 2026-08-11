@@ -25,8 +25,24 @@ package com.github.noony.app.timelinefx.core;
 public enum AnchorSide {
 
     /**
-     * The four cardinal sides, or no anchoring.
+     * The top side.
      */
-    TOP, BOTTOM, LEFT, RIGHT, NONE
+    TOP,
+    /**
+     * The bottom side.
+     */
+    BOTTOM,
+    /**
+     * The left side.
+     */
+    LEFT,
+    /**
+     * The right side.
+     */
+    RIGHT,
+    /**
+     * No anchoring.
+     */
+    NONE
 
 }

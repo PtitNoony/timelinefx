@@ -49,6 +49,8 @@ public final class FriezeFactory {
     }
 
     /**
+     * Returns all the friezes created so far.
+     *
      * @return all the friezes created so far
      */
     public static List<Frieze> getFriezes() {

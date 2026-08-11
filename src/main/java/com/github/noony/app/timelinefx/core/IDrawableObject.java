@@ -25,6 +25,7 @@ package com.github.noony.app.timelinefx.core;
 public interface IDrawableObject {
 
     /**
+     * Returns the object's width.
      *
      * @return the object's width
      */

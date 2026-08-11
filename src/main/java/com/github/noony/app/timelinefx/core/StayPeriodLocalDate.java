@@ -79,6 +79,8 @@ public class StayPeriodLocalDate extends StayPeriod {
     }
 
     /**
+     * Sets this stay's start date.
+     *
      * @param aStartDate the stay's new start date
      */
     public void setStartDate(final LocalDate aStartDate) {

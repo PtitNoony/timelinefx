@@ -25,9 +25,53 @@ package com.github.noony.app.timelinefx.core;
 public enum PlaceLevel {
 
     /**
-     * The available levels, ordered from smallest to largest.
+     * A single address.
      */
-    ADDRESS(10), TOWN(20), DEPARTMENT(30), REGION(40), COUNTRY(50), CONTINENT(60), PLANET(70), ORBIT(75), SYSTEM(80), INTER_SYSTEM_SPACE(90), GALAXY(100), UNIVERSE(1000);
+    ADDRESS(10),
+    /**
+     * A town.
+     */
+    TOWN(20),
+    /**
+     * A department.
+     */
+    DEPARTMENT(30),
+    /**
+     * A region.
+     */
+    REGION(40),
+    /**
+     * A country.
+     */
+    COUNTRY(50),
+    /**
+     * A continent.
+     */
+    CONTINENT(60),
+    /**
+     * A planet.
+     */
+    PLANET(70),
+    /**
+     * An orbit around a planet.
+     */
+    ORBIT(75),
+    /**
+     * A star system.
+     */
+    SYSTEM(80),
+    /**
+     * The space between star systems.
+     */
+    INTER_SYSTEM_SPACE(90),
+    /**
+     * A galaxy.
+     */
+    GALAXY(100),
+    /**
+     * The whole universe.
+     */
+    UNIVERSE(1000);
 
     /**
      * The numeric value used to compare levels.
@@ -39,6 +83,8 @@ public enum PlaceLevel {
     }
 
     /**
+     * Returns this level's numeric value.
+     *
      * @return this level's numeric value
      */
     public int getLevelValue() {

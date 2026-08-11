@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class Factory<T extends FriezeObject> {
 
     /**
-     * Default logging level to be used when creating an object in a Factory
+     * Default logging level to be used when creating an object in a Factory.
      */
     public static final Level CREATION_LOGGING_LEVEL = Level.FINE;
 
@@ -83,6 +83,7 @@ public class Factory<T extends FriezeObject> {
     }
 
     /**
+     * Returns the next available unique id.
      *
      * @return the next available unique id
      */

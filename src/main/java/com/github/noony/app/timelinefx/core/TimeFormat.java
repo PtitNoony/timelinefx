@@ -25,8 +25,12 @@ package com.github.noony.app.timelinefx.core;
 public enum TimeFormat {
 
     /**
-     * A calendar {@code LocalDate}, or a raw numeric time value.
+     * A calendar {@code LocalDate}.
      */
-    LOCAL_TIME, TIME_MIN
+    LOCAL_TIME,
+    /**
+     * A raw numeric time value.
+     */
+    TIME_MIN
 
 }

@@ -28,7 +28,7 @@ import java.util.List;
 public interface IPicture extends IDateObject, IFileObject, IDrawableObject {
 
     /**
-     * Name of the property change event for name change
+     * Name of the property change event for name change.
      */
     String NAME_CHANGED = "pictureNameChanged";
 

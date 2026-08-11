@@ -97,7 +97,7 @@ public abstract class AbstractPicture implements IPicture {
     private LocalDate date;
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(final long anID, final String aName, final String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected AbstractPicture(final long anID, final String aName, final String aFilePath, final int aWidth, int aHeight, LocalDate aDate) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
@@ -114,7 +114,7 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(final long anID, final String aName, final String aFilePath, int aWidth, int aHeight, double aTimestamp) {
+    protected AbstractPicture(final long anID, final String aName, final String aFilePath, final int aWidth, int aHeight, double aTimestamp) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
@@ -369,7 +369,7 @@ public abstract class AbstractPicture implements IPicture {
      * @param aPerson the person to move down in the persons list
      */
     public void movePersonDown(final Person aPerson) {
-        int index = persons.indexOf(aPerson);
+        final int index = persons.indexOf(aPerson);
         if (index != 1 && index < persons.size() - 1) {
             Collections.swap(persons, index + 1, index);
             propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);

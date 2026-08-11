@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static javafx.application.Platform.runLater;
+import javafx.application.Platform;
 
 /**
  * A subset of a project's places, persons and stays, laid out over a shared time window.
@@ -44,6 +44,7 @@ public final class Frieze implements FriezeObject {
      * Prefix used to namespace this class's property change event names.
      */
     public static final String CLASS_NAME = "Frieze";
+
     /**
      * Name of the property change event fired when the visible date window changes.
      */
@@ -126,6 +127,7 @@ public final class Frieze implements FriezeObject {
     private static final Logger LOG = Logger.getGlobal();
 
     private final Long id;
+
     /**
      * The project this frieze belongs to.
      */
@@ -211,12 +213,15 @@ public final class Frieze implements FriezeObject {
      */
     private double maxDateWindow = maxDate;
     //
+
     private double constraintMinDate = Double.NEGATIVE_INFINITY;
+
     private double constraintMaxDate = Double.POSITIVE_INFINITY;
     //
+
     private ItemSelectionPropagation itemSelectionPropagation = ItemSelectionPropagation.RECURSIVE;
 
-    protected Frieze(final long anID, final TimeLineProject aProject, final String friezeName, List<StayPeriod> staysToConsider) {
+    protected Frieze(final long anID, final TimeLineProject aProject, final String friezeName, final List<StayPeriod> staysToConsider) {
         id = anID;
         project = aProject;
         name = friezeName;
@@ -278,7 +283,7 @@ public final class Frieze implements FriezeObject {
         return project;
     }
 
-    private void addPerson(Person aPerson) {
+    private void addPerson(final Person aPerson) {
         if (!persons.contains(aPerson)) {
             persons.add(aPerson);
             final var stays = project.getStays().stream().filter(s -> s.getPerson() == aPerson).toList();
@@ -290,17 +295,17 @@ public final class Frieze implements FriezeObject {
             // notify place added
             // may be needed before adding stays for some variable updates
             propertyChangeSupport.firePropertyChange(PERSON_ADDED, this, aPerson);
-            runLater(() -> stays.forEach(this::addStay));
+            Platform.runLater(() -> stays.forEach(this::addStay));
         }
     }
 
-    public void addAllStays(StayPeriod... stays) {
+    public void addAllStays(final StayPeriod... stays) {
         for (StayPeriod s : stays) {
             addStay(s);
         }
     }
 
-    public void addAllStays(Collection<? extends StayPeriod> stays) {
+    public void addAllStays(final Collection<? extends StayPeriod> stays) {
         stays.forEach(this::addStay);
     }
 
@@ -309,14 +314,14 @@ public final class Frieze implements FriezeObject {
      *
      * @param stay a stay to be represented in this Frieze
      */
-    public void addStay(StayPeriod stay) {
+    public void addStay(final StayPeriod stay) {
         if (!stayPeriods.contains(stay)) {
             stayPeriods.add(stay);
             //
             stay.addListener(stayChangesListener);
             //
-            var place = stay.getPlace();
-            var person = stay.getPerson();
+            final var place = stay.getPlace();
+            final var person = stay.getPerson();
             // add place
             if (!places.contains(place)) {
                 places.add(place);
@@ -359,13 +364,13 @@ public final class Frieze implements FriezeObject {
         maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
     }
 
-    public void removeAllStays(StayPeriod... stays) {
+    public void removeAllStays(final StayPeriod... stays) {
         for (StayPeriod s : stays) {
             removeStay(s);
         }
     }
 
-    public void removeAllStays(Collection<? extends StayPeriod> stays) {
+    public void removeAllStays(final Collection<? extends StayPeriod> stays) {
         stays.forEach(this::removeStay);
     }
 
@@ -406,7 +411,7 @@ public final class Frieze implements FriezeObject {
         }
     }
 
-    public void updatePeopleSelection(Person aPerson, boolean selected) {
+    public void updatePeopleSelection(final Person aPerson, boolean selected) {
         LOG.log(Level.INFO, "updatePeopleSelection p:{0}, isSelected:{1}", new Object[]{aPerson, selected});
         if (selected) {
             addPerson(aPerson);
@@ -647,16 +652,16 @@ public final class Frieze implements FriezeObject {
             case TimeLineProject.PERSON_ADDED, TimeLineProject.STAY_ADDED -> {
                 // Nothing to do
             }
-//            case TimeLineProject.STAY_ADDED ->
-//                addStay((StayPeriod) event.getNewValue());
+            //            case TimeLineProject.STAY_ADDED ->
+            //                addStay((StayPeriod) event.getNewValue());
             case TimeLineProject.STAY_REMOVED ->
                 removeStay((StayPeriod) event.getNewValue());
             case TimeLineProject.PLACE_REMOVED -> {
-                var placeRemoved = (Place) event.getNewValue();
+                final var placeRemoved = (Place) event.getNewValue();
                 removePlace(placeRemoved);
             }
             case TimeLineProject.PERSON_REMOVED -> {
-                var personRemoved = (Person) event.getNewValue();
+                final var personRemoved = (Person) event.getNewValue();
                 removePerson(personRemoved);
             }
             default ->
@@ -677,7 +682,7 @@ public final class Frieze implements FriezeObject {
                 // First update the relevant dates before notifying of the stay change
                 updateDatesOnRemoval((long) event.getOldValue(), false);
                 updateDatesOnCreation((long) event.getNewValue(), false);
-                var stay = (StayPeriod) event.getSource();
+                final var stay = (StayPeriod) event.getSource();
                 propertyChangeSupport.firePropertyChange(STAY_UPDATED, this, stay);
             }
             default ->
@@ -698,7 +703,7 @@ public final class Frieze implements FriezeObject {
 
     private boolean removePerson(final Person personRemoved) {
         LOG.log(Level.INFO, "Removing person: {0} from {1}.", new Object[]{personRemoved, this});
-        var removed = persons.remove(personRemoved);
+        final var removed = persons.remove(personRemoved);
         if (!removed) {
             return false;
         }

@@ -52,6 +52,7 @@ public final class TimeLineProject {
      * Name of the property change event fired when a person is added.
      */
     public static final String PERSON_ADDED = "personAdded";
+
     /**
      * Name of the property change event fired when a place is added.
      */
@@ -194,7 +195,7 @@ public final class TimeLineProject {
      */
     private final List<PictureChronology> pictureChronologies;
 
-    protected TimeLineProject(final String projectName, Map<String, String> configParams) {
+    protected TimeLineProject(final String projectName, final Map<String, String> configParams) {
         name = projectName;
         initFolders(configParams);
         propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
@@ -405,13 +406,13 @@ public final class TimeLineProject {
         return allPlaces.get(placeName);
     }
 
-    public void addAllStays(StayPeriod... stays) {
+    public void addAllStays(final StayPeriod... stays) {
         for (StayPeriod s : stays) {
             addStay(s);
         }
     }
 
-    public void addAllStays(Collection<? extends StayPeriod> stays) {
+    public void addAllStays(final Collection<? extends StayPeriod> stays) {
         stays.forEach(this::addStay);
     }
 
@@ -572,9 +573,9 @@ public final class TimeLineProject {
     }
 
     private void removeChildrenPlaces(final Place aParentPlace) {
-        final List<Place> directChildren = allPlaces.values().stream()
-                .filter(place -> place.getParent().equals(aParentPlace))
-                .toList();
+        final List<Place> directChildren = allPlaces.values().stream().
+                filter(place -> place.getParent().equals(aParentPlace)).
+                toList();
         directChildren.forEach(child -> {
             allPlaces.remove(child.getName());
             removeStaysAt(child);

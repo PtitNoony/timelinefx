@@ -47,7 +47,7 @@ public class PictureInfo {
      * @param width the picture's width
      * @param height the picture's height
      */
-    public PictureInfo(final String name, final String path, final LocalDateTime creationDate, int width, int height) {
+    public PictureInfo(final String name, final String path, final LocalDateTime creationDate, final int width, int height) {
         this.name = name;
         this.path = path;
         this.creationDate = creationDate;

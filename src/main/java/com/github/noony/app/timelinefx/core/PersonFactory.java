@@ -20,7 +20,6 @@ package com.github.noony.app.timelinefx.core;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  * Entry point for creating and retrieving {@link Person} instances.
@@ -66,7 +65,7 @@ public final class PersonFactory {
      * @return the created person
      */
     public static Person createPerson(final TimeLineProject project, final String personName) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0}  ", new Object[]{personName});
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating person with personName={0}  ", new Object[]{personName});
         final var person = new Person(project, FACTORY.getNextID(), personName);
         FACTORY.addObject(person);
         return person;
@@ -81,7 +80,7 @@ public final class PersonFactory {
      * @return the created person
      */
     public static Person createPerson(final TimeLineProject project, final String personName, final Color color) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating person with personName={0} color={1} ", new Object[]{personName, color});
         final var person = new Person(project, FACTORY.getNextID(), personName, color, null, null);
         FACTORY.addObject(person);
         return person;
@@ -96,8 +95,8 @@ public final class PersonFactory {
      * @param color the person's color
      * @return the created person
      */
-    public static Person createPerson(final TimeLineProject project, final long id, final String personName, Color color) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
+    public static Person createPerson(final TimeLineProject project, final long id, final String personName, final Color color) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating person with id={0} personName={1} color={2}", new Object[]{id, personName, color});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create person " + personName + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");
         }

@@ -24,7 +24,6 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.List;
 import java.util.logging.Logger;
-import static com.github.noony.app.timelinefx.core.Factory.CREATION_LOGGING_LEVEL;
 
 /**
  * Entry point for creating and retrieving {@link Portrait} instances.
@@ -79,7 +78,7 @@ public final class PortraitFactory {
      * @return the created portrait
      */
     public static Portrait createPortrait(final Person person) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with person={0} and default picture.", new Object[]{person});
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating portrait with person={0} and default picture.", new Object[]{person});
         final var filePath = person.getProject().getPortraitsAbsoluteFolder().getAbsolutePath() + File.separator + Person.DEFAULT_PICTURE_NAME;
         final var fileRelativePath = person.getProject().getPortraitsRelativeFolder() + File.separator + Person.DEFAULT_PICTURE_NAME;
         final var file = new File(filePath);
@@ -98,10 +97,10 @@ public final class PortraitFactory {
      * @param filePath the portrait picture's project-relative file path
      * @return the created portrait
      */
-    public static Portrait createPortrait(final Person person, String filePath) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with person={0} filePath={1}.", new Object[]{person, filePath});
+    public static Portrait createPortrait(final Person person, final String filePath) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating portrait with person={0} filePath={1}.", new Object[]{person, filePath});
         final var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
-        var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
+        final var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
         assert picInfo != null;
         final var portrait = new Portrait(FACTORY.getNextID(), person, filePath, picInfo.getWidth(), picInfo.getHeight());
         FACTORY.addObject(portrait);
@@ -118,11 +117,11 @@ public final class PortraitFactory {
      * @return the created portrait
      */
     public static Portrait createPortrait(final long id, final Person person, final String filePath) {
-        LOG.log(CREATION_LOGGING_LEVEL, "Creating portrait with id={0} person={1} filePath={2}.", new Object[]{id, person, filePath});
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating portrait with id={0} person={1} filePath={2}.", new Object[]{id, person, filePath});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create portrait " + filePath + " with existing id=" + id + " (exists : " + FACTORY.get(id) + "[" + FACTORY.get(id).getId() + "])");
         }
-        var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
+        final var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
         if (!file.exists()) {
             throw new IllegalArgumentException("Trying to create portrait for " + person + " with missing file=" + filePath);
         }

@@ -90,6 +90,8 @@ public class Event {
     }
 
     /**
+     * Returns this event's raw numeric time value.
+     *
      * @return this event's raw numeric time value
      */
     public long getDate() {

@@ -47,6 +47,9 @@ public abstract class AbstractPicture implements IPicture {
      */
     private final PropertyChangeSupport propertyChangeSupport;
 
+    /**
+     * This picture's unique id.
+     */
     private final Long id;
 
     /**
@@ -355,6 +358,8 @@ public abstract class AbstractPicture implements IPicture {
     }
 
     /**
+     * Moves a person up in the persons list.
+     *
      * @param aPerson the person to move up in the persons list
      */
     public void movePersonUp(final Person aPerson) {

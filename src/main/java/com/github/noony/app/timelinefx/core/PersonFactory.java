@@ -50,6 +50,8 @@ public final class PersonFactory {
     }
 
     /**
+     * Returns the person with the given id.
+     *
      * @param id a person's id
      * @return the person with the given id, or null if none exists
      */

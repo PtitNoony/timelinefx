@@ -24,7 +24,11 @@ package com.github.noony.app.timelinefx.core;
  */
 public enum ItemSelectionPropagation {
     /**
-     * Selection does not propagate, or propagates to related items.
+     * Selection does not propagate to related items.
      */
-    NONE, RECURSIVE
+    NONE,
+    /**
+     * Selection propagates to related items.
+     */
+    RECURSIVE
 }

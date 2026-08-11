@@ -126,6 +126,8 @@ public final class StayFactory {
     }
 
     /**
+     * Returns the stay with the given id.
+     *
      * @param id a stay's id
      * @return the stay with the given id, or null if none exists
      */

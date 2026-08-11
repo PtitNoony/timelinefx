@@ -59,6 +59,9 @@ public abstract class StayPeriod implements FriezeObject {
      */
     private final PropertyChangeSupport propertyChangeSupport;
 
+    /**
+     * This stay's unique id.
+     */
     private final Long id;
 
     /**
@@ -84,6 +87,8 @@ public abstract class StayPeriod implements FriezeObject {
     }
 
     /**
+     * Adds a listener notified of this stay's changes.
+     *
      * @param listener the listener to add
      */
     public void addListener(final PropertyChangeListener listener) {

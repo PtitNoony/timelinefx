@@ -41,6 +41,8 @@ public class PictureInfo {
     private final int height;
 
     /**
+     * Creates picture metadata with the given fields.
+     *
      * @param name the picture's name
      * @param path the picture file's path
      * @param creationDate the picture's creation date

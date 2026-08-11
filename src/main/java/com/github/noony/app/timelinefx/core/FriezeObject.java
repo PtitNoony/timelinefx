@@ -30,7 +30,7 @@ public interface FriezeObject {
     long NO_ID = -1;
 
     /**
-     * Each IFriezeObject instance has a unique id in its project's scope
+     * Each IFriezeObject instance has a unique id in its project's scope.
      *
      * @return the object unique ID
      */

@@ -126,6 +126,9 @@ public final class Frieze implements FriezeObject {
      */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * This frieze's unique id.
+     */
     private final Long id;
 
     /**
@@ -214,11 +217,20 @@ public final class Frieze implements FriezeObject {
     private double maxDateWindow = maxDate;
     //
 
+    /**
+     * The lowest date allowed in the visible date window.
+     */
     private double constraintMinDate = Double.NEGATIVE_INFINITY;
 
+    /**
+     * The highest date allowed in the visible date window.
+     */
     private double constraintMaxDate = Double.POSITIVE_INFINITY;
     //
 
+    /**
+     * How selecting a person or place in this frieze propagates to related items.
+     */
     private ItemSelectionPropagation itemSelectionPropagation = ItemSelectionPropagation.RECURSIVE;
 
     protected Frieze(final long anID, final TimeLineProject aProject, final String friezeName, final List<StayPeriod> staysToConsider) {
@@ -262,6 +274,8 @@ public final class Frieze implements FriezeObject {
     }
 
     /**
+     * Sets this frieze's name.
+     *
      * @param aName this frieze's new name
      */
     public void setName(final String aName) {
@@ -299,12 +313,22 @@ public final class Frieze implements FriezeObject {
         }
     }
 
+    /**
+     * Adds several stays to this frieze.
+     *
+     * @param stays the stays to add
+     */
     public void addAllStays(final StayPeriod... stays) {
         for (StayPeriod s : stays) {
             addStay(s);
         }
     }
 
+    /**
+     * Adds several stays to this frieze.
+     *
+     * @param stays the stays to add
+     */
     public void addAllStays(final Collection<? extends StayPeriod> stays) {
         stays.forEach(this::addStay);
     }
@@ -364,12 +388,22 @@ public final class Frieze implements FriezeObject {
         maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
     }
 
+    /**
+     * Removes several stays from this frieze.
+     *
+     * @param stays the stays to remove
+     */
     public void removeAllStays(final StayPeriod... stays) {
         for (StayPeriod s : stays) {
             removeStay(s);
         }
     }
 
+    /**
+     * Removes several stays from this frieze.
+     *
+     * @param stays the stays to remove
+     */
     public void removeAllStays(final Collection<? extends StayPeriod> stays) {
         stays.forEach(this::removeStay);
     }
@@ -411,6 +445,12 @@ public final class Frieze implements FriezeObject {
         }
     }
 
+    /**
+     * Updates a person's selection state in this frieze.
+     *
+     * @param aPerson the person whose selection changed
+     * @param selected whether the person is now selected
+     */
     public void updatePeopleSelection(final Person aPerson, boolean selected) {
         LOG.log(Level.INFO, "updatePeopleSelection p:{0}, isSelected:{1}", new Object[]{aPerson, selected});
         if (selected) {
@@ -438,6 +478,12 @@ public final class Frieze implements FriezeObject {
         }
     }
 
+    /**
+     * Updates a person's selection state in this frieze.
+     *
+     * @param aPerson the person whose selection changed
+     * @param selected whether the person is now selected
+     */
     public void updatePersonSelection(final Person aPerson, final boolean selected) {
         LOG.log(Level.INFO, "Updating frieze for person: {0}, selected{1}.", new Object[]{aPerson, selected});
         if (selected) {

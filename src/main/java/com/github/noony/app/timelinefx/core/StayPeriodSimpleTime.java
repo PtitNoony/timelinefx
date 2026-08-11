@@ -72,6 +72,8 @@ public class StayPeriodSimpleTime extends StayPeriod {
     }
 
     /**
+     * Sets this stay's start time.
+     *
      * @param aStartDate the stay's new start time
      */
     public void setStartDate(final double aStartDate) {

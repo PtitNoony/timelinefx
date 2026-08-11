@@ -102,6 +102,8 @@ public class Portrait extends AbstractPicture {
     }
 
     /**
+     * Returns the person this portrait belongs to.
+     *
      * @return the person this portrait belongs to
      */
     public Person getPerson() {

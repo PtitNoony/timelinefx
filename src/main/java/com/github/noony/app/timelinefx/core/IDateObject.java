@@ -40,7 +40,7 @@ public interface IDateObject {
     DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
-     * The default time stamp
+     * The default time stamp.
      */
     long DEFAULT_TIMESTAMP = 0;
 
@@ -50,7 +50,6 @@ public interface IDateObject {
     String DATE_CHANGED = "pictureDateChanged";
 
     /**
-     *
      * @return the TimeFormat used by the instance
      */
     TimeFormat getTimeFormat();

@@ -25,6 +25,8 @@ package com.github.noony.app.timelinefx.core;
 public interface IFileObject extends FriezeObject {
 
     /**
+     * Returns the object's display name.
+     *
      * @return the object's display name
      */
     String getName();

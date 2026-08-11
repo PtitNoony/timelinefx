@@ -67,6 +67,8 @@ public final class PictureFactory {
     }
 
     /**
+     * Returns all created pictures.
+     *
      * @return all created pictures
      */
     public static List<Picture> getPictures() {

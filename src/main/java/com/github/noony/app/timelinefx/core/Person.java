@@ -111,6 +111,9 @@ public final class Person implements FriezeObject {
     private final PropertyChangeSupport propertyChangeSupport;
     //
 
+    /**
+     * This person's unique id.
+     */
     private final Long id;
     //
 
@@ -214,6 +217,8 @@ public final class Person implements FriezeObject {
     }
 
     /**
+     * Returns the project this person belongs to.
+     *
      * @return the project this person belongs to
      */
     public TimeLineProject getProject() {
@@ -269,6 +274,12 @@ public final class Person implements FriezeObject {
         return Collections.unmodifiableList(portraits);
     }
 
+    /**
+     * Returns this person's portrait with the given id.
+     *
+     * @param aPortraiID a portrait's id
+     * @return the matching portrait, or null if none exists
+     */
     public Portrait getPortrait(final long aPortraiID) {
         return portraits.stream().filter(p -> p.getId() == aPortraiID).findAny().orElse(null);
     }

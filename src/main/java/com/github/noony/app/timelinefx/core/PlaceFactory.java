@@ -64,6 +64,8 @@ public final class PlaceFactory {
     }
 
     /**
+     * Returns all created places, sorted by name.
+     *
      * @return all created places, sorted by name
      */
     public static List<Place> getPlaces() {

@@ -64,6 +64,8 @@ public final class PortraitFactory {
     }
 
     /**
+     * Returns the portrait with the given id.
+     *
      * @param id a portrait's id
      * @return the portrait with the given id, or null if none exists
      */

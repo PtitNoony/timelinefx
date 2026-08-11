@@ -59,6 +59,9 @@ public final class Place implements FriezeObject {
      */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * This place's unique id.
+     */
     private final Long id;
 
     /**
@@ -131,6 +134,8 @@ public final class Place implements FriezeObject {
     }
 
     /**
+     * Adds a listener notified of this place's changes.
+     *
      * @param listener the listener to add
      */
     public void addPropertyChangeListener(final PropertyChangeListener listener) {
@@ -270,6 +275,12 @@ public final class Place implements FriezeObject {
     }
 
 
+    /**
+     * Checks whether this place's level is lower than or equal to another place's level.
+     *
+     * @param anotherPlace the place to compare with, may be null
+     * @return true if this place's level is lower than or equal to {@code anotherPlace}'s, or if {@code anotherPlace} is null
+     */
     public boolean isLowerThanOrLeveled(final Place anotherPlace) {
         if (level == null) {
             return false;
@@ -280,6 +291,12 @@ public final class Place implements FriezeObject {
         }
     }
 
+    /**
+     * Checks whether this place contains another place, directly or through a nested child.
+     *
+     * @param anotherPlace the place to check, may be null
+     * @return true if {@code anotherPlace} is this place or one of its descendants
+     */
     public boolean encompasses(final Place anotherPlace) {
         if (anotherPlace == null || level.getLevelValue() < anotherPlace.level.getLevelValue()) {
             return false;

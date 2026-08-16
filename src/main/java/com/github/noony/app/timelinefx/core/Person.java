@@ -106,6 +106,11 @@ public final class Person implements FriezeObject {
     private static final long DEFAULT_TIME = -1;
 
     /**
+     * Prefix of the exception message thrown for an unrecognized time format.
+     */
+    private static final String UNSUPPORTED_TIME_MODE_MESSAGE = "Unsupported time mode : ";
+
+    /**
      * Support object used to fire property change events.
      */
     private final PropertyChangeSupport propertyChangeSupport;
@@ -393,7 +398,7 @@ public final class Person implements FriezeObject {
                 return timeOfBirth;
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time mode : " + timeFormat);
+                throw new UnsupportedOperationException(UNSUPPORTED_TIME_MODE_MESSAGE + timeFormat);
         }
     }
 
@@ -413,7 +418,7 @@ public final class Person implements FriezeObject {
                 return timeOfDeath;
             }
             default ->
-                throw new UnsupportedOperationException("Unsupported time mode : " + timeFormat);
+                throw new UnsupportedOperationException(UNSUPPORTED_TIME_MODE_MESSAGE + timeFormat);
         }
     }
 

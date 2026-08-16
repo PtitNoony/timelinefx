@@ -43,18 +43,18 @@ public class PictureInfo {
     /**
      * Creates picture metadata with the given fields.
      *
-     * @param name the picture's name
-     * @param path the picture file's path
-     * @param creationDate the picture's creation date
-     * @param width the picture's width
-     * @param height the picture's height
+     * @param aName the picture's name
+     * @param aPath the picture file's path
+     * @param aCreationDate the picture's creation date
+     * @param aWidth the picture's width
+     * @param aHeight the picture's height
      */
-    public PictureInfo(final String name, final String path, final LocalDateTime creationDate, final int width, int height) {
-        this.name = name;
-        this.path = path;
-        this.creationDate = creationDate;
-        this.width = width;
-        this.height = height;
+    public PictureInfo(final String aName, final String aPath, final LocalDateTime aCreationDate, final int aWidth, final int aHeight) {
+        name = aName;
+        path = aPath;
+        creationDate = aCreationDate;
+        width = aWidth;
+        height = aHeight;
     }
 
     /**

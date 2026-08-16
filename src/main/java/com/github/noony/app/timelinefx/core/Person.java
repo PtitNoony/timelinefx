@@ -199,7 +199,7 @@ public final class Person implements FriezeObject {
         visible = true;
     }
 
-    protected Person(final TimeLineProject aProject, final Long personId, final String personName, final Color aColor, long aToB, long aToD) {
+    protected Person(final TimeLineProject aProject, final Long personId, final String personName, final Color aColor, final long aToB, long aToD) {
         id = personId;
         project = aProject;
         portraits = new LinkedList<>();

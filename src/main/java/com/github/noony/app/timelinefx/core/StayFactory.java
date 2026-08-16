@@ -84,7 +84,7 @@ public final class StayFactory {
      * @param aPlace the place stayed at
      * @return the created stay
      */
-    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final long id, final Person person, final double startDate, final double endDate, Place aPlace) {
+    public static StayPeriodSimpleTime createStayPeriodSimpleTime(final long id, final Person person, final double startDate, final double endDate, final Place aPlace) {
         LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException(TRYING_TO_CREATE_STAY_MESSAGE + person.getName() + " from " + startDate + " to " + endDate + " with existing id=" + id + " (exists : " + id + ")");
@@ -120,7 +120,7 @@ public final class StayFactory {
      * @param aPlace the place stayed at
      * @return the created stay
      */
-    public static StayPeriodLocalDate createStayPeriodLocalDate(final long id, final Person person, final LocalDate startDate, final LocalDate endDate, Place aPlace) {
+    public static StayPeriodLocalDate createStayPeriodLocalDate(final long id, final Person person, final LocalDate startDate, final LocalDate endDate, final Place aPlace) {
         LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException(TRYING_TO_CREATE_STAY_MESSAGE + person.getName() + " with existing id=" + id + " (exists : " + FACTORY.get(id).getDisplayString() + ")");

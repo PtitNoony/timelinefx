@@ -257,8 +257,7 @@ public final class Frieze implements FriezeObject {
         staysToConsider.stream().forEachOrdered(Frieze.this::addStay);
     }
 
-    @Override
-    public long getId() {
+    @Override public long getId() {
         return id;
     }
 

@@ -262,8 +262,7 @@ public final class Place implements FriezeObject {
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return name;
     }
 

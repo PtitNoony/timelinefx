@@ -130,6 +130,16 @@ public final class TimeLineProject {
     private static final Logger LOG = Logger.getGlobal();
 
     /**
+     * Log message used when an exception is caught while saving a resource.
+     */
+    private static final String EXCEPTION_LOG_MESSAGE = "> Exception :: {0}";
+
+    /**
+     * Separator used between a class name and an unsupported event in exception messages.
+     */
+    private static final String CLASS_EVENT_SEPARATOR = " :: ";
+
+    /**
      * Support object used to fire property change events.
      */
     private final PropertyChangeSupport propertyChangeSupport;
@@ -271,10 +281,10 @@ public final class TimeLineProject {
             }
         } catch (FileNotFoundException ex) {
             LOG.log(Level.SEVERE, "Resource file not found :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
-            LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});
+            LOG.log(Level.SEVERE, EXCEPTION_LOG_MESSAGE, new Object[]{ex});
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception while saving resource :: {0}", new Object[]{Person.DEFAULT_PICTURE_NAME});
-            LOG.log(Level.SEVERE, "> Exception :: {0}", new Object[]{ex});
+            LOG.log(Level.SEVERE, EXCEPTION_LOG_MESSAGE, new Object[]{ex});
         }
     }
 
@@ -550,7 +560,7 @@ public final class TimeLineProject {
                 // ignored since removal from one Frieze does not mean deleted
             }
             default ->
-                throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
+                throw new UnsupportedOperationException(this.getClass().getSimpleName() + CLASS_EVENT_SEPARATOR + event);
         }
     }
 
@@ -560,7 +570,7 @@ public final class TimeLineProject {
                 // nothing to do
             }
             default ->
-                throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
+                throw new UnsupportedOperationException(this.getClass().getSimpleName() + CLASS_EVENT_SEPARATOR + event);
         }
     }
 

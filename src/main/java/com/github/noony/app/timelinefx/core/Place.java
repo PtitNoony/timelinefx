@@ -60,6 +60,11 @@ public final class Place implements FriezeObject {
     private static final Logger LOG = Logger.getGlobal();
 
     /**
+     * Fragment used to render a place's level in exception messages.
+     */
+    private static final String LEVEL_MESSAGE_FRAGMENT = "' (lvl ";
+
+    /**
      * This place's unique id.
      */
     private final Long id;
@@ -121,7 +126,7 @@ public final class Place implements FriezeObject {
         propertyChangeSupport = new PropertyChangeSupport(Place.this);
         selected = false;
         if (!isLowerThanOrLeveled(parent)) {
-            throw new IllegalStateException("For place '" + name + "' (lvl " + level + ") is greater or equal than its parent place '" + (parent != null ? parent.name : "null") + "' (lvl " + (parent != null ? parent.level : "null") + ")");
+            throw new IllegalStateException("For place '" + name + LEVEL_MESSAGE_FRAGMENT + level + ") is greater or equal than its parent place '" + (parent != null ? parent.name : "null") + LEVEL_MESSAGE_FRAGMENT + (parent != null ? parent.level : "null") + ")");
         }
     }
 

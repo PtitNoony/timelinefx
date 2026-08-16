@@ -40,8 +40,7 @@ public class Picture extends AbstractPicture {
         return project;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return "Pic[" + getName() + "]";
     }
 

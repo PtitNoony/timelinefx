@@ -74,8 +74,7 @@ public class Portrait extends AbstractPicture {
         return Collections.unmodifiableList(persons);
     }
 
-    @Override
-    public boolean addPerson(final Person aPerson) {
+    @Override public boolean addPerson(final Person aPerson) {
         LOG.log(Level.INFO, "No person can be added to a portrait. ({0}, {1})", new Object[]{this, aPerson});
         return false;
     }

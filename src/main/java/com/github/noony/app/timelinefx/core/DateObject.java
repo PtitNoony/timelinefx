@@ -108,8 +108,7 @@ public final class DateObject implements IDateObject {
         return timeFormat;
     }
 
-    @Override
-    public void setTimeFormat(final TimeFormat aTimeFormat) {
+    @Override public void setTimeFormat(final TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
         switch (timeFormat) {
             case LOCAL_TIME ->

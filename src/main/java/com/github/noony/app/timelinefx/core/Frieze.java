@@ -450,7 +450,7 @@ public final class Frieze implements FriezeObject {
      * @param aPerson the person whose selection changed
      * @param selected whether the person is now selected
      */
-    public void updatePeopleSelection(final Person aPerson, boolean selected) {
+    public void updatePeopleSelection(final Person aPerson, final boolean selected) {
         LOG.log(Level.INFO, "updatePeopleSelection p:{0}, isSelected:{1}", new Object[]{aPerson, selected});
         if (selected) {
             addPerson(aPerson);

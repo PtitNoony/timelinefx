@@ -136,7 +136,7 @@ public final class PlaceFactory {
      * @param color the place's color
      * @return the created place
      */
-    public static Place createPlace(final long id, final String placeName, final PlaceLevel placeLevel, final Place parentPlace, Color color) {
+    public static Place createPlace(final long id, final String placeName, final PlaceLevel placeLevel, final Place parentPlace, final Color color) {
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("trying to create place " + placeName + " with existing id=" + id);
         }

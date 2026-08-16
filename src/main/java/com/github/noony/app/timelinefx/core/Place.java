@@ -65,6 +65,11 @@ public final class Place implements FriezeObject {
     private static final String LEVEL_MESSAGE_FRAGMENT = "' (lvl ";
 
     /**
+     * Placeholder used in exception messages when there is no parent place to describe.
+     */
+    private static final String NULL_PLACEHOLDER = "null";
+
+    /**
      * This place's unique id.
      */
     private final Long id;
@@ -111,7 +116,7 @@ public final class Place implements FriezeObject {
     private boolean selected;
     //
 
-    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, final Place parentPlace, Color aColor) {
+    protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, final Place parentPlace, final Color aColor) {
         id = placeId;
         name = placeName;
         parent = parentPlace;
@@ -126,7 +131,16 @@ public final class Place implements FriezeObject {
         propertyChangeSupport = new PropertyChangeSupport(Place.this);
         selected = false;
         if (!isLowerThanOrLeveled(parent)) {
-            throw new IllegalStateException("For place '" + name + LEVEL_MESSAGE_FRAGMENT + level + ") is greater or equal than its parent place '" + (parent != null ? parent.name : "null") + LEVEL_MESSAGE_FRAGMENT + (parent != null ? parent.level : "null") + ")");
+            final String parentName;
+            final Object parentLevel;
+            if (parent == null) {
+                parentName = NULL_PLACEHOLDER;
+                parentLevel = NULL_PLACEHOLDER;
+            } else {
+                parentName = parent.name;
+                parentLevel = parent.level;
+            }
+            throw new IllegalStateException("For place '" + name + LEVEL_MESSAGE_FRAGMENT + level + ") is greater or equal than its parent place '" + parentName + LEVEL_MESSAGE_FRAGMENT + parentLevel + ")");
         }
     }
 

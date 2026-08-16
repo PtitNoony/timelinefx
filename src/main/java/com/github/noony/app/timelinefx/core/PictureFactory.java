@@ -123,7 +123,7 @@ public final class PictureFactory {
      * @param pictureHeight the picture's height
      * @return the created picture
      */
-    public static Picture createPicture(final TimeLineProject project, final long id, final String pictureName, final LocalDateTime pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    public static Picture createPicture(final TimeLineProject project, final long id, final String pictureName, final LocalDateTime pictureCreationDate, final String picturePath, int pictureWidth, int pictureHeight) {
         LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));

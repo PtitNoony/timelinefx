@@ -431,10 +431,10 @@ public final class TimeLineProject {
     /**
      * Adds several stays to this project.
      *
-     * @param stays the stays to add
+     * @param staysToAdd the stays to add
      */
-    public void addAllStays(final StayPeriod... stays) {
-        for (StayPeriod s : stays) {
+    public void addAllStays(final StayPeriod... staysToAdd) {
+        for (StayPeriod s : staysToAdd) {
             addStay(s);
         }
     }
@@ -442,10 +442,10 @@ public final class TimeLineProject {
     /**
      * Adds several stays to this project.
      *
-     * @param stays the stays to add
+     * @param staysToAdd the stays to add
      */
-    public void addAllStays(final Collection<? extends StayPeriod> stays) {
-        stays.forEach(this::addStay);
+    public void addAllStays(final Collection<? extends StayPeriod> staysToAdd) {
+        staysToAdd.forEach(this::addStay);
     }
 
     /**

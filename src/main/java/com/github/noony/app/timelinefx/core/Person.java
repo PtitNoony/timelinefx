@@ -507,8 +507,7 @@ public final class Person implements FriezeObject {
         return visible;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return name;
     }
 

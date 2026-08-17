@@ -34,7 +34,7 @@ public final class PlaceFactory {
     /**
      * The implicit root place all top-level places are attached to.
      */
-    public static final Place PLACES_PLACE = new Place(-1, "PLACES", PlaceLevel.UNIVERSE, null);
+    public static final Place PLACES_PLACE = new Place(-1, "PLACES", PlaceLevel.ROOT, null);
 
     /**
      * Logger used by this factory.

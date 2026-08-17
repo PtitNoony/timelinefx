@@ -18,7 +18,7 @@
 package com.github.noony.app.timelinefx.core;
 
 /**
- * The nesting level of a {@link Place}, from the smallest (address) to the largest (universe).
+ * The nesting level of a {@link Place}, from the smallest (address) to the largest (root).
  *
  * @author hamon
  */
@@ -71,7 +71,11 @@ public enum PlaceLevel {
     /**
      * The whole universe.
      */
-    UNIVERSE(1000);
+    UNIVERSE(1000),
+    /**
+     * The implicit root level above everything else, used as the default level.
+     */
+    ROOT(1_000_000);
 
     /**
      * The numeric value used to compare levels.

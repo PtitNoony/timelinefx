@@ -30,7 +30,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * @author solun
  */
-public class StayFactoryTest {
+public final class StayFactoryTest {
 
     @TempDir
     private Path tempDir;

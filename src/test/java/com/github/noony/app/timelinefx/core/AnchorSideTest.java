@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * @author solun
  */
-public class AnchorSideTest {
+public final class AnchorSideTest {
 
     public AnchorSideTest() {
     }

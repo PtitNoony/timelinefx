@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author solun
  */
-public class EventTest {
+public final class EventTest {
 
     public EventTest() {
     }

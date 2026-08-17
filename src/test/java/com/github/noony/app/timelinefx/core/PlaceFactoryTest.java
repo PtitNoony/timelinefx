@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author solun
  */
-public class PlaceFactoryTest {
+public final class PlaceFactoryTest {
 
     public PlaceFactoryTest() {
     }

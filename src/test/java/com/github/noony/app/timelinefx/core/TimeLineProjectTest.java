@@ -34,7 +34,7 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @author solun
  */
-public class TimeLineProjectTest {
+public final class TimeLineProjectTest {
 
     @TempDir
     private Path tempDir;

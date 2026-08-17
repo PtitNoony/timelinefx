@@ -33,7 +33,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * @author solun
  */
-public class PersonTest {
+public final class PersonTest {
 
     @TempDir
     private Path tempDir;

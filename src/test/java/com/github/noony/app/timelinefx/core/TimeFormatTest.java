@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * @author solun
  */
-public class TimeFormatTest {
+public final class TimeFormatTest {
 
     public TimeFormatTest() {
     }

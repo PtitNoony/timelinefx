@@ -22,10 +22,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
+ * Unit tests for {@link PictureInfo}.
+ *
  * @author solun
  */
 public final class PictureInfoTest {
 
+    /**
+     * Default constructor.
+     */
     public PictureInfoTest() {
     }
 

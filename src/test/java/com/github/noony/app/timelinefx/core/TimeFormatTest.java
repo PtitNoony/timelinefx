@@ -22,10 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
+ * Unit tests for {@link TimeFormat}.
+ *
  * @author solun
  */
 public final class TimeFormatTest {
 
+    /**
+     * Default constructor.
+     */
     public TimeFormatTest() {
     }
 

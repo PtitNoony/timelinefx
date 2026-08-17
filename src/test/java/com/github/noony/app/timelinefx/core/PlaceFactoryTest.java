@@ -27,18 +27,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link PlaceFactory}.
+ *
  * @author solun
  */
 public final class PlaceFactoryTest {
 
+    /**
+     * Default constructor.
+     */
     public PlaceFactoryTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PlaceFactory.reset();
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PlaceFactory.reset();

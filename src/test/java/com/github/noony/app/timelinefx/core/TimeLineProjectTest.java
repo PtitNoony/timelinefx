@@ -37,20 +37,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class TimeLineProjectTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * The project used in these tests.
+     */
     private TimeLineProject project;
 
+    /**
+     * A person used in these tests.
+     */
     private Person person;
 
+    /**
+     * A place used in these tests.
+     */
     private Place place;
 
+    /**
+     * A stay used in these tests.
+     */
     private StayPeriod stay;
 
+    /**
+     * Default constructor.
+     */
     public TimeLineProjectTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         FriezeObjectFactory.reset();
@@ -61,6 +82,9 @@ public final class TimeLineProjectTest {
         stay = StayFactory.createStayPeriodSimpleTime(person, 10.0, 20.0, place);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         FriezeObjectFactory.reset();

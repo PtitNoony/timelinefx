@@ -23,10 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
+ * Unit tests for {@link AnchorSide}.
+ *
  * @author solun
  */
 public final class AnchorSideTest {
 
+    /**
+     * Default constructor.
+     */
     public AnchorSideTest() {
     }
 

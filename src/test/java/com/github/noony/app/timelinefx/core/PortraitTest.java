@@ -28,22 +28,42 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link Portrait}.
+ *
  * @author solun
  */
 public final class PortraitTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * A person used in these tests.
+     */
     private Person person;
 
+    /**
+     * Another person used in these tests.
+     */
     private Person otherPerson;
 
+    /**
+     * A place used in these tests.
+     */
     private Place place;
 
+    /**
+     * Default constructor.
+     */
     public PortraitTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PortraitFactory.reset();
@@ -56,6 +76,9 @@ public final class PortraitTest {
         place = PlaceFactory.createPlace("testPlace", PlaceLevel.PLANET, null);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PortraitFactory.reset();

@@ -24,10 +24,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link Event}.
+ *
  * @author solun
  */
 public final class EventTest {
 
+    /**
+     * Default constructor.
+     */
     public EventTest() {
     }
 

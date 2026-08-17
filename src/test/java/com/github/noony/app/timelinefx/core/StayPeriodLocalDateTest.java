@@ -28,24 +28,47 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link StayPeriodLocalDate}.
+ *
  * @author solun
  */
 public final class StayPeriodLocalDateTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * A person used in these tests.
+     */
     private Person person;
 
+    /**
+     * Another person used in these tests.
+     */
     private Person otherPerson;
 
+    /**
+     * A place used in these tests.
+     */
     private Place place;
 
+    /**
+     * Another place used in these tests.
+     */
     private Place otherPlace;
 
+    /**
+     * Default constructor.
+     */
     public StayPeriodLocalDateTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         StayFactory.reset();
@@ -59,6 +82,9 @@ public final class StayPeriodLocalDateTest {
         otherPlace = PlaceFactory.createPlace("otherPlace", PlaceLevel.PLANET, null);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         StayFactory.reset();

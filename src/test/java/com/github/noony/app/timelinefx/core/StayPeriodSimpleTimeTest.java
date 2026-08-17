@@ -27,20 +27,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link StayPeriodSimpleTime}.
+ *
  * @author solun
  */
 public final class StayPeriodSimpleTimeTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * A person used in these tests.
+     */
     private Person person;
 
+    /**
+     * A place used in these tests.
+     */
     private Place place;
 
+    /**
+     * Default constructor.
+     */
     public StayPeriodSimpleTimeTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         StayFactory.reset();
@@ -52,6 +69,9 @@ public final class StayPeriodSimpleTimeTest {
         place = PlaceFactory.createPlace("place", PlaceLevel.PLANET, null);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         StayFactory.reset();

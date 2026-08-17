@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
+import lombok.NonNull;
 
 /**
  * A named location, optionally nested under a parent place (e.g. a town within a country).
@@ -92,6 +92,7 @@ public final class Place implements FriezeObject {
     /**
      * This place's nesting level.
      */
+    @NonNull
     private PlaceLevel level;
 
     /**
@@ -120,14 +121,19 @@ public final class Place implements FriezeObject {
         id = placeId;
         name = placeName;
         parent = parentPlace;
-        level = placeLevel;
+        if (placeLevel == null) {
+            level = PlaceLevel.ROOT;
+            isRootPlace = true;
+        } else {
+            level = placeLevel;
+            isRootPlace = parentPlace == null || PlaceFactory.PLACES_PLACE.equals(parentPlace);
+        }
         places = new LinkedList<>();
         color = aColor;
         //
         if (parentPlace != null) {
             parentPlace.addPlace(Place.this);
         }
-        isRootPlace = parentPlace == null || PlaceFactory.PLACES_PLACE.equals(parentPlace);
         propertyChangeSupport = new PropertyChangeSupport(Place.this);
         selected = false;
         if (!isLowerThanOrLeveled(parent)) {
@@ -148,7 +154,8 @@ public final class Place implements FriezeObject {
         this(placeId, placeName, placeLevel, parentPlace, DEFAULT_COLOR);
     }
 
-    @Override public long getId() {
+    @Override
+    public long getId() {
         return id;
     }
 
@@ -281,7 +288,8 @@ public final class Place implements FriezeObject {
         propertyChangeSupport.firePropertyChange(CONTENT_CHANGED, null, this);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return name;
     }
 
@@ -292,7 +300,6 @@ public final class Place implements FriezeObject {
         return selected;
     }
 
-
     /**
      * Checks whether this place's level is lower than or equal to another place's level.
      *
@@ -300,9 +307,7 @@ public final class Place implements FriezeObject {
      * @return true if this place's level is lower than or equal to {@code anotherPlace}'s, or if {@code anotherPlace} is null
      */
     public boolean isLowerThanOrLeveled(final Place anotherPlace) {
-        if (level == null) {
-            return false;
-        } else if (anotherPlace == null) {
+        if (anotherPlace == null) {
             return true;
         } else {
             return level.getLevelValue() <= anotherPlace.level.getLevelValue();

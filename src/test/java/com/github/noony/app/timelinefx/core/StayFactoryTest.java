@@ -29,20 +29,37 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
+ * Unit tests for {@link StayFactory}.
+ *
  * @author solun
  */
 public final class StayFactoryTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * A person used in these tests.
+     */
     private Person person;
 
+    /**
+     * A place used in these tests.
+     */
     private Place place;
 
+    /**
+     * Default constructor.
+     */
     public StayFactoryTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PersonFactory.reset();
@@ -54,6 +71,9 @@ public final class StayFactoryTest {
         place = PlaceFactory.createPlace("testPlace", PlaceLevel.PLANET, null);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PersonFactory.reset();

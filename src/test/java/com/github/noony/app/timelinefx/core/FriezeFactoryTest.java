@@ -30,18 +30,32 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link FriezeFactory}.
+ *
  * @author solun
  */
 public final class FriezeFactoryTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * The project used in these tests.
+     */
     private TimeLineProject project;
 
+    /**
+     * Default constructor.
+     */
     public FriezeFactoryTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         FriezeFactory.reset();
@@ -49,6 +63,9 @@ public final class FriezeFactoryTest {
         project = TimeLineProjectFactory.createProject("FriezeFactoryTest", configParams);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         FriezeFactory.reset();

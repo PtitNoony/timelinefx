@@ -38,20 +38,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class PictureTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * The project used in these tests.
+     */
     private TimeLineProject project;
 
+    /**
+     * A person used in these tests.
+     */
     private Person personA;
 
+    /**
+     * Another person used in these tests.
+     */
     private Person personB;
 
+    /**
+     * A place used in these tests.
+     */
     private Place place;
 
+    /**
+     * Default constructor.
+     */
     public PictureTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PictureFactory.reset();
@@ -64,6 +85,9 @@ public final class PictureTest {
         place = PlaceFactory.createPlace("testPlace", PlaceLevel.PLANET, null);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PictureFactory.reset();

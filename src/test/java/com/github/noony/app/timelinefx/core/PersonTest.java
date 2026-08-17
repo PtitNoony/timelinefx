@@ -32,18 +32,32 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link Person}.
+ *
  * @author solun
  */
 public final class PersonTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * The project used in these tests.
+     */
     private TimeLineProject project;
 
+    /**
+     * Default constructor.
+     */
     public PersonTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PersonFactory.reset();
@@ -52,6 +66,9 @@ public final class PersonTest {
         project = TimeLineProjectFactory.createProject("PersonTest", configParams);
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PersonFactory.reset();

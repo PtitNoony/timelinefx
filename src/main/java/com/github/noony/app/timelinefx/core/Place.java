@@ -92,8 +92,7 @@ public final class Place implements FriezeObject {
     /**
      * This place's nesting level.
      */
-    @NonNull
-    private PlaceLevel level;
+    @NonNull private PlaceLevel level;
 
     /**
      * Whether this place has no parent (or its parent is the implicit root place).

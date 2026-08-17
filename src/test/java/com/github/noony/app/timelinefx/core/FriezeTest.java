@@ -35,7 +35,7 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @author solun
  */
-public class FriezeTest {
+public final class FriezeTest {
 
     static {
         try {

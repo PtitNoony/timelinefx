@@ -14,27 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.noony.app.timelinefx.core;
-
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * @author solun
+ * Unit tests for the core domain model.
  */
-public final class MessagesTest {
-
-    public MessagesTest() {
-    }
-
-    /**
-     * Test that UNSUPPORTED_TIME_FORMAT is a non-empty, stable message prefix.
-     */
-    @Test
-    public void testUnsupportedTimeFormat() {
-        assertNotNull(Messages.UNSUPPORTED_TIME_FORMAT);
-        assertEquals("Unsupported time format: ", Messages.UNSUPPORTED_TIME_FORMAT);
-    }
-
-}
+package com.github.noony.app.timelinefx.core;

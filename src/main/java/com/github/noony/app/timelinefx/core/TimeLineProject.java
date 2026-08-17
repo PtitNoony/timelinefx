@@ -218,9 +218,12 @@ public final class TimeLineProject {
     }
 
     private void initFolders(final Map<String, String> configParams) {
-        final var projectFolderLocation = configParams.containsKey(PROJECT_FOLDER_KEY)
-                ? configParams.get(PROJECT_FOLDER_KEY)
-                : Configuration.getProjectsParentFolder() + File.separator + name;
+        final String projectFolderLocation;
+        if (configParams.containsKey(PROJECT_FOLDER_KEY)) {
+            projectFolderLocation = configParams.get(PROJECT_FOLDER_KEY);
+        } else {
+            projectFolderLocation = Configuration.getProjectsParentFolder() + File.separator + name;
+        }
         final var portraitsFolderLocation = configParams.getOrDefault(PORTRAIT_FOLDER_KEY, DEFAULT_PORTRAIT_FOLDER);
         final var picturesFolderLocation = configParams.getOrDefault(PICTURES_FOLDER_KEY, DEFAULT_PICTURES_FOLDER);
         final var miniaturesFolderLocation = configParams.getOrDefault(MINIATURES_FOLDER_KEY, DEFAULT_MINIATURES_FOLDER);

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @author solun
  */
-public class PictureTest {
+public final class PictureTest {
 
     @TempDir
     private Path tempDir;

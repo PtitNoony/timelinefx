@@ -24,6 +24,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -241,6 +242,86 @@ public class PlaceTest {
         assertFalse(europe.encompasses(egypt));
         assertFalse(europe.encompasses(cairo));
         assertFalse(europe.encompasses(atlantis));
+    }
+
+    /**
+     * Test of isLowerThanOrLeveled method, of class Place, with a null argument.
+     */
+    @Test
+    public void testIsLowerThanOrLeveledWithNull() {
+        var instance = PlaceFactory.createPlace("testIsLowerThanOrLeveledWithNull", PlaceLevel.PLANET, null);
+        assertTrue(instance.isLowerThanOrLeveled(null));
+    }
+
+    /**
+     * Test of encompasses method, of class Place, with a null argument.
+     */
+    @Test
+    public void testEncompassesWithNull() {
+        var instance = PlaceFactory.createPlace("testEncompassesWithNull", PlaceLevel.PLANET, null);
+        assertFalse(instance.encompasses(null));
+    }
+
+    /**
+     * Test of setParent method, of class Place.
+     */
+    @Test
+    public void testSetParent() {
+        var oldParent = PlaceFactory.createPlace("testSetParentOldParent", PlaceLevel.ORBIT, null);
+        var newParent = PlaceFactory.createPlace("testSetParentNewParent", PlaceLevel.ORBIT, null);
+        var child = PlaceFactory.createPlace("testSetParentChild", PlaceLevel.PLANET, oldParent);
+        assertTrue(oldParent.getPlaces().contains(child));
+        assertFalse(newParent.getPlaces().contains(child));
+        //
+        child.setParent(newParent);
+        assertEquals(newParent, child.getParent());
+        assertFalse(oldParent.getPlaces().contains(child));
+        assertTrue(newParent.getPlaces().contains(child));
+    }
+
+    /**
+     * Test of setParent method, of class Place, updating isRootPlace.
+     */
+    @Test
+    public void testSetParentUpdatesIsRootPlace() {
+        var parent = PlaceFactory.createPlace("testSetParentUpdatesIsRootPlaceParent", PlaceLevel.ORBIT, null);
+        var child = PlaceFactory.createPlace("testSetParentUpdatesIsRootPlaceChild", PlaceLevel.PLANET, parent);
+        assertFalse(child.isRootPlace());
+        child.setParent(null);
+        assertTrue(child.isRootPlace());
+    }
+
+    /**
+     * Test of setLevel method, of class Place, when a child place conflicts with the new level.
+     */
+    @Test
+    public void testSetLevelConflict() {
+        var parent = PlaceFactory.createPlace("testSetLevelConflictParent", PlaceLevel.CONTINENT, null);
+        var child = PlaceFactory.createPlace("testSetLevelConflictChild", PlaceLevel.COUNTRY, parent);
+        var result = parent.setLevel(PlaceLevel.TOWN);
+        assertFalse(result);
+        assertEquals(PlaceLevel.CONTINENT, parent.getLevel());
+        assertEquals(PlaceLevel.COUNTRY, child.getLevel());
+    }
+
+    /**
+     * Test of the Place constructor, of class Place, with a null level defaulting to PlaceLevel.ROOT.
+     */
+    @Test
+    public void testNullLevelDefaultsToRoot() {
+        var instance = PlaceFactory.createPlace("testNullLevelDefaultsToRoot", null, null);
+        assertEquals(PlaceLevel.ROOT, instance.getLevel());
+        assertTrue(instance.isRootPlace());
+    }
+
+    /**
+     * Test of the Place constructor, of class Place, rejecting a level greater than its parent's.
+     */
+    @Test
+    public void testConstructorThrowsWhenLevelConflictsWithParent() {
+        var townParent = PlaceFactory.createPlace("testConstructorThrowsWhenLevelConflictsWithParentParent", PlaceLevel.TOWN, null);
+        assertThrows(IllegalStateException.class,
+                () -> PlaceFactory.createPlace("testConstructorThrowsWhenLevelConflictsWithParentChild", PlaceLevel.GALAXY, townParent));
     }
 
 }

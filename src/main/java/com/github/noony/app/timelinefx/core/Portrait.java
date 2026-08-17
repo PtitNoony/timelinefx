@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
@@ -30,7 +29,7 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public class Portrait extends AbstractPicture {
+public final class Portrait extends AbstractPicture {
 
     /**
      * Orders portraits by id.
@@ -70,11 +69,13 @@ public class Portrait extends AbstractPicture {
         this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
     }
 
-    @Override public List<Person> getPersons() {
+    @Override
+    public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
     }
 
-    @Override public boolean addPerson(final Person aPerson) {
+    @Override
+    public boolean addPerson(final Person aPerson) {
         LOG.log(Level.INFO, "No person can be added to a portrait. ({0}, {1})", new Object[]{this, aPerson});
         return false;
     }

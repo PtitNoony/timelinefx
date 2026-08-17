@@ -17,8 +17,11 @@ jobs:
           java-version: '26'
           cache: maven
 
+      - name: Install Xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
       - name: Run tests with JaCoCo
-        run: mvn -B test
+        run: xvfb-run -a mvn -B test
 
       - name: Upload coverage to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1

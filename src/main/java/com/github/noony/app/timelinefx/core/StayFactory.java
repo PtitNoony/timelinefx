@@ -31,8 +31,6 @@ public final class StayFactory {
      * Logger used by this factory.
      */
     private static final Logger LOG = Logger.getGlobal();
-    //    private static final Map<Long, StayPeriod> STAY_PERIOD_SIMPLE_TIMES = new HashMap<>();
-    //    private static final Map<Long, StayPeriod> STAY_PERIOD_LOCAL_DATES = new HashMap<>();
 
 
     /**
@@ -49,6 +47,10 @@ public final class StayFactory {
      * Fragment used to render the conflicting id in exception messages.
      */
     private static final String EXISTING_ID_MESSAGE_FRAGMENT = " with existing id=";
+    /**
+     * Fragment used to render the exixiting conflicting id in exception messages.
+     */
+    private static final String EXISTING_ID_MESSAGE_FRAGMENT_PART_2 = " (exists : ";
 
     private StayFactory() {
         // private utility constructor
@@ -59,8 +61,6 @@ public final class StayFactory {
      */
     public static void reset() {
         FACTORY.reset();
-        //        STAY_PERIOD_SIMPLE_TIMES.clear();
-        //        STAY_PERIOD_LOCAL_DATES.clear();
     }
 
     /**
@@ -92,7 +92,7 @@ public final class StayFactory {
     public static StayPeriodSimpleTime createStayPeriodSimpleTime(final long id, final Person person, final double startDate, final double endDate, final Place aPlace) {
         LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating StayPeriodSimpleTime with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
-            throw new IllegalArgumentException(TRYING_TO_CREATE_STAY_MESSAGE + person.getName() + " from " + startDate + " to " + endDate + EXISTING_ID_MESSAGE_FRAGMENT + id + " (exists : " + id + ")");
+            throw new IllegalArgumentException(TRYING_TO_CREATE_STAY_MESSAGE + person.getName() + " from " + startDate + " to " + endDate + EXISTING_ID_MESSAGE_FRAGMENT + id + EXISTING_ID_MESSAGE_FRAGMENT_PART_2 + id + ")");
         }
         final var stay = new StayPeriodSimpleTime(id, person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);
@@ -128,7 +128,7 @@ public final class StayFactory {
     public static StayPeriodLocalDate createStayPeriodLocalDate(final long id, final Person person, final LocalDate startDate, final LocalDate endDate, final Place aPlace) {
         LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating createStayPeriodLocalDate with id={0} person={1} startDate={2} endDate={3} aPlace={4}", new Object[]{id, person, startDate, endDate, aPlace});
         if (!FACTORY.isIdAvailable(id)) {
-            throw new IllegalArgumentException(TRYING_TO_CREATE_STAY_MESSAGE + person.getName() + EXISTING_ID_MESSAGE_FRAGMENT + id + " (exists : " + FACTORY.get(id).getDisplayString() + ")");
+            throw new IllegalArgumentException(TRYING_TO_CREATE_STAY_MESSAGE + person.getName() + EXISTING_ID_MESSAGE_FRAGMENT + id + EXISTING_ID_MESSAGE_FRAGMENT_PART_2 + FACTORY.get(id).getDisplayString() + ")");
         }
         final var stay = new StayPeriodLocalDate(id, person, startDate, endDate, aPlace);
         FACTORY.addObject(stay);

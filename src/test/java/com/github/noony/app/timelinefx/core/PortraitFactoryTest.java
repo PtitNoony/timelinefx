@@ -36,16 +36,31 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  */
 public final class PortraitFactoryTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * The project used in these tests.
+     */
     private TimeLineProject project;
 
+    /**
+     * A person used in these tests.
+     */
     private Person person;
 
+    /**
+     * Default constructor.
+     */
     public PortraitFactoryTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PersonFactory.reset();
@@ -55,6 +70,9 @@ public final class PortraitFactoryTest {
         person = PersonFactory.createPerson(project, "testPerson");
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PersonFactory.reset();

@@ -36,17 +36,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class TimeLineProjectFactoryTest {
 
+    /**
+     * Temporary directory used to create a test project without touching the real user directories.
+     */
     @TempDir
     private Path tempDir;
 
+    /**
+     * Default constructor.
+     */
     public TimeLineProjectFactoryTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         FriezeObjectFactory.reset();
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         FriezeObjectFactory.reset();

@@ -34,17 +34,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class FactoryTest {
 
+    /**
+     * The factory instance under test.
+     */
     private Factory<Place> instance;
 
+    /**
+     * Default constructor.
+     */
     public FactoryTest() {
     }
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     public void setUp() {
         PlaceFactory.reset();
         instance = new Factory<>();
     }
 
+    /**
+     * Tears down test fixtures after each test.
+     */
     @AfterEach
     public void tearDown() {
         PlaceFactory.reset();

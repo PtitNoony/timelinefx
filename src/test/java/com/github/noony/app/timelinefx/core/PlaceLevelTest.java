@@ -22,10 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link PlaceLevel}.
+ *
  * @author solun
  */
 public final class PlaceLevelTest {
 
+    /**
+     * Default constructor.
+     */
     public PlaceLevelTest() {
     }
 

@@ -22,10 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
+ * Unit tests for {@link ItemSelectionPropagation}.
+ *
  * @author solun
  */
 public final class ItemSelectionPropagationTest {
 
+    /**
+     * Default constructor.
+     */
     public ItemSelectionPropagationTest() {
     }
 

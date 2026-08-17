@@ -25,10 +25,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link DateObject}.
+ *
  * @author solun
  */
 public final class DateObjectTest {
 
+    /**
+     * Default constructor.
+     */
     public DateObjectTest() {
     }
 

@@ -22,10 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
+ * Unit tests for {@link Messages}.
+ *
  * @author solun
  */
 public final class MessagesTest {
 
+    /**
+     * Default constructor.
+     */
     public MessagesTest() {
     }
 

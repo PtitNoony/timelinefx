@@ -514,7 +514,7 @@ public final class Frieze implements FriezeObject {
      * @param listener the listener to remove
      */
     public void removeListener(final PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     /**

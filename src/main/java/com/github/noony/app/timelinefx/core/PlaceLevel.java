@@ -78,8 +78,8 @@ public enum PlaceLevel {
      */
     private final int level;
 
-    PlaceLevel(final int level) {
-        this.level = level;
+    PlaceLevel(final int aLevel) {
+        level = aLevel;
     }
 
     /**

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * @author solun
  */
-public class StayPeriodSimpleTimeTest {
+public final class StayPeriodSimpleTimeTest {
 
     @TempDir
     private Path tempDir;

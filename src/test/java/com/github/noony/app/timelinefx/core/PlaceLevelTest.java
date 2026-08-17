@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author solun
  */
-public class PlaceLevelTest {
+public final class PlaceLevelTest {
 
     public PlaceLevelTest() {
     }

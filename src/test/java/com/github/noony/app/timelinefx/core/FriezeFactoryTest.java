@@ -31,7 +31,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * @author solun
  */
-public class FriezeFactoryTest {
+public final class FriezeFactoryTest {
 
     @TempDir
     private Path tempDir;

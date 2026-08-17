@@ -29,7 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  * @author solun
  */
-public class StayPeriodLocalDateTest {
+public final class StayPeriodLocalDateTest {
 
     @TempDir
     private Path tempDir;

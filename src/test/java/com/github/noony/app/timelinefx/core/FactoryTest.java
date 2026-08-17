@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author solun
  */
-public class FactoryTest {
+public final class FactoryTest {
 
     private Factory<Place> instance;
 

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author solun
  */
-public class PictureInfoTest {
+public final class PictureInfoTest {
 
     public PictureInfoTest() {
     }

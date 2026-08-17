@@ -9,7 +9,6 @@ import com.github.noony.app.timelinefx.core.PictureInfo;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,13 +46,12 @@ public class MetadataParser {
         int xRes = DEFAULT_RESOLUTION;
         int yRes = DEFAULT_RESOLUTION;
 
-        try {
+        try (var imageStream = new FileInputStream(filePath)) {
             // Using the Javafx API to get resolution
-            var imageStream = new FileInputStream(filePath);
             var image = new Image(imageStream);
             xRes = (int) image.getWidth();
             yRes = (int) image.getHeight();
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception while loading image :: {0}", new Object[]{ex});
         }
 

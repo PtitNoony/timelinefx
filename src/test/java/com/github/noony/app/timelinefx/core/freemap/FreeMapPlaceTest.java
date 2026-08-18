@@ -46,9 +46,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class FreeMapPlaceTest {
 
+    /**
+     * An arbitrary free map id; no real {@link FriezeFreeMap} is registered under it.
+     */
     private static final long FREE_MAP_ID = 1L;
+
+    /**
+     * The plot separation used when creating the fixture's FreeMapPlace.
+     */
     private static final double PLOT_SEPARATION = 8.0;
+
+    /**
+     * The place name width used when creating the fixture's FreeMapPlace.
+     */
     private static final double NAME_WIDTH = 100.0;
+
+    /**
+     * The font size used when creating the fixture's FreeMapPlace.
+     */
     private static final double FONT_SIZE = 12.0;
 
     /**

@@ -24,7 +24,6 @@ import com.github.noony.app.timelinefx.core.PortraitFactory;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
-import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnectorFactory;
@@ -38,14 +37,35 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
+ * Unit tests for {@link FreeMapPortrait}.
+ *
  * @author solun
  */
 public final class FreeMapPortraitTest {
 
+    /**
+     * An arbitrary free map id used to scope the fixture's FreeMapPerson/FreeMapPlace.
+     */
     private static final long FREE_MAP_ID = 1L;
+
+    /**
+     * The plot separation used when creating the fixture's FreeMapPlace.
+     */
     private static final double PLOT_SEPARATION = 8.0;
+
+    /**
+     * The place name width used when creating the fixture's FreeMapPlace.
+     */
     private static final double NAME_WIDTH = 100.0;
+
+    /**
+     * The font size used when creating the fixture's FreeMapPlace.
+     */
     private static final double FONT_SIZE = 12.0;
+
+    /**
+     * The portrait radius used in these tests.
+     */
     private static final double RADIUS = 30.0;
 
     /**

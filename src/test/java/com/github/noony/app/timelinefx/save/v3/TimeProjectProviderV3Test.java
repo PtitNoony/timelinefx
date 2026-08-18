@@ -18,13 +18,15 @@
 package com.github.noony.app.timelinefx.save.v3;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Element;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Element;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link TimeProjectProviderV3}.
+ *
  * @author solun
  */
 public final class TimeProjectProviderV3Test {
@@ -35,9 +37,18 @@ public final class TimeProjectProviderV3Test {
     public TimeProjectProviderV3Test() {
     }
 
-    private static Element newElement(String tagName, String attributeName, String attributeValue) throws Exception {
-        var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        var element = doc.createElement(tagName);
+    /**
+     * Builds a single-attribute element to feed to {@code parseDoubleAttribute}.
+     *
+     * @param tagName the element's tag name
+     * @param attributeName the attribute's name
+     * @param attributeValue the attribute's raw string value
+     * @return the constructed element
+     * @throws Exception if the document builder cannot be created
+     */
+    private static Element newElement(final String tagName, final String attributeName, final String attributeValue) throws Exception {
+        final var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        final var element = doc.createElement(tagName);
         element.setAttribute(attributeName, attributeValue);
         return element;
     }
@@ -47,7 +58,7 @@ public final class TimeProjectProviderV3Test {
      */
     @Test
     public void testParseDoubleAttributeValidValue() throws Exception {
-        var element = newElement("stay", "startDate", "12.5");
+        final var element = newElement("stay", "startDate", "12.5");
         assertEquals(12.5, TimeProjectProviderV3.parseDoubleAttribute(element, "startDate"));
     }
 
@@ -57,8 +68,8 @@ public final class TimeProjectProviderV3Test {
      */
     @Test
     public void testParseDoubleAttributeThrowsClearExceptionOnMalformedValue() throws Exception {
-        var element = newElement("stay", "startDate", "not-a-number");
-        var exception = assertThrows(IllegalStateException.class,
+        final var element = newElement("stay", "startDate", "not-a-number");
+        final var exception = assertThrows(IllegalStateException.class,
                 () -> TimeProjectProviderV3.parseDoubleAttribute(element, "startDate"));
         assertTrue(exception.getMessage().contains("startDate"));
         assertTrue(exception.getMessage().contains("stay"));
@@ -71,8 +82,8 @@ public final class TimeProjectProviderV3Test {
      */
     @Test
     public void testParseDoubleAttributeThrowsClearExceptionOnMissingAttribute() throws Exception {
-        var element = newElement("stay", "otherAttribute", "1.0");
-        var exception = assertThrows(IllegalStateException.class,
+        final var element = newElement("stay", "otherAttribute", "1.0");
+        final var exception = assertThrows(IllegalStateException.class,
                 () -> TimeProjectProviderV3.parseDoubleAttribute(element, "startDate"));
         assertTrue(exception.getMessage().contains("startDate"));
         assertTrue(exception.getMessage().contains("stay"));

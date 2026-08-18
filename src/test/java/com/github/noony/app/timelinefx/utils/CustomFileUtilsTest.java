@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link CustomFileUtils}.
+ *
  * @author solun
  */
 public final class CustomFileUtilsTest {
@@ -38,7 +40,7 @@ public final class CustomFileUtilsTest {
      */
     @Test
     public void testToDoubleArrayValidInput() {
-        var result = CustomFileUtils.toDoubleArray("[1.0, 2.5, -3.25]");
+        final var result = CustomFileUtils.toDoubleArray("[1.0, 2.5, -3.25]");
         assertArrayEquals(new double[]{1.0, 2.5, -3.25}, result);
     }
 
@@ -48,7 +50,7 @@ public final class CustomFileUtilsTest {
      */
     @Test
     public void testToDoubleArrayThrowsClearExceptionOnMalformedValue() {
-        var exception = assertThrows(IllegalArgumentException.class, () -> CustomFileUtils.toDoubleArray("[1.0, oops, 3.0]"));
+        final var exception = assertThrows(IllegalArgumentException.class, () -> CustomFileUtils.toDoubleArray("[1.0, oops, 3.0]"));
         assertTrue(exception.getMessage().contains("oops"));
         assertTrue(exception.getMessage().contains("[1.0, oops, 3.0]"));
     }

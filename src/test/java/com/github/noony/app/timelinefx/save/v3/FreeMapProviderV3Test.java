@@ -18,12 +18,14 @@
 package com.github.noony.app.timelinefx.save.v3;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Element;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Element;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link FreeMapProviderV3}.
+ *
  * @author solun
  */
 public final class FreeMapProviderV3Test {
@@ -39,24 +41,27 @@ public final class FreeMapProviderV3Test {
      * malformed {@code height} attribute. Parsing fails while resolving that attribute, before the
      * {@code frieze} argument of {@link FreeMapProviderV3#parseFreeMaps} is ever dereferenced, so {@code null}
      * is a safe stand-in for it here.
+     *
+     * @return the constructed {@code <freeMaps>} element
+     * @throws Exception if the document builder cannot be created
      */
     private static Element newFreeMapsElementWithMalformedPlaceHeight() throws Exception {
-        var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        var freeMapsElement = doc.createElement("freeMaps");
-        var freeMapElement = doc.createElement("freeMap");
-        freeMapElement.setAttribute("id", "1");
-        freeMapElement.setAttribute("name", "Test FreeMap");
-        freeMapElement.appendChild(doc.createElement("freeMapDateHandles"));
-        freeMapElement.appendChild(doc.createElement("freeMapPersons"));
-        var placesElement = doc.createElement("freeMapPlaces");
-        var placeElement = doc.createElement("freeMapPlace");
+        final var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        final var placeElement = doc.createElement("freeMapPlace");
         placeElement.setAttribute("placeID", "1");
         placeElement.setAttribute("height", "not-a-number");
         placeElement.setAttribute("yPos", "0.0");
         placeElement.setAttribute("fontSize", "10.0");
         placeElement.setAttribute("placeNameWidth", "10.0");
+        final var placesElement = doc.createElement("freeMapPlaces");
         placesElement.appendChild(placeElement);
+        final var freeMapElement = doc.createElement("freeMap");
+        freeMapElement.setAttribute("id", "1");
+        freeMapElement.setAttribute("name", "Test FreeMap");
+        freeMapElement.appendChild(doc.createElement("freeMapDateHandles"));
+        freeMapElement.appendChild(doc.createElement("freeMapPersons"));
         freeMapElement.appendChild(placesElement);
+        final var freeMapsElement = doc.createElement("freeMaps");
         freeMapsElement.appendChild(freeMapElement);
         return freeMapsElement;
     }
@@ -68,8 +73,8 @@ public final class FreeMapProviderV3Test {
      */
     @Test
     public void testParseFreeMapsThrowsClearExceptionOnMalformedPlaceHeight() throws Exception {
-        var freeMapsElement = newFreeMapsElementWithMalformedPlaceHeight();
-        var exception = assertThrows(IllegalStateException.class,
+        final var freeMapsElement = newFreeMapsElementWithMalformedPlaceHeight();
+        final var exception = assertThrows(IllegalStateException.class,
                 () -> FreeMapProviderV3.parseFreeMaps(freeMapsElement, null));
         assertTrue(exception.getMessage().contains("height"));
         assertTrue(exception.getMessage().contains("not-a-number"));

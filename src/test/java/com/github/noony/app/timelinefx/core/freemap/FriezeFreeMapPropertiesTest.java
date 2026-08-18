@@ -64,4 +64,19 @@ public class FriezeFreeMapPropertiesTest {
         assertEquals(defaults.portraitRadius(), properties.portraitRadius());
     }
 
+    /**
+     * Regression test: the javadoc has always promised a fallback to defaults for keys that are "missing/
+     * unparseable", but the implementation used to only handle missing keys -- a present-but-garbled value threw
+     * NumberFormatException instead of honoring that contract.
+     */
+    @Test public void testFromParameterMapFallsBackOnUnparseableValues() {
+        final var defaults = FriezeFreeMap.DEFAULT_PROPERTIES;
+        final Map<String, String> garbledParameters = new HashMap<>();
+        garbledParameters.put(FriezeFreeMap.FONT_SIZE, "not-a-number");
+        garbledParameters.put(FriezeFreeMap.PLOT_SEPARATION, Double.toString(CUSTOM_FONT_SIZE));
+        final var properties = FriezeFreeMapProperties.fromParameterMap(garbledParameters, defaults);
+        assertEquals(defaults.fontSize(), properties.fontSize());
+        assertEquals(CUSTOM_FONT_SIZE, properties.plotSeparation());
+    }
+
 }

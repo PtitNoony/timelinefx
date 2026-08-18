@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2026 NoOnY
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.github.noony.app.timelinefx.core.freemap;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+/**
+ * Unit tests for {@link TimeMode}.
+ *
+ * @author solun
+ */
+public final class TimeModeTest {
+
+    /**
+     * Default constructor.
+     */
+    public TimeModeTest() {
+    }
+
+    /**
+     * Test of values method, of class TimeMode.
+     */
+    @Test
+    public void testValues() {
+        assertArrayEquals(new TimeMode[]{TimeMode.EQUAL_SPLIT, TimeMode.PROPORTIONAL, TimeMode.FREE}, TimeMode.values());
+    }
+
+    /**
+     * Test of valueOf method, of class TimeMode.
+     */
+    @Test
+    public void testValueOf() {
+        assertSame(TimeMode.PROPORTIONAL, TimeMode.valueOf("PROPORTIONAL"));
+    }
+
+}

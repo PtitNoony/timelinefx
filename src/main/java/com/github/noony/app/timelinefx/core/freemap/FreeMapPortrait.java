@@ -57,12 +57,12 @@ public final class FreeMapPortrait implements FriezeObject {
     protected FreeMapPortrait(long anID, Portrait aPortrait, FreeMapPerson aFreeMapPerson, double aRadius) {
         id = anID;
         propertyChangeSupport = new PropertyChangeSupport(FreeMapPortrait.this);
-        connector = FreeMapConnectorFactory.createFreeMapBasicConnector(FreeMapPortrait.this, radius, xPos);
-        portrait = aPortrait;
-        person = aFreeMapPerson;
         radius = aRadius;
         xPos = DEFAULT_POSITION;
         yPos = DEFAULT_POSITION;
+        connector = FreeMapConnectorFactory.createFreeMapBasicConnector(FreeMapPortrait.this, radius, xPos);
+        portrait = aPortrait;
+        person = aFreeMapPerson;
         connector.setX(xPos);
         connector.setY(yPos);
         person.addPropertyChangeListener(this::handleFreeMapPersonChanges);
@@ -152,7 +152,7 @@ public final class FreeMapPortrait implements FriezeObject {
             case FreeMapPerson.PORTRAIT_LINK_ADDED, FreeMapPerson.PORTRAIT_LINK_REMOVED -> {
                 // nothing to do.
             }
-            case FreeMapPerson.FREEMAP_STAY_REMOVED -> {
+            case FreeMapPerson.FREEMAP_STAY_ADDED, FreeMapPerson.FREEMAP_STAY_REMOVED -> {
                 // nothing to do.
             }
             case FreeMapPerson.TRAVEL_LINK_ADDED, FreeMapPerson.TRAVEL_LINK_REMOVED -> {

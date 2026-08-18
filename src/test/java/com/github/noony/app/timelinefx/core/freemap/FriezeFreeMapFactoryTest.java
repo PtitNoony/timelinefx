@@ -39,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link FriezeFreeMapFactory}.
+ *
  * @author solun
  */
 public final class FriezeFreeMapFactoryTest {

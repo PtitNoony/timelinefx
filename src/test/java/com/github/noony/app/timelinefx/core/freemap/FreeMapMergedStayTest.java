@@ -41,13 +41,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * Unit tests for {@link FreeMapMergedStay}.
+ *
  * @author solun
  */
 public final class FreeMapMergedStayTest {
 
+    /**
+     * An arbitrary free map id used to scope the fixture's FreeMapPerson/FreeMapPlace.
+     */
     private static final long FREE_MAP_ID = 1L;
+
+    /**
+     * The plot separation used when creating the fixture's FreeMapPlace.
+     */
     private static final double PLOT_SEPARATION = 8.0;
+
+    /**
+     * The place name width used when creating the fixture's FreeMapPlace.
+     */
     private static final double NAME_WIDTH = 100.0;
+
+    /**
+     * The font size used when creating the fixture's FreeMapPlace.
+     */
     private static final double FONT_SIZE = 12.0;
 
     /**

@@ -36,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public final class FreeMapDateHandleTest {
 
+    /**
+     * An arbitrary free map id; no real {@link FriezeFreeMap} is registered under it.
+     */
     private static final long FREE_MAP_ID = 1L;
 
     /**

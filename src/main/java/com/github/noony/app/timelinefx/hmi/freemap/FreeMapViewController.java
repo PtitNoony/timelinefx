@@ -121,9 +121,13 @@ public class FreeMapViewController implements Initializable {
             if (t1.isBlank() | t1.isEmpty()) {
                 // nothing
             } else {
-                var width = Double.parseDouble(t1);
-                if (friezeFreeMap != null) {
-                    friezeFreeMap.setWidth(width);
+                try {
+                    var width = Double.parseDouble(t1);
+                    if (friezeFreeMap != null) {
+                        friezeFreeMap.setWidth(width);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid width {0}. {1}", new Object[]{t1, e});
                 }
             }
         });
@@ -132,9 +136,13 @@ public class FreeMapViewController implements Initializable {
             if (t1.isBlank() | t1.isEmpty()) {
                 // nothing
             } else {
-                var height = Double.parseDouble(t1);
-                if (friezeFreeMap != null) {
-                    friezeFreeMap.setHeight(height);
+                try {
+                    var height = Double.parseDouble(t1);
+                    if (friezeFreeMap != null) {
+                        friezeFreeMap.setHeight(height);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid height {0}. {1}", new Object[]{t1, e});
                 }
             }
         });
@@ -143,9 +151,13 @@ public class FreeMapViewController implements Initializable {
             if (t1.isBlank() | t1.isEmpty()) {
                 // nothing
             } else {
-                var plotSize = Double.parseDouble(t1);
-                if (friezeFreeMap != null) {
-                    friezeFreeMap.setPlotSize(plotSize);
+                try {
+                    var plotSize = Double.parseDouble(t1);
+                    if (friezeFreeMap != null) {
+                        friezeFreeMap.setPlotSize(plotSize);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid plot size {0}. {1}", new Object[]{t1, e});
                 }
             }
         });
@@ -154,9 +166,13 @@ public class FreeMapViewController implements Initializable {
             if (t1.isBlank() | t1.isEmpty()) {
                 // nothing
             } else {
-                var fontSize = Double.parseDouble(t1);
-                if (friezeFreeMap != null) {
-                    friezeFreeMap.setFontSize(fontSize);
+                try {
+                    var fontSize = Double.parseDouble(t1);
+                    if (friezeFreeMap != null) {
+                        friezeFreeMap.setFontSize(fontSize);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid font size {0}. {1}", new Object[]{t1, e});
                 }
             }
         });
@@ -165,9 +181,13 @@ public class FreeMapViewController implements Initializable {
             if (t1.isBlank() | t1.isEmpty()) {
                 // nothing
             } else {
-                var portraitRadius = Double.parseDouble(t1);
-                if (friezeFreeMap != null) {
-                    friezeFreeMap.setPortraitRadius(portraitRadius);
+                try {
+                    var portraitRadius = Double.parseDouble(t1);
+                    if (friezeFreeMap != null) {
+                        friezeFreeMap.setPortraitRadius(portraitRadius);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid portrait radius {0}. {1}", new Object[]{t1, e});
                 }
             }
         });

@@ -331,6 +331,23 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         return null;
     }
 
+    /**
+     * Parses the given attribute as a double, failing with a message identifying the element, attribute and
+     * raw value instead of the bare {@link NumberFormatException} {@link Double#parseDouble(String)} would throw.
+     *
+     * @param element the element carrying the attribute
+     * @param attributeName the attribute to parse
+     * @return the parsed value
+     */
+    protected static double parseDoubleAttribute(final Element element, final String attributeName) {
+        var value = element.getAttribute(attributeName);
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Could not parse attribute '" + attributeName + "' of <" + element.getTagName() + "> as a double: '" + value + "'", e);
+        }
+    }
+
     private static List<Place> parsePlaces(Element placesRootElement, Place parentPlace) {
         List<Place> places = new LinkedList<>();
         NodeList placeElements = placesRootElement.getChildNodes();
@@ -445,8 +462,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 }
                 case TIME_MIN -> {
                     if (sourceElement.hasAttribute(DATE_ATR)) {
-                        var timeS = sourceElement.getAttribute(DATE_ATR);
-                        var time = Double.parseDouble(timeS);
+                        var time = parseDoubleAttribute(sourceElement, DATE_ATR);
                         aDateObject.setTimestamp(time);
                     }
                 }
@@ -615,8 +631,8 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
         if (place == null) {
             throw new IllegalStateException("Could not load StayPeriodSimpleTime id=" + id + " with placeID=" + placeID);
         }
-        var start = Double.parseDouble(stayElement.getAttribute(START_DATE_ATR));
-        var end = Double.parseDouble(stayElement.getAttribute(END_DATE_ATR));
+        var start = parseDoubleAttribute(stayElement, START_DATE_ATR);
+        var end = parseDoubleAttribute(stayElement, END_DATE_ATR);
         return StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
     }
 
@@ -636,8 +652,8 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     private PictureChronology parsePictureChronology(TimeLineProject project, Element pictureChronologyElement) {
         long id = Long.parseLong(pictureChronologyElement.getAttribute(ID_ATR));
         String name = pictureChronologyElement.getAttribute(NAME_ATR);
-        double width = Double.parseDouble(pictureChronologyElement.getAttribute(WIDTH_ATR));
-        double height = Double.parseDouble(pictureChronologyElement.getAttribute(HEIGHT_ATR));
+        double width = parseDoubleAttribute(pictureChronologyElement, WIDTH_ATR);
+        double height = parseDoubleAttribute(pictureChronologyElement, HEIGHT_ATR);
         //
         List<ChronologyPictureMiniature> miniatures = new LinkedList<>();
         List<ChronologyLink> links = new LinkedList<>();
@@ -665,9 +681,9 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
 //        <pictureChronologyMiniature id="138" pictureRef="125" xPos="897.0" yPos="329.0" scale="0.5"/>
         long id = Long.parseLong(miniatureElement.getAttribute(ID_ATR));
         long pictureRef = Long.parseLong(miniatureElement.getAttribute(PICTURE_REF_ELEMENT));
-        double xPos = Double.parseDouble(miniatureElement.getAttribute(X_POS_ATR));
-        double yPos = Double.parseDouble(miniatureElement.getAttribute(Y_POS_ATR));
-        double scale = Double.parseDouble(miniatureElement.getAttribute(SCALE_ATR));
+        double xPos = parseDoubleAttribute(miniatureElement, X_POS_ATR);
+        double yPos = parseDoubleAttribute(miniatureElement, Y_POS_ATR);
+        double scale = parseDoubleAttribute(miniatureElement, SCALE_ATR);
         var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
         miniature.setUseCustomTime(!miniature.isInSyncWithPicture());
         if (!miniature.isInSyncWithPicture()) {

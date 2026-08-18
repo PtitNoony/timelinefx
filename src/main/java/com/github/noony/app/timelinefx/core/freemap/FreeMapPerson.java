@@ -66,7 +66,7 @@ public class FreeMapPerson implements FriezeObject {
     }
 
     public static final boolean removeFreeMapPerson(final FreeMapPerson freeMapPerson) {
-        var freeMapPersons = FACTORY_CONTENT.get(freeMapPerson.friezeFreeMapID);
+        final var freeMapPersons = FACTORY_CONTENT.get(freeMapPerson.friezeFreeMapID);
         return freeMapPersons != null && freeMapPersons.remove(freeMapPerson);
     }
 

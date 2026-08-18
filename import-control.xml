@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE import-control PUBLIC
+    "-//Checkstyle//DTD ImportControl Configuration 1.4//EN"
+    "https://checkstyle.org/dtds/import_control_1_4.dtd">
+
+<!--
+    Permissive import-control configuration: this project does not enforce per-package import
+    restrictions. This file exists solely so Checkstyle's ImportControl check (enabled by
+    Codacy's default Java profile) has a file to load instead of failing with
+    "Missing an import control file" on every source file.
+-->
+<import-control pkg="com.github.noony.app.timelinefx">
+    <allow pkg=".*" regex="true"/>
+</import-control>

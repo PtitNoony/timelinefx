@@ -95,11 +95,13 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
         if (raw == null) {
             return defaultValue;
         }
+        var parsedValue = defaultValue;
         try {
-            return Double.parseDouble(raw);
+            parsedValue = Double.parseDouble(raw);
         } catch (NumberFormatException e) {
-            return defaultValue;
+            // keep the default already assigned above
         }
+        return parsedValue;
     }
 
 }

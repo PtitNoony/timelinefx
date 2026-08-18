@@ -76,18 +76,26 @@ public class PicturesChronologyConfiguratorController implements Initializable {
         //
         widthField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (!t1.isBlank() && !t1.isEmpty()) {
-                var width = Double.parseDouble(t1);
-                if (pictureChronology != null) {
-                    pictureChronology.setWidth(width);
+                try {
+                    var width = Double.parseDouble(t1);
+                    if (pictureChronology != null) {
+                        pictureChronology.setWidth(width);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid width {0}. {1}", new Object[]{t1, e});
                 }
             }
         });
         //
         heightField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (!t1.isBlank() && !t1.isEmpty()) {
-                var height = Double.parseDouble(t1);
-                if (pictureChronology != null) {
-                    pictureChronology.setHeight(height);
+                try {
+                    var height = Double.parseDouble(t1);
+                    if (pictureChronology != null) {
+                        pictureChronology.setHeight(height);
+                    }
+                } catch (NumberFormatException e) {
+                    LOG.log(Level.FINEST, "The following value is not a valid height {0}. {1}", new Object[]{t1, e});
                 }
             }
         });

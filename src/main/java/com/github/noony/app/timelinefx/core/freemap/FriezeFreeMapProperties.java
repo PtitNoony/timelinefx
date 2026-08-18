@@ -69,19 +69,37 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
      * {@code defaults}
      */
     public static FriezeFreeMapProperties fromParameterMap(final Map<String, String> parameters, final FriezeFreeMapProperties defaults) {
-        final var width = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_WIDTH, Double.toString(defaults.dimension().getWidth())));
-        final var height = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FRIEZE_HEIGHT, Double.toString(defaults.dimension().getHeight())));
-        final var personWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PERSONS_WIDTH, Double.toString(defaults.personWidth())));
-        final var placeNameWidthValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLACE_NAMES_WIDTH, Double.toString(defaults.placeNameWidth())));
-        final var fontSizeValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.FONT_SIZE, Double.toString(defaults.fontSize())));
-        final var plotSeparationValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLOT_SEPARATION, Double.toString(defaults.plotSeparation())));
-        final var plotSizeValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PLOT_SIZE, Double.toString(defaults.plotSize())));
+        final var width = parseDoubleOrDefault(parameters, FriezeFreeMap.FRIEZE_WIDTH, defaults.dimension().getWidth());
+        final var height = parseDoubleOrDefault(parameters, FriezeFreeMap.FRIEZE_HEIGHT, defaults.dimension().getHeight());
+        final var personWidthValue = parseDoubleOrDefault(parameters, FriezeFreeMap.PERSONS_WIDTH, defaults.personWidth());
+        final var placeNameWidthValue = parseDoubleOrDefault(parameters, FriezeFreeMap.PLACE_NAMES_WIDTH, defaults.placeNameWidth());
+        final var fontSizeValue = parseDoubleOrDefault(parameters, FriezeFreeMap.FONT_SIZE, defaults.fontSize());
+        final var plotSeparationValue = parseDoubleOrDefault(parameters, FriezeFreeMap.PLOT_SEPARATION, defaults.plotSeparation());
+        final var plotSizeValue = parseDoubleOrDefault(parameters, FriezeFreeMap.PLOT_SIZE, defaults.plotSize());
         final var plotVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PLOT_VISIBILITY, Boolean.toString(defaults.plotVisibility())));
         final var portraitConnectorVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(defaults.portraitConnectorVisibility())));
-        final var portraitRadiusValue = Double.parseDouble(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_RADIUS, Double.toString(defaults.portraitRadius())));
+        final var portraitRadiusValue = parseDoubleOrDefault(parameters, FriezeFreeMap.PORTRAIT_RADIUS, defaults.portraitRadius());
         return new FriezeFreeMapProperties(new Dimension2D(width, height), personWidthValue, placeNameWidthValue,
                 fontSizeValue, plotSeparationValue, plotSizeValue, plotVisibilityValue, portraitConnectorVisibilityValue,
                 portraitRadiusValue);
+    }
+
+    /**
+     * @param parameters the raw parameter map
+     * @param key the key to look up
+     * @param defaultValue the value to fall back to when the key is missing or its value is not a valid double
+     * @return the parsed value, or {@code defaultValue} if missing/unparseable
+     */
+    private static double parseDoubleOrDefault(final Map<String, String> parameters, final String key, final double defaultValue) {
+        final var raw = parameters.get(key);
+        if (raw == null) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(raw);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
 }

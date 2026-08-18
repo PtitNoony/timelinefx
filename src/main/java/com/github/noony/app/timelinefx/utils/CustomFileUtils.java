@@ -73,7 +73,11 @@ public class CustomFileUtils {
         String[] valuesAsString = input.replace("[", "").replace("]", "").split(", ");
         double[] result = new double[valuesAsString.length];
         for (int i = 0; i < result.length; i++) {
-            result[i] = Double.parseDouble(valuesAsString[i]);
+            try {
+                result[i] = Double.parseDouble(valuesAsString[i]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Could not parse double array from '" + input + "': invalid value '" + valuesAsString[i] + "' at index " + i, e);
+            }
         }
         return result;
     }

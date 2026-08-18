@@ -295,9 +295,9 @@ public class FreeMapProviderV3 {
         var freemapDateHandlesElements = freemapDateHandleGroupElement.getElementsByTagName(FREEMAP_DATE_HANDLE_ELEMENT);
         for (int i = 0; i < freemapDateHandlesElements.getLength(); i++) {
             var dateHandleElement = (Element) freemapDateHandlesElements.item(i);
-            var date = Double.parseDouble(dateHandleElement.getAttribute(DATE_ATR));
-            var xPos = Double.parseDouble(dateHandleElement.getAttribute(X_POS_ATR));
-            var yPos = Double.parseDouble(dateHandleElement.getAttribute(Y_POS_ATR));
+            var date = parseDoubleAttribute(dateHandleElement, DATE_ATR);
+            var xPos = parseDoubleAttribute(dateHandleElement, X_POS_ATR);
+            var yPos = parseDoubleAttribute(dateHandleElement, Y_POS_ATR);
             var type = FreeMapDateHandle.TimeType.valueOf(dateHandleElement.getAttribute(TYPE_ATR));
             var freemapDateHandle = FreeMapDateHandle.createFreeMapDateHandle(parentFreeMapID, date, type, new Point2D(xPos, yPos));
             freeMapDateHandles.add(freemapDateHandle);
@@ -405,9 +405,9 @@ public class FreeMapProviderV3 {
         var freeMapPortraitID = Long.parseLong(freemapPortraitElement.getAttribute(ID_ATR));
         var personID = Long.parseLong(freemapPortraitElement.getAttribute(PERSON_ATR));
         var portraitRef = Long.parseLong(freemapPortraitElement.getAttribute(PORTRAIT_REF_ATR));
-        var xPos = Double.parseDouble(freemapPortraitElement.getAttribute(X_POS_ATR));
-        var yPos = Double.parseDouble(freemapPortraitElement.getAttribute(Y_POS_ATR));
-        var radius = Double.parseDouble(freemapPortraitElement.getAttribute(RADIUS_ATR));
+        var xPos = parseDoubleAttribute(freemapPortraitElement, X_POS_ATR);
+        var yPos = parseDoubleAttribute(freemapPortraitElement, Y_POS_ATR);
+        var radius = parseDoubleAttribute(freemapPortraitElement, RADIUS_ATR);
         //
         var person = PersonFactory.getPerson(personID);
         var portrait = person.getPortrait(portraitRef);
@@ -462,10 +462,10 @@ public class FreeMapProviderV3 {
 
     private static FreeMapPlace parseFreeMapPlace(Element freemapPlaceElement, long parentFreeMapID, FriezeFreeMapProperties freeMapProperties, Map<Long, FreeMapPerson> freeMapPersonsById) {
         var placeID = Long.parseLong(freemapPlaceElement.getAttribute(PLACE_ID_ATR));
-        var height = Double.parseDouble(freemapPlaceElement.getAttribute(HEIGHT_ATR));
-        var yPos = Double.parseDouble(freemapPlaceElement.getAttribute(Y_POS_ATR));
-        var fontSize = Double.parseDouble(freemapPlaceElement.getAttribute(FREEMAP_FONT_SIZE_ATR));
-        var nameWidth = Double.parseDouble(freemapPlaceElement.getAttribute(FREEMAP_PLACE_NAME_WIDTH_ATR));
+        var height = parseDoubleAttribute(freemapPlaceElement, HEIGHT_ATR);
+        var yPos = parseDoubleAttribute(freemapPlaceElement, Y_POS_ATR);
+        var fontSize = parseDoubleAttribute(freemapPlaceElement, FREEMAP_FONT_SIZE_ATR);
+        var nameWidth = parseDoubleAttribute(freemapPlaceElement, FREEMAP_PLACE_NAME_WIDTH_ATR);
         //
         var place = PlaceFactory.getPlace(placeID);
         //
@@ -489,14 +489,14 @@ public class FreeMapProviderV3 {
 
     private static FreeMapConnector parseConnectorElement(Element freeMapConnectorElement, Map<Long, FreeMapStay> freeMapStaysById) {
         var connectorID = Long.parseLong(freeMapConnectorElement.getAttribute(ID_ATR));
-        var date = Double.parseDouble(freeMapConnectorElement.getAttribute(DATE_ATR));
+        var date = parseDoubleAttribute(freeMapConnectorElement, DATE_ATR);
         var colorS = freeMapConnectorElement.getAttribute(COLOR_ATR);
-        var xPos = Double.parseDouble(freeMapConnectorElement.getAttribute(X_POS_ATR));
-        var yPos = Double.parseDouble(freeMapConnectorElement.getAttribute(Y_POS_ATR));
+        var xPos = parseDoubleAttribute(freeMapConnectorElement, X_POS_ATR);
+        var yPos = parseDoubleAttribute(freeMapConnectorElement, Y_POS_ATR);
         LOG.log(Level.FINE, "parseConnectorElement ignoring field color: {0}.", new Object[]{colorS});
         LOG.log(Level.FINE, "parseConnectorElement ignoring field xPos: {0}.", new Object[]{xPos});
         LOG.log(Level.FINE, "parseConnectorElement ignoring field yPos: {0}.", new Object[]{yPos});
-        var plotSize = Double.parseDouble(freeMapConnectorElement.getAttribute(PLOT_SIZE_ATR));
+        var plotSize = parseDoubleAttribute(freeMapConnectorElement, PLOT_SIZE_ATR);
         var linkedElementID = Long.parseLong(freeMapConnectorElement.getAttribute(FREEMAP_LINKED_ELEMENT_ID_ATR));
         //
         var stayLink = freeMapStaysById.get(linkedElementID);

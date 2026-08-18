@@ -64,13 +64,16 @@ public final class FreeMapMergedStay implements FreeMapStay {
         //
         propertyChangeSupport = new PropertyChangeSupport(FreeMapMergedStay.this);
         //
-        assert staysToMerge.length > 0;
         if (staysToMerge.length == 0) {
             throw new IllegalStateException("Cannot create a FreeMapMergedStay with NO stay.");
         }
         //
-        updateEarliestStay(staysToMerge[0]);
-        updateLatestStay(staysToMerge[0]);
+        // set directly (not through updateEarliestStay/updateLatestStay) since those also push the date into
+        // beginPlot/endPlot, which do not exist yet. person/place must also be set before beginPlot/endPlot are
+        // built below, since their constructors read the initial date/person/place straight off this instance
+        // via getStartDate()/getEndDate()/getPerson()/getPlace().
+        earliestStay = staysToMerge[0];
+        latestStay = staysToMerge[0];
         person = earliestStay.getPerson();
         forcedPlace = aForcedPlace;
         if (forcedPlace != null) {
@@ -78,12 +81,12 @@ public final class FreeMapMergedStay implements FreeMapStay {
         } else {
             place = earliestStay.getPlace();
         }
+        beginPlot = createStartPlot(aStartID, FreeMapMergedStay.this, FriezeFreeMap.DEFAULT_PLOT_SIZE);
+        endPlot = createEndPlot(anEndID, FreeMapMergedStay.this, FriezeFreeMap.DEFAULT_PLOT_SIZE);
         // loop and initialisation could be optimized
         for (FreeMapStay aStay : staysToMerge) {
             addStay(aStay);
         }
-        beginPlot = createStartPlot(aStartID, FreeMapMergedStay.this, FriezeFreeMap.DEFAULT_PLOT_SIZE);
-        endPlot = createEndPlot(anEndID, FreeMapMergedStay.this, FriezeFreeMap.DEFAULT_PLOT_SIZE);
         color = earliestStay.getPerson().getPerson().getColor();
         linkShape = LinkShape.QUAD_LINE;
     }
@@ -94,12 +97,12 @@ public final class FreeMapMergedStay implements FreeMapStay {
 
     @Override
     public double getStartDate() {
-        return beginPlot.getDate();
+        return earliestStay.getStartDate();
     }
 
     @Override
     public double getEndDate() {
-        return endPlot.getDate();
+        return latestStay.getEndDate();
     }
 
     /**
@@ -183,6 +186,7 @@ public final class FreeMapMergedStay implements FreeMapStay {
 //                    + " to stay " + this + " with place " + place.getName());
 //        }
         if (!stays.contains(aStay)) {
+            stays.add(aStay);
             if (forcedPlace == null && !aStay.getPlace().getPlace().isLowerThanOrLeveled(place.getPlace())) {
                 place = aStay.getPlace();
                 System.err.println("TODO : fire everywhere");

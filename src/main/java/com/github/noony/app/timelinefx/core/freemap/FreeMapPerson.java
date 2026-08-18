@@ -60,13 +60,14 @@ public class FreeMapPerson implements FriezeObject {
         if (freeMapPersons.stream().anyMatch(fp -> fp.getPerson() == aPerson)) {
             throw new IllegalStateException("Cannot create a FreeMapPerson twice. (" + aPerson.getName() + " in " + FriezeFreeMapFactory.getFriezeFreeMap(aFriezeFreeMapID).getName() + ")");
         }
-        var freeMapPerson = new FreeMapPerson(aPerson);
+        var freeMapPerson = new FreeMapPerson(aFriezeFreeMapID, aPerson);
         freeMapPersons.add(freeMapPerson);
         return freeMapPerson;
     }
 
     public static final boolean removeFreeMapPerson(final FreeMapPerson freeMapPerson) {
-        return FACTORY_CONTENT.remove(freeMapPerson.getId()) == null;
+        var freeMapPersons = FACTORY_CONTENT.get(freeMapPerson.friezeFreeMapID);
+        return freeMapPersons != null && freeMapPersons.remove(freeMapPerson);
     }
 
     public static final void resetFactory() {
@@ -77,6 +78,7 @@ public class FreeMapPerson implements FriezeObject {
     // paramters to be saved
     //
     private final long id;
+    private final long friezeFreeMapID;
     //
     private final List<FreeMapStay> stays;
     private final List<FreeMapPortrait> freeMapPortraits;
@@ -96,9 +98,11 @@ public class FreeMapPerson implements FriezeObject {
     /**
      * The FreeMapPerson instance has the same id as is related person
      *
+     * @param aFriezeFreeMapID the id of the free map this person belongs to
      * @param aPerson the related person
      */
-    private FreeMapPerson(Person aPerson) {
+    private FreeMapPerson(long aFriezeFreeMapID, Person aPerson) {
+        friezeFreeMapID = aFriezeFreeMapID;
         person = aPerson;
         id = aPerson.getId();
         //

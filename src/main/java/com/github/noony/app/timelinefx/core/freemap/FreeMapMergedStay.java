@@ -174,7 +174,7 @@ public final class FreeMapMergedStay implements FreeMapStay {
                     + " to stay " + this + " with person " + person.getName());
         }
         // if the stay is forced to represent one specific place, ensure the stay is a leaf of this place
-        if (forcedPlace != null && forcedPlace.getPlace().encompasses(aStay.getPlace().getPlace())) {
+        if (forcedPlace != null && !forcedPlace.getPlace().encompasses(aStay.getPlace().getPlace())) {
             throw new IllegalStateException("Cannot add a stay " + aStay + " with place " + aStay.getPerson().getName()
                     + " to stay " + this + " with place " + place.getName() + " since it is not encompassed.");
         }

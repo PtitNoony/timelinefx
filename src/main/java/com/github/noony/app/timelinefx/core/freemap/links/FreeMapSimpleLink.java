@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap.links;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
@@ -34,22 +35,31 @@ import javafx.scene.paint.Color;
 public class FreeMapSimpleLink implements FreeMapLink {
 
     public static final Color DEFAULT_COLOR = Color.BLUEVIOLET;
+
     public static final String COLOR_CHANGED = "colorChanged";
+
     public static final String LINK_SHAPE_CHANGED = "linkShapeChanged";
+
     public static final String CONNECTOR_ADDED = "connectorAdded";
 
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final long id;
+
     private final FreeMapPerson person;
+
     private final FreeMapConnector beginConnector;
+
     private final FreeMapConnector endConnector;
+
     private final LinkType linkType;
-    //
+
     private final List<FreeMapConnector> intermediateConnectors;
-    //
+
     private LinkShape linkShape;
+
     private Color color;
+
     private boolean isSelected = false;
 
 

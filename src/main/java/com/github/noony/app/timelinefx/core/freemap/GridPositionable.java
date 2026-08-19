@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 /**
@@ -23,8 +24,11 @@ package com.github.noony.app.timelinefx.core.freemap;
 public interface GridPositionable {
 
     public static final String POS_CHANGED = "posChanged";
+
     public static final String PLOT_SIZE_CHANGED = "plotSizeChanged";
+
     public static final String PLOT_VISIBILITY_CHANGED = "plotVisibilityChanged";
+
     public static final String PLOT_COLOR_CHANGED = "plotColorChanged";
 
     public static final double EPSILON = 0.000000001;

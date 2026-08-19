@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
@@ -36,7 +37,9 @@ import javafx.scene.paint.Color;
 public final class FreeMapPortrait implements FriezeObject {
 
     public static final String POSITION_CHANGED = "positionChanged";
+
     public static final String RADIUS_CHANGED = "portraitRadiusChanged";
+
     public static final String PORTRAIT_UPDATED = "portraitUpdated";
 
     private static final Logger LOG = Logger.getGlobal();
@@ -44,14 +47,19 @@ public final class FreeMapPortrait implements FriezeObject {
     private static final double DEFAULT_POSITION = 0.0;
 
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final FreeMapPerson person;
+
     private final long id;
+
     private final FreeMapBasicConnector connector;
+
     private Portrait portrait;
-    //
-    //
+
     private double xPos;
+
     private double yPos;
+
     private double radius;
 
     protected FreeMapPortrait(long anID, Portrait aPortrait, FreeMapPerson aFreeMapPerson, double aRadius) {

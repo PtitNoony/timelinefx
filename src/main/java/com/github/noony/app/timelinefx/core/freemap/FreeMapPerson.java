@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
@@ -40,16 +41,23 @@ import java.util.Map;
 public class FreeMapPerson implements FriezeObject {
 
     public static final String FREEMAP_STAY_ADDED = "stayAdded";
+
     public static final String FREEMAP_STAY_REMOVED = "stayRemoved";
+
     public static final String FIRST_PLOT_CHANGED = "firstPlotChanged";
+
     public static final String TRAVEL_LINK_ADDED = "travelLinkAdded";
+
     public static final String TRAVEL_LINK_REMOVED = "travelLinkRemoved";
+
     public static final String PORTRAIT_ADDED = "portraitAdded";
+
     public static final String PORTRAIT_REMOVED = "portraitRemoved";
+
     public static final String PORTRAIT_LINK_ADDED = "portraitLinkAdded";
+
     public static final String PORTRAIT_LINK_REMOVED = "portraitLinkRemoved";
 
-    //
     private static final Map<Long, List<FreeMapPerson>> FACTORY_CONTENT = new HashMap<>();
 
     public static final FreeMapPerson createFreeMapPerson(final long aFriezeFreeMapID, final Person aPerson) {
@@ -78,13 +86,16 @@ public class FreeMapPerson implements FriezeObject {
     // paramters to be saved
     //
     private final long id;
+
     private final long friezeFreeMapID;
-    //
+
     private final List<FreeMapStay> stays;
+
     private final List<FreeMapPortrait> freeMapPortraits;
     //
     // to be saved in next version
     //
+
     private final List<FreeMapTravelLink> travelLinks;
     private final Map<FreeMapPortrait, PortraitLink> portraitLinks;
     //
@@ -92,7 +103,7 @@ public class FreeMapPerson implements FriezeObject {
     //
     // no need to save since ids match by construction
     private final Person person;
-    //
+
     private final PropertyChangeSupport propertyChangeSupport;
 
     /**

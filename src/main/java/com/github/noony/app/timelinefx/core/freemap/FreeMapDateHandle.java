@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
@@ -38,6 +39,7 @@ public class FreeMapDateHandle {
     }
 
     public static final String PLOT_REMOVED = "plotRemoved";
+
     public static final String POSITION_CHANGED = "datePositionChanged";
 
     private static final Map<Long, List<FreeMapDateHandle>> FACTORY_CONTENT = new HashMap<>();
@@ -60,13 +62,17 @@ public class FreeMapDateHandle {
     }
 
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final PropertyChangeListener propertyChangeListener;
+
     private final TimeType timeType;
+
     private final double date;
-    //
+
     private final List<FreeMapPlot> plots;
-    //
+
     private double xPos;
+
     private double yPos;
 
     private FreeMapDateHandle(double aDate, TimeType aTimeType, Point2D aPosition) {

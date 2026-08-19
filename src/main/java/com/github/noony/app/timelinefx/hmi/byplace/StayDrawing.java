@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byplace;
 
 import com.github.noony.app.timelinefx.core.StayPeriod;
@@ -29,7 +30,9 @@ import javafx.scene.shape.StrokeType;
 public class StayDrawing {
 
     public static final double STROKE_WIDTH = 6;
+
     public static final double SELECTED_STROKE_WIDTH = 12;
+
     public static final double DEFAULT_SEPARATION = 6;
 
     private final StayPeriod stayPeriod;

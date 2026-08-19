@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byplace;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -42,19 +43,24 @@ public final class FriezeSpaceLinearDrawing {
     private final Frieze frieze;
 
     private final Group mainNode;
+
     private final VBox placesGroup;
+
     private final Group stayGroup;
 
     private final Rectangle background;
 
     private final Map<Place, PlaceDrawing> placesAndDrawings;
-    //
+
     private double width = 800;
+
     private double height = 600;
+
     private double placeWith;
     // temp since no zoom
+
     private double timeWindowWidth;
-    //
+
     private double timeRatio = 1;
 
     protected FriezeSpaceLinearDrawing(Frieze aFrieze) {

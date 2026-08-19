@@ -28,6 +28,7 @@ import com.github.noony.app.timelinefx.core.freemap.links.FreeMapSimpleLink;
 import com.github.noony.app.timelinefx.core.freemap.links.PortraitLink;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
+import com.github.noony.app.timelinefx.drawings.InteractiveDragType;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -81,19 +82,19 @@ public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
         //
         freeMapPerson.getFreeMapStays().forEach(fmStay -> {
             FreeMapPersonDrawing.this.createLink(fmStay);
-            createConnector(fmStay.getStartPlot());
-            createConnector(fmStay.getEndConnector());
+            createConnector(fmStay.getStartPlot(), InteractiveDragType.X_ONLY);
+            createConnector(fmStay.getEndConnector(), InteractiveDragType.X_ONLY);
         });
         freeMapPerson.getFreeMapTravelLinks().forEach(fmStay -> {
             FreeMapPersonDrawing.this.createLink(fmStay);
-            createConnector(fmStay.getBeginConnector());
-            createConnector(fmStay.getEndConnector());
+            createConnector(fmStay.getBeginConnector(), InteractiveDragType.X_ONLY);
+            createConnector(fmStay.getEndConnector(), InteractiveDragType.X_ONLY);
         });
         freeMapPerson.getFreeMapPortraits().forEach(fmPortrait -> {
             var portraitLink = freeMapPerson.getPortraitLink(fmPortrait);
             createLink(portraitLink);
-            createConnector(portraitLink.getBeginConnector());
-            createConnector(portraitLink.getEndConnector());
+            createConnector(portraitLink.getBeginConnector(), InteractiveDragType.FREE_TRANSLATION);
+            createConnector(portraitLink.getEndConnector(), InteractiveDragType.FREE_TRANSLATION);
             freeFormDrawing.createPortraitDrawing(fmPortrait);
         });
         //
@@ -143,8 +144,8 @@ public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
         }
     }
 
-    private void createConnector(FreeMapConnector connector) {
-        var rectangleConnector = new RectangleConnector(connector);
+    private void createConnector(FreeMapConnector connector, InteractiveDragType anInteractiveDragType) {
+        var rectangleConnector = new RectangleConnector(connector,anInteractiveDragType);
         plotDrawings.put(connector, rectangleConnector);
         scalableNodes.add(rectangleConnector);
         plotGroup.getChildren().add(rectangleConnector.getNode());
@@ -181,8 +182,8 @@ public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
 //            }
             case FreeMapPerson.FREEMAP_STAY_ADDED -> {
                 var stay = (FreeMapSimpleStay) event.getNewValue();
-                createConnector(stay.getStartPlot());
-                createConnector(stay.getEndConnector());
+                createConnector(stay.getStartPlot(), InteractiveDragType.X_ONLY);
+                createConnector(stay.getEndConnector(), InteractiveDragType.X_ONLY);
                 createLink(stay);
             }
             case FreeMapPerson.FREEMAP_STAY_REMOVED -> {
@@ -194,8 +195,8 @@ public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
             case FreeMapPerson.PORTRAIT_LINK_ADDED -> {
                 var portraitLink = (PortraitLink) event.getNewValue();
                 createLink(portraitLink);
-                createConnector(portraitLink.getBeginConnector());
-                createConnector(portraitLink.getEndConnector());
+                createConnector(portraitLink.getBeginConnector(), InteractiveDragType.FREE_TRANSLATION);
+                createConnector(portraitLink.getEndConnector(), InteractiveDragType.FREE_TRANSLATION);
             }
             case FreeMapPerson.PORTRAIT_ADDED -> {
                 var freeMapPortrait = (FreeMapPortrait) event.getNewValue();

@@ -20,6 +20,8 @@ package com.github.noony.app.timelinefx.hmi.freemap;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
+import com.github.noony.app.timelinefx.drawings.InteractiveDragType;
+import static com.github.noony.app.timelinefx.drawings.InteractiveDragType.X_ONLY;
 import java.beans.PropertyChangeEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -34,6 +36,8 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private final FreeMapConnector connector;
 
+    private final InteractiveDragType interactiveDragType;
+
     private final Rectangle connectorRectangle;
 
     private Point2D oldScene;
@@ -44,12 +48,13 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private double oldMainNodeTranslateY;
 
-    protected RectangleConnector(FreeMapConnector abstractConnector) {
+    protected RectangleConnector(FreeMapConnector abstractConnector, InteractiveDragType anInteractiveDragType) {
         connector = abstractConnector;
         connector.addPropertyChangeListener(RectangleConnector.this::handlePropertyChange);
         connectorRectangle = new Rectangle();
         connectorRectangle.setFill(DEFAULT_STROKE_COLOR);
         connectorRectangle.setStroke(DEFAULT_STROKE_COLOR);
+        interactiveDragType = anInteractiveDragType;
         addNode(connectorRectangle);
         initInteractivity();
         updateLayout();
@@ -81,9 +86,21 @@ public final class RectangleConnector extends AbstractFxScalableNode {
             var deltaYScaled = currentScene.getY() - oldScene.getY();
             var deltaX = deltaXScaled / getScale();
             var deltaY = deltaYScaled / getScale();
-            var newX = connector.getX() + (deltaX / gridSpace) * gridSpace;
-            var newY = connector.getY() + (deltaY / gridSpace) * gridSpace;
-            connector.setPosition(newX, newY);
+            var newX = connector.getX() + ((int) (deltaX / gridSpace)) * gridSpace;
+            var newY = connector.getY() + ((int) (deltaY / gridSpace)) * gridSpace;
+            switch (interactiveDragType) {
+                case FREE_TRANSLATION ->
+                    connector.setPosition(newX, newY);
+                case NOT_ALLOWED -> {
+                    // nothing to be updated
+                }
+                case X_ONLY ->
+                    connector.setPosition(newX, connector.getY());
+                case Y_ONLY ->
+                    connector.setPosition(connector.getX(), newY);
+                default ->
+                    throw new AssertionError();
+            }
         });
         connectorRectangle.setOnMouseClicked(event -> connector.setSelected(!connector.isSelected()));
     }

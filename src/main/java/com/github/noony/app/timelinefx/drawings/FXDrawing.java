@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.drawings;
 
 import javafx.scene.Group;
@@ -28,11 +29,15 @@ import javafx.scene.shape.Rectangle;
 public class FXDrawing implements IFxNode {
 
     private final Group mainNode;
+
     private final Rectangle background;
-    //
+
     private double xPos;
+
     private double yPos;
+
     private double width;
+
     private double height;
 
     public FXDrawing() {

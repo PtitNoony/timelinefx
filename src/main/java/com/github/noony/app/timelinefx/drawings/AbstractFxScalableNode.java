@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.drawings;
 
 import javafx.scene.Group;
@@ -26,6 +27,7 @@ import javafx.scene.Node;
 public abstract class AbstractFxScalableNode implements IFxScalableNode {
 
     private final Group mainNode;
+
     private double scale;
 
     public AbstractFxScalableNode(double aScale) {

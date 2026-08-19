@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byperson;
 
 import com.github.noony.app.timelinefx.core.Place;
@@ -30,6 +31,7 @@ import javafx.scene.shape.Rectangle;
 public class PlaceStayDrawing {
 
     public static final double STROKE_WIDTH = 6;
+
     public static final double SELECTED_STROKE_WIDTH = 12;
 
     public static final double PLACE_HEIGHT = PersonDrawing.DEFAULT_HEIGHT - 2.0 * PersonDrawing.DEFAULT_INNER_SEPARATION;
@@ -37,6 +39,7 @@ public class PlaceStayDrawing {
     private final StayPeriod stayPeriod;
 
     private final Rectangle rectangle;
+
     private final double yPos = PersonDrawing.DEFAULT_INNER_SEPARATION;
 
     public PlaceStayDrawing(StayPeriod stay) {

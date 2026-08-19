@@ -21,7 +21,6 @@ import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import com.github.noony.app.timelinefx.drawings.InteractiveDragType;
-import static com.github.noony.app.timelinefx.drawings.InteractiveDragType.X_ONLY;
 import java.beans.PropertyChangeEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -36,6 +35,9 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private final FreeMapConnector connector;
 
+    /**
+     * the connector allowed movements while being dragged.
+     */
     private final InteractiveDragType interactiveDragType;
 
     private final Rectangle connectorRectangle;
@@ -86,8 +88,8 @@ public final class RectangleConnector extends AbstractFxScalableNode {
             var deltaYScaled = currentScene.getY() - oldScene.getY();
             var deltaX = deltaXScaled / getScale();
             var deltaY = deltaYScaled / getScale();
-            var newX = connector.getX() + ((int) (deltaX / gridSpace)) * gridSpace;
-            var newY = connector.getY() + ((int) (deltaY / gridSpace)) * gridSpace;
+            final var newX = connector.getX() + ((int) (deltaX / gridSpace)) * gridSpace;
+            final var newY = connector.getY() + ((int) (deltaY / gridSpace)) * gridSpace;
             switch (interactiveDragType) {
                 case FREE_TRANSLATION ->
                     connector.setPosition(newX, newY);

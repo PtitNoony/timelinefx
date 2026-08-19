@@ -145,7 +145,7 @@ public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
     }
 
     private void createConnector(FreeMapConnector connector, InteractiveDragType anInteractiveDragType) {
-        var rectangleConnector = new RectangleConnector(connector,anInteractiveDragType);
+        final var rectangleConnector = new RectangleConnector(connector, anInteractiveDragType);
         plotDrawings.put(connector, rectangleConnector);
         scalableNodes.add(rectangleConnector);
         plotGroup.getChildren().add(rectangleConnector.getNode());

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
@@ -35,22 +36,29 @@ import javafx.scene.text.TextAlignment;
 public final class PlaceDrawing extends AbstractFxScalableNode {
 
     private final FreeMapPlace place;
+
     private final FriezeFreeMap friezeFreeMap;
-    //
+
     private final Rectangle debugBackground;
+
     private final Rectangle background;
+
     private final Rectangle backgroundClip;
-    //
+
     private final Group placePlotsGroup;
+
     private final Group nameGroup;
+
     private final Label nameLabel;
-    //
+
     private PlaceDrawingMode drawingMode;
-    //
+
     private double minX;
+
     private double maxX;
-    //
+
     private double oldScreenY;
+
     private double oldTranslateY;
 
     protected PlaceDrawing(FreeMapPlace aPlace, FriezeFreeMap aFriezeFreeMap) {

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
@@ -30,8 +31,9 @@ import javafx.scene.Node;
 public class FreeMapView {
 
     private final FriezeFreeMap freeMap;
-    //
+
     private Node mainNode;
+
     private FreeMapViewController freeMapViewController;
 
     public FreeMapView(FriezeFreeMap aFreeMap) {

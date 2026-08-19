@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
@@ -42,18 +43,23 @@ import javafx.scene.Group;
 public final class FreeMapPersonDrawing extends AbstractFxScalableNode {
 
     private final FreeMapPerson freeMapPerson;
+
     private final FriezeFreeMap freeMap;
-    //
+
     private final PropertyChangeListener linkListener = FreeMapPersonDrawing.this::handleLinkChanges;
     // TODO: remove work around
+
     private final FriezeFreeFormDrawing freeFormDrawing;
-    //
+
     private final List<IFxScalableNode> scalableNodes;
+
     private final Map<FreeMapLink, LinkDrawing> linkDrawings;
     // TODO : use interface
+
     private final Map<FreeMapConnector, RectangleConnector> plotDrawings;
-    //
+
     private final Group linkGroup;
+
     private final Group plotGroup;
 
     // todo remove FriezeFreeMap

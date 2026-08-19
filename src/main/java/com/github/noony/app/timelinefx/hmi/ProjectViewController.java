@@ -259,7 +259,8 @@ public final class ProjectViewController implements Initializable {
     @FXML
     protected void handleCreateBasicExample(ActionEvent event) {
         LOG.log(Level.INFO, "handleCreateBasicExample {0}", event);
-        loadProject(TestExample.createExample());
+        var testExample = TestExample.createExample();
+        AppInstanceConfiguration.setSelectedTimeline(testExample);
     }
 
     @FXML
@@ -267,7 +268,6 @@ public final class ProjectViewController implements Initializable {
         LOG.log(Level.INFO, "handleCreateStarWars {0}", event);
         var starWars = StarWars.createStartWars();
         AppInstanceConfiguration.setSelectedTimeline(starWars);
-//        loadProject(starWars);
     }
 
     private void loadProject(TimeLineProject aTimeLineProject) {

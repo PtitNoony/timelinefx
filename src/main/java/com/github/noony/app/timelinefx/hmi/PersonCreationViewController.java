@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -68,7 +69,9 @@ import javafx.stage.FileChooser;
 public final class PersonCreationViewController implements Initializable {
 
     public static final String CANCEL_PERSON_CREATION = "cancelPersonCreation";
+
     public static final String PERSON_CREATED = "personCreated";
+
     public static final String PERSON_EDITIED = "personEdited";
 
     private static final Logger LOG = Logger.getGlobal();
@@ -77,6 +80,7 @@ public final class PersonCreationViewController implements Initializable {
 
     @FXML
     private GridPane propertiesGrid;
+
     @FXML
     private TextField nameField;
     @FXML
@@ -95,32 +99,44 @@ public final class PersonCreationViewController implements Initializable {
     private Button addPortraitButton, removePortraitButton;
     @FXML
     private HBox portraitTimeHB;
-    //
+
     private DatePicker birthDatePicker, deathDatePicker, portraitDatePicker;
+
     private TextField birthTimeField, deathTimeField, portraitTimeField;
-    //
+
     private Image image;
+
     private GalleryTiles galleryTiles;
+
     private FileChooser fileChooser;
-    //
+
     private EditionMode editionMode;
-    //
+
     private TimeLineProject currentProject = null;
+
     private Person currentEditedPerson = null;
+
     private List<Portrait> currentPortaitsList = null;
-    //
+
     private String personName = "";
+
     private Portrait defaultPortrait = null;
+
     private Color personColor = null;
+
     private LocalDate dateOfBirth = null;
+
     private LocalDate dateOfDeath = null;
-    //
+
     private Portrait portraitSelected = null;
+
     private Map<Portrait, LocalDate> updatedPortraitDates;
+
     private Map<Portrait, String> updatedPortraitTimes;
 
     //
     private boolean nameOK = false;
+
     private boolean colorOK = false;
 
     @Override

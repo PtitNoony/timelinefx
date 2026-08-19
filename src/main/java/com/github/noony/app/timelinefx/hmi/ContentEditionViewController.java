@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -63,6 +64,7 @@ public final class ContentEditionViewController implements Initializable {
 
     @FXML
     private TreeView<Place> placesCheckTreeView;
+
     @FXML
     private ListView<Person> personCheckListView;
     @FXML
@@ -72,17 +74,23 @@ public final class ContentEditionViewController implements Initializable {
     private SplitPane splitPane;
 
     private final PropertyChangeListener timelineChangeListener = this::handleTimelineChanges;
-    //
+
     private TimeLineProject timeLineProject;
-    //
+
     private CustomModalWindow customModalWindow = null;
-    //
+
     private Parent placeCreationView = null;
+
     private Parent personCreationView = null;
+
     private Parent staysCreationView = null;
+
     private PlaceCreationViewController placeCreationController = null;
+
     private PersonCreationViewController personCreationController = null;
+
     private StaysCreationViewController staysCreationViewController = null;
+
     private EditType editType;
 
     @Override

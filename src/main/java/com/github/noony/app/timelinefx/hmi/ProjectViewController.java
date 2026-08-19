@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -75,6 +76,7 @@ public final class ProjectViewController implements Initializable {
 
     @FXML
     private AnchorPane mainAnchorPane;
+
     @FXML
     private MenuBar menuBar;
     @FXML
@@ -95,34 +97,51 @@ public final class ProjectViewController implements Initializable {
     private final Map<CheckMenuItem, Frieze> friezeMenuItems = new HashMap<>();
 
     private TimeLineProject timeLineProject;
+
     private FileChooser fileChooser;
-    //
+
     private Stage modalStage;
+
     private Scene modalScene;
-    //
+
     private Parent contentEditionView = null;
     private Parent friezeContentEditorView = null;
+
     private Parent galleryView = null;
+
     private Parent configurationView = null;
+
     private Parent projectCreationWizardView = null;
+
     private Parent pictureLoaderView = null;
+
     private Parent picturesChronologyView = null;
-    //
+
     private GalleryViewController galleryController = null;
+
     private ConfigurationViewController configurationController = null;
+
     private ProjectCreationWizardController projectCreationWizardController = null;
+
     private PictureLoaderViewController pictureLoaderViewController = null;
+
     private PicturesChronologyViewController pictureChronologyViewController = null;
-    //
+
     private SaveWindow saveWindow = null;
     // toolbarToggleGroup does not seem to work : TODO: fix
+
     private ToggleGroup toolbarToggleGroup;
+
     private ToggleGroup viewToggleGroup;
+
     private ACTION_ON_HOLD actionOnHold = ACTION_ON_HOLD.NONE;
-    //
+
     private ToggleButton contentEditionToggle;
+
     private ToggleButton timeLineToggle;
+
     private ToggleButton galleryToggle;
+
     private ToggleButton picturesChronologyToggle;
 
     @Override

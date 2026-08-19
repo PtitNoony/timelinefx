@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.TimeLineProject;
@@ -38,17 +39,23 @@ import javafx.stage.WindowEvent;
 public final class SaveWindow {
 
     public static final String SAVE = "save";
+
     public static final String CANCEL = "cancel";
+
     public static final String DISCARD = "discard";
 
     private static final Logger LOG = Logger.getGlobal();
 
     private final Window parentWindow;
+
     private final Stage stage;
+
     private final PropertyChangeSupport propertyChangeSupport;
-    //
+
     private Scene scene;
+
     private Parent saveDialogView = null;
+
     private SaveDialogController saveDialogController = null;
 
     public SaveWindow(Window aParentWindow) {

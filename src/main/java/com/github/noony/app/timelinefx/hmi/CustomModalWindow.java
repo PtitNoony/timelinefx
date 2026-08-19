@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import javafx.scene.Parent;
@@ -32,8 +33,11 @@ import jfxtras.styles.jmetro.Style;
 public class CustomModalWindow {
 
     private final Window parentWindow;
+
     private final Stage modalStage;
+
     private final Scene modalScene;
+
     private final JMetro jMetro;
 
     public CustomModalWindow(Window aParentWindow, Parent content) {

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -70,10 +71,12 @@ public final class GalleryViewController implements Initializable, ViewControlle
     private TimeLineProject project = null;
 
     private Parent pictureLoaderView = null;
+
     private PictureLoaderViewController pictureLoaderController = null;
 
     @FXML
     private TableView<Picture> picturesTableView;
+
     @FXML
     private TableColumn<Picture, String> pictureNameColumn, pictureDateColumn, picturePeopleColumn, picturePlacesColumn;
     @FXML

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -62,7 +63,7 @@ public final class StaysCreationViewController implements Initializable {
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(StaysCreationViewController.this);
-    //
+
     @FXML
     private RadioButton timeRB, dateRB;
     //
@@ -84,22 +85,26 @@ public final class StaysCreationViewController implements Initializable {
     //
     @FXML
     private ListView<StayPeriod> chronologyListView;
-    //
+
     private TimeFormat timeFormat;
-    //
+
     private TimeLineProject timeline = null;
     //
     // is there a better way ?
     private final PropertyChangeListener timelineListener = StaysCreationViewController.this::handleTimelineChanges;
-    //
+
     private boolean personOK = false;
+
     private boolean placeOK = false;
+
     private boolean startOK = false;
+
     private boolean endOK = false;
-    //
+
     private long startTime = -1;
+
     private long endTime = -1;
-    //
+
     private StayPeriod selectedStayPeriod = null;
 
     /**

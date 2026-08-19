@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Portrait;
@@ -37,15 +38,18 @@ import javafx.scene.control.ScrollPane;
 public class PortraitSelectionViewController implements Initializable {
 
     public static final String PORTRAIT_SELECTION_UPDATED = "portraitSelectionUpdated";
+
     public static final String HIDE_REQUESTED = "hideRequested";
 
     @FXML
     private ScrollPane galleryScrollPane;
 
     private Portrait portraitSelected = null;
+
     private List<Portrait> portraits;
+
     private PropertyChangeSupport propertyChangeSupport;
-    //
+
     private GalleryTiles galleryTiles;
 
     @Override

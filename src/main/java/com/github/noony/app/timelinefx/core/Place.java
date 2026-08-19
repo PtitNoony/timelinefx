@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import java.beans.PropertyChangeListener;
@@ -114,7 +115,6 @@ public final class Place implements FriezeObject {
      * Whether this place is currently selected.
      */
     private boolean selected;
-    //
 
     protected Place(final long placeId, final String placeName, final PlaceLevel placeLevel, final Place parentPlace, final Color aColor) {
         id = placeId;

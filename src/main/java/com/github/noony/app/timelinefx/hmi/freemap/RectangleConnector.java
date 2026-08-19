@@ -82,7 +82,7 @@ public final class RectangleConnector extends AbstractFxScalableNode {
             var deltaX = deltaXScaled / getScale();
             var deltaY = deltaYScaled / getScale();
             var newX = connector.getX() + (deltaX / gridSpace) * gridSpace;
-            var newY = connector.getY() + (deltaY % gridSpace) * gridSpace;
+            var newY = connector.getY() + (deltaY / gridSpace) * gridSpace;
             connector.setPosition(newX, newY);
         });
         connectorRectangle.setOnMouseClicked(event -> connector.setSelected(!connector.isSelected()));

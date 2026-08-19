@@ -27,6 +27,7 @@ import com.github.noony.app.timelinefx.examples.TestExample;
 import static com.github.noony.app.timelinefx.hmi.AppInstanceConfiguration.ANCHOR_CONSTRAINT_ZERO;
 import com.github.noony.app.timelinefx.hmi.frieze.FriezeContentEditorController;
 import com.github.noony.app.timelinefx.save.XMLHandler;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
@@ -93,6 +94,10 @@ public final class ProjectViewController implements Initializable {
     private RadioMenuItem galleryViewMI;
     @FXML
     private RadioMenuItem picturesChronologyViewMI;
+    @FXML
+    private MenuItem undoMenuItem;
+    @FXML
+    private MenuItem redoMenuItem;
 
     private final Map<CheckMenuItem, Frieze> friezeMenuItems = new HashMap<>();
 
@@ -192,6 +197,9 @@ public final class ProjectViewController implements Initializable {
         //
         AppInstanceConfiguration.addPropertyChangeListener(this::handleAppInstanceConfigChanges);
         //
+        UndoManager.addPropertyChangeListener(this::handleUndoStateChanged);
+        updateUndoRedoMenuState();
+        //
         displayContentEditionView();
         //
         StageFactory.reApplyTheme();
@@ -250,6 +258,27 @@ public final class ProjectViewController implements Initializable {
     }
 
     @FXML
+    protected void handleUndo(ActionEvent event) {
+        LOG.log(Level.INFO, "handleUndo {0}", event);
+        UndoManager.undo();
+    }
+
+    @FXML
+    protected void handleRedo(ActionEvent event) {
+        LOG.log(Level.INFO, "handleRedo {0}", event);
+        UndoManager.redo();
+    }
+
+    private void handleUndoStateChanged(PropertyChangeEvent event) {
+        updateUndoRedoMenuState();
+    }
+
+    private void updateUndoRedoMenuState() {
+        undoMenuItem.setDisable(!UndoManager.canUndo());
+        redoMenuItem.setDisable(!UndoManager.canRedo());
+    }
+
+    @FXML
     protected void handleFriezeCreation(ActionEvent event) {
         LOG.log(Level.INFO, "handleFriezeCreation {0}", event);
         var frieze = FriezeFactory.createFrieze(timeLineProject, "New Frieze", timeLineProject.getStays());
@@ -277,6 +306,7 @@ public final class ProjectViewController implements Initializable {
             System.err.println("TODO: manage listeners");
 //            timeLineProject.removeListener(listener);
         }
+        UndoManager.reset();
         timeLineProject = aTimeLineProject;
         friezeMenuItems.clear();
         friezesMenu.getItems().clear();

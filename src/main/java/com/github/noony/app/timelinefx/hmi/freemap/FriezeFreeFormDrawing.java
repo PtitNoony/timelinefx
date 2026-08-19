@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapDateHandle;
@@ -53,38 +54,53 @@ public final class FriezeFreeFormDrawing {
 
     private final VBox mainNode;
     // Group which contains all the graphical elements necessary for the free map display
+
     private final Group freeMapGroup;
-    //
+
     private final Group startDateHandleGroup;
+
     private final Group endDateHandleGroup;
     // Group that contains only the printable elements (places, persons...). Date handles are not part of if for e.g.
+
     private final Group freeMapInnerGroup;
-    //
+
     private final Group personsGroup;
+
     private final Group personLinksGroup;
+
     private final Group placesGroup;
+
     private final Group portraitsGroup;
-    //
+
     private final Rectangle background;
+
     private final Rectangle innerBackground;
+
     private final Rectangle personsBackground;
+
     private final Rectangle placesBackground;
+
     private final Pane startDatesPane;
+
     private final Pane endDatesPane;
 
     private final FriezeFreeMap friezeFreeMap;
     //
     private final Map<FreeMapPortrait, FreeMapPortraitDrawing> portraitDrawings;
+
     private final Map<FreeMapPlace, PlaceDrawing> placeDrawings;
     private final Map<FreeMapPerson, FreeMapPersonDrawing> personDrawings;
+
     private final Map<Double, DateHandleDrawing> startDatesHandles;
+
     private final Map<Double, DateHandleDrawing> endDatesHandles;
-    //
+
     private final List<IFxScalableNode> scalableNodes;
-    //
+
     private double drawingWidth;
+
     private double drawingHeight;
-    //
+
     private double scale = 1.0;
 
     public FriezeFreeFormDrawing(FriezeFreeMap aFriezeFreeMap) {

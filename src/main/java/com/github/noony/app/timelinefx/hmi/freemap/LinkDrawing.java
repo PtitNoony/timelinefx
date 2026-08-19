@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
@@ -53,18 +54,23 @@ public final class LinkDrawing implements Selectable, IFxScalableNode {
     private final FreeMapLink link;
     private final FreeMapConnector beginConnector;
     private final FreeMapConnector endConnector;
-    //
+
     private double scale = 1.0;
-    //
+
     private Line line;
+
     private CubicCurve cubicCurve;
-    //
+
     private Color color;
+
     private boolean isSelected = false;
-    //
+
     private double startX = 1.0;
+
     private double startY = 1.0;
+
     private double endX = 1.0;
+
     private double endY = 1.0;
 
     protected LinkDrawing(FreeMapLink aLink) {

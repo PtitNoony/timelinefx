@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
@@ -32,11 +33,15 @@ public final class RectangleConnector extends AbstractFxScalableNode {
     private static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
 
     private final FreeMapConnector connector;
+
     private final Rectangle connectorRectangle;
-    //
+
     private Point2D oldScene;
+
     private Point2D currentScene;
+
     private double oldMainNodeTranslateX;
+
     private double oldMainNodeTranslateY;
 
     protected RectangleConnector(FreeMapConnector abstractConnector) {

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapDateHandle;
@@ -39,9 +40,11 @@ public final class DateHandleDrawing extends AbstractFxScalableNode {
     private final FreeMapDateHandle dateHandle;
 
     private final ORIENTATION orientation;
+
     private final Polygon handle;
-    //
+
     private double lastMouseX;
+
     private double currentMouseX;
 
     public DateHandleDrawing(FreeMapDateHandle aDateHandle, double aScale) {

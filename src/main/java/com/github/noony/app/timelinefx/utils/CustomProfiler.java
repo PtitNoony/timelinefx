@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.utils;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class CustomProfiler {
     private static final boolean WITH_PROFILE = true;
 
     private static final Map<String, Profile> profiles = new HashMap<>(); // Fast access to profiles by name
+
     private static final List<Profile> profilesStack = new LinkedList<>();// Profiles as created chronologically
 
     /**
@@ -123,10 +125,15 @@ public class CustomProfiler {
         private static final String CSV_FORMAT_STRING = "%s,%d,%d,%d,%d,%d,%d,%d\n";
 
         private final String name;
+
         private long startTime;
+
         private long callCount;
+
         private long totalTime;
+
         private long minTime;
+
         private long maxTime;
 
         public Profile(String aName) {

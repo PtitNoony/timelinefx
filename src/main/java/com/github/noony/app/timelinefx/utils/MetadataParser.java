@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.github.noony.app.timelinefx.utils;
 
 import com.github.noony.app.timelinefx.core.PictureInfo;
@@ -35,6 +36,7 @@ public class MetadataParser {
     private static final DateTimeFormatter DT_PARSER = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss");
 
     private static final LocalDateTime DEFAULT_DATE = LocalDateTime.MIN;
+
     private static final int DEFAULT_RESOLUTION = -1;
 
     public static PictureInfo parseMetadata(TimeLineProject project, File file) {

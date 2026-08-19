@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.utils;
 
 import com.github.noony.app.timelinefx.core.Picture;
@@ -32,6 +33,7 @@ public class ExecutorUtils {
     private static final int THREAD_POOL_SIZE = 3;
 
     private static ThreadPoolExecutor executor;
+
     private static List<Picture> picturesToBeLoaded;
 
     public static void init() {

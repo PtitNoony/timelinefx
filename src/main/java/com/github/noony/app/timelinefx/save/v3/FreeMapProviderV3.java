@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.save.v3;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -54,25 +55,43 @@ import org.w3c.dom.Element;
 public class FreeMapProviderV3 {
 
     protected static final String FREEMAPS_GROUP = "freeMaps";
+
     private static final String FREEMAP_PLACES_GROUP = "freeMapPlaces";
+
     private static final String FREEMAP_PERSONS_GROUP = "freeMapPersons";
+
     private static final String FREEMAP_DATE_HANDLES_GROUP = "freeMapDateHandles";
+
     private static final String FREEMAP_PORTRAITS_GROUP = "freeMapPortraits";
+
     private static final String FREEMAP_STAYS_GROUP = "freeMapStays";
+
     private static final String FREEMAP_PARAMETERS_GROUP = "freeMapParameters";
+
     private static final String FREEMAP_ELEMENT = "freeMap";
+
     private static final String PARAMETER_ELEMENT = "parameter";
+
     private static final String PARAMETER_NAME_ATR = "name";
+
     private static final String PARAMETER_VALUE_ATR = "value";
+
     private static final String FREEMAP_PERSON_ELEMENT = "freeMapPerson";
+
     private static final String FREEMAP_PLACE_ELEMENT = "freeMapPlace";
+
     private static final String FREEMAP_STAY_ELEMENT = "freeMapStay";
+
     private static final String FREEMAP_DATE_HANDLE_ELEMENT = "freeMapDateHandle";
+
     private static final String FREEMAP_CONNECTOR_ELEMENT = "connector";
+
     private static final String FREEMAP_PORTRAIT_LINK_ELEMENT = "portraitLink";
-    //
+
     private static final String FREEMAP_PLACE_NAME_WIDTH_ATR = "placeNameWidth";
+
     private static final String FREEMAP_FONT_SIZE_ATR = "fontSize";
+
     private static final String FREEMAP_LINKED_ELEMENT_ID_ATR = "linkedElementID";
     private static final String FREEMAP_IS_MERGED_ATR = "isMerged";
 

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.examples;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -47,20 +48,30 @@ import javafx.scene.paint.Color;
 public class StarWars {
 
     private static final Logger LOG = Logger.getGlobal();
+
     private static final String[] RESOURCES = {
         "c3po.png", "darth_sidius.png", "mace_windu.png", "quigon.png",
         "cpt_panaka.png", "darth_vader.png", "obi_wan.png", "r2d2.png",
         "darth_maul.png", "gunray.png", "padme.png", "yoda.png", "ahsoka.png"};
 
     private static Person obiWanKenobi;
+
     private static Person quiGon;
+
     private static Person yoda;
+
     private static Person padme;
+
     private static Person panaka;
+
     private static Person r2d2;
+
     private static Person c3po;
+
     private static Person anakin;
+
     private static Person maceWindu;
+
     private static Person gunray;
     private static Person darthMaul;
     private static Person darthSidious;

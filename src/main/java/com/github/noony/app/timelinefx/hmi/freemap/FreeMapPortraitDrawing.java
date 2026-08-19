@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -41,23 +42,33 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
     private static final Logger LOG = Logger.getGlobal();
 
     private final FriezeFreeFormDrawing friezeFreeFormDrawing;
+
     private final FreeMapPortrait freeMapPortrait;
+
     private final Circle circle;
+
     private final Circle smallerCircle;
+
     private final Circle imageClip;
+
     private final ImageView imageView;
-    //
+
     private Image image;
-    //
+
     private double xPos;
+
     private double yPos;
-    //
+
     private double oldScreenX;
+
     private double oldScreenY;
+
     private double oldTranslateX;
+
     private double oldTranslateY;
-    //
+
     private double tmpImgPos;
+
     private double tmpImgFit;
 
     public FreeMapPortraitDrawing(FreeMapPortrait aPortrait, FriezeFreeFormDrawing aFriezeFreeFormDrawing) {

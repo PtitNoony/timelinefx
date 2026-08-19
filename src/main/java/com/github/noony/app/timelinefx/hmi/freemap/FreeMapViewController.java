@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.freemap;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -57,6 +58,7 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     private ScrollPane viewScrollPane;
+
     @FXML
     private AnchorPane viewRootPane;
     @FXML
@@ -85,11 +87,15 @@ public class FreeMapViewController implements Initializable {
     private Button linearTimeButton, constantTimeButton;
 
     private FriezeFreeFormDrawing friezeFreeFormDrawing;
+
     private FriezeFreeMap friezeFreeMap;
-    //
+
     private FileChooser fileChooser;
+
     private CustomModalWindow modalWindow;
+
     private Parent portraitSelectionView = null;
+
     private PortraitSelectionViewController portraitSelectionViewController;
     //
     private FreeMapPortrait freeMapPortraitToUpdate = null;

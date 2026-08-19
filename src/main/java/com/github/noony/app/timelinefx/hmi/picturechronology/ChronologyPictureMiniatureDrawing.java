@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
@@ -44,35 +45,53 @@ import javafx.scene.shape.Rectangle;
 public final class ChronologyPictureMiniatureDrawing implements IFxScalableNode {
 
     public static final String MINIATURE_REQUEST_REMOVAL = "miniatureRequestRemoval";
+
     public static final String MINIATURE_REQUEST_SELECTION = "miniatureRequestSelection";
 
     public static final double ARC_WIDTH = 32;
-    //
+
     private static final Logger LOG = Logger.getGlobal();
+
     private static final double MIN_SCALE = 0.05;
+
     private static final double SCALE_STEP = 0.05;
-    //
+
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final ChronologyPictureMiniature chronologyPictureMiniature;
+
     private final List<ContourDrawing> contours;
-    //
+
     private final Group mainNode;
+
     private final Group contentNode;
+
     private final Group contoursNode;
+
     private final Rectangle clipRectangle;
+
     private final Rectangle frontGlass;
+
     private final Image image;
+
     private final ImageView imageView;
-    //
+
     private double scale;
+
     private double viewingScale = 1.0;
+
     private double renderingScale;
+
     private double width;
+
     private double height;
-    //
+
     private double oldScreenX;
+
     private double oldScreenY;
+
     private double oldTranslateX;
+
     private double oldTranslateY;
 
     public ChronologyPictureMiniatureDrawing(ChronologyPictureMiniature aChronologyPictureMiniature) {

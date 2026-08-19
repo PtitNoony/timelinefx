@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx;
 
 import com.github.noony.app.timelinefx.hmi.ConfigurationViewController;
@@ -39,33 +40,48 @@ import jfxtras.styles.jmetro.Style;
 public class Configuration {
 
     public static final String TIMELINES_FOLDER_LOCATION_CHANGED = "timelinesFolderLocationChanged";
+
     public static final String PORTRAITS_FOLDER_LOCATION_CHANGED = "portraitsFolderLocationChanged";
+
     public static final String PICTURES_FOLDER_LOCATION_CHANGED = "picturesFolderLocationChanged";
+
     public static final String MINIATURES_FOLDER_LOCATION_CHANGED = "miniaturesFolderLocationChanged";
+
     public static final String THEME_CHANGED = "miniaturesFolderLocationChanged";
-    //
+
     public static final double DEFAULT_FXML_GAP = 8.0;
-    //
+
     private static final String DEFAULT_PORTRAITS_FOLDER_NAME = "portraits";
+
     private static final String DEFAULT_PICTURES_FOLDER_NAME = "pictures";
+
     private static final String DEFAULT_MINIATURES_FOLDER_NAME = "miniatures";
 
     private static final String DEFAULT_PROJECTS_FOLDER_NAME = "Timelines";
+
     private static final String PREFERENCE_FILE_NAME = ".timelines";
+
     private static final String TIMELINES_FOLDER_PROPERTY_NAME = "TimelinesFolder";
+
     private static final String PORTRAITS_FOLDER_PROPERTY_NAME = "PortraitsFolder";
+
     private static final String PICTURES_FOLDER_PROPERTY_NAME = "PicturesFolder";
+
     private static final String MINIATURES_FOLDER_PROPERTY_NAME = "MiniaturesFolder";
+
     private static final String THEME_PROPERTY_NAME = "Theme";
-    //
+
     private static final String DEFAULT_TIMELINES_FOLDER_PATH = System.getProperty("user.home") + File.separator + DEFAULT_PROJECTS_FOLDER_NAME;
+
     private static final Style DEFAULT_THEME = Style.DARK;
 
     //
     private static final Logger LOG = Logger.getGlobal();
+
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(ConfigurationViewController.class);
-    //
+
     private static File preferenceFile = null;
+
     private static Properties properties = null;
 
     private Configuration() {

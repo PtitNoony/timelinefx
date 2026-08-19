@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
@@ -39,11 +40,17 @@ import java.util.logging.Logger;
 public class FreeMapPlace implements FriezeObject {
 
     public static final String Y_POS_CHANGED = "yPosChanged";
+
     public static final String WIDTH_POS_CHANGED = "widthPosChanged";
+
     public static final String HEIGHT_POS_CHANGED = "heightPosChanged";
+
     public static final String MIN_MAX_X_CHANGED = "minMaxXChanged";
+
     public static final String NAME_WIDTH_CHANGED = "nameWidthChanged";
+
     public static final String FONT_SIZE_CHANGED = "fontSizeChanged";
+
     public static final String PLOT_SEPARATION_CHANGED = "plotSeparationChanged";
 
     public static final double PLACE_NAME_HEIGHT = 35;
@@ -53,6 +60,7 @@ public class FreeMapPlace implements FriezeObject {
     private static final Logger LOG = Logger.getGlobal();
 
     private static final double DEFAULT_MIN_X = 0;
+
     private static final double DEFAULT_MAX_X = 0;
 
     //
@@ -75,7 +83,6 @@ public class FreeMapPlace implements FriezeObject {
         FACTORY_CONTENT.clear();
     }
 
-    //
     private final PropertyChangeSupport propertyChangeSupport;
 
     //
@@ -84,21 +91,28 @@ public class FreeMapPlace implements FriezeObject {
     private final long id;
     // for the order of each person when drawn
     private final List<FreeMapPerson> persons;
+
     private double yPos;
+
     private double fontSize;
+
     private double placeNameWidth;
     //
     // other instance parameters, usually calculated
     //
+
     private final Place place;
     private final List<FreeMapPlot> registeredPlots;
     //
     private double placeStayWidth;
+
     private double height = DEFAULT_HEIGHT;
     private double requestedMinPlotSeparation;
     private double currentPlotSeparation;
     //
+
     private double minX = DEFAULT_MIN_X;
+
     private double maxX = DEFAULT_MAX_X;
 
     private FreeMapPlace(Place aPlace, double aPlotSeparation, double aNameWidth, double aFontSize) {

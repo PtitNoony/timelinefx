@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx;
 
 import com.github.noony.app.timelinefx.hmi.AppInstanceConfiguration;
@@ -35,6 +36,7 @@ import javafx.stage.WindowEvent;
 public class MainApp extends Application {
 
     private static final String STAGE_TITLE = "Timeline";
+
     private static final Logger LOG = Logger.getGlobal();
 
     static {

@@ -40,12 +40,24 @@ public final class UndoManager {
      */
     public static final String UNDO_STATE_CHANGED = "undoStateChanged";
 
+    /**
+     * Logger for this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * Support for {@link #UNDO_STATE_CHANGED} notifications.
+     */
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(UndoManager.class);
 
+    /**
+     * Executed (or redone) commands, most recent first.
+     */
     private static final Deque<Command> UNDO_STACK = new ArrayDeque<>();
 
+    /**
+     * Undone commands, most recent first.
+     */
     private static final Deque<Command> REDO_STACK = new ArrayDeque<>();
 
     private UndoManager() {
@@ -53,8 +65,10 @@ public final class UndoManager {
     }
 
     /**
-     * @param listener notified with {@link #UNDO_STATE_CHANGED} after every {@link #execute(Command)},
-     * {@link #undo()}, {@link #redo()} or {@link #reset()}
+     * Registers a listener to be notified after every {@link #execute(Command)}, {@link #undo()}, {@link #redo()}
+     * or {@link #reset()}.
+     *
+     * @param listener notified with {@link #UNDO_STATE_CHANGED}
      */
     public static void addPropertyChangeListener(final PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.addPropertyChangeListener(listener);

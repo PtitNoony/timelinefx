@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byplace;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -40,6 +41,7 @@ import org.controlsfx.control.RangeSlider;
 public class FriezePlaceViewController implements Initializable {
 
     private final double barPadding = 15;
+
     private final double noBarPadding = 5;
 
     @FXML
@@ -53,14 +55,18 @@ public class FriezePlaceViewController implements Initializable {
 
     @FXML
     private RangeSlider timeSlider;
+
     @FXML
     private Label minDateLabel, maxDateLabel;
 
     private double friezePaneWidth = 100;
+
     private double friezePaneHeight = 100;
+
     private boolean vBarVisible = true;
 
     private Frieze frieze = null;
+
     private FriezeSpaceLinearDrawing friezeSpaceLinearDrawing = null;
 
     @Override

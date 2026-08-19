@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.frieze;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -72,6 +73,7 @@ public class FriezeContentEditorController implements Initializable {
 
     @FXML
     private TabPane tabPane;
+
     @FXML
     private TextField nameField;
     @FXML
@@ -91,24 +93,32 @@ public class FriezeContentEditorController implements Initializable {
     // properties
     @FXML
     private GridPane timeGrid;
-    //
+
     private List<CheckBoxTreeItem<Place>> allTreeItems = new LinkedList<>();
+
     private Map<FriezeFreeMap, Tab> freemapTabs;
-    //
+
     private TimeLineProject timeLineProject;
+
     private Frieze frieze;
-    //
+
     private FriezePlaceViewController spatialViewController;
+
     private FriezePeopleViewController peopleViewController;
     // properties
+
     private TextField friezeStartTimeField;
+
     private TextField friezeEndTimeField;
-    //
+
     private AnchorPane spatialViewRootPane;
+
     private AnchorPane peopleViewRootPane;
-    //
+
     private PropertyChangeListener projectListener;
+
     private PropertyChangeListener friezeListener;
+
     private PropertyChangeListener placeCheckTreeItemChangeListener;
 
     @Override

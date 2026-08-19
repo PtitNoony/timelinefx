@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -46,16 +47,19 @@ public class StageFactory {
     /**
      * Default scene height.
      */
+
     public static final double DEFAULT_SCENE_HEIGHT = 900;
-    //
+
     private static final Logger LOG = Logger.getGlobal();
-    //
+
     private static final boolean DEFAULT_LAF = false;
+
     private static final Map<Scene, JMetro> SCENE_STYLES = new HashMap<>();
     //
     /**
      * Font size in pt
      */
+
     private static final DoubleProperty FONT_SIZE = new SimpleDoubleProperty(12);
 
     private StageFactory() {

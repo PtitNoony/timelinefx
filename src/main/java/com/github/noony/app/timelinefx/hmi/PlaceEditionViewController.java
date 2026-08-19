@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Place;
@@ -42,10 +43,12 @@ import javafx.scene.paint.Color;
 public final class PlaceEditionViewController implements Initializable {
 
     public static final String PLACE_EDITED = "placeEdited";
+
     public static final String CANCEL_PLACE_EDITION = "cancelPlaceEdition";
 
     @FXML
     private TextField nameLabel;
+
     @FXML
     private ComboBox<PlaceLevel> placeLevelCB;
     @FXML
@@ -61,14 +64,21 @@ public final class PlaceEditionViewController implements Initializable {
 
     //
     private Place currentPlace = null;
+
     private String placeName = null;
+
     private PlaceLevel placeLevel = null;
+
     private Place parentPlace = null;
+
     private Color placeColor = null;
-    //
+
     private boolean nameOK = false;
+
     private boolean levelOK = false;
+
     private boolean parentOK = true;
+
     private boolean colorOK = true;
 
     @Override

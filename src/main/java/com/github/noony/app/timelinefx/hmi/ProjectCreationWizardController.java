@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -39,6 +40,7 @@ import javafx.stage.DirectoryChooser;
 public final class ProjectCreationWizardController implements Initializable {
 
     public static final String CANCEL = "cancel";
+
     public static final String CREATE = "create";
 
     private DirectoryChooser directoryChooser = null;
@@ -47,6 +49,7 @@ public final class ProjectCreationWizardController implements Initializable {
 
     @FXML
     private Button createB;
+
     @FXML
     private TextField nameField;
     @FXML
@@ -59,12 +62,17 @@ public final class ProjectCreationWizardController implements Initializable {
     private TextField miniaturesField;
 
     private String name = "";
+
     private String projectFolderPath = "";
+
     private String portraitsFolderName = "";
+
     private String picturesFolderName = "";
+
     private String miniaturesFolderName = "";
-    //
+
     private File incompleteProjectFolder = null;
+
     private boolean isOK = false;
 
     @Override

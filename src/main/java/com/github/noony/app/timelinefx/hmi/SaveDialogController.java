@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import java.beans.PropertyChangeListener;
@@ -33,7 +34,7 @@ import javafx.fxml.Initializable;
 public final class SaveDialogController implements Initializable {
 
     private static final Logger LOG = Logger.getGlobal();
-    //
+
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     @Override

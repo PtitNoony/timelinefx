@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -50,6 +51,7 @@ public class PicturesChronologyConfiguratorController implements Initializable {
 
     @FXML
     private AnchorPane configuratorRoot;
+
     @FXML
     private TextField widthField;
     @FXML
@@ -58,10 +60,11 @@ public class PicturesChronologyConfiguratorController implements Initializable {
     private TextField zoomField;
     @FXML
     private CheckBox picturesVisibilityCB;
-    //
+
     private PictureChronology pictureChronology;
+
     private PictureChronologyDrawing pictureChronologyDrawing;
-    //
+
     private FileChooser fileChooser;
 
     @Override

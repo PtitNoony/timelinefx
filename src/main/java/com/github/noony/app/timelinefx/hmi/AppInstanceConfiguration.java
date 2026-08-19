@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -32,13 +33,15 @@ public class AppInstanceConfiguration {
     public static final double ANCHOR_CONSTRAINT_ZERO = 0.0;
 
     public static final String TIMELINE_SELECTED_CHANGED = "timelineSelectedChanged";
+
     public static final String FRIEZE_SELECTED_CHANGED = "friezeSelectedChanged";
-    //
+
     private static final Logger LOG = Logger.getGlobal();
+
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(ConfigurationViewController.class);
-    //
-    //
+
     private static TimeLineProject selectedProject = null;
+
     private static Frieze selectedFrieze = null;
 
     private AppInstanceConfiguration() {

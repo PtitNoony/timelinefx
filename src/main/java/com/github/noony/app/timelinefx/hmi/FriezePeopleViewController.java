@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -47,6 +48,7 @@ public class FriezePeopleViewController implements Initializable {
 
     @FXML
     private AnchorPane peopleViewRootPane;
+
     @FXML
     private ScrollPane peopleViewScrollPane;
     @FXML
@@ -58,15 +60,19 @@ public class FriezePeopleViewController implements Initializable {
 
     /// DOUBLONS !!
     private final double barPadding = 15;
+
     private final double noBarPadding = 5;
 
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
 
     private double friezePaneWidth = 100;
+
     private double friezePaneHeight = 100;
+
     private boolean vBarVisible = true;
 
     private Frieze frieze = null;
+
     private FriezePeopleLinearDrawing friezePeopleLinearDrawing = null;
 
     @Override

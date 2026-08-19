@@ -18,7 +18,6 @@
 package com.github.noony.app.timelinefx.drawings;
 
 /**
- *
  * This enum is intended to describe / constraint the allowed movements of various nodes while drag and dropping them.
  *
  * @author hamon
@@ -26,22 +25,22 @@ package com.github.noony.app.timelinefx.drawings;
 public enum InteractiveDragType {
 
     /**
-     * No movement allowed
+     * No movement allowed.
      */
     NOT_ALLOWED,
 
     /**
-     * Position update only allowed along the X-axis
+     * Position update only allowed along the X-axis.
      */
     X_ONLY,
 
     /**
-     * Position update only allowed along the Y-axis
+     * Position update only allowed along the Y-axis.
      */
     Y_ONLY,
 
     /**
-     * No movement restriction
+     * No movement restriction.
      */
     FREE_TRANSLATION
 

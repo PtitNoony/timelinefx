@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.drawings;
 
 import com.github.noony.app.timelinefx.MainApp;
@@ -55,24 +56,31 @@ import javafx.scene.text.TextAlignment;
 public final class GalleryTiles implements IFxNode {
 
     public static final double TILE_WIDTH = 250;
+
     public static final double TILE_HEIGHT = 200;
 
     public static final String TILE_CLICKED = "tileClicked";
+
     public static final String TILE_SELECTED = "tileSelected";
 
     private static final Logger LOG = Logger.getGlobal();
 
     private static final int DEFAULT_NUMBER_OF_TILES = 6;
+
     private static final double IMAGE_RATIO = 0.9;
+
     private static final double IMAGE_WIDTH = TILE_WIDTH * IMAGE_RATIO;
+
     private static final double IMAGE_HEIGHT = TILE_HEIGHT * IMAGE_RATIO;
+
     private static final Dimension IMAGE_DIMENSION = new Dimension((int) IMAGE_WIDTH, (int) IMAGE_HEIGHT);
 
     private FlowGridPane tilesPane;
 
     private final PropertyChangeSupport propertyChangeSupport;
-    //
+
     private final Map<IFileObject, Tile> content;
+
     private Tile activeTile = null;
 
     public GalleryTiles(List<IFileObject> objectList) {

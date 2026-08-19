@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.drawings;
 
 import com.github.noony.app.timelinefx.core.IDrawableObject;
@@ -34,26 +35,31 @@ import javafx.scene.shape.Rectangle;
 public class FxScalableParent implements IFxScalableNode {
 
     public static final double MIN_SCALE = 0.2;
+
     public static final double MAX_SCALE = 20;
+
     public static final double SCALE_STEP = 0.1;
 
     public static final double BORDER = 0;//todo investigate why size does not take this into account
+
     public static final double PADDING = 8;
 
     private final PropertyChangeSupport propertyChangeSupport;
 
     private final Pane mainNode;
+
     private final Group mainGroup;
-    //
+
     private final Rectangle background;
-    //
+
     private final List<IFxScalableNode> scalableNodes;
-    //
+
     private final IDrawableObject drawableObject;
-    //
+
     private double drawingWidth;
+
     private double drawingHeight;
-    //
+
     private double viewingScale = 1.0;
 
     @SuppressWarnings("this-escape")

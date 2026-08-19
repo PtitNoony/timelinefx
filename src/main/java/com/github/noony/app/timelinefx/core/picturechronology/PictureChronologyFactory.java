@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.Factory;
@@ -35,11 +36,14 @@ public class PictureChronologyFactory {
     private static final Logger LOG = Logger.getGlobal();
 
     private static final Factory<PictureChronology> CHROLOGY_FACTORY = new Factory<>();
+
     private static final Factory<ChronologyPictureMiniature> PICTURE_FACTORY = new Factory<>();
+
     private static final Factory<ChronologyLink> LINK_FACTORY = new Factory<>();
 
     //
     private static final String TRYING_CREATION_MSG = "Trying to create createPictureChronology ";
+
     private static final String EXISTING_ID_MSG = " with existing id=";
 
     private PictureChronologyFactory() {

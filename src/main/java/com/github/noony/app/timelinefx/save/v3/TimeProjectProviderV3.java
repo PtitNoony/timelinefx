@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.save.v3;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -86,25 +87,43 @@ import org.w3c.dom.NodeList;
 public class TimeProjectProviderV3 implements TimelineProjectProvider {
 
     public static final String PROJECT_GROUP = "PROJECT";
+
     public static final String PLACES_GROUP = "PLACES";
+
     public static final String PERSONS_GROUP = "PERSONS";
+
     public static final String PICTURES_GROUP = "PICTURES";
+
     public static final String FRIEZES_GROUP = "FRIEZES";
+
     public static final String STAYS_GROUP = "STAYS";
+
     public static final String STAYS_REF_GROUP = "stays";
+
     public static final String PORTRAITS_GROUP = "portraits";
+
     public static final String PICTURE_CHRONOLOGIES_GROUP = "PICTURE_CHRONOLOGIES";
-    //
+
     public static final String PLACE_ELEMENT = "place";
+
     public static final String PLACE_REF_ELEMENT = "placeRef";
+
     public static final String PERSON_ELEMENT = "person";
+
     public static final String PERSON_REF_ELEMENT = "personRef";
+
     public static final String PICTURE_ELEMENT = "picture";
+
     public static final String PICTURE_REF_ELEMENT = "pictureRef";
+
     public static final String FRIEZE_ELEMENT = "frieze";
+
     public static final String STAY_ELEMENT = "stay";
+
     public static final String STAY_ELEMENT_REF = "stayRef";
+
     public static final String PORTRAIT_ELEMENT = "portrait";
+
     public static final String PICTURE_CHRONOLOGY_ELEMENT = "pictureChronology";
     public static final String PICTURE_CHRONOLOGY_MINIATURE_ELEMENT = "pictureChronologyMiniature";
     public static final String PICTURE_CHRONOLOGY_LINK_ELEMENT = "pictureChronologyLink";

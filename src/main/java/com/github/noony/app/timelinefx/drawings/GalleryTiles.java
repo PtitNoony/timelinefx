@@ -29,7 +29,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Collections;
@@ -148,13 +148,11 @@ public final class GalleryTiles implements IFxNode {
     private Tile createSetTile(IFileObject fileObject) {
         String smallImageFilePath = fileObject.getProject().getMiniaturesFolder() + File.separator + fileObject.getId() + "_small.jpg";
         File imageFile = new File(smallImageFilePath);
-        InputStream imageStream;
         Image smallImage = null;
         if (imageFile.exists()) {
-            try {
-                imageStream = new FileInputStream(smallImageFilePath);
+            try (InputStream imageStream = new FileInputStream(smallImageFilePath)) {
                 smallImage = new Image(imageStream);
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 LOG.log(Level.SEVERE, null, ex);
             }
         } else {

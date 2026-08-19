@@ -23,7 +23,7 @@ import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Point2D;
@@ -177,10 +177,11 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             var filePathS = project.getProjectFolder().getAbsolutePath() + File.separatorChar
                     + portrait.getProjectRelativePath();
             LOG.log(Level.FINE, "Trying to load file {0}", new Object[] { filePathS });
-            FileInputStream inputstream = new FileInputStream(filePathS);
-            image = new Image(inputstream);
-            imageView.setImage(image);
-        } catch (FileNotFoundException ex) {
+            try (FileInputStream inputstream = new FileInputStream(filePathS)) {
+                image = new Image(inputstream);
+                imageView.setImage(image);
+            }
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, " Ex :: {0}", new Object[] { ex });
             throw new IllegalStateException();
         }

@@ -33,7 +33,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -391,12 +391,10 @@ public final class PersonCreationViewController implements Initializable {
             String picturePath = currentProject.getProjectFolder().getAbsolutePath() + File.separatorChar + defaultPortrait.getProjectRelativePath();
             File pictureFile = new File(picturePath);
             if (Files.exists(pictureFile.toPath())) {
-                FileInputStream inputstream;
-                try {
-                    inputstream = new FileInputStream(picturePath);
+                try (FileInputStream inputstream = new FileInputStream(picturePath)) {
                     image = new Image(inputstream);
                     imageView.setImage(image);
-                } catch (FileNotFoundException ex) {
+                } catch (IOException ex) {
                     LOG.log(Level.SEVERE, "Exception while updating image for {0} : {1}", new Object[]{defaultPortrait, ex});
                     LOG.log(Level.SEVERE, "> file name was: {0}", new Object[]{picturePath});
                 }

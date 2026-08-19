@@ -36,8 +36,10 @@ public interface Command {
     void undo();
 
     /**
-     * @return a short, human-readable description of the action (e.g. "Move portrait"), for display next to
-     * "Undo"/"Redo" in the UI. Defaults to an empty string.
+     * A short, human-readable description of the action (e.g. "Move portrait"), for display next to
+     * "Undo"/"Redo" in the UI.
+     *
+     * @return the description, or an empty string by default
      */
     default String getDescription() {
         return "";

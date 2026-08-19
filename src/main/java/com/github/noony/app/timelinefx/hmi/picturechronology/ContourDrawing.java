@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -34,9 +35,11 @@ public class ContourDrawing implements IFxScalableNode {
     private static final double DEFAULT_STROKE_WIDTH = 2.5;
 
     private final ChronologyPictureMiniature miniature;
+
     private final Person person;
+
     private Rectangle contourDrawing;
-    //
+
     private double viewingScale = 1.0;
 
     protected ContourDrawing(ChronologyPictureMiniature aMiniature, Person aPerson) {

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byplace;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -45,6 +46,7 @@ import javafx.scene.text.TextAlignment;
 public final class PlaceDrawing extends FXDrawing {
 
     public static final double DEFAULT_HEIGHT = 20;
+
     public static final double DEFAULT_WIDTH = 500;
 
     public static final double DEFAULT_SEPARATION = 12.0;
@@ -52,18 +54,25 @@ public final class PlaceDrawing extends FXDrawing {
     public static final double DEFAULT_NAME_WIDTH = 100;
 
     private final Place place;
+
     private final Frieze frieze;
-    //
+
     private final List<Person> visiblePersons;
+
     private final Map<StayPeriod, StayDrawing> staysAndDrawings;
+
     private final Map<Person, List<StayDrawing>> personsAndDrawings;
-    //
+
     private final Label nameLabel;
+
     private final Line nameSeparationLine;
+
     private final Group stayGroup;
+
     private final Rectangle stayGroupClip;
-    //
+
     private double currentMinDate = 0L;
+
     private double currentRatio = 1;
 
     public PlaceDrawing(Place aPlace, Frieze aFrieze) {

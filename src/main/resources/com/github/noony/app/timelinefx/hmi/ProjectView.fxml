@@ -4,6 +4,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -24,7 +25,20 @@
                               <MenuItem mnemonicParsing="false" text="Close" />
                           </items>
                       </Menu>
-                      <Menu disable="true" mnemonicParsing="false" text="Edit" />
+                      <Menu mnemonicParsing="false" text="Edit">
+                          <items>
+                              <MenuItem fx:id="undoMenuItem" disable="true" mnemonicParsing="false" onAction="#handleUndo" text="Undo">
+                                  <accelerator>
+                                      <KeyCodeCombination alt="UP" code="Z" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                                  </accelerator>
+                              </MenuItem>
+                              <MenuItem fx:id="redoMenuItem" disable="true" mnemonicParsing="false" onAction="#handleRedo" text="Redo">
+                                  <accelerator>
+                                      <KeyCodeCombination alt="UP" code="Y" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                                  </accelerator>
+                              </MenuItem>
+                          </items>
+                      </Menu>
                   <Menu fx:id="friezesMenu" mnemonicParsing="false" text="Friezes">
                      <items>
                               <MenuItem fx:id="createFriezeMenuItem" mnemonicParsing="false" onAction="#handleFriezeCreation" text="Create New Frieze" />

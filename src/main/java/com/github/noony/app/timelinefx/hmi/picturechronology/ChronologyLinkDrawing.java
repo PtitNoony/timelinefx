@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
@@ -48,27 +49,40 @@ public final class ChronologyLinkDrawing implements IFxScalableNode {
     private static final Logger LOG = Logger.getGlobal();
 
     private static final double DEFAULT_RADIUS = 12;
+
     private static final double DEFAULT_STROKE = 4;
+
     private static final Color DEFAULT_CONTROLS_COLOR = Color.MAGENTA;
 
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final ChronologyLink chronologyLink;
-    //
+
     private final Group mainNode;
+
     private final Circle startNode;
+
     private final Circle endNode;
+
     private Line line = null;
+
     private QuadCurve quadCurve = null;
+
     private CubicCurve cubicCurve = null;
-    //
+
     private Shape linkShape = null;
     // in the future, do not create all the controls at once
+
     private Circle cubicControlPoint1 = null;
+
     private Line cubicControlLine1 = null;
+
     private Line cubicControlLine2 = null;
+
     private Circle cubicControlPoint2 = null;
-    //
+
     private double viewingScale = 1.0;
+
     private double[] linkParameters = null;
 
     public ChronologyLinkDrawing(ChronologyLink aChronologyLink) {

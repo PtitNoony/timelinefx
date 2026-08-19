@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -36,22 +37,31 @@ import javafx.scene.shape.Rectangle;
 public final class PictureChronologyDrawing extends FxScalableParent {
 
     public static final String LINK_SELECTED = "linkSelected";
+
     public static final String LINK_UNSELECTED = "linkUnselected";
+
     public static final String MINIATURE_SELECTED = "miniatureSelected";
+
     public static final String MINIATURE_UNSELECTED = "miniatureUnselected";
 
     private final PictureChronology pictureChronology;
+
     private final Map<ChronologyPictureMiniature, ChronologyPictureMiniatureDrawing> miniatureDrawings;
+
     private final Map<Person, PersonChronologyPicturesDrawing> personsDrawings;
-    //
+
     private final PropertyChangeListener personListener;
-    //
+
     private final Group drawingGroup;
+
     private final Rectangle drawingBackground;
+
     private final Group picturesGroup;
+
     private final Group personsGroup;
-    //
+
     private ChronologyLinkDrawing selectedLink = null;
+
     private ChronologyPictureMiniatureDrawing selectedMiniature = null;
 
     public PictureChronologyDrawing(PictureChronology aPictureChronology) {

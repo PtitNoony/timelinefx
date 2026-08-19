@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -35,14 +36,17 @@ import javafx.scene.Node;
 public final class PersonChronologyPicturesDrawing implements IFxScalableNode {
 
     private final PictureChronologyDrawing chronologyDrawing;
+
     private final PictureChronology chronology;
+
     private final Map<ChronologyLink, ChronologyLinkDrawing> linkDrawings;
-    //
+
     private final Group mainGroup;
-    //
+
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final PropertyChangeListener linkListener;
-    //
+
     private double viewingScale = 1.0;
 
     public PersonChronologyPicturesDrawing(PictureChronologyDrawing aChronologyDrawing, Person aPerson) {

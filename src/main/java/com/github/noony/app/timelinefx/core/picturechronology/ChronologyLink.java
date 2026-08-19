@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.AnchorSide;
@@ -44,25 +45,30 @@ public final class ChronologyLink implements FriezeObject {
     private static final AnchorSide DEFAULT_END_LINK_ANCHOR_SIDE = AnchorSide.LEFT;
 
     private static final Logger LOG = Logger.getGlobal();
+
     private static final double PLOT_SEPARATION = 15;
 
     private final PropertyChangeSupport propertyChangeSupport;
     private final long id;
 
     private final Person person;
+
     private final ChronologyPictureMiniature startMiniature;
+
     private final ChronologyPictureMiniature endMiniature;
-    //
+
     private ChronologyLinkType linkType;
     private AnchorSide startAnchorSide;
     private AnchorSide endAnchorSide;
-    //
+
     private int startIndex;
+
     private int endIndex;
-    //
+
     private Point2D startPosition;
+
     private Point2D endPosition;
-    //
+
     private double[] linkParameters;
 
     protected ChronologyLink(long anId, Person aPerson, ChronologyPictureMiniature aStartMiniature, ChronologyPictureMiniature anEndMiniature, ChronologyLinkType aLinkType, double[] allLinkParameters) {

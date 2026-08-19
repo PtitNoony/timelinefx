@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.DateObject;
@@ -35,8 +36,11 @@ import javafx.geometry.Point2D;
 public final class ChronologyPictureMiniature implements FriezeObject {
 
     public static final String POSITION_CHANGED = "ChronologyPictureMiniature__positionChanged";
+
     public static final String SCALE_CHANGED = "ChronologyPictureMiniature__scaleChanged";
+
     public static final String TIME_CHANGED = "ChronologyPictureMiniature__timeChanged";
+
     public static final String REQUEST_LINKS_UPDATE = "ChronologyPictureMiniature__requestLinksUpdate";
 
     public static final Comparator<ChronologyPictureMiniature> COMPARATOR = (c1, c2) -> Double.compare(c1.getCurrenltyUsedAbsoluteTime(), c2.getCurrenltyUsedAbsoluteTime());
@@ -45,9 +49,13 @@ public final class ChronologyPictureMiniature implements FriezeObject {
     private final long id;
 
     private final IPicture picture;
+
     private final DateObject dateObject;
+
     private Point2D position;
+
     private double scale;
+
     private boolean usesCustomTime;
 
     protected ChronologyPictureMiniature(long anId, IPicture aPicture, Point2D aPosition, double aScale) {

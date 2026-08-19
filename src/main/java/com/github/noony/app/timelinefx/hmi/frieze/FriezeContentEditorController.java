@@ -342,7 +342,7 @@ public class FriezeContentEditorController implements Initializable {
     }
 
     private void removePersonFromPeoplePane(final Person personToRemove) {
-        personCheckListView.getItems().add(personToRemove);
+        personCheckListView.getItems().remove(personToRemove);
     }
 
     private void updatePlacesPane() {

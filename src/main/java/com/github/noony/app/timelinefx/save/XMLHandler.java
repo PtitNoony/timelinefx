@@ -125,7 +125,7 @@ public final class XMLHandler {
         int l1 = v1Split.length;
         int l2 = v2Split.length;
         int maxSplit = Math.max(l1, l2);
-        for (int i = 1; i < maxSplit; i++) {
+        for (int i = 0; i < maxSplit; i++) {
             String i1 = i < l1 ? v1Split[i] : "-1";
             String i2 = i < l2 ? v2Split[i] : "-2";
             int comp = i1.compareTo(i2);

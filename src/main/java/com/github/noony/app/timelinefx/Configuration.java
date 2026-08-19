@@ -47,7 +47,7 @@ public class Configuration {
 
     public static final String MINIATURES_FOLDER_LOCATION_CHANGED = "miniaturesFolderLocationChanged";
 
-    public static final String THEME_CHANGED = "miniaturesFolderLocationChanged";
+    public static final String THEME_CHANGED = "themeChanged";
 
     public static final double DEFAULT_FXML_GAP = 8.0;
 
@@ -235,7 +235,7 @@ public class Configuration {
     }
 
     public static void setTheme(Style newStyle) {
-        if (newStyle != null && !newStyle.name().equals(getMiniaturesFolder())) {
+        if (newStyle != null && newStyle != getTheme()) {
             properties.setProperty(THEME_PROPERTY_NAME, newStyle.name());
             savePreferences();
             PROPERTY_CHANGE_SUPPORT.firePropertyChange(THEME_CHANGED, null, newStyle);

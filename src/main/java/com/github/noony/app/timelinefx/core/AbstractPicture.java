@@ -374,7 +374,7 @@ public abstract class AbstractPicture implements IPicture {
      */
     public void movePersonDown(final Person aPerson) {
         final int index = persons.indexOf(aPerson);
-        if (index != 1 && index < persons.size() - 1) {
+        if (index != -1 && index < persons.size() - 1) {
             Collections.swap(persons, index + 1, index);
             propertyChangeSupport.firePropertyChange(PERSONS_REORDED, this, index);
         }

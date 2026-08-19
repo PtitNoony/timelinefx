@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.StayPeriod;
@@ -39,22 +40,31 @@ import javafx.scene.paint.Color;
 public final class FreeMapMergedStay implements FreeMapStay {
 
     private final long id;
+
     private final List<FreeMapStay> stays;
+
     private final List<FreeMapConnector> intermediateConnectors;
-    //
+
     private final PropertyChangeSupport propertyChangeSupport;
-    //
+
     private final FreeMapPerson person;
+
     private FreeMapPlace forcedPlace = null;
+
     private FreeMapPlace place;
-    //
+
     private FreeMapStay earliestStay;
+
     private FreeMapStay latestStay;
+
     private final StartPlot beginPlot;
+
     private final EndPlot endPlot;
-    //
+
     private Color color;
+
     private LinkShape linkShape;
+
     private boolean isSelected = false;
 
     protected FreeMapMergedStay(long anID, long aStartID, long anEndID, long aLinkID, FreeMapPlace aForcedPlace, FreeMapStay... staysToMerge) {

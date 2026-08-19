@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -57,16 +58,27 @@ public final class FriezeFreeMap implements FriezeObject {
 
     // PropertyChangeEvent names
     public static final String LAYOUT_CHANGED = "layoutChanged";
+
     public static final String NAME_CHANGED = "nameChanged";
+
     public static final String FREE_MAP_PLACE_ADDED = "freeMapPlaceAdded";
+
     public static final String FREE_MAP_PLACE_REMOVED = "freeMapPlaceRemoved";
+
     public static final String FREE_MAP_PERSON_ADDED = "freeMapPersonAdded";
+
     public static final String FREE_MAP_PERSON_REMOVED = "freeMapPersonRemoved";
+
     public static final String FREE_MAP_PORTRAIT_REMOVED = "freeMapPortraitRemoved";
+
     public static final String FREE_MAP_PLOT_SIZE_CHANGED = "freeMapPlotSizeChanged";
+
     public static final String START_DATE_HANDLE_ADDED = "freeMapStartDateAdded";
+
     public static final String START_DATE_HANDLE_REMOVED = "freeMapStartDateRemoved";
+
     public static final String END_DATE_HANDLE_ADDED = "freeMapEndDateAdded";
+
     public static final String END_DATE_HANDLE_REMOVED = "freeMapEndDateRemoved";
 
     // Default Values for layout
@@ -82,6 +94,7 @@ public final class FriezeFreeMap implements FriezeObject {
     public static final double DEFAULT_PLOT_SIZE = 8;
     //
     private static final double DEFAULT_PLOT_SEPARATION = 20;
+
     private static final boolean DEFAULT_PLOT_VISIBILITY = true;
     private static final boolean DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY = true;
 
@@ -100,32 +113,46 @@ public final class FriezeFreeMap implements FriezeObject {
     private final Frieze frieze;
     // TODO remove ?
     private final List<FreeMapPerson> persons;
+
     private final Map<Place, FreeMapPlace> places;
+
     private final Map<Person, FreeMapPerson> freeMapPersons;
     private final Map<Double, FreeMapDateHandle> startDateHandles;
     private final Map<Double, FreeMapDateHandle> endDateHandles;
-    //
+
     private String name;
-    //
+
     private double width;
+
     private double height;
-    //
+
     private double portraitWidth;
+
     private double placeDrawingWidth;
+
     private double placeNamesWidth;
-    //
+
     private double portraitRadius;
+
     private double fontSize;
+
     private double plotSeparation;
+
     private boolean plotVisibiltiy;
+
     private boolean portraitConnectorsVisibiltiy;
+
     private double plotSize;
-    //
+
     private double minDate;
+
     private double maxDate;
+
     private double availableWidth;
+
     private double timeRatio;
-    //
+
+// to be created
 //    private TimeMode timeMode;
 
     protected FriezeFreeMap(long anID, Frieze aFrieze, FriezeFreeMapProperties properties, List<FreeMapDateHandle> dateHandles,

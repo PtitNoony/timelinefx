@@ -23,7 +23,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -113,15 +113,15 @@ public final class ChronologyPictureMiniatureDrawing implements IFxScalableNode 
         }
         //
         String imagePath = chronologyPictureMiniature.getPicture().getAbsolutePath();
-        InputStream imageStream;
-        try {
-            imageStream = new FileInputStream(imagePath);
-        } catch (FileNotFoundException ex) {
+        Image loadedImage;
+        try (InputStream imageStream = new FileInputStream(imagePath)) {
+            loadedImage = new Image(imageStream);
+        } catch (IOException ex) {
             LOG.log(Level.SEVERE, null, ex);
             // Ugly... but will do for now
-            imageStream = null;
+            loadedImage = null;
         }
-        image = new Image(imageStream);
+        image = loadedImage;
         imageView = new ImageView(image);
         imageView.setClip(clipRectangle);
         //

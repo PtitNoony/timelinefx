@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byperson;
 
 import com.github.noony.app.timelinefx.core.Person;
@@ -39,24 +40,32 @@ import javafx.scene.text.TextAlignment;
 public final class PersonDrawing extends FXDrawing {
 
     public static final double DEFAULT_HEIGHT = 24;
+
     public static final double DEFAULT_WIDTH = 500;
 
     public static final double DEFAULT_SEPARATION = 12.0;
+
     public static final double DEFAULT_INNER_SEPARATION = 8.0;
 
     public static final double DEFAULT_NAME_WIDTH = 140;
 
     private final Person person;
+
     private final IFriezeView friezeView;
+
     private final Map<StayPeriod, PlaceStayDrawing> staysAndDrawings;
 
     //
     private final Label nameLabel;
+
     private final Line nameSeparationLine;
+
     private final Group placesGroup;
+
     private final Rectangle placesGroupClip;
-    //
+
     private double currentMinDate = 0L;
+
     private double currentRatio = 1;
 
     public PersonDrawing(IFriezeView aFriezeView, Person aPerson) {

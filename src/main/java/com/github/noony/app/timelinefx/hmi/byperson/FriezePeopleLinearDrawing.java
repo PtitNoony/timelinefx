@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi.byperson;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -40,20 +41,28 @@ public final class FriezePeopleLinearDrawing implements IFriezeView {
     private final Frieze frieze;
 
     private final Group mainNode;
+
     private final Group personsGroup;
+
     private final Group stayGroup;
+
     private final Rectangle stayGroupClip;
 
     private final Rectangle background;
 
     private final Map<Person, PersonDrawing> personsAndDrawings;
+
     private final List<Person> visiblePersons;
-    //
+
     private double width = 800;
+
     private double height = 600;
+
     private double placeWith;
     // temp since no zoom
+
     private double timeWindowWidth;
+
     private double timeWindowX;
 
     private double previewsPersonsHeight = 0;

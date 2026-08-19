@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.picturechronology;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
@@ -45,13 +46,19 @@ public final class PictureChronology implements FriezeObject, IDrawableObject {
     public static final String DEFAULT_NAME = "PictureChronologyNoName";
 
     public static final String LAYOUT_CHANGED = "layoutChanged";
+
     public static final String NAME_CHANGED = "nameChanged";
+
     public static final String PICTURE_ADDED = "pictureAdded";
+
     public static final String PICTURE_REMOVED = "pictureRemoved";
+
     public static final String LINK_ADDED = "linkedAdded";
+
     public static final String LINK_REMOVED = "linkedRemoved";
 
     private static final double DEFAULT_WIDTH = 1600;
+
     private static final double DEFAULT_HEIGHT = 1200;
 
     public static final double PERSON_CONTOUR_WIDTH = 6;
@@ -62,14 +69,19 @@ public final class PictureChronology implements FriezeObject, IDrawableObject {
     private final ChronologyLinkType chronologyLinkType = ChronologyLink.DEFAULT_LINK_TYPE;
 
     private final TimeLineProject project;
+
     private final List<ChronologyPictureMiniature> chronologyPictures;
+
     private final Map<String, ChronologyLink> chronologyLinks;
+
     private final List<Person> persons;
     //
     private final TimeFormat timeFormat;
-    //
+
     private String name;
+
     private double width;
+
     private double height;
 
     protected PictureChronology(long anID, TimeLineProject aProject, String aName, TimeFormat aTimeFormat, List<ChronologyPictureMiniature> exisitingMiniatures, List<ChronologyLink> existingLinks) {

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.IDateObject;
@@ -60,7 +61,9 @@ import org.controlsfx.control.CheckListView;
 public final class PictureLoaderViewController implements Initializable, ViewController {
 
     public static final String CANCEL_EVENT = "cancel";
+
     public static final String OK_EVENT = "ok";
+
     public static final String FILE_REQUEST_EVENT = "fileChooserRequest";
 
     private static final Logger LOG = Logger.getGlobal();
@@ -69,6 +72,7 @@ public final class PictureLoaderViewController implements Initializable, ViewCon
 
     @FXML
     private TextField fileField;
+
     @FXML
     private TextField pictureNameField;
     @FXML
@@ -88,7 +92,9 @@ public final class PictureLoaderViewController implements Initializable, ViewCon
     private EditionMode editionMode;
 
     private TimeLineProject project = null;
+
     private File pictureFile = null;
+
     private String pictureName = null;
 
     private Picture picture = null;

@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.AnchorSide;
@@ -56,6 +57,7 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
 
     @FXML
     private Label nameLabel;
+
     @FXML
     private Label idLabel;
     @FXML
@@ -81,6 +83,7 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
     private TableColumn<ChronologyLink, AnchorSide> linksSideColumn;
 
     private ChronologyPictureMiniature currentMiniature = null;
+
     private PictureChronology pictureChronology = null;
 
     @Override

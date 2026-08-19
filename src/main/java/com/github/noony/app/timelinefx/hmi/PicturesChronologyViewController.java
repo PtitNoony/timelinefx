@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.IFileObject;
@@ -58,19 +59,26 @@ import javafx.scene.layout.AnchorPane;
 public final class PicturesChronologyViewController implements Initializable {
 
     private static final Logger LOG = Logger.getGlobal();
+
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
     private final PropertyChangeListener galleryTilesListener = PicturesChronologyViewController.this::handleGalleryTilesChanges;
+
     private final PropertyChangeListener portraitTilesListener = PicturesChronologyViewController.this::handlePortraitTilesChanges;
 
     private TimeLineProject project;
+
     private GalleryTiles picturesGalleryTiles = null;
+
     private GalleryTiles portraitGalleryTiles = null;
+
     private PictureChronology currentPictureChronology = null;
+
     private PictureChronologyDrawing pictureChronologyDrawing = null;
-    //
 
     @FXML
     private ScrollPane viewScrollPane;
+
     @FXML
     private TabPane propertiesTabPane;
     @FXML
@@ -85,14 +93,19 @@ public final class PicturesChronologyViewController implements Initializable {
     private Button insertPictureB, insertPortraitB;
 
     private AnchorPane configuratorView;
+
     private AnchorPane miniaturePropertyRootView;
+
     private AnchorPane linkPropertyRootView;
 
     private PicturesChronologyConfiguratorController configuratorController;
+
     private ChronologyMiniatureConfiguratorController miniaturePropertyController;
+
     private ChronologyLinkConfiguratorController linkPropertyController;
 
     private Tab configuratorTab = null;
+
     private Tab itemPropertyTab = null;
 
     @Override

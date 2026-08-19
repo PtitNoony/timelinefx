@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
@@ -48,12 +49,14 @@ public final class ConfigurationViewController implements Initializable {
 
     @FXML
     private TextField timelinesLocationField;
+
     @FXML
     private RadioButton darkThemeRB;
     @FXML
     private RadioButton lightThemeRB;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(ConfigurationViewController.this);
+
     private final DirectoryChooser directoryChooser = new DirectoryChooser();
 
     @Override

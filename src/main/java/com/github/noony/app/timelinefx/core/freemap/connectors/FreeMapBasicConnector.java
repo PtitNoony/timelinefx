@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap.connectors;
 
 import com.github.noony.app.timelinefx.core.FriezeObject;
@@ -32,17 +33,23 @@ public final class FreeMapBasicConnector implements FreeMapConnector {
     public static final String PLOT_DATE_CHANGED = "plotDateChanged";
 
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final long id;
 
     private final FriezeObject parentObject;
 
     private double date;
+
     private final DoubleProperty xPos;
+
     private final DoubleProperty yPos;
 
     private boolean isVisible = true;
+
     private boolean isSelected = false;
+
     private Color color;
+
     private double plotSize;
 
     protected FreeMapBasicConnector(long anId, FriezeObject aParentObject, double aDate, double aPlotSize) {

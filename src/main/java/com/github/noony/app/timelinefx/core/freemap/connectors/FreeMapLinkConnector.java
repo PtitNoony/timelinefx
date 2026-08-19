@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap.connectors;
 
 import com.github.noony.app.timelinefx.core.freemap.FreeMapLink;
@@ -36,16 +37,23 @@ public final class FreeMapLinkConnector implements FreeMapConnector {
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport;
+
     private final long id;
+
     private final FreeMapLink sourceLink;
 
     private double date;
+
     private final DoubleProperty xPos;
+
     private final DoubleProperty yPos;
 
     private boolean isVisible = true;
+
     private boolean isSelected = false;
+
     private double plotSize;
+
     private Color color;
 
     protected FreeMapLinkConnector(long anID, FreeMapLink aSourceLink, double aDate, double aPlotSize) {

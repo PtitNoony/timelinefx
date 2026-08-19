@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core.freemap.connectors;
 
 import com.github.noony.app.timelinefx.core.Factory;
@@ -38,6 +39,7 @@ public class FreeMapConnectorFactory {
     private static final Logger LOG = Logger.getGlobal();
 
     private static final Factory<FreeMapConnector> FACTORY = new Factory<>();
+
     private static final PropertyChangeSupport PROPERTY_CHANGE_SUPPORT = new PropertyChangeSupport(FACTORY);
 
     private FreeMapConnectorFactory() {

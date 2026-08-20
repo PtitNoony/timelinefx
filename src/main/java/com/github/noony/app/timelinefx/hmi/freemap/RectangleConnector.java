@@ -21,6 +21,8 @@ import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapPlot;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
 import com.github.noony.app.timelinefx.drawings.InteractiveDragType;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import java.beans.PropertyChangeEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -50,6 +52,10 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private double oldMainNodeTranslateY;
 
+    private double oldConnectorX;
+
+    private double oldConnectorY;
+
     protected RectangleConnector(FreeMapConnector abstractConnector, InteractiveDragType anInteractiveDragType) {
         connector = abstractConnector;
         connector.addPropertyChangeListener(RectangleConnector.this::handlePropertyChange);
@@ -76,6 +82,8 @@ public final class RectangleConnector extends AbstractFxScalableNode {
             oldScene = new Point2D(event.getScreenX(), event.getScreenY());
             oldMainNodeTranslateX = getNode().getTranslateX();
             oldMainNodeTranslateY = getNode().getTranslateY();
+            oldConnectorX = connector.getX();
+            oldConnectorY = connector.getY();
         });
         connectorRectangle.setOnMouseDragged(event -> {
             currentScene = new Point2D(event.getScreenX(), event.getScreenY());
@@ -90,16 +98,24 @@ public final class RectangleConnector extends AbstractFxScalableNode {
             var deltaY = deltaYScaled / getScale();
             final var newX = connector.getX() + ((int) (deltaX / gridSpace)) * gridSpace;
             final var newY = connector.getY() + ((int) (deltaY / gridSpace)) * gridSpace;
+            final var previousX = oldConnectorX;
+            final var previousY = oldConnectorY;
             switch (interactiveDragType) {
                 case FREE_TRANSLATION ->
-                    connector.setPosition(newX, newY);
+                    UndoManager.execute(new SimpleCommand("Move connector",
+                            () -> connector.setPosition(newX, newY),
+                            () -> connector.setPosition(previousX, previousY)));
                 case NOT_ALLOWED -> {
                     // nothing to be updated
                 }
                 case X_ONLY ->
-                    connector.setPosition(newX, connector.getY());
+                    UndoManager.execute(new SimpleCommand("Move connector",
+                            () -> connector.setPosition(newX, previousY),
+                            () -> connector.setPosition(previousX, previousY)));
                 case Y_ONLY ->
-                    connector.setPosition(connector.getX(), newY);
+                    UndoManager.execute(new SimpleCommand("Move connector",
+                            () -> connector.setPosition(previousX, newY),
+                            () -> connector.setPosition(previousX, previousY)));
                 default ->
                     throw new AssertionError();
             }

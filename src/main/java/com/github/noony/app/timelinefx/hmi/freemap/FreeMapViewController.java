@@ -23,6 +23,8 @@ import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.hmi.CustomModalWindow;
 import com.github.noony.app.timelinefx.hmi.PortraitSelectionViewController;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.PngExporter;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
@@ -100,6 +102,8 @@ public class FreeMapViewController implements Initializable {
     //
     private FreeMapPortrait freeMapPortraitToUpdate = null;
 
+    private boolean applyingUndoRedo = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         timeHandleVisibilityCB.setSelected(true);
@@ -111,15 +115,19 @@ public class FreeMapViewController implements Initializable {
         //
         plotsVisibilityCB.setSelected(true);
         plotsVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-            if (friezeFreeMap != null) {
-                friezeFreeMap.setPlotVisibility(plotsVisibilityCB.isSelected());
+            if (friezeFreeMap != null && !applyingUndoRedo) {
+                UndoManager.execute(new SimpleCommand("Toggle plots visibility",
+                        () -> setPlotsVisibility(true),
+                        () -> setPlotsVisibility(false)));
             }
         });
         //
         portraitConnectorVisibilityCB.setSelected(true);
         portraitConnectorVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-            if (friezeFreeMap != null) {
-                friezeFreeMap.setPortraitConnectorVisibility(portraitConnectorVisibilityCB.isSelected());
+            if (friezeFreeMap != null && !applyingUndoRedo) {
+                UndoManager.execute(new SimpleCommand("Toggle portrait connectors visibility",
+                        () -> setPortraitConnectorsVisibility(true),
+                        () -> setPortraitConnectorsVisibility(false)));
             }
         });
         //
@@ -213,6 +221,20 @@ public class FreeMapViewController implements Initializable {
                 LOG.log(Level.FINEST, "The following value is not a valid zoom level {0}. {1}", new Object[]{t1, e});
             }
         });
+    }
+
+    private void setPlotsVisibility(final boolean visible) {
+        applyingUndoRedo = true;
+        plotsVisibilityCB.setSelected(visible);
+        friezeFreeMap.setPlotVisibility(visible);
+        applyingUndoRedo = false;
+    }
+
+    private void setPortraitConnectorsVisibility(final boolean visible) {
+        applyingUndoRedo = true;
+        portraitConnectorVisibilityCB.setSelected(visible);
+        friezeFreeMap.setPortraitConnectorVisibility(visible);
+        applyingUndoRedo = false;
     }
 
     @FXML
@@ -348,7 +370,11 @@ public class FreeMapViewController implements Initializable {
             case PortraitSelectionViewController.PORTRAIT_SELECTION_UPDATED -> {
                 if (freeMapPortraitToUpdate != null) {
                     var newPortrait = (Portrait) event.getNewValue();
-                    freeMapPortraitToUpdate.changePortrait(newPortrait);
+                    var portraitToUpdate = freeMapPortraitToUpdate;
+                    var oldPortrait = portraitToUpdate.getPortrait();
+                    UndoManager.execute(new SimpleCommand("Change portrait",
+                            () -> portraitToUpdate.changePortrait(newPortrait),
+                            () -> portraitToUpdate.changePortrait(oldPortrait)));
                 }
             }
             default ->

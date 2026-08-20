@@ -19,6 +19,8 @@ package com.github.noony.app.timelinefx.hmi.picturechronology;
 
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -94,6 +96,11 @@ public final class ChronologyPictureMiniatureDrawing implements IFxScalableNode 
 
     private double oldTranslateY;
 
+    /**
+     * The miniature's position when the current drag gesture started.
+     */
+    private Point2D oldPosition;
+
     public ChronologyPictureMiniatureDrawing(ChronologyPictureMiniature aChronologyPictureMiniature) {
         propertyChangeSupport = new PropertyChangeSupport(ChronologyPictureMiniatureDrawing.this);
         chronologyPictureMiniature = aChronologyPictureMiniature;
@@ -167,6 +174,7 @@ public final class ChronologyPictureMiniatureDrawing implements IFxScalableNode 
             oldScreenY = event.getScreenY();
             oldTranslateX = getNode().getTranslateX();
             oldTranslateY = getNode().getTranslateY();
+            oldPosition = chronologyPictureMiniature.getPosition();
         });
         frontGlass.setOnMouseDragged(event -> {
             getNode().setTranslateX(oldTranslateX + event.getScreenX() - oldScreenX);
@@ -178,7 +186,11 @@ public final class ChronologyPictureMiniatureDrawing implements IFxScalableNode 
             //
             mainNode.setTranslateX(translateXScaled);
             mainNode.setTranslateY(translateYScaled);
-            chronologyPictureMiniature.setPosition(new Point2D(translateXScaled / viewingScale, translateYScaled / viewingScale));
+            final var newPosition = new Point2D(translateXScaled / viewingScale, translateYScaled / viewingScale);
+            final var previousPosition = oldPosition;
+            UndoManager.execute(new SimpleCommand("Move picture",
+                    () -> chronologyPictureMiniature.setPosition(newPosition),
+                    () -> chronologyPictureMiniature.setPosition(previousPosition)));
         });
         frontGlass.setOnScroll(event -> {
             if (event.isControlDown()) {

@@ -17,61 +17,87 @@
 
 package com.github.noony.app.timelinefx.undo;
 
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
+ * Tests for {@link SimpleCommand}.
  *
  * @author solun
  */
-public class SimpleCommandTest {
+public final class SimpleCommandTest {
 
+    private static final String SET_TO_ONE_DESCRIPTION = "Set to 1";
+
+    public SimpleCommandTest() {
+    }
+
+    /**
+     * Resets the shared {@link UndoManager} history before each test.
+     */
     @BeforeEach
     public void setUp() {
         UndoManager.reset();
     }
 
+    /**
+     * Resets the shared {@link UndoManager} history after each test.
+     */
     @AfterEach
     public void tearDown() {
         UndoManager.reset();
     }
 
+    /**
+     * Checks that {@link SimpleCommand#execute()} runs the {@code doAction} closure.
+     */
     @Test
     public void testExecuteRunsDoAction() {
-        var value = new int[]{0};
-        var command = new SimpleCommand("Set to 1", () -> value[0] = 1, () -> value[0] = 0);
+        final var value = new int[]{0};
+        final var command = new SimpleCommand(SET_TO_ONE_DESCRIPTION, () -> value[0] = 1, () -> value[0] = 0);
         command.execute();
         assertEquals(1, value[0]);
     }
 
+    /**
+     * Checks that {@link SimpleCommand#undo()} runs the {@code undoAction} closure.
+     */
     @Test
     public void testUndoRunsUndoAction() {
-        var value = new int[]{0};
-        var command = new SimpleCommand("Set to 1", () -> value[0] = 1, () -> value[0] = 0);
+        final var value = new int[]{0};
+        final var command = new SimpleCommand(SET_TO_ONE_DESCRIPTION, () -> value[0] = 1, () -> value[0] = 0);
         command.execute();
         command.undo();
         assertEquals(0, value[0]);
     }
 
+    /**
+     * Checks that {@link SimpleCommand#getDescription()} returns the description passed to the constructor.
+     */
     @Test
     public void testGetDescription() {
-        var command = new SimpleCommand("Set to 1", () -> {
+        final var command = new SimpleCommand(SET_TO_ONE_DESCRIPTION, () -> {
         }, () -> {
         });
-        assertEquals("Set to 1", command.getDescription());
+        assertEquals(SET_TO_ONE_DESCRIPTION, command.getDescription());
     }
 
+    /**
+     * Checks a full {@link UndoManager#execute(Command)}, {@link UndoManager#undo()}, {@link UndoManager#redo()}
+     * cycle.
+     */
     @Test
     public void testUndoManagerRoundTrip() {
-        var value = new int[]{0};
-        var command = new SimpleCommand("Set to 42", () -> value[0] = 42, () -> value[0] = 0);
+        final var value = new int[]{0};
+        final var target = 42;
+        final var command = new SimpleCommand("Set to target", () -> value[0] = target, () -> value[0] = 0);
         //
         UndoManager.execute(command);
-        assertEquals(42, value[0]);
+        assertEquals(target, value[0]);
         assertTrue(UndoManager.canUndo());
         assertFalse(UndoManager.canRedo());
         //
@@ -81,7 +107,7 @@ public class SimpleCommandTest {
         assertTrue(UndoManager.canRedo());
         //
         UndoManager.redo();
-        assertEquals(42, value[0]);
+        assertEquals(target, value[0]);
         assertTrue(UndoManager.canUndo());
         assertFalse(UndoManager.canRedo());
     }

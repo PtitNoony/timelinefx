@@ -63,6 +63,9 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
 
     private double oldTranslateY;
 
+    /**
+     * The place's Y position when the current drag gesture started.
+     */
     private double oldY;
 
     protected PlaceDrawing(FreeMapPlace aPlace, FriezeFreeMap aFriezeFreeMap) {

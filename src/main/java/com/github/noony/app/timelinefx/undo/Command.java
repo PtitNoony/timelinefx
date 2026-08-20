@@ -20,7 +20,7 @@ package com.github.noony.app.timelinefx.undo;
 /**
  * A single reversible action, to be executed and tracked through {@link UndoManager}.
  *
- * @author solun
+ * @author hamon
  */
 public interface Command {
 

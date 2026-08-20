@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * through this manager anywhere in the app; it is wired up (Edit menu, keyboard shortcuts, enablement) and ready
  * for individual actions to be made undoable one at a time.
  *
- * @author solun
+ * @author hamon
  */
 public final class UndoManager {
 

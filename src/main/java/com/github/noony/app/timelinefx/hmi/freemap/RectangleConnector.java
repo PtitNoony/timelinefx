@@ -35,6 +35,10 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
 
+    /**
+     * Description used for every {@link com.github.noony.app.timelinefx.undo.Command} pushed when this connector
+     * is dragged.
+     */
     private static final String MOVE_CONNECTOR_DESCRIPTION = "Move connector";
 
     private final FreeMapConnector connector;

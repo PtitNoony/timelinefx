@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Unit tests for {@link StayFactory}.
  *
- * @author solun
+ * @author hamon
  */
 public final class StayFactoryTest {
 

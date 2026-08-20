@@ -27,7 +27,7 @@ import java.util.logging.LogRecord;
 
 /**
  *
- * @author solun
+ * @author hamon
  */
 public class CustomLogFormatter extends Formatter {
 

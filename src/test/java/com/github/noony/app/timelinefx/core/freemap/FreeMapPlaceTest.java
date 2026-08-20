@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@link FreeMapPlace} in isolation; the duplicate-creation test therefore only asserts that some
  * {@link RuntimeException} is thrown.
  *
- * @author solun
+ * @author hamon
  */
 public final class FreeMapPlaceTest {
 

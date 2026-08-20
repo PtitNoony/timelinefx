@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * initialized first (it reads/writes a preferences file under the user's home directory), which existing tests
  * in this project (e.g. {@code PlaceTest}) also avoid.
  *
- * @author solun
+ * @author hamon
  */
 public class FriezeFreeMapPropertiesTest {
 

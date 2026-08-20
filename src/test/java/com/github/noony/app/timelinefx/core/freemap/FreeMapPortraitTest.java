@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link FreeMapPortrait}.
  *
- * @author solun
+ * @author hamon
  */
 public final class FreeMapPortraitTest {
 

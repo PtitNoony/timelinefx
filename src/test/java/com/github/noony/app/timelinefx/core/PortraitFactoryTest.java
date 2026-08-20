@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * bundled default portrait resource ({@link Person#DEFAULT_PICTURE_NAME}) into the project's portraits folder,
  * which is what makes these portrait creations resolve to a real, readable file.
  *
- * @author solun
+ * @author hamon
  */
 public final class PortraitFactoryTest {
 

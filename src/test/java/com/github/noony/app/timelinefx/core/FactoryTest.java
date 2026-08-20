@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Note: exercised with {@link Place} as the concrete {@link FriezeObject}, since it does not require a
  * {@link TimeLineProject}.
  *
- * @author solun
+ * @author hamon
  */
 public final class FactoryTest {
 

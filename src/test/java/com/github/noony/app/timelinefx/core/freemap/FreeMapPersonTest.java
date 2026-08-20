@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link FreeMapPerson}.
  *
- * @author solun
+ * @author hamon
  */
 public final class FreeMapPersonTest {
 

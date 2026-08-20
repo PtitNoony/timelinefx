@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link StayPeriodLocalDate}.
  *
- * @author solun
+ * @author hamon
  */
 public final class StayPeriodLocalDateTest {
 

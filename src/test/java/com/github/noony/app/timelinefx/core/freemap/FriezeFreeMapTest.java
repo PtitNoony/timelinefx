@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code Platform.runLater} (only {@code updatePersonSelection}/{@code updatePeopleSelection} do, neither of
  * which is exercised here), so no JavaFX toolkit bootstrap is needed for this fixture, unlike {@code FriezeTest}.
  *
- * @author solun
+ * @author hamon
  */
 public final class FriezeFreeMapTest {
 

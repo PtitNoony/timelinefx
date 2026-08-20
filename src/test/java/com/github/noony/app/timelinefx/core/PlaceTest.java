@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  *
- * @author solun
+ * @author hamon
  */
 public class PlaceTest {
 

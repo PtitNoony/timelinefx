@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Unit tests for {@link Messages}.
  *
- * @author solun
+ * @author hamon
  */
 public final class MessagesTest {
 

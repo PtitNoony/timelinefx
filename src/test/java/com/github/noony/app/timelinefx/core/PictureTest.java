@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Note: also covers the {@link AbstractPicture} behavior shared with {@link Portrait}, since
  * {@code AbstractPicture} is abstract and {@link Picture} does not override most of it.
  *
- * @author solun
+ * @author hamon
  */
 public final class PictureTest {
 

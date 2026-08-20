@@ -20,6 +20,8 @@ package com.github.noony.app.timelinefx.hmi.picturechronology;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -116,11 +118,19 @@ public final class ChronologyLinkDrawing implements IFxScalableNode {
             var controlPoint1 = new Point2D(e.getX(), e.getY());
             var startPoint = new Point2D(startNode.getCenterX(), startNode.getCenterY());
             //
-            var angle = MathUtils.getAngle(startPoint, controlPoint1);
-            var r = controlPoint1.distance(startPoint) / viewingScale;
-            linkParameters[2] = angle;
-            linkParameters[3] = r;
-            chronologyLink.updateLinkParameters(linkParameters);
+            final var angle = MathUtils.getAngle(startPoint, controlPoint1);
+            final var r = controlPoint1.distance(startPoint) / viewingScale;
+            final var oldAngle = linkParameters[2];
+            final var oldR = linkParameters[3];
+            UndoManager.execute(new SimpleCommand("Move link control point", () -> {
+                linkParameters[2] = angle;
+                linkParameters[3] = r;
+                chronologyLink.updateLinkParameters(linkParameters);
+            }, () -> {
+                linkParameters[2] = oldAngle;
+                linkParameters[3] = oldR;
+                chronologyLink.updateLinkParameters(linkParameters);
+            }));
         });
         cubicControlPoint2 = new Circle(DEFAULT_RADIUS, DEFAULT_CONTROLS_COLOR);
         cubicControlPoint2.setOnMouseDragged(e -> {
@@ -134,11 +144,19 @@ public final class ChronologyLinkDrawing implements IFxScalableNode {
         cubicControlPoint2.setOnMouseReleased(e -> {
             var controlPoint2 = new Point2D(e.getX(), e.getY());
             var endPoint = new Point2D(endNode.getCenterX(), endNode.getCenterY());
-            var angle = MathUtils.getAngle(endPoint, controlPoint2);
-            var r = controlPoint2.distance(endPoint) / viewingScale;
-            linkParameters[4] = angle;
-            linkParameters[5] = r;
-            chronologyLink.updateLinkParameters(linkParameters);
+            final var angle = MathUtils.getAngle(endPoint, controlPoint2);
+            final var r = controlPoint2.distance(endPoint) / viewingScale;
+            final var oldAngle = linkParameters[4];
+            final var oldR = linkParameters[5];
+            UndoManager.execute(new SimpleCommand("Move link control point", () -> {
+                linkParameters[4] = angle;
+                linkParameters[5] = r;
+                chronologyLink.updateLinkParameters(linkParameters);
+            }, () -> {
+                linkParameters[4] = oldAngle;
+                linkParameters[5] = oldR;
+                chronologyLink.updateLinkParameters(linkParameters);
+            }));
         });
         //
         createLinkShape();

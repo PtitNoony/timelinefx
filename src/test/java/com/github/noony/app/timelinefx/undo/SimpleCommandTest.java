@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for {@link SimpleCommand}.
  *
- * @author solun
+ * @author hamon
  */
 public final class SimpleCommandTest {
 

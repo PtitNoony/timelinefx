@@ -20,6 +20,8 @@ package com.github.noony.app.timelinefx.hmi.freemap;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPlace;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import java.beans.PropertyChangeEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -60,6 +62,8 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
     private double oldScreenY;
 
     private double oldTranslateY;
+
+    private double oldY;
 
     protected PlaceDrawing(FreeMapPlace aPlace, FriezeFreeMap aFriezeFreeMap) {
         super();
@@ -140,13 +144,18 @@ public final class PlaceDrawing extends AbstractFxScalableNode {
         background.setOnMousePressed(event -> {
             oldScreenY = event.getScreenY();
             oldTranslateY = getNode().getTranslateY();
+            oldY = place.getYPos();
         });
         background.setOnMouseDragged(event ->
             getNode().setTranslateY(oldTranslateY + event.getScreenY() - oldScreenY)
         );
         background.setOnMouseReleased(event -> {
             var translateYScaled = oldTranslateY + event.getScreenY() - oldScreenY;
-            place.setY(translateYScaled / getScale());
+            final var newY = translateYScaled / getScale();
+            final var previousY = oldY;
+            UndoManager.execute(new SimpleCommand("Move place",
+                    () -> place.setY(newY),
+                    () -> place.setY(previousY)));
         });
     }
 

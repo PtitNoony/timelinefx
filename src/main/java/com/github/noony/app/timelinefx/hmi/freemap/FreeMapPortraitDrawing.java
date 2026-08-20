@@ -20,6 +20,8 @@ package com.github.noony.app.timelinefx.hmi.freemap;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.freemap.FreeMapPortrait;
 import com.github.noony.app.timelinefx.drawings.AbstractFxScalableNode;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,6 +68,10 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
     private double oldTranslateX;
 
     private double oldTranslateY;
+
+    private double oldX;
+
+    private double oldY;
 
     private double tmpImgPos;
 
@@ -120,6 +126,8 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             oldScreenY = event.getScreenY();
             oldTranslateX = getNode().getTranslateX();
             oldTranslateY = getNode().getTranslateY();
+            oldX = freeMapPortrait.getX();
+            oldY = freeMapPortrait.getY();
         });
         imageView.setOnMouseDragged(event -> {
             getNode().setTranslateX(oldTranslateX + event.getScreenX() - oldScreenX);
@@ -129,8 +137,17 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             var translateXScaled = oldTranslateX + event.getScreenX() - oldScreenX;
             var translateYScaled = oldTranslateY + event.getScreenY() - oldScreenY;
             //
-            freeMapPortrait.setX(translateXScaled / getScale());
-            freeMapPortrait.setY(translateYScaled / getScale());
+            final var newX = translateXScaled / getScale();
+            final var newY = translateYScaled / getScale();
+            final var previousX = oldX;
+            final var previousY = oldY;
+            UndoManager.execute(new SimpleCommand("Move portrait", () -> {
+                freeMapPortrait.setX(newX);
+                freeMapPortrait.setY(newY);
+            }, () -> {
+                freeMapPortrait.setX(previousX);
+                freeMapPortrait.setY(previousY);
+            }));
         });
         imageView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {

@@ -21,7 +21,7 @@ package com.github.noony.app.timelinefx.undo;
  * A {@link Command} built from two closures, for actions that boil down to "call a setter with the new value; to
  * undo, call it again with the old value" and don't warrant a dedicated class.
  *
- * @author solun
+ * @author hamon
  */
 public final class SimpleCommand implements Command {
 

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code createPicture} overload is exercised; the file-copying overload needs a real, parseable image file
  * and is left to integration testing.
  *
- * @author solun
+ * @author hamon
  */
 public final class PictureFactoryTest {
 

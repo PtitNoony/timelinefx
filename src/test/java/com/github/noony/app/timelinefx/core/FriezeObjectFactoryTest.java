@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link FriezeObjectFactory}.
  *
- * @author solun
+ * @author hamon
  */
 public final class FriezeObjectFactoryTest {
 

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link Person}.
  *
- * @author solun
+ * @author hamon
  */
 public final class PersonTest {
 

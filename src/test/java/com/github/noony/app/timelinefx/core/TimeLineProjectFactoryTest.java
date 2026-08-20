@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code Configuration.getProjectsParentFolder()} (which reads/writes a preferences file under the user's home
  * directory). It does still create real folders under the temp directory, which JUnit cleans up automatically.
  *
- * @author solun
+ * @author hamon
  */
 public final class TimeLineProjectFactoryTest {
 

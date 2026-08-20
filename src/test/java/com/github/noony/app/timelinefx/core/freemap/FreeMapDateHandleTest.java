@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@link RuntimeException} is thrown, since the error path itself looks up the owning {@link FriezeFreeMap} by
  * id to build its message.
  *
- * @author solun
+ * @author hamon
  */
 public final class FreeMapDateHandleTest {
 

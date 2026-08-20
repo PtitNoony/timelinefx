@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link Portrait}.
  *
- * @author solun
+ * @author hamon
  */
 public final class PortraitTest {
 

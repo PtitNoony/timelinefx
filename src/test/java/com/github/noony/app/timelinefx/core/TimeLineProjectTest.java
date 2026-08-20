@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Note: uses a real {@link TimeLineProject}, created in a JUnit {@code @TempDir} via an explicit
  * {@link TimeLineProject#PROJECT_FOLDER_KEY} override so it never touches the real user home directory.
  *
- * @author solun
+ * @author hamon
  */
 public final class TimeLineProjectTest {
 

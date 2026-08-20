@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link PictureInfo}.
  *
- * @author solun
+ * @author hamon
  */
 public final class PictureInfoTest {
 

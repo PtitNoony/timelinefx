@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * Unit tests for {@link TimeMode}.
  *
- * @author solun
+ * @author hamon
  */
 public final class TimeModeTest {
 

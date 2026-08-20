@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * toolkit to be initialized. Bootstrapped once here since plain JUnit tests don't run inside a JavaFX
  * Application.
  *
- * @author solun
+ * @author hamon
  */
 public final class FriezeTest {
 

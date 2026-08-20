@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit tests for {@link PlaceLevel}.
  *
- * @author solun
+ * @author hamon
  */
 public final class PlaceLevelTest {
 

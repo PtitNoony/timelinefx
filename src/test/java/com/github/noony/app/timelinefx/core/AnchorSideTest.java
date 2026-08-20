@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * Unit tests for {@link AnchorSide}.
  *
- * @author solun
+ * @author hamon
  */
 public final class AnchorSideTest {
 

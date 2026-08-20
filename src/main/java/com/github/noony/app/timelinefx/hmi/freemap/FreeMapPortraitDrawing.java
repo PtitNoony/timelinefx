@@ -69,8 +69,14 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
 
     private double oldTranslateY;
 
+    /**
+     * The portrait's X position when the current drag gesture started.
+     */
     private double oldX;
 
+    /**
+     * The portrait's Y position when the current drag gesture started.
+     */
     private double oldY;
 
     private double tmpImgPos;

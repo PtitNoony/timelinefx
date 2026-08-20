@@ -25,23 +25,32 @@ package com.github.noony.app.timelinefx.undo;
  */
 public final class SimpleCommand implements Command {
 
+    /**
+     * The description returned by {@link #getDescription()}.
+     */
     private final String description;
 
+    /**
+     * Applies the action.
+     */
     private final Runnable doAction;
 
+    /**
+     * Reverts the action.
+     */
     private final Runnable undoAction;
 
     /**
      * Creates a command from two closures.
      *
-     * @param description a short, human-readable description of the action
-     * @param doAction applies the action; called once now and again on every redo
-     * @param undoAction reverts the action
+     * @param aDescription a short, human-readable description of the action
+     * @param aDoAction applies the action; called once now and again on every redo
+     * @param anUndoAction reverts the action
      */
-    public SimpleCommand(final String description, final Runnable doAction, final Runnable undoAction) {
-        this.description = description;
-        this.doAction = doAction;
-        this.undoAction = undoAction;
+    public SimpleCommand(final String aDescription, final Runnable aDoAction, final Runnable anUndoAction) {
+        description = aDescription;
+        doAction = aDoAction;
+        undoAction = anUndoAction;
     }
 
     @Override

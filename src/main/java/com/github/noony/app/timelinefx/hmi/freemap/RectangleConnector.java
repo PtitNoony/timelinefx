@@ -35,6 +35,8 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private static final Color DEFAULT_STROKE_COLOR = Color.BLACK;
 
+    private static final String MOVE_CONNECTOR_DESCRIPTION = "Move connector";
+
     private final FreeMapConnector connector;
 
     /**
@@ -52,8 +54,14 @@ public final class RectangleConnector extends AbstractFxScalableNode {
 
     private double oldMainNodeTranslateY;
 
+    /**
+     * The connector's X position when the current drag gesture started.
+     */
     private double oldConnectorX;
 
+    /**
+     * The connector's Y position when the current drag gesture started.
+     */
     private double oldConnectorY;
 
     protected RectangleConnector(FreeMapConnector abstractConnector, InteractiveDragType anInteractiveDragType) {
@@ -102,18 +110,18 @@ public final class RectangleConnector extends AbstractFxScalableNode {
             final var previousY = oldConnectorY;
             switch (interactiveDragType) {
                 case FREE_TRANSLATION ->
-                    UndoManager.execute(new SimpleCommand("Move connector",
+                    UndoManager.execute(new SimpleCommand(MOVE_CONNECTOR_DESCRIPTION,
                             () -> connector.setPosition(newX, newY),
                             () -> connector.setPosition(previousX, previousY)));
                 case NOT_ALLOWED -> {
                     // nothing to be updated
                 }
                 case X_ONLY ->
-                    UndoManager.execute(new SimpleCommand("Move connector",
+                    UndoManager.execute(new SimpleCommand(MOVE_CONNECTOR_DESCRIPTION,
                             () -> connector.setPosition(newX, previousY),
                             () -> connector.setPosition(previousX, previousY)));
                 case Y_ONLY ->
-                    UndoManager.execute(new SimpleCommand("Move connector",
+                    UndoManager.execute(new SimpleCommand(MOVE_CONNECTOR_DESCRIPTION,
                             () -> connector.setPosition(previousX, newY),
                             () -> connector.setPosition(previousX, previousY)));
                 default ->

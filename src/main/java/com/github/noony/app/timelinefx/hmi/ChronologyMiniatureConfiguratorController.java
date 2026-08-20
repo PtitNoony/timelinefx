@@ -21,6 +21,8 @@ import com.github.noony.app.timelinefx.core.AnchorSide;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.net.URL;
@@ -86,6 +88,8 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
 
     private PictureChronology pictureChronology = null;
 
+    private boolean applyingUndoRedo = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Initializing ChronologyMiniatureConfiguratorController");
@@ -126,13 +130,18 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
             }
         });
         customDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            if (currentMiniature != null) {
-                currentMiniature.setCurrenltyUsedTimeValue(t1);
+            if (currentMiniature != null && !applyingUndoRedo) {
+                final var oldDate = currentMiniature.getCurrenltyUsedTimeValue();
+                UndoManager.execute(new SimpleCommand("Change picture date",
+                        () -> setCustomDate(t1),
+                        () -> setCustomDate(oldDate)));
             }
         });
         customDateCB.selectedProperty().addListener((ov, t, t1) -> {
-            if (currentMiniature != null) {
-                currentMiniature.setUseCustomTime(t1);
+            if (currentMiniature != null && !applyingUndoRedo) {
+                UndoManager.execute(new SimpleCommand("Toggle custom date",
+                        () -> setUseCustomDate(t1),
+                        () -> setUseCustomDate(!t1)));
             }
         });
         //
@@ -158,6 +167,20 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
         linksSideColumn.setCellValueFactory(new PropertyValueFactory<>("startAnchorSide"));
         linksSideColumn.setCellFactory(ComboBoxTableCell.<ChronologyLink, AnchorSide>forTableColumn(FXCollections.observableList(Arrays.asList(AnchorSide.values()))));
         linksSideColumn.setEditable(true);
+    }
+
+    private void setUseCustomDate(final boolean useCustomDate) {
+        applyingUndoRedo = true;
+        customDateCB.setSelected(useCustomDate);
+        currentMiniature.setUseCustomTime(useCustomDate);
+        applyingUndoRedo = false;
+    }
+
+    private void setCustomDate(final LocalDate date) {
+        applyingUndoRedo = true;
+        customDatePicker.setValue(date);
+        currentMiniature.setCurrenltyUsedTimeValue(date);
+        applyingUndoRedo = false;
     }
 
     @FXML

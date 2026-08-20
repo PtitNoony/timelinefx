@@ -22,6 +22,8 @@ import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -121,14 +123,27 @@ public final class GalleryViewController implements Initializable, ViewControlle
     @FXML
     protected void handleUpPerson(ActionEvent event) {
         LOG.log(Level.INFO, "handleUpPerson on event {0}", new Object[]{event});
-        currentPicture.movePersonUp(picturePersonsList.getSelectionModel().getSelectedItem());
-        picturePersonsList.setItems(FXCollections.observableArrayList(currentPicture.getPersons()));
+        final var person = picturePersonsList.getSelectionModel().getSelectedItem();
+        UndoManager.execute(new SimpleCommand("Move person up",
+                () -> movePerson(person, true),
+                () -> movePerson(person, false)));
     }
 
     @FXML
     protected void handleDownPerson(ActionEvent event) {
         LOG.log(Level.INFO, "handleDownPerson on event {0}", new Object[]{event});
-        currentPicture.movePersonDown(picturePersonsList.getSelectionModel().getSelectedItem());
+        final var person = picturePersonsList.getSelectionModel().getSelectedItem();
+        UndoManager.execute(new SimpleCommand("Move person down",
+                () -> movePerson(person, false),
+                () -> movePerson(person, true)));
+    }
+
+    private void movePerson(final Person person, final boolean up) {
+        if (up) {
+            currentPicture.movePersonUp(person);
+        } else {
+            currentPicture.movePersonDown(person);
+        }
         picturePersonsList.setItems(FXCollections.observableArrayList(currentPicture.getPersons()));
     }
 

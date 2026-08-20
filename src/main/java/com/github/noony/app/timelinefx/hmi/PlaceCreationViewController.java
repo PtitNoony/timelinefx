@@ -20,6 +20,8 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URL;
@@ -112,10 +114,26 @@ public final class PlaceCreationViewController implements Initializable {
             case CREATION ->
                 propertyChangeSupport.firePropertyChange(PLACE_CREATED, null, PlaceFactory.createPlace(placeName, placeLevel, parentPlace, placeColor));
             case EDITION -> {
-                currentEditedPlace.setName(placeName);
-                currentEditedPlace.setParent(parentPlace);
-                currentEditedPlace.setLevel(placeLevel);
-                currentEditedPlace.setColor(placeColor);
+                final var editedPlace = currentEditedPlace;
+                final var oldName = editedPlace.getName();
+                final var oldParent = editedPlace.getParent();
+                final var oldLevel = editedPlace.getLevel();
+                final var oldColor = editedPlace.getColor();
+                final var newName = placeName;
+                final var newParent = parentPlace;
+                final var newLevel = placeLevel;
+                final var newColor = placeColor;
+                UndoManager.execute(new SimpleCommand("Edit place", () -> {
+                    editedPlace.setName(newName);
+                    editedPlace.setParent(newParent);
+                    editedPlace.setLevel(newLevel);
+                    editedPlace.setColor(newColor);
+                }, () -> {
+                    editedPlace.setName(oldName);
+                    editedPlace.setParent(oldParent);
+                    editedPlace.setLevel(oldLevel);
+                    editedPlace.setColor(oldColor);
+                }));
                 propertyChangeSupport.firePropertyChange(PLACE_EDITIED, null, currentEditedPlace);
             }
             default ->

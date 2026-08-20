@@ -18,11 +18,11 @@
 package com.github.noony.app.timelinefx.undo;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link SimpleCommand}.
@@ -31,8 +31,14 @@ import org.junit.jupiter.api.Test;
  */
 public final class SimpleCommandTest {
 
+    /**
+     * Description shared by the commands in this test that only ever apply a single fixed value.
+     */
     private static final String SET_TO_ONE_DESCRIPTION = "Set to 1";
 
+    /**
+     * Default constructor.
+     */
     public SimpleCommandTest() {
     }
 

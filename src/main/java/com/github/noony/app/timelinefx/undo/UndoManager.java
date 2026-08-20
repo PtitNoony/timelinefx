@@ -75,6 +75,8 @@ public final class UndoManager {
     }
 
     /**
+     * Stops notifying a previously registered listener.
+     *
      * @param listener the listener to stop notifying
      */
     public static void removePropertyChangeListener(final PropertyChangeListener listener) {
@@ -126,6 +128,8 @@ public final class UndoManager {
     }
 
     /**
+     * Reports whether there is a command to undo.
+     *
      * @return {@code true} if {@link #undo()} would revert a command
      */
     public static boolean canUndo() {
@@ -133,6 +137,8 @@ public final class UndoManager {
     }
 
     /**
+     * Reports whether there is a command to redo.
+     *
      * @return {@code true} if {@link #redo()} would re-run a command
      */
     public static boolean canRedo() {

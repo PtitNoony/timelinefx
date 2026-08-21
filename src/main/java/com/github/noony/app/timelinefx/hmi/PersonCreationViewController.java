@@ -26,6 +26,8 @@ import com.github.noony.app.timelinefx.core.PortraitFactory;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.drawings.GalleryTiles;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -229,8 +232,14 @@ public final class PersonCreationViewController implements Initializable {
                 propertyChangeSupport.firePropertyChange(PERSON_CREATED, null, currentEditedPerson);
             }
             case EDITION -> {
-                updatePerson(currentEditedPerson);
-                propertyChangeSupport.firePropertyChange(PERSON_EDITIED, null, currentEditedPerson);
+                final var editedPerson = currentEditedPerson;
+                final var oldSnapshot = capturePersonSnapshot(editedPerson);
+                updatePerson(editedPerson);
+                final var newSnapshot = capturePersonSnapshot(editedPerson);
+                UndoManager.execute(new SimpleCommand("Edit person",
+                        () -> applyPersonSnapshot(editedPerson, newSnapshot),
+                        () -> applyPersonSnapshot(editedPerson, oldSnapshot)));
+                propertyChangeSupport.firePropertyChange(PERSON_EDITIED, null, editedPerson);
                 reset();
             }
             default ->
@@ -408,6 +417,46 @@ public final class PersonCreationViewController implements Initializable {
                 LOG.log(Level.SEVERE, "Exception while updating image foPicturer {0} : {1}", new Object[]{defaultPortrait, e});
                 LOG.log(Level.SEVERE, "> file name was: {0}", new Object[]{path});
             }
+        }
+    }
+
+    private record PersonSnapshot(String name, List<Portrait> portraits, Portrait defaultPortrait, Color color,
+            TimeFormat timeFormat, LocalDate dateOfBirth, LocalDate dateOfDeath, long timeOfBirth, long timeOfDeath,
+            Map<Portrait, LocalDate> portraitDates, Map<Portrait, Double> portraitTimestamps) {
+    }
+
+    private PersonSnapshot capturePersonSnapshot(Person person) {
+        var portraitDates = new HashMap<Portrait, LocalDate>();
+        updatedPortraitDates.keySet().forEach(portrait -> portraitDates.put(portrait, portrait.getDate()));
+        var portraitTimestamps = new HashMap<Portrait, Double>();
+        updatedPortraitTimes.keySet().forEach(portrait -> portraitTimestamps.put(portrait, portrait.getTimestamp()));
+        return new PersonSnapshot(person.getName(), new ArrayList<>(person.getPortraits()), person.getDefaultPortrait(),
+                person.getColor(), person.getTimeFormat(), person.getDateOfBirth(), person.getDateOfDeath(),
+                person.getTimeOfBirth(), person.getTimeOfDeath(), portraitDates, portraitTimestamps);
+    }
+
+    private void applyPersonSnapshot(Person person, PersonSnapshot snapshot) {
+        person.setName(snapshot.name());
+        new ArrayList<>(person.getPortraits()).stream()
+                .filter(p -> !snapshot.portraits().contains(p))
+                .forEach(person::removePortrait);
+        snapshot.portraits().forEach(person::addPortrait);
+        person.setDefaultPortrait(snapshot.defaultPortrait());
+        person.setColor(snapshot.color());
+        person.setTimeFormat(snapshot.timeFormat());
+        switch (snapshot.timeFormat()) {
+            case LOCAL_TIME -> {
+                person.setDateOfBirth(snapshot.dateOfBirth());
+                person.setDateOfDeath(snapshot.dateOfDeath());
+                snapshot.portraitDates().forEach((portrait, date) -> portrait.setDate(date));
+            }
+            case TIME_MIN -> {
+                person.setTimeOfBirth(snapshot.timeOfBirth());
+                person.setTimeOfDeath(snapshot.timeOfDeath());
+                snapshot.portraitTimestamps().forEach((portrait, timestamp) -> portrait.setTimestamp(timestamp));
+            }
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + snapshot.timeFormat());
         }
     }
 

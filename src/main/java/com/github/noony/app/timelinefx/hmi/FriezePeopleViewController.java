@@ -77,8 +77,14 @@ public class FriezePeopleViewController implements Initializable {
 
     private FriezePeopleLinearDrawing friezePeopleLinearDrawing = null;
 
+    /**
+     * The slider's low value when the current drag gesture started.
+     */
     private double lowValueAtDragStart;
 
+    /**
+     * The slider's high value when the current drag gesture started.
+     */
     private double highValueAtDragStart;
 
     @Override
@@ -121,34 +127,38 @@ public class FriezePeopleViewController implements Initializable {
                 updateUpperTimeValue();
             }
         });
-        peopleViewTimeSlider.lowValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
-            if (isChanging) {
-                lowValueAtDragStart = peopleViewTimeSlider.getLowValue();
-            } else {
-                final var oldLowValue = lowValueAtDragStart;
-                final var newLowValue = peopleViewTimeSlider.getLowValue();
-                if (oldLowValue != newLowValue) {
-                    UndoManager.execute(new SimpleCommand("Change lower time window",
-                            () -> peopleViewTimeSlider.setLowValue(newLowValue),
-                            () -> peopleViewTimeSlider.setLowValue(oldLowValue)));
-                }
-            }
-        });
-        peopleViewTimeSlider.highValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
-            if (isChanging) {
-                highValueAtDragStart = peopleViewTimeSlider.getHighValue();
-            } else {
-                final var oldHighValue = highValueAtDragStart;
-                final var newHighValue = peopleViewTimeSlider.getHighValue();
-                if (oldHighValue != newHighValue) {
-                    UndoManager.execute(new SimpleCommand("Change upper time window",
-                            () -> peopleViewTimeSlider.setHighValue(newHighValue),
-                            () -> peopleViewTimeSlider.setHighValue(oldHighValue)));
-                }
-            }
-        });
+        peopleViewTimeSlider.lowValueChangingProperty().addListener((ov, wasChanging, isChanging) -> handleLowValueChanging(isChanging));
+        peopleViewTimeSlider.highValueChangingProperty().addListener((ov, wasChanging, isChanging) -> handleHighValueChanging(isChanging));
         peopleViewMinDateLabel.setText("");
         peopleViewMaxDateLabel.setText("");
+    }
+
+    private void handleLowValueChanging(final boolean isChanging) {
+        if (isChanging) {
+            lowValueAtDragStart = peopleViewTimeSlider.getLowValue();
+        } else {
+            final var oldLowValue = lowValueAtDragStart;
+            final var newLowValue = peopleViewTimeSlider.getLowValue();
+            if (oldLowValue != newLowValue) {
+                UndoManager.execute(new SimpleCommand("Change lower time window",
+                        () -> peopleViewTimeSlider.setLowValue(newLowValue),
+                        () -> peopleViewTimeSlider.setLowValue(oldLowValue)));
+            }
+        }
+    }
+
+    private void handleHighValueChanging(final boolean isChanging) {
+        if (isChanging) {
+            highValueAtDragStart = peopleViewTimeSlider.getHighValue();
+        } else {
+            final var oldHighValue = highValueAtDragStart;
+            final var newHighValue = peopleViewTimeSlider.getHighValue();
+            if (oldHighValue != newHighValue) {
+                UndoManager.execute(new SimpleCommand("Change upper time window",
+                        () -> peopleViewTimeSlider.setHighValue(newHighValue),
+                        () -> peopleViewTimeSlider.setHighValue(oldHighValue)));
+            }
+        }
     }
 
     private void updateFriezeWidth() {

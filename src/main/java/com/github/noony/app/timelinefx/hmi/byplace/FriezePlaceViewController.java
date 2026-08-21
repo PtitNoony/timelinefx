@@ -71,8 +71,14 @@ public class FriezePlaceViewController implements Initializable {
 
     private FriezeSpaceLinearDrawing friezeSpaceLinearDrawing = null;
 
+    /**
+     * The slider's low value when the current drag gesture started.
+     */
     private double lowValueAtDragStart;
 
+    /**
+     * The slider's high value when the current drag gesture started.
+     */
     private double highValueAtDragStart;
 
     @Override
@@ -116,34 +122,38 @@ public class FriezePlaceViewController implements Initializable {
                 updateUpperTimeValue();
             }
         });
-        timeSlider.lowValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
-            if (isChanging) {
-                lowValueAtDragStart = timeSlider.getLowValue();
-            } else {
-                final var oldLowValue = lowValueAtDragStart;
-                final var newLowValue = timeSlider.getLowValue();
-                if (oldLowValue != newLowValue) {
-                    UndoManager.execute(new SimpleCommand("Change lower time window",
-                            () -> timeSlider.setLowValue(newLowValue),
-                            () -> timeSlider.setLowValue(oldLowValue)));
-                }
-            }
-        });
-        timeSlider.highValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
-            if (isChanging) {
-                highValueAtDragStart = timeSlider.getHighValue();
-            } else {
-                final var oldHighValue = highValueAtDragStart;
-                final var newHighValue = timeSlider.getHighValue();
-                if (oldHighValue != newHighValue) {
-                    UndoManager.execute(new SimpleCommand("Change upper time window",
-                            () -> timeSlider.setHighValue(newHighValue),
-                            () -> timeSlider.setHighValue(oldHighValue)));
-                }
-            }
-        });
+        timeSlider.lowValueChangingProperty().addListener((ov, wasChanging, isChanging) -> handleLowValueChanging(isChanging));
+        timeSlider.highValueChangingProperty().addListener((ov, wasChanging, isChanging) -> handleHighValueChanging(isChanging));
         minDateLabel.setText("");
         maxDateLabel.setText("");
+    }
+
+    private void handleLowValueChanging(final boolean isChanging) {
+        if (isChanging) {
+            lowValueAtDragStart = timeSlider.getLowValue();
+        } else {
+            final var oldLowValue = lowValueAtDragStart;
+            final var newLowValue = timeSlider.getLowValue();
+            if (oldLowValue != newLowValue) {
+                UndoManager.execute(new SimpleCommand("Change lower time window",
+                        () -> timeSlider.setLowValue(newLowValue),
+                        () -> timeSlider.setLowValue(oldLowValue)));
+            }
+        }
+    }
+
+    private void handleHighValueChanging(final boolean isChanging) {
+        if (isChanging) {
+            highValueAtDragStart = timeSlider.getHighValue();
+        } else {
+            final var oldHighValue = highValueAtDragStart;
+            final var newHighValue = timeSlider.getHighValue();
+            if (oldHighValue != newHighValue) {
+                UndoManager.execute(new SimpleCommand("Change upper time window",
+                        () -> timeSlider.setHighValue(newHighValue),
+                        () -> timeSlider.setHighValue(oldHighValue)));
+            }
+        }
     }
 
     private void updateFriezeWidth() {

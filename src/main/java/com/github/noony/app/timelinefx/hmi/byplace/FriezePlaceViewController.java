@@ -18,6 +18,8 @@
 package com.github.noony.app.timelinefx.hmi.byplace;
 
 import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.net.URL;
 import java.util.Optional;
@@ -69,6 +71,10 @@ public class FriezePlaceViewController implements Initializable {
 
     private FriezeSpaceLinearDrawing friezeSpaceLinearDrawing = null;
 
+    private double lowValueAtDragStart;
+
+    private double highValueAtDragStart;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         scrollPane.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -108,6 +114,32 @@ public class FriezePlaceViewController implements Initializable {
         timeSlider.highValueProperty().addListener(o -> {
             if (!timeSlider.isLowValueChanging()) {
                 updateUpperTimeValue();
+            }
+        });
+        timeSlider.lowValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
+            if (isChanging) {
+                lowValueAtDragStart = timeSlider.getLowValue();
+            } else {
+                final var oldLowValue = lowValueAtDragStart;
+                final var newLowValue = timeSlider.getLowValue();
+                if (oldLowValue != newLowValue) {
+                    UndoManager.execute(new SimpleCommand("Change lower time window",
+                            () -> timeSlider.setLowValue(newLowValue),
+                            () -> timeSlider.setLowValue(oldLowValue)));
+                }
+            }
+        });
+        timeSlider.highValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
+            if (isChanging) {
+                highValueAtDragStart = timeSlider.getHighValue();
+            } else {
+                final var oldHighValue = highValueAtDragStart;
+                final var newHighValue = timeSlider.getHighValue();
+                if (oldHighValue != newHighValue) {
+                    UndoManager.execute(new SimpleCommand("Change upper time window",
+                            () -> timeSlider.setHighValue(newHighValue),
+                            () -> timeSlider.setHighValue(oldHighValue)));
+                }
             }
         });
         minDateLabel.setText("");

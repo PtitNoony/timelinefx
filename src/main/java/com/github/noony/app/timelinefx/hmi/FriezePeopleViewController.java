@@ -19,6 +19,8 @@ package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.hmi.byperson.FriezePeopleLinearDrawing;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +77,10 @@ public class FriezePeopleViewController implements Initializable {
 
     private FriezePeopleLinearDrawing friezePeopleLinearDrawing = null;
 
+    private double lowValueAtDragStart;
+
+    private double highValueAtDragStart;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         peopleViewScrollPane.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -113,6 +119,32 @@ public class FriezePeopleViewController implements Initializable {
         peopleViewTimeSlider.highValueProperty().addListener(o -> {
             if (!peopleViewTimeSlider.isLowValueChanging()) {
                 updateUpperTimeValue();
+            }
+        });
+        peopleViewTimeSlider.lowValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
+            if (isChanging) {
+                lowValueAtDragStart = peopleViewTimeSlider.getLowValue();
+            } else {
+                final var oldLowValue = lowValueAtDragStart;
+                final var newLowValue = peopleViewTimeSlider.getLowValue();
+                if (oldLowValue != newLowValue) {
+                    UndoManager.execute(new SimpleCommand("Change lower time window",
+                            () -> peopleViewTimeSlider.setLowValue(newLowValue),
+                            () -> peopleViewTimeSlider.setLowValue(oldLowValue)));
+                }
+            }
+        });
+        peopleViewTimeSlider.highValueChangingProperty().addListener((ov, wasChanging, isChanging) -> {
+            if (isChanging) {
+                highValueAtDragStart = peopleViewTimeSlider.getHighValue();
+            } else {
+                final var oldHighValue = highValueAtDragStart;
+                final var newHighValue = peopleViewTimeSlider.getHighValue();
+                if (oldHighValue != newHighValue) {
+                    UndoManager.execute(new SimpleCommand("Change upper time window",
+                            () -> peopleViewTimeSlider.setHighValue(newHighValue),
+                            () -> peopleViewTimeSlider.setHighValue(oldHighValue)));
+                }
             }
         });
         peopleViewMinDateLabel.setText("");

@@ -21,6 +21,8 @@ import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
+import com.github.noony.app.timelinefx.undo.UndoManager;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -373,7 +375,10 @@ public final class ContentEditionViewController implements Initializable {
             case PlaceCreationViewController.PLACE_CREATED -> {
                 place = (Place) event.getNewValue();
                 customModalWindow.hide();
-                timeLineProject.addPlace(place);
+                final var createdPlace = place;
+                UndoManager.execute(new SimpleCommand("Create place",
+                        () -> timeLineProject.addPlace(createdPlace),
+                        () -> timeLineProject.removePlace(createdPlace)));
                 updatePlacesTab();
             }
 
@@ -415,7 +420,10 @@ public final class ContentEditionViewController implements Initializable {
             case PersonCreationViewController.PERSON_CREATED -> {
                 person = (Person) event.getNewValue();
                 customModalWindow.hide();
-                timeLineProject.addPerson(person);
+                final var createdPerson = person;
+                UndoManager.execute(new SimpleCommand("Create person",
+                        () -> timeLineProject.addPerson(createdPerson),
+                        () -> timeLineProject.removePerson(createdPerson)));
                 updatePersonTab();
             }
             case PersonCreationViewController.PERSON_EDITIED -> {

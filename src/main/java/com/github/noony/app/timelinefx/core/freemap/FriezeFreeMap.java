@@ -473,8 +473,7 @@ public final class FriezeFreeMap implements FriezeObject {
 
     public void setPortraitRadius(double newPortraitRadius) {
         portraitRadius = newPortraitRadius;
-        System.err.println(" todo : setPortraitRadius");
-//        portraits.values().forEach(portrait -> portrait.setRadius(newPortraitRadius));
+        freeMapPersons.values().forEach(freeMapPerson -> freeMapPerson.getFreeMapPortraits().forEach(portrait -> portrait.setRadius(newPortraitRadius)));
     }
 
     /**

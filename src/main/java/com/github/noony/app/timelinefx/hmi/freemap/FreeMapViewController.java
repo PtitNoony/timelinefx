@@ -117,8 +117,8 @@ public class FreeMapViewController implements Initializable {
         plotsVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             if (friezeFreeMap != null && !applyingUndoRedo) {
                 UndoManager.execute(new SimpleCommand("Toggle plots visibility",
-                        () -> setPlotsVisibility(true),
-                        () -> setPlotsVisibility(false)));
+                        () -> setPlotsVisibility(t1),
+                        () -> setPlotsVisibility(t)));
             }
         });
         //
@@ -126,8 +126,8 @@ public class FreeMapViewController implements Initializable {
         portraitConnectorVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             if (friezeFreeMap != null && !applyingUndoRedo) {
                 UndoManager.execute(new SimpleCommand("Toggle portrait connectors visibility",
-                        () -> setPortraitConnectorsVisibility(true),
-                        () -> setPortraitConnectorsVisibility(false)));
+                        () -> setPortraitConnectorsVisibility(t1),
+                        () -> setPortraitConnectorsVisibility(t)));
             }
         });
         //

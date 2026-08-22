@@ -47,6 +47,8 @@ public interface FreeMapStay extends FreeMapLink {
 
     void setPlotVisibility(boolean visibility);
 
+    void setPlotSize(double plotSize);
+
     List<StayPeriod> getStayPeriods();
 
     List<FreeMapStay> getFreeMapStayPeriods();

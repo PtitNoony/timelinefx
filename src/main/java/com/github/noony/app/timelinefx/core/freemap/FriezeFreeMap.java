@@ -570,13 +570,7 @@ public final class FriezeFreeMap implements FriezeObject {
         var startDate = freeMapStay.getStartDate();
         createDateHandle(startDate, FreeMapDateHandle.TimeType.START);
         var endDate = freeMapStay.getEndDate();
-        var endDateHandle = endDateHandles.get(endDate);
-        if (endDateHandle == null) {
-            throw new IllegalStateException("Cannot ");
-        }
-        //
-        System.err.println(" TODO FIX MY CODE");
-        //
+        createDateHandle(endDate, FreeMapDateHandle.TimeType.END);
         freeMapPerson.addFreeMapStay(freeMapStay);
     }
 

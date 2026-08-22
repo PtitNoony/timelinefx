@@ -180,6 +180,11 @@ public final class FreeMapMergedStay implements FreeMapStay {
         stays.forEach(stay -> stay.setPlotVisibility(visibility));
     }
 
+    @Override
+    public void setPlotSize(double plotSize) {
+        stays.forEach(stay -> stay.setPlotSize(plotSize));
+    }
+
     public final boolean addStay(FreeMapStay aStay) {
         // checks for consitency
         if (aStay.getPerson() != person) {

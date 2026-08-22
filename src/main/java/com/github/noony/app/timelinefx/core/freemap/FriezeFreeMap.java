@@ -423,6 +423,7 @@ public final class FriezeFreeMap implements FriezeObject {
 
     public void setPlotSize(double newPlotSize) {
         plotSize = newPlotSize;
+        freeMapPersons.values().forEach(freeMapPerson -> freeMapPerson.setPlotsSize(newPlotSize));
         propertyChangeSupport.firePropertyChange(FREE_MAP_PLOT_SIZE_CHANGED, this, plotSize);
     }
 

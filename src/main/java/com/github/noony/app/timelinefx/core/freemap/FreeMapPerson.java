@@ -247,6 +247,10 @@ public class FreeMapPerson implements FriezeObject {
         stays.forEach(s -> s.setPlotVisibility(visibility));
     }
 
+    protected void setPlotsSize(double plotSize) {
+        stays.forEach(s -> s.setPlotSize(plotSize));
+    }
+
     protected void setPortraitConnectorsVisibilty(boolean visibility) {
         portraitLinks.values().forEach(pLinks -> pLinks.setConnectorsVisibility(visibility));
     }

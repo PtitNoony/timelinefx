@@ -148,6 +148,12 @@ public final class FreeMapSimpleStay implements FreeMapStay {
     }
 
     @Override
+    public void setPlotSize(double plotSize) {
+        beginPlot.setPlotSize(plotSize);
+        endPlot.setPlotSize(plotSize);
+    }
+
+    @Override
     public Color getColor() {
         return color;
     }

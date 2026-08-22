@@ -312,8 +312,7 @@ public class FreeMapViewController implements Initializable {
         heightField.setText(Double.toString(friezeFreeMap.getHeight()));
         plotWidthField.setText(Double.toString(friezeFreeMap.getPlotSize()));
         fontSizeField.setText(Double.toString(friezeFreeMap.getFontSize()));
-        portraitRadiusField.setText("");
-        portraitRadiusField.setPromptText("Set radius to apply to all portraits.");
+        portraitRadiusField.setText(Double.toString(friezeFreeMap.getPortraitRadius()));
         zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 

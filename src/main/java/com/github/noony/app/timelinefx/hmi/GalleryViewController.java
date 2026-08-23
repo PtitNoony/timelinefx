@@ -25,6 +25,7 @@ import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.undo.SimpleCommand;
 import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
+import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -49,6 +50,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
@@ -77,6 +79,12 @@ public final class GalleryViewController implements Initializable, ViewControlle
     private PictureLoaderViewController pictureLoaderController = null;
 
     @FXML
+    private SplitPane mainSplitPane;
+
+    @FXML
+    private SplitPane tableDetailSplitPane;
+
+    @FXML
     private TableView<Picture> picturesTableView;
 
     @FXML
@@ -99,6 +107,8 @@ public final class GalleryViewController implements Initializable, ViewControlle
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Loading GalleryViewController");
         // init
+        SplitPaneDividerPersister.bind(mainSplitPane, "GalleryMainSplitPane");
+        SplitPaneDividerPersister.bind(tableDetailSplitPane, "GalleryTableDetailSplitPane");
         AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         init();

@@ -51,7 +51,7 @@
                </VBox.margin>
             </GridPane>
             <Separator prefWidth="200.0" />
-            <SplitPane dividerPositions="0.5, 0.5" VBox.vgrow="SOMETIMES">
+            <SplitPane fx:id="splitPane" dividerPositions="0.5, 0.5" VBox.vgrow="SOMETIMES">
               <items>
                   <VBox spacing="8.0">
                      <children>

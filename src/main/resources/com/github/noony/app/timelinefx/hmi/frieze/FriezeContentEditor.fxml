@@ -83,7 +83,7 @@
           </Tab>
           <Tab text="Frieze's content">
             <content>
-                  <SplitPane dividerPositions="0.2, 0.5">
+                  <SplitPane fx:id="contentSplitPane" dividerPositions="0.2, 0.5">
                      <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>

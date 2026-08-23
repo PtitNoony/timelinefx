@@ -19,7 +19,7 @@
 
 <AnchorPane id="AnchorPane" prefWidth="1200.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.freemap.FreeMapViewController">
     <children>
-        <SplitPane dividerPositions="0.3" layoutX="37.0" layoutY="22.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <SplitPane fx:id="splitPane" dividerPositions="0.3" layoutX="37.0" layoutY="22.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
             <VBox spacing="8.0">
                <children>

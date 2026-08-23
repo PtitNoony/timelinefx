@@ -31,6 +31,7 @@ import com.github.noony.app.timelinefx.hmi.StageFactory;
 import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapListCellImpl;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapView;
+import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -54,6 +55,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -73,6 +75,9 @@ public class FriezeContentEditorController implements Initializable {
 
     @FXML
     private TabPane tabPane;
+
+    @FXML
+    private SplitPane contentSplitPane;
 
     @FXML
     private TextField nameField;
@@ -124,6 +129,7 @@ public class FriezeContentEditorController implements Initializable {
     @Override
     public void initialize(final URL url, final ResourceBundle rb) {
         //
+        SplitPaneDividerPersister.bind(contentSplitPane, "FriezeContentEditorSplitPane");
         tabPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         //
         freemapTabs = new HashMap<>();

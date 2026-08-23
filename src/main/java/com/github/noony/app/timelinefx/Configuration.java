@@ -28,9 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import jfxtras.styles.jmetro.Style;
 
 /**
@@ -70,6 +72,12 @@ public class Configuration {
     private static final String MINIATURES_FOLDER_PROPERTY_NAME = "MiniaturesFolder";
 
     private static final String THEME_PROPERTY_NAME = "Theme";
+
+    /**
+     * Prefix for the per-{@link javafx.scene.control.SplitPane} divider-position keys, so they don't collide with
+     * unrelated properties.
+     */
+    private static final String SPLIT_PANE_PROPERTY_PREFIX = "SplitPane.";
 
     private static final String DEFAULT_TIMELINES_FOLDER_PATH = System.getProperty("user.home") + File.separator + DEFAULT_PROJECTS_FOLDER_NAME;
 
@@ -200,6 +208,17 @@ public class Configuration {
 
     public static Style getTheme() {
         return Style.valueOf(properties.getProperty(THEME_PROPERTY_NAME));
+    }
+
+    public static double[] getSplitPaneDividerPositions(String key) {
+        var value = properties.getProperty(SPLIT_PANE_PROPERTY_PREFIX + key);
+        return value == null ? null : Arrays.stream(value.split(",")).mapToDouble(Double::parseDouble).toArray();
+    }
+
+    public static void setSplitPaneDividerPositions(String key, double[] positions) {
+        var value = Arrays.stream(positions).mapToObj(Double::toString).collect(Collectors.joining(","));
+        properties.setProperty(SPLIT_PANE_PROPERTY_PREFIX + key, value);
+        savePreferences();
     }
 
     public static void setProjectsParentFolder(String newValue) {

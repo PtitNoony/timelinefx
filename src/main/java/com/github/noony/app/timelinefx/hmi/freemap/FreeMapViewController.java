@@ -26,6 +26,7 @@ import com.github.noony.app.timelinefx.hmi.PortraitSelectionViewController;
 import com.github.noony.app.timelinefx.undo.SimpleCommand;
 import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.PngExporter;
+import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -60,6 +62,9 @@ public class FreeMapViewController implements Initializable {
 
     @FXML
     private ScrollPane viewScrollPane;
+
+    @FXML
+    private SplitPane splitPane;
 
     @FXML
     private AnchorPane viewRootPane;
@@ -106,6 +111,7 @@ public class FreeMapViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        SplitPaneDividerPersister.bind(splitPane, "FreeMapPropertiesSplitPane");
         timeHandleVisibilityCB.setSelected(true);
         timeHandleVisibilityCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
             if (friezeFreeFormDrawing != null) {

@@ -19,9 +19,18 @@ package com.github.noony.app.timelinefx.core.freemap;
 
 import com.github.noony.app.timelinefx.core.Factory;
 import com.github.noony.app.timelinefx.core.Frieze;
+import com.github.noony.app.timelinefx.core.IFileObject;
+import com.github.noony.app.timelinefx.core.Person;
+import com.github.noony.app.timelinefx.core.Place;
+import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnectorFactory;
+import com.github.noony.app.timelinefx.core.freemap.links.FreeMapLinkFactory;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Point2D;
 
 /**
  *
@@ -89,6 +98,98 @@ public class FriezeFreeMapFactory {
         final var friezeFreeMap = new FriezeFreeMap(anID, aFrieze, properties, dateHandles, persons, places, stays, false);
         FACTORY.addObject(friezeFreeMap);
         return friezeFreeMap;
+    }
+
+    /**
+     * Creates a fully independent copy of {@code source}: same layout properties, persons, places, stays and
+     * portraits, but built from brand-new objects that share no mutable state with the source (only the
+     * underlying {@link Person}/{@link com.github.noony.app.timelinefx.core.Place}/
+     * {@link com.github.noony.app.timelinefx.core.StayPeriod}/{@link com.github.noony.app.timelinefx.core.Portrait}
+     * domain objects are reused, since duplicating the free map's layout must not duplicate the frieze's actual
+     * content).
+     *
+     * @param source the free map to duplicate
+     * @return the newly created copy
+     */
+    public static FriezeFreeMap duplicateFriezeFreeMap(final FriezeFreeMap source) {
+        final var newID = FACTORY.getNextID();
+        final var frieze = source.getFrieze();
+        final var properties = source.getProperties();
+        LOG.log(Level.WARNING, "Duplicating FriezeFreeMap (id={0}) into a new one (id={1}).", new Object[]{source.getId(), newID});
+        //
+        final var dateHandles = duplicateDateHandles(source, newID);
+        //
+        final var places = new LinkedList<FreeMapPlace>();
+        final Map<Place, FreeMapPlace> placesByPlace = new HashMap<>();
+        source.getPlaces().forEach(sourcePlace -> {
+            final var newPlace = FreeMapPlace.createFreeMapPlace(newID, sourcePlace.getPlace(),
+                    properties.plotSeparation(), properties.placeNameWidth(), properties.fontSize());
+            newPlace.setY(sourcePlace.getYPos());
+            newPlace.setHeight(sourcePlace.getHeight());
+            places.add(newPlace);
+            placesByPlace.put(sourcePlace.getPlace(), newPlace);
+        });
+        //
+        final var persons = new LinkedList<FreeMapPerson>();
+        final Map<Person, FreeMapPerson> personsByPerson = new HashMap<>();
+        final var stays = new LinkedList<FreeMapStay>();
+        final Map<Long, FreeMapStay> newStaysBySourceStayId = new HashMap<>();
+        source.getPersons().forEach(sourcePerson -> {
+            final var newPerson = FreeMapPerson.createFreeMapPerson(newID, sourcePerson.getPerson());
+            persons.add(newPerson);
+            personsByPerson.put(sourcePerson.getPerson(), newPerson);
+            sourcePerson.getFreeMapStays().forEach(sourceStay -> {
+                if (sourceStay instanceof FreeMapSimpleStay sourceSimpleStay) {
+                    final var newPlace = placesByPlace.get(sourceStay.getPlace().getPlace());
+                    final var stayPeriod = sourceSimpleStay.getStayPeriods().get(0);
+                    final var newStay = FreeMapStayFactory.createFreeMapStay(stayPeriod, newPerson, newPlace);
+                    stays.add(newStay);
+                    newStaysBySourceStayId.put(sourceStay.getId(), newStay);
+                } else {
+                    LOG.log(Level.WARNING, "Skipping merged stay {0} while duplicating FriezeFreeMap: not supported.", new Object[]{sourceStay});
+                }
+            });
+        });
+        //
+        final var duplicate = createFriezeFreeMap(newID, frieze, properties, dateHandles, persons, places, stays);
+        duplicate.setName(source.getName() + " (copy)");
+        //
+        duplicatePortraits(source, personsByPerson, newStaysBySourceStayId);
+        //
+        return duplicate;
+    }
+
+    private static List<FreeMapDateHandle> duplicateDateHandles(final FriezeFreeMap source, final long newID) {
+        final var dateHandles = new LinkedList<FreeMapDateHandle>();
+        source.getStartDateHandles().forEach(handle -> dateHandles.add(FreeMapDateHandle.createFreeMapDateHandle(
+                newID, handle.getDate(), FreeMapDateHandle.TimeType.START, new Point2D(handle.getXPos(), handle.getYPos()))));
+        source.getEndDateHandles().forEach(handle -> dateHandles.add(FreeMapDateHandle.createFreeMapDateHandle(
+                newID, handle.getDate(), FreeMapDateHandle.TimeType.END, new Point2D(handle.getXPos(), handle.getYPos()))));
+        return dateHandles;
+    }
+
+    private static void duplicatePortraits(final FriezeFreeMap source, final Map<Person, FreeMapPerson> personsByPerson,
+            final Map<Long, FreeMapStay> newStaysBySourceStayId) {
+        source.getPersons().forEach(sourcePerson -> {
+            final var newPerson = personsByPerson.get(sourcePerson.getPerson());
+            sourcePerson.getFreeMapPortraits().forEach(sourcePortrait -> {
+                final var sourceLink = sourcePerson.getPortraitLink(sourcePortrait);
+                final var sourceConnector = sourceLink.getEndConnector();
+                final var newStay = newStaysBySourceStayId.get(sourceConnector.getLinkedElementID());
+                if (newStay == null) {
+                    LOG.log(Level.WARNING, "Skipping portrait {0} while duplicating FriezeFreeMap: its stay was not duplicated.", new Object[]{sourcePortrait});
+                    return;
+                }
+                final var newConnector = FreeMapConnectorFactory.createFreeMapLinkConnector(
+                        IFileObject.NO_ID, newStay, sourceConnector.getDate(), FriezeFreeMap.DEFAULT_PLOT_SIZE);
+                final var newPortrait = FreeMapPortraitFactory.createFreeMapPortrait(
+                        sourcePortrait.getPortrait(), newPerson, sourcePortrait.getRadius());
+                newPortrait.setX(sourcePortrait.getX());
+                newPortrait.setY(sourcePortrait.getY());
+                final var newPortraitLink = FreeMapLinkFactory.createPortraitLink(newPortrait, newConnector);
+                newPerson.addFreeMapPortrait(newPortrait, newPortraitLink);
+            });
+        });
     }
 
 }

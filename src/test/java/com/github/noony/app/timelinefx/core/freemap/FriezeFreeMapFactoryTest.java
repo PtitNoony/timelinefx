@@ -137,6 +137,44 @@ public final class FriezeFreeMapFactoryTest {
     }
 
     /**
+     * Test of duplicateFriezeFreeMap(FriezeFreeMap) method, of class FriezeFreeMapFactory: the copy has the same
+     * structure as the source, but is built from fully independent objects.
+     */
+    @Test
+    public void testDuplicateFriezeFreeMap() {
+        final var place = PlaceFactory.createPlace("testPlace", PlaceLevel.PLANET, null);
+        final var person = PersonFactory.createPerson(frieze.getProject(), "testPerson");
+        final var stayPeriod = StayFactory.createStayPeriodSimpleTime(person, 0.0, 10.0, place);
+        final var sourceID = 10L;
+        final var freeMapPlace = FreeMapPlace.createFreeMapPlace(sourceID, place, FriezeFreeMap.DEFAULT_PROPERTIES.plotSeparation(),
+                FriezeFreeMap.DEFAULT_PROPERTIES.placeNameWidth(), FriezeFreeMap.DEFAULT_PROPERTIES.fontSize());
+        final var freeMapPerson = FreeMapPerson.createFreeMapPerson(sourceID, person);
+        final var freeMapStay = FreeMapStayFactory.createFreeMapStay(stayPeriod, freeMapPerson, freeMapPlace);
+        final var source = FriezeFreeMapFactory.createFriezeFreeMap(sourceID, frieze, FriezeFreeMap.DEFAULT_PROPERTIES,
+                java.util.List.of(), java.util.List.of(freeMapPerson), java.util.List.of(freeMapPlace), java.util.List.of(freeMapStay));
+        source.setName("Source");
+        //
+        final var duplicate = FriezeFreeMapFactory.duplicateFriezeFreeMap(source);
+        //
+        assertEquals("Source (copy)", duplicate.getName());
+        assertTrue(duplicate.getId() != source.getId());
+        assertEquals(source.getPersons().size(), duplicate.getPersons().size());
+        assertEquals(source.getPlaces().size(), duplicate.getPlaces().size());
+        //
+        final var duplicatePerson = duplicate.getPersons().get(0);
+        final var duplicatePlace = duplicate.getPlaces().get(0);
+        assertTrue(duplicatePerson != freeMapPerson);
+        assertTrue(duplicatePlace != freeMapPlace);
+        assertEquals(freeMapPerson.getPerson(), duplicatePerson.getPerson());
+        assertEquals(freeMapPlace.getPlace(), duplicatePlace.getPlace());
+        assertEquals(freeMapPerson.getFreeMapStays().size(), duplicatePerson.getFreeMapStays().size());
+        //
+        // editing the duplicate must not affect the source
+        duplicatePlace.setY(123.0);
+        assertTrue(freeMapPlace.getYPos() != duplicatePlace.getYPos());
+    }
+
+    /**
      * Test of reset method, of class FriezeFreeMapFactory.
      */
     @Test

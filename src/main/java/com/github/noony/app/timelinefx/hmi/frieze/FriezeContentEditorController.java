@@ -24,6 +24,7 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
+import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import com.github.noony.app.timelinefx.drawings.IFriezeView;
 import com.github.noony.app.timelinefx.hmi.AppInstanceConfiguration;
 import com.github.noony.app.timelinefx.hmi.FriezePeopleViewController;
@@ -83,6 +84,8 @@ public class FriezeContentEditorController implements Initializable {
     private TextField nameField;
     @FXML
     private ListView<FriezeFreeMap> freemapListView;
+    @FXML
+    private Button duplicateFreemapButton;
     @FXML
     private Button deleteFreemapButton;
     @FXML
@@ -149,6 +152,7 @@ public class FriezeContentEditorController implements Initializable {
         freemapListView.setEditable(true);
         freemapListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         freemapListView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FriezeFreeMap> ov, FriezeFreeMap t, FriezeFreeMap t1) -> {
+            duplicateFreemapButton.setDisable(t1 == null);
             deleteFreemapButton.setDisable(t1 == null);
             if (t1 != null) {
                 tabPane.getSelectionModel().select(freemapTabs.get(t1));
@@ -157,6 +161,7 @@ public class FriezeContentEditorController implements Initializable {
         freemapListView.setCellFactory((ListView<FriezeFreeMap> p) -> {
             return new FreeMapListCellImpl(this);
         });
+        duplicateFreemapButton.setDisable(true);
         deleteFreemapButton.setDisable(true);
         //
         tabPane.getSelectionModel().selectedItemProperty().addListener((var ov, var t, var t1) -> {
@@ -216,6 +221,17 @@ public class FriezeContentEditorController implements Initializable {
         var freeMap = frieze.createFriezeFreeMap();
         createFreeMapView(freeMap);
         runLater(() -> freemapListView.getSelectionModel().select(freeMap));
+    }
+
+    @FXML
+    protected void handleDuplicateFreeMap(final ActionEvent event) {
+        LOG.log(Level.INFO, "handleDuplicateFreeMap {0}", event);
+        var source = getSelectedFreeMap();
+        if (source != null) {
+            var duplicate = FriezeFreeMapFactory.duplicateFriezeFreeMap(source);
+            createFreeMapView(duplicate);
+            runLater(() -> freemapListView.getSelectionModel().select(duplicate));
+        }
     }
 
     @FXML

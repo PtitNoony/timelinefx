@@ -71,6 +71,7 @@
                               <HBox alignment="CENTER" spacing="8.0" VBox.vgrow="NEVER">
                                  <children>
                                             <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#handleFreeMapCreation" text="New" />
+                                    <Button fx:id="duplicateFreemapButton" disable="true" mnemonicParsing="false" onAction="#handleDuplicateFreeMap" text="Duplicate" />
                                     <Button fx:id="deleteFreemapButton" disable="true" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleDeleteFreeMap" text="Delete" />
                                  </children>
                               </HBox>

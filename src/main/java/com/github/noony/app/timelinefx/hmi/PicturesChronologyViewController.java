@@ -30,6 +30,7 @@ import com.github.noony.app.timelinefx.core.picturechronology.PictureChronologyF
 import com.github.noony.app.timelinefx.drawings.GalleryTiles;
 import com.github.noony.app.timelinefx.drawings.IFxScalableNode;
 import com.github.noony.app.timelinefx.hmi.picturechronology.PictureChronologyDrawing;
+import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -84,6 +85,8 @@ public final class PicturesChronologyViewController implements Initializable {
     @FXML
     private ListView<PictureChronology> chronologiesListView;
     @FXML
+    private SplitPane mainSplitPane;
+    @FXML
     private SplitPane leftSplitPane;
     @FXML
     private ScrollPane picturesPane, portraitsPane;
@@ -111,6 +114,8 @@ public final class PicturesChronologyViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // init
+        SplitPaneDividerPersister.bind(mainSplitPane, "ChronologyMainSplitPane");
+        SplitPaneDividerPersister.bind(leftSplitPane, "ChronologyLeftSplitPane");
         AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         PictureFactory.addPropertyChangeListener(this::handlePictureFactoryChanges);
         PortraitFactory.addPropertyChangeListener(this::handlePortraitFactoryChanges);

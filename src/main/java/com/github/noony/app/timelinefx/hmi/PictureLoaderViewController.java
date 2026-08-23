@@ -29,6 +29,7 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
+import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -49,6 +50,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -69,6 +71,9 @@ public final class PictureLoaderViewController implements Initializable, ViewCon
     private static final Logger LOG = Logger.getGlobal();
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(PictureLoaderViewController.this);
+
+    @FXML
+    private SplitPane splitPane;
 
     @FXML
     private TextField fileField;
@@ -102,6 +107,7 @@ public final class PictureLoaderViewController implements Initializable, ViewCon
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         LOG.log(Level.INFO, "Loading PictureLoaderViewController");
+        SplitPaneDividerPersister.bind(splitPane, "PictureLoaderSplitPane");
         AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
         peopleCheckListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         placesCheckListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

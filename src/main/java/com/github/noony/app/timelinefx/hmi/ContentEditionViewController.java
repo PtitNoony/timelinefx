@@ -23,6 +23,7 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.undo.SimpleCommand;
 import com.github.noony.app.timelinefx.undo.UndoManager;
+import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -99,6 +100,7 @@ public final class ContentEditionViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // init
         AppInstanceConfiguration.addPropertyChangeListener(this::handleAppConfigChanges);
+        SplitPaneDividerPersister.bind(splitPane, "ContentEditionSplitPane");
         loadStaysCreationView();
         //
         createButton.setDisable(false);

@@ -17,13 +17,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefWidth="1200.0" xmlns="http://javafx.com/javafx/24" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.freemap.FreeMapViewController">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="1200.0" xmlns="http://javafx.com/javafx/24" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.freemap.FreeMapViewController">
     <children>
-        <SplitPane fx:id="splitPane" dividerPositions="0.3" layoutX="37.0" layoutY="22.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <SplitPane fx:id="splitPane" dividerPositions="0.3" layoutX="37.0" layoutY="22.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
-            <VBox spacing="8.0">
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0">
                <children>
-                  <Label fx:id="friezeNameLabel" text="Label" VBox.vgrow="NEVER">
+                  <Label fx:id="friezeNameLabel" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="NEVER">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
@@ -31,9 +31,9 @@
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                      </padding>
                   </Label>
-                  <Accordion VBox.vgrow="SOMETIMES">
+                  <Accordion maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES">
                     <panes>
-                      <TitledPane animated="false" text="Properties">
+                      <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Properties">
                            <content>
                               <ScrollPane>
                                  <content>
@@ -132,14 +132,14 @@
                               </ScrollPane>
                            </content>
                         </TitledPane>
-                      <TitledPane animated="false" text="untitled 2" />
+                      <TitledPane animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="untitled 2" />
                     </panes>
                   </Accordion>
                </children>
             </VBox>
-            <ScrollPane fx:id="viewScrollPane" maxHeight="1.7976931348623157E308">
+            <ScrollPane fx:id="viewScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                <content>
-                      <AnchorPane fx:id="viewRootPane" minHeight="0.0" minWidth="0.0" prefHeight="331.0" prefWidth="100" style="-fx-background-color: white;" />
+                      <AnchorPane fx:id="viewRootPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-background-color: white;" />
                </content>
             </ScrollPane>
             </items>

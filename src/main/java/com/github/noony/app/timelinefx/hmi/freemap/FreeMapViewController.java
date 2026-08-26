@@ -77,6 +77,8 @@ public class FreeMapViewController implements Initializable {
     @FXML
     private CheckBox portraitConnectorVisibilityCB;
     @FXML
+    private CheckBox uniformRadiiCB;
+    @FXML
     private TextField zoomField;
     @FXML
     private TextField widthField;
@@ -107,7 +109,11 @@ public class FreeMapViewController implements Initializable {
     //
     private FreeMapPortrait freeMapPortraitToUpdate = null;
 
+    private FreeMapPortrait selectedPortrait = null;
+
     private boolean applyingUndoRedo = false;
+
+    private boolean updatingRadiusFieldDisplay = false;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -197,14 +203,23 @@ public class FreeMapViewController implements Initializable {
             }
         });
         //
+        uniformRadiiCB.setSelected(true);
+        uniformRadiiCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> updatePortraitRadiusFieldDisplay());
         portraitRadiusField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            if (updatingRadiusFieldDisplay) {
+                return;
+            }
             if (t1.isBlank() | t1.isEmpty()) {
                 // nothing
             } else {
                 try {
                     var portraitRadius = Double.parseDouble(t1);
-                    if (friezeFreeMap != null) {
-                        friezeFreeMap.setPortraitRadius(portraitRadius);
+                    if (uniformRadiiCB.isSelected()) {
+                        if (friezeFreeMap != null) {
+                            friezeFreeMap.setPortraitRadius(portraitRadius);
+                        }
+                    } else if (selectedPortrait != null) {
+                        selectedPortrait.setRadius(portraitRadius);
                     }
                 } catch (NumberFormatException e) {
                     LOG.log(Level.FINEST, "The following value is not a valid portrait radius {0}. {1}", new Object[]{t1, e});
@@ -241,6 +256,18 @@ public class FreeMapViewController implements Initializable {
         portraitConnectorVisibilityCB.setSelected(visible);
         friezeFreeMap.setPortraitConnectorVisibility(visible);
         applyingUndoRedo = false;
+    }
+
+    private void updatePortraitRadiusFieldDisplay() {
+        updatingRadiusFieldDisplay = true;
+        if (uniformRadiiCB.isSelected()) {
+            portraitRadiusField.setDisable(friezeFreeMap == null);
+            portraitRadiusField.setText(friezeFreeMap == null ? "" : Double.toString(friezeFreeMap.getPortraitRadius()));
+        } else {
+            portraitRadiusField.setDisable(selectedPortrait == null);
+            portraitRadiusField.setText(selectedPortrait == null ? "" : Double.toString(selectedPortrait.getRadius()));
+        }
+        updatingRadiusFieldDisplay = false;
     }
 
     @FXML
@@ -312,13 +339,14 @@ public class FreeMapViewController implements Initializable {
 
     public void setFriezeFreeMap(FriezeFreeMap aFriezeFreeMap) {
         friezeFreeMap = aFriezeFreeMap;
+        selectedPortrait = null;
         createDrawing();
         friezeNameLabel.setText(friezeFreeMap.getName());
         widthField.setText(Double.toString(friezeFreeMap.getWidth()));
         heightField.setText(Double.toString(friezeFreeMap.getHeight()));
         plotWidthField.setText(Double.toString(friezeFreeMap.getPlotSize()));
         fontSizeField.setText(Double.toString(friezeFreeMap.getFontSize()));
-        portraitRadiusField.setText(Double.toString(friezeFreeMap.getPortraitRadius()));
+        updatePortraitRadiusFieldDisplay();
         zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }
 
@@ -327,6 +355,10 @@ public class FreeMapViewController implements Initializable {
             case FriezeFreeFormDrawing.PORTRAIT_SECTION_REQUEST -> {
                 var freeMapPortrait = (FreeMapPortrait) event.getNewValue();
                 displayPortraitSelectionWindow(freeMapPortrait);
+            }
+            case FriezeFreeFormDrawing.PORTRAIT_SELECTED -> {
+                selectedPortrait = (FreeMapPortrait) event.getNewValue();
+                updatePortraitRadiusFieldDisplay();
             }
             default ->
                 throw new AssertionError();

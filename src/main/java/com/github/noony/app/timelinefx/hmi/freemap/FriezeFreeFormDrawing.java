@@ -46,6 +46,8 @@ public final class FriezeFreeFormDrawing {
 
     public static final String PORTRAIT_SECTION_REQUEST = "portraitSelectionRequest";
 
+    public static final String PORTRAIT_SELECTED = "portraitSelected";
+
     public static final double MAIN_CONTAINER_PADDING = 8;
 
     private static final double INITIAL_BACKGROUND_SIZE = 500;
@@ -336,6 +338,10 @@ public final class FriezeFreeFormDrawing {
 
     protected void requestPortraitSelectionUpdate(FreeMapPortrait aFreeMapPortrait) {
         propertyChangeSupport.firePropertyChange(PORTRAIT_SECTION_REQUEST, this, aFreeMapPortrait);
+    }
+
+    protected void requestPortraitSelection(FreeMapPortrait aFreeMapPortrait) {
+        propertyChangeSupport.firePropertyChange(PORTRAIT_SELECTED, this, aFreeMapPortrait);
     }
 
     protected void updateLayout() {

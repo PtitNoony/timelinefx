@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefWidth="1200.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.freemap.FreeMapViewController">
+<AnchorPane id="AnchorPane" prefWidth="1200.0" xmlns="http://javafx.com/javafx/24" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.noony.app.timelinefx.hmi.freemap.FreeMapViewController">
     <children>
         <SplitPane fx:id="splitPane" dividerPositions="0.3" layoutX="37.0" layoutY="22.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
@@ -60,6 +60,7 @@
                                           <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                           <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                           <RowConstraints minHeight="10.0" vgrow="NEVER" />
+                                          <RowConstraints vgrow="NEVER" />
                                           <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                           <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                           <RowConstraints minHeight="10.0" vgrow="NEVER" />
@@ -70,7 +71,7 @@
                                           <ColorPicker fx:id="handleColorPicker" minHeight="-Infinity" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                           <Button fx:id="linearTimeButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLinearTimeAction" text="Linear" GridPane.rowIndex="10" />
                                           <Button fx:id="constantTimeButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleConstantTimeAction" text="Constant" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                          <Label maxHeight="1.7976931348623157E308" text="Time Display:" GridPane.rowIndex="9">
+                                          <Label maxHeight="1.7976931348623157E308" text="Time Display:" underline="true" GridPane.rowIndex="9">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -79,7 +80,7 @@
                                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleZoomOutAction" text="Zoom IN" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleUpdateLayout" text="Update Layout" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="5" />
                                           <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSaveAsPicture" text="Save As Pic" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="5" />
-                                          <Label text="Zoom Level:">
+                                          <Label text="Zoom Level:" underline="true">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
@@ -87,20 +88,20 @@
                                           <CheckBox fx:id="plotsVisibilityCB" mnemonicParsing="false" text="Visibility" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                                           <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Size:" GridPane.rowIndex="13" />
                                           <TextField fx:id="plotWidthField" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                                          <Label text="Portraits:" GridPane.rowIndex="15">
+                                          <Label text="Portraits:" underline="true" GridPane.rowIndex="15">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" text="Radius:" textAlignment="RIGHT" GridPane.rowIndex="17" />
-                                          <TextField fx:id="portraitRadiusField" GridPane.columnIndex="1" GridPane.rowIndex="17" />
-                                          <Label text="Places:" GridPane.rowIndex="19">
+                                          <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxWidth="1.7976931348623157E308" text="Radius:" textAlignment="RIGHT" GridPane.rowIndex="18" />
+                                          <TextField fx:id="portraitRadiusField" GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                                          <Label text="Places:" underline="true" GridPane.rowIndex="20">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
-                                          <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Font Size:" GridPane.rowIndex="20" />
-                                          <TextField fx:id="fontSizeField" GridPane.columnIndex="1" GridPane.rowIndex="20" />
+                                          <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Font Size:" GridPane.rowIndex="21" />
+                                          <TextField fx:id="fontSizeField" GridPane.columnIndex="1" GridPane.rowIndex="21" />
                                           <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Width:" GridPane.rowIndex="3">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
@@ -113,14 +114,15 @@
                                           </Label>
                                           <TextField fx:id="widthField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                           <TextField fx:id="heightField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleDistributePlacesAction" text="Distribute Places" GridPane.columnIndex="1" GridPane.rowIndex="19" />
+                                          <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleDistributePlacesAction" text="Distribute Places" GridPane.columnIndex="1" GridPane.rowIndex="20" />
                                           <TextField fx:id="zoomField" GridPane.columnIndex="1" />
-                                          <Label text="Plots:" GridPane.rowIndex="12">
+                                          <Label text="Plots:" underline="true" GridPane.rowIndex="12">
                                              <font>
                                                 <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
                                           <CheckBox fx:id="portraitConnectorVisibilityCB" mnemonicParsing="false" text="Portrait Connectors" GridPane.rowIndex="16" />
+                                          <CheckBox fx:id="uniformRadiiCB" mnemonicParsing="false" text="Uniform radii" GridPane.rowIndex="17" />
                                        </children>
                                     </GridPane>
                                  </content>
@@ -135,7 +137,7 @@
                   </Accordion>
                </children>
             </VBox>
-            <ScrollPane fx:id="viewScrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <ScrollPane fx:id="viewScrollPane" maxHeight="1.7976931348623157E308">
                <content>
                       <AnchorPane fx:id="viewRootPane" minHeight="0.0" minWidth="0.0" prefHeight="331.0" prefWidth="100" style="-fx-background-color: white;" />
                </content>

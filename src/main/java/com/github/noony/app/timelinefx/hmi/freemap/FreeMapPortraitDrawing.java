@@ -159,6 +159,8 @@ public final class FreeMapPortraitDrawing extends AbstractFxScalableNode {
             if (event.getButton() == MouseButton.SECONDARY) {
                 friezeFreeFormDrawing.requestPortraitSelectionUpdate(freeMapPortrait);
 
+            } else if (event.getButton() == MouseButton.PRIMARY) {
+                friezeFreeFormDrawing.requestPortraitSelection(freeMapPortrait);
             }
         });
     }

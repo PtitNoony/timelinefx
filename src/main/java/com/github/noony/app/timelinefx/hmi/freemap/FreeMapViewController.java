@@ -204,7 +204,14 @@ public class FreeMapViewController implements Initializable {
         });
         //
         uniformRadiiCB.setSelected(true);
-        uniformRadiiCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> updatePortraitRadiusFieldDisplay());
+        uniformRadiiCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if (t1) {
+                applyUniformPortraitRadius();
+            } else {
+                selectedPortrait = null;
+                clearPortraitRadiusFieldDisplay();
+            }
+        });
         portraitRadiusField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (updatingRadiusFieldDisplay) {
                 return;
@@ -267,6 +274,20 @@ public class FreeMapViewController implements Initializable {
             portraitRadiusField.setDisable(selectedPortrait == null);
             portraitRadiusField.setText(selectedPortrait == null ? "" : Double.toString(selectedPortrait.getRadius()));
         }
+        updatingRadiusFieldDisplay = false;
+    }
+
+    private void applyUniformPortraitRadius() {
+        if (friezeFreeMap != null) {
+            friezeFreeMap.setPortraitRadius(friezeFreeMap.getPortraitRadius());
+        }
+        updatePortraitRadiusFieldDisplay();
+    }
+
+    private void clearPortraitRadiusFieldDisplay() {
+        updatingRadiusFieldDisplay = true;
+        portraitRadiusField.setDisable(true);
+        portraitRadiusField.setText("");
         updatingRadiusFieldDisplay = false;
     }
 

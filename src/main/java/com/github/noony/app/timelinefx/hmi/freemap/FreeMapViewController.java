@@ -115,6 +115,8 @@ public class FreeMapViewController implements Initializable {
 
     private boolean updatingRadiusFieldDisplay = false;
 
+    private boolean updatingUniformRadiiCB = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         SplitPaneDividerPersister.bind(splitPane, "FreeMapPropertiesSplitPane");
@@ -205,6 +207,12 @@ public class FreeMapViewController implements Initializable {
         //
         uniformRadiiCB.setSelected(true);
         uniformRadiiCB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
+            if (updatingUniformRadiiCB) {
+                return;
+            }
+            if (friezeFreeMap != null) {
+                friezeFreeMap.setUniformPortraitRadii(t1);
+            }
             if (t1) {
                 applyUniformPortraitRadius();
             } else {
@@ -367,6 +375,9 @@ public class FreeMapViewController implements Initializable {
         heightField.setText(Double.toString(friezeFreeMap.getHeight()));
         plotWidthField.setText(Double.toString(friezeFreeMap.getPlotSize()));
         fontSizeField.setText(Double.toString(friezeFreeMap.getFontSize()));
+        updatingUniformRadiiCB = true;
+        uniformRadiiCB.setSelected(friezeFreeMap.isUniformPortraitRadii());
+        updatingUniformRadiiCB = false;
         updatePortraitRadiusFieldDisplay();
         zoomField.setText(Double.toString(friezeFreeFormDrawing.getScale()));
     }

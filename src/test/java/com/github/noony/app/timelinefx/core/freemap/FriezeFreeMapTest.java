@@ -155,7 +155,7 @@ public final class FriezeFreeMapTest {
     public void testPropertiesRoundTrip() {
         final var freeMap = frieze.createFriezeFreeMap();
         final var customProperties = new FriezeFreeMapProperties(new Dimension2D(1000.0, 800.0), 100.0, 150.0,
-                14.0, 10.0, 6.0, false, false, 40.0);
+                14.0, 10.0, 6.0, false, false, 40.0, false);
         freeMap.setProperties(customProperties);
         assertEquals(customProperties, freeMap.getProperties());
         assertEquals(1000.0, freeMap.getWidth());

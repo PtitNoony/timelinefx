@@ -36,11 +36,12 @@ import javafx.geometry.Dimension2D;
  * @param plotVisibility whether plots are drawn
  * @param portraitConnectorVisibility whether portrait connectors are drawn
  * @param portraitRadius the radius of a person's portrait
+ * @param uniformPortraitRadii whether every portrait's radius is kept in sync with {@code portraitRadius}
  * @author hamon
  */
 public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth, double placeNameWidth,
         double fontSize, double plotSeparation, double plotSize, boolean plotVisibility,
-        boolean portraitConnectorVisibility, double portraitRadius) {
+        boolean portraitConnectorVisibility, double portraitRadius, boolean uniformPortraitRadii) {
 
     /**
      * @return this instance's attributes as a {@code Map<String, String>}, keyed by
@@ -58,6 +59,7 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
         parameters.put(FriezeFreeMap.PLOT_VISIBILITY, Boolean.toString(plotVisibility));
         parameters.put(FriezeFreeMap.PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(portraitConnectorVisibility));
         parameters.put(FriezeFreeMap.PORTRAIT_RADIUS, Double.toString(portraitRadius));
+        parameters.put(FriezeFreeMap.UNIFORM_PORTRAIT_RADII, Boolean.toString(uniformPortraitRadii));
         return parameters;
     }
 
@@ -79,9 +81,10 @@ public record FriezeFreeMapProperties(Dimension2D dimension, double personWidth,
         final var plotVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PLOT_VISIBILITY, Boolean.toString(defaults.plotVisibility())));
         final var portraitConnectorVisibilityValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.PORTRAIT_CONNECTOR_VISIBILITY, Boolean.toString(defaults.portraitConnectorVisibility())));
         final var portraitRadiusValue = parseDoubleOrDefault(parameters, FriezeFreeMap.PORTRAIT_RADIUS, defaults.portraitRadius());
+        final var uniformPortraitRadiiValue = Boolean.parseBoolean(parameters.getOrDefault(FriezeFreeMap.UNIFORM_PORTRAIT_RADII, Boolean.toString(defaults.uniformPortraitRadii())));
         return new FriezeFreeMapProperties(new Dimension2D(width, height), personWidthValue, placeNameWidthValue,
                 fontSizeValue, plotSeparationValue, plotSizeValue, plotVisibilityValue, portraitConnectorVisibilityValue,
-                portraitRadiusValue);
+                portraitRadiusValue, uniformPortraitRadiiValue);
     }
 
     /**

@@ -55,6 +55,7 @@ public final class FriezeFreeMap implements FriezeObject {
     public static final String PLOT_VISIBILITY = "plotVisibility";
     public static final String PORTRAIT_CONNECTOR_VISIBILITY = "portraitConnectorVisibility";
     public static final String PORTRAIT_RADIUS = "portraitRadius";
+    public static final String UNIFORM_PORTRAIT_RADII = "uniformPortraitRadii";
 
     // PropertyChangeEvent names
     public static final String LAYOUT_CHANGED = "layoutChanged";
@@ -97,11 +98,12 @@ public final class FriezeFreeMap implements FriezeObject {
 
     private static final boolean DEFAULT_PLOT_VISIBILITY = true;
     private static final boolean DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY = true;
+    private static final boolean DEFAULT_UNIFORM_PORTRAIT_RADII = true;
 
     public static final FriezeFreeMapProperties DEFAULT_PROPERTIES = new FriezeFreeMapProperties(
             new Dimension2D(DEFAULT_WIDTH, DEFAULT_HEIGHT), DEFAULT_PERSONS_WIDTH, DEFAULT_PLACE_NAMES_WIDTH,
             DEFAULT_FONT_SIZE, DEFAULT_PLOT_SEPARATION, DEFAULT_PLOT_SIZE, DEFAULT_PLOT_VISIBILITY,
-            DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY, DEFAULT_PORTRAIT_RADIUS);
+            DEFAULT_PORTRAIT_CONNECTOR_VISIBILITY, DEFAULT_PORTRAIT_RADIUS, DEFAULT_UNIFORM_PORTRAIT_RADII);
 
     private static final String DEFAULT_NAME = "FreeMap";
 
@@ -141,6 +143,8 @@ public final class FriezeFreeMap implements FriezeObject {
     private boolean plotVisibiltiy;
 
     private boolean portraitConnectorsVisibiltiy;
+
+    private boolean uniformPortraitRadii;
 
     private double plotSize;
 
@@ -372,6 +376,10 @@ public final class FriezeFreeMap implements FriezeObject {
         return portraitRadius;
     }
 
+    public boolean isUniformPortraitRadii() {
+        return uniformPortraitRadii;
+    }
+
 // </editor-fold>
     //
     // <editor-fold defaultstate="collapsed" desc="Setters">
@@ -477,6 +485,10 @@ public final class FriezeFreeMap implements FriezeObject {
         freeMapPersons.values().forEach(freeMapPerson -> freeMapPerson.getFreeMapPortraits().forEach(portrait -> portrait.setRadius(newPortraitRadius)));
     }
 
+    public void setUniformPortraitRadii(boolean newUniformPortraitRadii) {
+        uniformPortraitRadii = newUniformPortraitRadii;
+    }
+
     /**
      *
      * @return a new map containing the frieze parameters
@@ -487,7 +499,8 @@ public final class FriezeFreeMap implements FriezeObject {
 
     public FriezeFreeMapProperties getProperties() {
         return new FriezeFreeMapProperties(new Dimension2D(width, height), portraitWidth, placeNamesWidth,
-                fontSize, plotSeparation, plotSize, plotVisibiltiy, portraitConnectorsVisibiltiy, portraitRadius);
+                fontSize, plotSeparation, plotSize, plotVisibiltiy, portraitConnectorsVisibiltiy, portraitRadius,
+                uniformPortraitRadii);
     }
 
     public void setProperties(FriezeFreeMapProperties properties) {
@@ -507,6 +520,7 @@ public final class FriezeFreeMap implements FriezeObject {
         plotVisibiltiy = properties.plotVisibility();
         portraitConnectorsVisibiltiy = properties.portraitConnectorVisibility();
         portraitRadius = properties.portraitRadius();
+        uniformPortraitRadii = properties.uniformPortraitRadii();
     }
 
     private void addPerson(Person person) {

@@ -481,6 +481,20 @@ public final class TimeLineProject {
         return Collections.unmodifiableList(stays);
     }
 
+    /**
+     * @return the earliest start date across every stay in the project, or {@code 0} if it has no stays
+     */
+    public double getMinDate() {
+        return stays.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(0);
+    }
+
+    /**
+     * @return the latest end date across every stay in the project, or {@code 0} if it has no stays
+     */
+    public double getMaxDate() {
+        return stays.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(0);
+    }
+
     protected boolean addFrieze(final Frieze frieze) {
         if (!friezes.contains(frieze)) {
             frieze.addListener(this::handleFriezeChange);

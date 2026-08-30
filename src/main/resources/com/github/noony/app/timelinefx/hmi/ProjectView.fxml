@@ -4,6 +4,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -37,6 +38,9 @@
                                       <KeyCodeCombination alt="UP" code="Y" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                                   </accelerator>
                               </MenuItem>
+                              <SeparatorMenuItem />
+                              <RadioMenuItem fx:id="dateTimeFormatMI" disable="true" mnemonicParsing="false" text="Use Dates" />
+                              <RadioMenuItem fx:id="minTimeFormatMI" disable="true" mnemonicParsing="false" text="Use Time" />
                           </items>
                       </Menu>
                   <Menu fx:id="friezesMenu" mnemonicParsing="false" text="Friezes">

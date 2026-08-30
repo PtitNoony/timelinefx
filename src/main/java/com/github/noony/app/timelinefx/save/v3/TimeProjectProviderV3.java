@@ -195,6 +195,8 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
         );
         TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
+        var timeFormatValue = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : TimeFormat.LOCAL_TIME;
+        project.setTimeFormat(timeFormatValue);
         //
         List<String> relativePathLoaded = new LinkedList<>();
         //
@@ -289,6 +291,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             rootElement.setAttribute(PORTRAIT_FOLDER_ATR, portraitsFolderName);
             rootElement.setAttribute(PICTURES_LOCATION_ATR, picturesFolderName);
             rootElement.setAttribute(MINIATURES_FOLDER_ATR, miniaturesFolderName);
+            rootElement.setAttribute(TIME_FORMAT_ATR, project.getTimeFormat().name());
             doc.appendChild(rootElement);
             // save places
             Element placesGroupElement = doc.createElement(PLACES_GROUP);

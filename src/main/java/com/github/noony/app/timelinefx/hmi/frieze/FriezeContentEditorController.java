@@ -644,6 +644,9 @@ public class FriezeContentEditorController implements Initializable {
                 updatePlacesPane();
             case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED ->
                 updateProjectDatesDisplay();
+            case TimeLineProject.TIME_FORMAT_CHANGED -> {
+                // nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }

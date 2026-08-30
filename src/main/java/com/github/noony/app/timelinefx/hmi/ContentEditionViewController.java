@@ -418,7 +418,7 @@ public final class ContentEditionViewController implements Initializable {
 
     private void handleTimelineChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PLACE_REMOVED, TimeLineProject.PLACE_ADDED ->
+            case TimeLineProject.PLACE_REMOVED, TimeLineProject.PLACE_ADDED, TimeLineProject.HIGH_LEVEL_PLACE_ADDED ->
                 runLater(this::updatePlacesTab);
             case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED ->
                 runLater(this::updatePersonTab);

@@ -69,6 +69,7 @@ public final class XMLHandler {
     }
 
     public static TimeLineProject loadFile(File file) {
+        LOG.log(Level.INFO, "Trying to load file {0}.", new Object[]{file});
         TimeLineProject project = null;
         if (file != null) {
             FriezeObjectFactory.reset();
@@ -86,8 +87,9 @@ public final class XMLHandler {
                 boolean foundProvider = false;
                 for (TimelineProjectProvider candidateprovider : INSTANCE.providers) {
                     if (candidateprovider.getSupportedVersions().contains(version)) {
-                        project = candidateprovider.load(file, e);
                         foundProvider = true;
+                        LOG.log(Level.INFO, "Using provider {0}.", new Object[]{candidateprovider});
+                        project = candidateprovider.load(file, e);
                         break;
                     }
                 }

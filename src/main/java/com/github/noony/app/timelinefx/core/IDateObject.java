@@ -22,8 +22,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Contract for objects holding a date/time value that can be represented either as a
- * calendar date or as a raw numeric timestamp.
+ * Contract for objects holding a date/time value that can be represented either as a calendar date or as a raw numeric timestamp.
  *
  * @author hamon
  */
@@ -38,6 +37,11 @@ public interface IDateObject {
      * Formatter used to parse/format date-time values.
      */
     DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
+
+    /**
+     * The default date.
+     */
+    LocalDate DEFAULT_DATE = LocalDate.EPOCH;
 
     /**
      * The default time stamp.
@@ -62,8 +66,7 @@ public interface IDateObject {
 
     /**
      *
-     * @return the instance date value, or null if not set or if the time format is
-     *         not compatible
+     * @return the instance date value, or null if not set or if the time format is not compatible
      */
     LocalDate getDate();
 
@@ -99,8 +102,7 @@ public interface IDateObject {
 
     /**
      *
-     * @return an absolute time value to compare dateObjects no matter their time
-     *         format
+     * @return an absolute time value to compare dateObjects no matter their time format
      */
     double getAbsoluteTime();
 

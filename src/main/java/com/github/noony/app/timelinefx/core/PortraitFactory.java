@@ -17,6 +17,8 @@
 
 package com.github.noony.app.timelinefx.core;
 
+import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
+import static com.github.noony.app.timelinefx.core.TimeFormat.TIME_MIN;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
 import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
@@ -86,7 +88,7 @@ public final class PortraitFactory {
         final var file = new File(filePath);
         final var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
         assert picInfo != null;
-        final var portrait = new Portrait(FACTORY.getNextID(), person, fileRelativePath, picInfo.getWidth(), picInfo.getHeight());
+        final var portrait = createPortraitImpl(person, picInfo, fileRelativePath);
         FACTORY.addObject(portrait);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_CREATED, null, portrait);
         return portrait;
@@ -104,7 +106,7 @@ public final class PortraitFactory {
         final var file = new File(CustomFileUtils.fromProjectRelativeToAbsolute(person.getProject(), filePath));
         final var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
         assert picInfo != null;
-        final var portrait = new Portrait(FACTORY.getNextID(), person, filePath, picInfo.getWidth(), picInfo.getHeight());
+        final var portrait = createPortraitImpl(person, picInfo, filePath);
         FACTORY.addObject(portrait);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_CREATED, null, portrait);
         return portrait;
@@ -128,7 +130,7 @@ public final class PortraitFactory {
             throw new IllegalArgumentException("Trying to create portrait for " + person + " with missing file=" + filePath);
         }
         var picInfo = MetadataParser.parseMetadata(person.getProject(), file);
-        final var portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight());
+        final var portrait = createPortraitImpl(id, person, picInfo, filePath);
         FACTORY.addObject(portrait);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PORTRAIT_CREATED, null, portrait);
         return portrait;
@@ -153,6 +155,28 @@ public final class PortraitFactory {
      */
     public static void removePropertyChangeListener(final PropertyChangeListener listener) {
         PROPERTY_CHANGE_SUPPORT.removePropertyChangeListener(listener);
+    }
+
+
+    private static Portrait createPortraitImpl(Person person, PictureInfo picInfo, String filePath){
+        return createPortraitImpl(FACTORY.getNextID(), person, picInfo, filePath);
+    }
+
+    private static Portrait createPortraitImpl(long id, Person person, PictureInfo picInfo, String filePath){
+        Portrait portrait;
+        switch (person.getProject().getTimeFormat()) {
+            case LOCAL_TIME -> {
+                final var date = picInfo.getCreationDate() == null ? picInfo.getCreationDate().toLocalDate() : IDateObject.DEFAULT_DATE;
+                portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight(), date);
+            }
+            case TIME_MIN -> {
+                final var time = picInfo.getCreationDate() == null ? picInfo.getCreationDate().toLocalDate().toEpochDay() : IDateObject.DEFAULT_TIMESTAMP;
+                portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight(), time);
+            }
+            default ->
+                throw new AssertionError();
+        }
+        return portrait;
     }
 
 }

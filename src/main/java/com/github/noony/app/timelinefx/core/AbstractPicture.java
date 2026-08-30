@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.utils.MathUtils;
@@ -110,7 +109,7 @@ public abstract class AbstractPicture implements IPicture {
         filePath = aFilePath;
         //
         timeFormat = TimeFormat.LOCAL_TIME;
-        date = aDate != null ? aDate : LocalDate.MIN;
+        date = aDate != null ? aDate : LocalDate.EPOCH;
         timestamp = -1;
         //
         name = aName;
@@ -133,11 +132,13 @@ public abstract class AbstractPicture implements IPicture {
         name = aName;
     }
 
-    @Override public long getId() {
+    @Override
+    public long getId() {
         return id;
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return name;
     }
 
@@ -217,6 +218,7 @@ public abstract class AbstractPicture implements IPicture {
     @Override
     public void setTimeFormat(final TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
+        System.err.println(" changing time format for " + getName() + " ==> " + aTimeFormat);
         switch (timeFormat) {
             case LOCAL_TIME ->
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);

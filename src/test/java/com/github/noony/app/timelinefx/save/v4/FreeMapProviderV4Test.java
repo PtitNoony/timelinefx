@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2026 NoOnY
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package com.github.noony.app.timelinefx.save.v4;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.junit.jupiter.api.Test;
+import org.w3c.dom.Element;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Unit tests for {@link FreeMapProviderV4}.
+ *
+ * @author hamon
+ */
+public final class FreeMapProviderV4Test {
+
+    /**
+     * Default constructor.
+     */
+    public FreeMapProviderV4Test() {
+    }
+
+    /**
+     * Builds a minimal {@code <freeMaps>} element containing one {@code <freeMap>} whose only place has a
+     * malformed {@code height} attribute. Parsing fails while resolving that attribute, before the
+     * {@code frieze} argument of {@link FreeMapProviderV4#parseFreeMaps} is ever dereferenced, so {@code null}
+     * is a safe stand-in for it here.
+     *
+     * @return the constructed {@code <freeMaps>} element
+     * @throws Exception if the document builder cannot be created
+     */
+    private static Element newFreeMapsElementWithMalformedPlaceHeight() throws Exception {
+        final var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        final var placeElement = doc.createElement("freeMapPlace");
+        placeElement.setAttribute("placeID", "1");
+        placeElement.setAttribute("height", "not-a-number");
+        placeElement.setAttribute("yPos", "0.0");
+        placeElement.setAttribute("fontSize", "10.0");
+        placeElement.setAttribute("placeNameWidth", "10.0");
+        final var placesElement = doc.createElement("freeMapPlaces");
+        placesElement.appendChild(placeElement);
+        final var freeMapElement = doc.createElement("freeMap");
+        freeMapElement.setAttribute("id", "1");
+        freeMapElement.setAttribute("name", "Test FreeMap");
+        freeMapElement.appendChild(doc.createElement("freeMapDateHandles"));
+        freeMapElement.appendChild(doc.createElement("freeMapPersons"));
+        freeMapElement.appendChild(placesElement);
+        final var freeMapsElement = doc.createElement("freeMaps");
+        freeMapsElement.appendChild(freeMapElement);
+        return freeMapsElement;
+    }
+
+    /**
+     * Regression test: confirms FreeMapProviderV4's own parsing methods are wired to the shared
+     * parseDoubleAttribute helper too, surfacing a clear IllegalStateException instead of a bare
+     * NumberFormatException for a malformed freemap place height.
+     */
+    @Test
+    public void testParseFreeMapsThrowsClearExceptionOnMalformedPlaceHeight() throws Exception {
+        final var freeMapsElement = newFreeMapsElementWithMalformedPlaceHeight();
+        final var exception = assertThrows(IllegalStateException.class,
+                () -> FreeMapProviderV4.parseFreeMaps(freeMapsElement, null));
+        assertTrue(exception.getMessage().contains("height"));
+        assertTrue(exception.getMessage().contains("not-a-number"));
+    }
+
+}

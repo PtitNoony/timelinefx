@@ -234,12 +234,18 @@ public final class ContentEditionViewController implements Initializable {
     }
 
     private void updatePersonTab() {
+        if (timeLineProject == null) {
+            personCheckListView.getItems().clear();
+            return;
+        }
         personCheckListView.getItems().setAll(timeLineProject.getPersons());
     }
 
     private void updatePlacesTab() {
         var rootPlaceItem = createRootPlaceItem();
-        timeLineProject.getHighLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
+        if (timeLineProject != null) {
+            timeLineProject.getHighLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
+        }
         placesCheckTreeView.setRoot(rootPlaceItem);
         rootPlaceItem.setExpanded(true);
         placesCheckTreeView.refresh();
@@ -378,18 +384,19 @@ public final class ContentEditionViewController implements Initializable {
                 place = (Place) event.getNewValue();
                 customModalWindow.hide();
                 final var createdPlace = place;
-                UndoManager.execute(new SimpleCommand("Create place",
-                        () -> timeLineProject.addPlace(createdPlace),
-                        () -> timeLineProject.removePlace(createdPlace)));
+                if (timeLineProject != null) {
+                    UndoManager.execute(new SimpleCommand("Create place",
+                            () -> timeLineProject.addPlace(createdPlace),
+                            () -> timeLineProject.removePlace(createdPlace)));
+                }
                 updatePlacesTab();
             }
 
             case PlaceCreationViewController.PLACE_EDITIED -> {
                 place = (Place) event.getNewValue();
-                if (place.isRootPlace()) {
+                if (place.isRootPlace() && timeLineProject != null) {
                     timeLineProject.addHighLevelPlace(place);
                 } else {
-//                    timeLineProject.addHighLevelPlace(place);
 // nothing is needed since the parent place will take care of things
                 }
                 customModalWindow.hide();
@@ -426,9 +433,11 @@ public final class ContentEditionViewController implements Initializable {
                 person = (Person) event.getNewValue();
                 customModalWindow.hide();
                 final var createdPerson = person;
-                UndoManager.execute(new SimpleCommand("Create person",
-                        () -> timeLineProject.addPerson(createdPerson),
-                        () -> timeLineProject.removePerson(createdPerson)));
+                if (timeLineProject != null) {
+                    UndoManager.execute(new SimpleCommand("Create person",
+                            () -> timeLineProject.addPerson(createdPerson),
+                            () -> timeLineProject.removePerson(createdPerson)));
+                }
                 updatePersonTab();
             }
             case PersonCreationViewController.PERSON_EDITIED -> {

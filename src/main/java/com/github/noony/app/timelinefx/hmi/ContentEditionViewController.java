@@ -411,6 +411,9 @@ public final class ContentEditionViewController implements Initializable {
             case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
                 // TODO : see if ignoring is OK
             }
+            case TimeLineProject.TIME_FORMAT_CHANGED -> {
+                // nothing to do
+            }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
         }

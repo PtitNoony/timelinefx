@@ -151,6 +151,9 @@ public final class StaysCreationViewController implements Initializable {
             }
         });
         dateRB.setSelected(true);
+        // The time format is now chosen at the project level (Edit menu), not per-stay.
+        timeRB.setDisable(true);
+        dateRB.setDisable(true);
         //
         personCB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Person> ov, Person t, Person t1) -> {
             personOK = t1 != null;
@@ -187,6 +190,7 @@ public final class StaysCreationViewController implements Initializable {
                 selectedStayPeriod = null;
                 updateB.setDisable(true);
                 clearFields();
+                applyProjectTimeFormat();
             }
         });
         //
@@ -261,6 +265,7 @@ public final class StaysCreationViewController implements Initializable {
         timeline = aTimeline;
         if (timeline != null) {
             timeline.addListener(timelineListener);
+            applyProjectTimeFormat();
             runLater(() -> {
                 personCB.getItems().setAll(timeline.getPersons());
                 chronologyListView.getItems().setAll(timeline.getStays());
@@ -315,8 +320,31 @@ public final class StaysCreationViewController implements Initializable {
                 chronologyListView.getItems().add((StayPeriod) event.getNewValue());
             case TimeLineProject.STAY_REMOVED ->
                 chronologyListView.getItems().remove((StayPeriod) event.getNewValue());
+            case TimeLineProject.TIME_FORMAT_CHANGED -> {
+                if (selectedStayPeriod == null) {
+                    applyProjectTimeFormat();
+                }
+            }
             default ->
                 throw new UnsupportedOperationException(event.toString());
+        }
+    }
+
+    /**
+     * Selects the radio button (and shows the corresponding fields) matching the project's own time format,
+     * used as the format for the next stay to be created.
+     */
+    private void applyProjectTimeFormat() {
+        if (timeline == null) {
+            return;
+        }
+        switch (timeline.getTimeFormat()) {
+            case LOCAL_TIME ->
+                dateRB.setSelected(true);
+            case TIME_MIN ->
+                timeRB.setSelected(true);
+            default ->
+                throw new UnsupportedOperationException();
         }
     }
 

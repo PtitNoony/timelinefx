@@ -82,6 +82,11 @@ public final class TimeLineProject {
      * Name of the property change event fired when a stay is removed.
      */
     public static final String STAY_REMOVED = "stayRemoved";
+
+    /**
+     * Name of the property change event fired when the project's time format changes.
+     */
+    public static final String TIME_FORMAT_CHANGED = "timeFormatChanged";
     //
 
     /**
@@ -204,6 +209,11 @@ public final class TimeLineProject {
      * The picture chronologies built from this project.
      */
     private final List<PictureChronology> pictureChronologies;
+
+    /**
+     * The time format used for stays created in this project.
+     */
+    private TimeFormat timeFormat = TimeFormat.LOCAL_TIME;
 
     protected TimeLineProject(final String projectName, final Map<String, String> configParams) {
         name = projectName;
@@ -367,6 +377,21 @@ public final class TimeLineProject {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return the time format used for stays created in this project
+     */
+    public TimeFormat getTimeFormat() {
+        return timeFormat;
+    }
+
+    /**
+     * @param newTimeFormat the new time format to use for stays created in this project
+     */
+    public void setTimeFormat(final TimeFormat newTimeFormat) {
+        timeFormat = newTimeFormat;
+        propertyChangeSupport.firePropertyChange(TIME_FORMAT_CHANGED, this, timeFormat);
     }
 
     /**

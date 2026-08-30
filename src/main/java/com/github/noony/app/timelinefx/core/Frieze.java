@@ -762,7 +762,7 @@ public final class Frieze implements FriezeObject {
             case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PLACE_ADDED -> {
                 // Nothing to do
             }
-            case TimeLineProject.PERSON_ADDED, TimeLineProject.STAY_ADDED -> {
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.STAY_ADDED, TimeLineProject.TIME_FORMAT_CHANGED -> {
                 // Nothing to do
             }
             //            case TimeLineProject.STAY_ADDED ->

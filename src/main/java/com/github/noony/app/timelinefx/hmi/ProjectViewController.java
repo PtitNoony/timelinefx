@@ -600,6 +600,7 @@ public final class ProjectViewController implements Initializable {
                 contentEditionView.setDisable(false);
                 friezeContentEditorView.setDisable(false);
                 displayContentEditionView();
+                AppInstanceConfiguration.setSelectedTimeline(project);
             }
             default ->
                 throw new UnsupportedOperationException("" + event);

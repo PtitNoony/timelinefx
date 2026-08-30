@@ -210,6 +210,7 @@ public final class ContentEditionViewController implements Initializable {
         }
         timeLineProject = aTimeLineProject;
         timeLineProject.addListener(timelineChangeListener);
+        updateCreateButtonState();
         //
         if (staysCreationViewController != null) {
             staysCreationViewController.setTimelineProject(aTimeLineProject);
@@ -266,9 +267,15 @@ public final class ContentEditionViewController implements Initializable {
 
     private void setEditMode(EditType mode) {
         editType = mode;
+        updateCreateButtonState();
+    }
+
+    private void updateCreateButtonState() {
         switch (editType) {
             case PERSON, PLACE ->
-                createButton.setDisable(false);
+                // creating a person/place needs an active project (its default portrait, or its
+                // registration in the project, both dereference it) -- see updateCreateButtonState callers
+                createButton.setDisable(timeLineProject == null);
             case NONE ->
                 createButton.setDisable(true);
             default ->

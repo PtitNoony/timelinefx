@@ -34,7 +34,6 @@ import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.core.StayPeriodLocalDate;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
-import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
@@ -78,6 +77,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
 
 /**
  *
@@ -194,9 +194,8 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 TimeLineProject.PICTURES_FOLDER_KEY, picturesFolderValue,
                 TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
         );
-        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
         var timeFormatValue = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : TimeFormat.LOCAL_TIME;
-        project.setTimeFormat(timeFormatValue);
+        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormatValue);
         //
         List<String> relativePathLoaded = new LinkedList<>();
         //
@@ -591,13 +590,16 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         for (int i = 0; i < stayElements.getLength(); i++) {
             if (stayElements.item(i).getNodeName().equals(STAY_ELEMENT)) {
                 Element e = (Element) stayElements.item(i);
-                switch (aTimeFormat) {
+                // a stay keeps the time format it was created with, which may predate a later change to the
+                // project's own time format, so prefer its own attribute over the project's current default
+                var stayTimeFormat = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : aTimeFormat;
+                switch (stayTimeFormat) {
                     case LOCAL_TIME ->
                         stayPeriods.add(parseStayPeriodLocalTime(e));
                     case TIME_MIN ->
                         stayPeriods.add(parseStayPeriodSimpleTime(e));
                     default ->
-                        throw new UnsupportedOperationException("Time format not recognized: " + e.getAttribute(TIME_FORMAT_ATR));
+                        throw new UnsupportedOperationException("Time format not recognized: " + stayTimeFormat);
                 }
             }
         }

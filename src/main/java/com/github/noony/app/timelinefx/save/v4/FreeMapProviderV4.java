@@ -35,7 +35,6 @@ import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnector;
 import com.github.noony.app.timelinefx.core.freemap.connectors.FreeMapConnectorFactory;
 import com.github.noony.app.timelinefx.core.freemap.links.FreeMapLinkFactory;
 import com.github.noony.app.timelinefx.core.freemap.links.PortraitLink;
-import static com.github.noony.app.timelinefx.save.v4.TimeProjectProviderV4.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +46,7 @@ import javafx.geometry.Point2D;
 import javafx.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import static com.github.noony.app.timelinefx.save.v4.TimeProjectProviderV4.*;
 
 /**
  *

@@ -166,11 +166,11 @@ public final class PortraitFactory {
         Portrait portrait;
         switch (person.getProject().getTimeFormat()) {
             case LOCAL_TIME -> {
-                final var date = picInfo.getCreationDate() == null ? picInfo.getCreationDate().toLocalDate() : IDateObject.DEFAULT_DATE;
+                final var date = picInfo.getCreationDate() == null ? IDateObject.DEFAULT_DATE : picInfo.getCreationDate().toLocalDate();
                 portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight(), date);
             }
             case TIME_MIN -> {
-                final var time = picInfo.getCreationDate() == null ? picInfo.getCreationDate().toLocalDate().toEpochDay() : IDateObject.DEFAULT_TIMESTAMP;
+                final var time = picInfo.getCreationDate() == null ? IDateObject.DEFAULT_TIMESTAMP : picInfo.getCreationDate().toLocalDate().toEpochDay();
                 portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight(), time);
             }
             default ->

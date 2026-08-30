@@ -115,6 +115,11 @@ public final class TimeLineProject {
     public static final String PORTRAIT_FOLDER_KEY = "portraitsFolderKey";
 
     /**
+     * Configuration key for the project's time format.
+     */
+    public static final String TIME_FORMAT_KEY = "timeFormatKey";
+
+    /**
      * Default portraits folder name, relative to the project folder.
      */
     public static final String DEFAULT_PORTRAIT_FOLDER = "portraits";
@@ -213,9 +218,22 @@ public final class TimeLineProject {
     /**
      * The time format used for stays created in this project.
      */
-    private TimeFormat timeFormat = TimeFormat.LOCAL_TIME;
+    private TimeFormat timeFormat;
 
+    /**
+     * @param projectName the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     */
     protected TimeLineProject(final String projectName, final Map<String, String> configParams) {
+        this(projectName, configParams, TimeFormat.LOCAL_TIME);
+    }
+
+    /**
+     * @param projectName the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     * @param aTimeFormat the time format to use for stays created in this project
+     */
+    protected TimeLineProject(final String projectName, final Map<String, String> configParams, final TimeFormat aTimeFormat) {
         name = projectName;
         initFolders(configParams);
         propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
@@ -225,6 +243,7 @@ public final class TimeLineProject {
         stays = new LinkedList<>();
         friezes = new LinkedList<>();
         pictureChronologies = new LinkedList<>();
+        timeFormat = aTimeFormat;
     }
 
     private void initFolders(final Map<String, String> configParams) {

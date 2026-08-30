@@ -594,7 +594,8 @@ public final class ProjectViewController implements Initializable {
                 @SuppressWarnings("unchecked")
                 var configParams = (Map<String, String>) event.getNewValue();
                 String projectName = configParams.get(TimeLineProject.PROJECT_NAME_KEY);
-                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
+                var timeFormat = TimeFormat.valueOf(configParams.get(TimeLineProject.TIME_FORMAT_KEY));
+                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormat);
                 loadProject(project);
                 contentEditionView.setDisable(false);
                 friezeContentEditorView.setDisable(false);

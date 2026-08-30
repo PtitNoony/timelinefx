@@ -27,6 +27,7 @@ import com.github.noony.app.timelinefx.core.PlaceLevel;
 import com.github.noony.app.timelinefx.core.PortraitFactory;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriod;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import java.io.File;
@@ -97,7 +98,7 @@ public class StarWars {
         Map<String, String> configParams = Map.of(
                 TimeLineProject.PROJECT_FOLDER_KEY, projectFolderPath
         );
-        var timeLineProject = TimeLineProjectFactory.createProject("Star Wars", configParams);
+        var timeLineProject = TimeLineProjectFactory.createProject("Star Wars", configParams, TimeFormat.TIME_MIN);
         //
         var pictureFolder = timeLineProject.getPortraitsAbsoluteFolder();
         for (var picName : RESOURCES) {

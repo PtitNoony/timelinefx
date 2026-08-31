@@ -640,7 +640,7 @@ public class FriezeContentEditorController implements Initializable {
                 addPeopleToPeoplePane((Person) event.getNewValue());
             case TimeLineProject.PERSON_REMOVED ->
                 removePersonFromPeoplePane((Person) event.getNewValue());
-            case TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED ->
+            case TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED, TimeLineProject.HIGH_LEVEL_PLACE_ADDED ->
                 updatePlacesPane();
             case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED ->
                 updateProjectDatesDisplay();

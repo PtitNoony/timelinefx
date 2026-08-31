@@ -49,74 +49,146 @@ import org.w3c.dom.Element;
 import static com.github.noony.app.timelinefx.save.v4.TimeProjectProviderV4.*;
 
 /**
+ * Reads and writes {@link FriezeFreeMap} objects for save format version 4.
  *
  * @author hamon
  */
 public class FreeMapProviderV4 {
 
+    /**
+     * XML group element name for the free maps section.
+     */
     protected static final String FREEMAPS_GROUP = "freeMaps";
 
+    /**
+     * XML group element name for a free map's places.
+     */
     private static final String FREEMAP_PLACES_GROUP = "freeMapPlaces";
 
+    /**
+     * XML group element name for a free map's persons.
+     */
     private static final String FREEMAP_PERSONS_GROUP = "freeMapPersons";
 
+    /**
+     * XML group element name for a free map's date handles.
+     */
     private static final String FREEMAP_DATE_HANDLES_GROUP = "freeMapDateHandles";
 
+    /**
+     * XML group element name for a person's portraits within a free map.
+     */
     private static final String FREEMAP_PORTRAITS_GROUP = "freeMapPortraits";
 
+    /**
+     * XML group element name for a person's stays within a free map.
+     */
     private static final String FREEMAP_STAYS_GROUP = "freeMapStays";
 
+    /**
+     * XML group element name for a free map's layout parameters.
+     */
     private static final String FREEMAP_PARAMETERS_GROUP = "freeMapParameters";
 
+    /**
+     * XML element name for a single free map.
+     */
     private static final String FREEMAP_ELEMENT = "freeMap";
 
+    /**
+     * XML element name for a single free map layout parameter.
+     */
     private static final String PARAMETER_ELEMENT = "parameter";
 
+    /**
+     * XML attribute name for a parameter's name.
+     */
     private static final String PARAMETER_NAME_ATR = "name";
 
+    /**
+     * XML attribute name for a parameter's value.
+     */
     private static final String PARAMETER_VALUE_ATR = "value";
 
+    /**
+     * XML element name for a free map person.
+     */
     private static final String FREEMAP_PERSON_ELEMENT = "freeMapPerson";
 
+    /**
+     * XML element name for a free map place.
+     */
     private static final String FREEMAP_PLACE_ELEMENT = "freeMapPlace";
 
+    /**
+     * XML element name for a free map stay.
+     */
     private static final String FREEMAP_STAY_ELEMENT = "freeMapStay";
 
+    /**
+     * XML element name for a free map date handle.
+     */
     private static final String FREEMAP_DATE_HANDLE_ELEMENT = "freeMapDateHandle";
 
+    /**
+     * XML element name for a free map connector.
+     */
     private static final String FREEMAP_CONNECTOR_ELEMENT = "connector";
 
+    /**
+     * XML element name for a portrait's link to its stay connector.
+     */
     private static final String FREEMAP_PORTRAIT_LINK_ELEMENT = "portraitLink";
 
+    /**
+     * XML attribute name for a place's name width.
+     */
     private static final String FREEMAP_PLACE_NAME_WIDTH_ATR = "placeNameWidth";
 
+    /**
+     * XML attribute name for a place's font size.
+     */
     private static final String FREEMAP_FONT_SIZE_ATR = "fontSize";
 
+    /**
+     * XML attribute name for the id of the element a connector is linked to.
+     */
     private static final String FREEMAP_LINKED_ELEMENT_ID_ATR = "linkedElementID";
+
+    /**
+     * XML attribute name for whether a free map stay is a merge of several stays.
+     */
     private static final String FREEMAP_IS_MERGED_ATR = "isMerged";
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
-    protected static Element saveFreeMapElement(Document doc, FriezeFreeMap friezeFreeMap) {
+    private FreeMapProviderV4() {
+        // private utility constructor
+    }
+
+    protected static Element saveFreeMapElement(final Document doc, final FriezeFreeMap friezeFreeMap) {
         LOG.log(Level.INFO, "Saving FriezeFreeMap: {0}", new Object[]{friezeFreeMap});
         //
-        var friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
+        final var friezeFreeMapElement = doc.createElement(FREEMAP_ELEMENT);
         friezeFreeMapElement.setAttribute(NAME_ATR, friezeFreeMap.getName());
         friezeFreeMapElement.setAttribute(ID_ATR, Long.toString(friezeFreeMap.getId()));
         //
-        var configGroupElement = doc.createElement(FREEMAP_PARAMETERS_GROUP);
+        final var configGroupElement = doc.createElement(FREEMAP_PARAMETERS_GROUP);
         friezeFreeMap.getParemeters().forEach((pName, pString) -> configGroupElement.appendChild(saveParameter(doc, pName, pString)));
         friezeFreeMapElement.appendChild(configGroupElement);
         // Places
-        var placeGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
+        final var placeGroupElement = doc.createElement(FREEMAP_PLACES_GROUP);
         friezeFreeMap.getPlaces().forEach(p -> placeGroupElement.appendChild(saveFreeMapPlaceElement(doc, p)));
         friezeFreeMapElement.appendChild(placeGroupElement);
         // Person
-        var personsGroupElement = doc.createElement(FREEMAP_PERSONS_GROUP);
+        final var personsGroupElement = doc.createElement(FREEMAP_PERSONS_GROUP);
         friezeFreeMap.getPersons().forEach(p -> personsGroupElement.appendChild(saveFreeMapPersonElement(doc, p)));
         friezeFreeMapElement.appendChild(personsGroupElement);
         // Date handles
-        var dateHandlesGroupElement = doc.createElement(FREEMAP_DATE_HANDLES_GROUP);
+        final var dateHandlesGroupElement = doc.createElement(FREEMAP_DATE_HANDLES_GROUP);
         friezeFreeMap.getStartDateHandles().forEach(s -> dateHandlesGroupElement.appendChild(saveFreeMapDateHandleElement(doc, s)));
         friezeFreeMap.getEndDateHandles().forEach(e -> dateHandlesGroupElement.appendChild(saveFreeMapDateHandleElement(doc, e)));
         friezeFreeMapElement.appendChild(dateHandlesGroupElement);
@@ -124,40 +196,40 @@ public class FreeMapProviderV4 {
         return friezeFreeMapElement;
     }
 
-    private static Element saveParameter(Document doc, String aName, String aValueString) {
-        var paramElement = doc.createElement(PARAMETER_ELEMENT);
+    private static Element saveParameter(final Document doc, final String aName, final String aValueString) {
+        final var paramElement = doc.createElement(PARAMETER_ELEMENT);
         paramElement.setAttribute(PARAMETER_NAME_ATR, aName);
         paramElement.setAttribute(PARAMETER_VALUE_ATR, aValueString);
         return paramElement;
     }
 
-    private static Element saveFreeMapPersonElement(Document doc, FreeMapPerson freeMapPerson) {
-        var personElement = doc.createElement(FREEMAP_PERSON_ELEMENT);
+    private static Element saveFreeMapPersonElement(final Document doc, final FreeMapPerson freeMapPerson) {
+        final var personElement = doc.createElement(FREEMAP_PERSON_ELEMENT);
         personElement.setAttribute(ID_ATR, Long.toString(freeMapPerson.getId()));
         // stays
-        var staysGroupElement = doc.createElement(FREEMAP_STAYS_GROUP);
+        final var staysGroupElement = doc.createElement(FREEMAP_STAYS_GROUP);
         personElement.appendChild(staysGroupElement);
         freeMapPerson.getFreeMapStays().forEach(fmStay -> {
             final var fmStayElement = saveFreeMapStayElement(doc, fmStay);
             staysGroupElement.appendChild(fmStayElement);
         });
-        var portraitsGroupElement = doc.createElement(FREEMAP_PORTRAITS_GROUP);
+        final var portraitsGroupElement = doc.createElement(FREEMAP_PORTRAITS_GROUP);
         personElement.appendChild(portraitsGroupElement);
         freeMapPerson.getFreeMapPortraits().forEach(fmPortrait -> {
-            var fmPortraitElement = saveFreeMapPortraitElement(doc, fmPortrait);
+            final var fmPortraitElement = saveFreeMapPortraitElement(doc, fmPortrait);
             portraitsGroupElement.appendChild(fmPortraitElement);
         });
         return personElement;
     }
 
-    private static Element saveFreeMapPlaceElement(Document doc, FreeMapPlace freeMapPlace) {
-        var placeElement = doc.createElement(FREEMAP_PLACE_ELEMENT);
+    private static Element saveFreeMapPlaceElement(final Document doc, final FreeMapPlace freeMapPlace) {
+        final var placeElement = doc.createElement(FREEMAP_PLACE_ELEMENT);
         placeElement.setAttribute(PLACE_ID_ATR, Long.toString(freeMapPlace.getPlace().getId()));
         placeElement.setAttribute(HEIGHT_ATR, Double.toString(freeMapPlace.getHeight()));
         placeElement.setAttribute(Y_POS_ATR, Double.toString(freeMapPlace.getYPos()));
         placeElement.setAttribute(FREEMAP_FONT_SIZE_ATR, Double.toString(freeMapPlace.getFontSize()));
         placeElement.setAttribute(FREEMAP_PLACE_NAME_WIDTH_ATR, Double.toString(freeMapPlace.getNameWidth()));
-        var personsAtPlace = freeMapPlace.getPersons();
+        final var personsAtPlace = freeMapPlace.getPersons();
         for (int i = 0; i < personsAtPlace.size(); i++) {
             final var personElement = doc.createElement(FREEMAP_PERSON_ELEMENT);
             personElement.setAttribute(INDEX_ATR, Integer.toString(i));
@@ -167,8 +239,8 @@ public class FreeMapProviderV4 {
         return placeElement;
     }
 
-    private static Element saveFreeMapDateHandleElement(Document doc, FreeMapDateHandle freeMapDateHandle) {
-        var freeMapDateHandleElement = doc.createElement(FREEMAP_DATE_HANDLE_ELEMENT);
+    private static Element saveFreeMapDateHandleElement(final Document doc, final FreeMapDateHandle freeMapDateHandle) {
+        final var freeMapDateHandleElement = doc.createElement(FREEMAP_DATE_HANDLE_ELEMENT);
         freeMapDateHandleElement.setAttribute(DATE_ATR, Double.toString(freeMapDateHandle.getDate()));
         freeMapDateHandleElement.setAttribute(X_POS_ATR, Double.toString(freeMapDateHandle.getXPos()));
         freeMapDateHandleElement.setAttribute(Y_POS_ATR, Double.toString(freeMapDateHandle.getYPos()));
@@ -177,7 +249,7 @@ public class FreeMapProviderV4 {
         return freeMapDateHandleElement;
     }
 
-    private static Element saveFreeMapStayElement(Document doc, FreeMapStay freeMapStay) {
+    private static Element saveFreeMapStayElement(final Document doc, final FreeMapStay freeMapStay) {
         // TODO, evaluate not saving stays inside persons but at freemap level ?
         final var stayElement = doc.createElement(FREEMAP_STAY_ELEMENT);
         stayElement.setAttribute(ID_ATR, Long.toString(freeMapStay.getId()));
@@ -185,9 +257,9 @@ public class FreeMapProviderV4 {
         stayElement.setAttribute(END_ID_ATR, Long.toString(freeMapStay.getEndPlot().getId()));
         stayElement.setAttribute(PERSON_REF_ATR, Long.toString(freeMapStay.getPerson().getId()));
         stayElement.setAttribute(PLACE_REF_ATR, Long.toString(freeMapStay.getPlace().getId()));
-        var subStays = freeMapStay.getFreeMapStayPeriods();
+        final var subStays = freeMapStay.getFreeMapStayPeriods();
         // made it more readable and easy to update
-        var allStaysIncluded = freeMapStay.getStayPeriods();
+        final var allStaysIncluded = freeMapStay.getStayPeriods();
         if (subStays.isEmpty()) {
             stayElement.setAttribute(FREEMAP_IS_MERGED_ATR, Boolean.FALSE.toString());
             stayElement.setAttribute(STAY_ID_ATR, Long.toString(allStaysIncluded.get(0).getId()));
@@ -207,8 +279,8 @@ public class FreeMapProviderV4 {
         return stayElement;
     }
 
-    private static Element saveFreeMapPortraitElement(Document doc, FreeMapPortrait freeMapPortrait) {
-        var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
+    private static Element saveFreeMapPortraitElement(final Document doc, final FreeMapPortrait freeMapPortrait) {
+        final var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
         portraitElement.setAttribute(ID_ATR, Long.toString(freeMapPortrait.getId()));
         portraitElement.setAttribute(PERSON_ATR, Long.toString(freeMapPortrait.getPerson().getId()));
         portraitElement.setAttribute(X_POS_ATR, Double.toString(freeMapPortrait.getX()));
@@ -216,25 +288,25 @@ public class FreeMapProviderV4 {
         portraitElement.setAttribute(RADIUS_ATR, Double.toString(freeMapPortrait.getRadius()));
         portraitElement.setAttribute(PORTRAIT_REF_ATR, Long.toString(freeMapPortrait.getPortrait().getId()));
         //
-        var portraitLink = freeMapPortrait.getPerson().getPortraitLink(freeMapPortrait);
+        final var portraitLink = freeMapPortrait.getPerson().getPortraitLink(freeMapPortrait);
         //
-        var portraitLinkElement = savePortraitLinkElement(doc, portraitLink);
+        final var portraitLinkElement = savePortraitLinkElement(doc, portraitLink);
         portraitElement.appendChild(portraitLinkElement);
         return portraitElement;
     }
 
-    private static Element savePortraitLinkElement(Document doc, PortraitLink aPortraitLink) {
-        var portraitLinkElement = doc.createElement(FREEMAP_PORTRAIT_LINK_ELEMENT);
+    private static Element savePortraitLinkElement(final Document doc, final PortraitLink aPortraitLink) {
+        final var portraitLinkElement = doc.createElement(FREEMAP_PORTRAIT_LINK_ELEMENT);
         portraitLinkElement.setAttribute(ID_ATR, Long.toString(aPortraitLink.getId()));
         //
-        var stayConnetorElement = saveConnectorElement(doc, aPortraitLink.getEndConnector());
+        final var stayConnetorElement = saveConnectorElement(doc, aPortraitLink.getEndConnector());
         portraitLinkElement.appendChild(stayConnetorElement);
 
         return portraitLinkElement;
     }
 
-    private static Element saveConnectorElement(Document doc, FreeMapConnector connector) {
-        var connectorElement = doc.createElement(FREEMAP_CONNECTOR_ELEMENT);
+    private static Element saveConnectorElement(final Document doc, final FreeMapConnector connector) {
+        final var connectorElement = doc.createElement(FREEMAP_CONNECTOR_ELEMENT);
         connectorElement.setAttribute(ID_ATR, Long.toString(connector.getId()));
         connectorElement.setAttribute(FREEMAP_LINKED_ELEMENT_ID_ATR, Long.toString(connector.getLinkedElementID()));
         connectorElement.setAttribute(COLOR_ATR, connector.getColor().toString());
@@ -248,42 +320,42 @@ public class FreeMapProviderV4 {
     //
     //
     //
-    protected static void parseFreeMaps(Element freemapsRootElement, Frieze frieze) {
-        var freemapElements = freemapsRootElement.getChildNodes();
+    protected static void parseFreeMaps(final Element freemapsRootElement, final Frieze frieze) {
+        final var freemapElements = freemapsRootElement.getChildNodes();
         for (int i = 0; i < freemapElements.getLength(); i++) {
             if (freemapElements.item(i).getNodeName().equals(FREEMAP_ELEMENT)) {
-                var e = (Element) freemapElements.item(i);
+                final var e = (Element) freemapElements.item(i);
                 parseFreeMap(e, frieze);
             }
         }
     }
 
-    private static void parseFreeMap(Element freemapElement, Frieze frieze) {
-        var freeMapID = Long.parseLong(freemapElement.getAttribute(ID_ATR));
-        var freeMapName = freemapElement.getAttribute(NAME_ATR);
+    private static void parseFreeMap(final Element freemapElement, final Frieze frieze) {
+        final var freeMapID = Long.parseLong(freemapElement.getAttribute(ID_ATR));
+        final var freeMapName = freemapElement.getAttribute(NAME_ATR);
         // parse parameters
-        var freeMapParameters = parseFreeMapParameters(freemapElement);
-        var freeMapProperties = FriezeFreeMapProperties.fromParameterMap(freeMapParameters, FriezeFreeMap.DEFAULT_PROPERTIES);
+        final var freeMapParameters = parseFreeMapParameters(freemapElement);
+        final var freeMapProperties = FriezeFreeMapProperties.fromParameterMap(freeMapParameters, FriezeFreeMap.DEFAULT_PROPERTIES);
         LOG.log(Level.INFO, "Parsed Freemap {0}_{1} parameters: {2}", new Object[]{freeMapID, freeMapName, freeMapProperties});
         // parse date handles
-        var dateHandles = parseFreeMapDateHandles(freemapElement, freeMapID);
+        final var dateHandles = parseFreeMapDateHandles(freemapElement, freeMapID);
         // parse FreeMapPersons, step 01: only creation and portrait loading (no stays)
-        var freeMapPersonsAndElements = parseFreeMapPersons(freemapElement, freeMapID);
-        var freeMapPersons = freeMapPersonsAndElements.stream().map(aPair -> aPair.getKey()).collect(Collectors.toList());
-        var freeMapPersonsById = freeMapPersons.stream().collect(Collectors.toMap(FreeMapPerson::getId, p -> p));
+        final var freeMapPersonsAndElements = parseFreeMapPersons(freemapElement, freeMapID);
+        final var freeMapPersons = freeMapPersonsAndElements.stream().map(aPair -> aPair.getKey()).collect(Collectors.toList());
+        final var freeMapPersonsById = freeMapPersons.stream().collect(Collectors.toMap(FreeMapPerson::getId, p -> p));
         // parse FreemapPlaces
-        var freeMapPlaces = parseFreeMapPlaces(freemapElement, freeMapID, freeMapProperties, freeMapPersonsById);
-        var freeMapPlacesById = freeMapPlaces.stream().collect(Collectors.toMap(FreeMapPlace::getId, p -> p));
+        final var freeMapPlaces = parseFreeMapPlaces(freemapElement, freeMapID, freeMapProperties, freeMapPersonsById);
+        final var freeMapPlacesById = freeMapPlaces.stream().collect(Collectors.toMap(FreeMapPlace::getId, p -> p));
         //
         // parse FreeMapStays
-        List<FreeMapStay> freeMapStays = new LinkedList<>();
+        final List<FreeMapStay> freeMapStays = new LinkedList<>();
         freeMapPersonsAndElements.forEach(
                 pair -> freeMapStays.addAll(
                         parseFreeMapPersonStep02(pair.getValue(), pair.getKey(), freeMapPlacesById))
         );
-        var freeMapStaysById = freeMapStays.stream().collect(Collectors.toMap(FreeMapStay::getId, s -> s));
+        final var freeMapStaysById = freeMapStays.stream().collect(Collectors.toMap(FreeMapStay::getId, s -> s));
         // create FreeMap
-        var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, freeMapProperties, dateHandles, freeMapPersons, freeMapPlaces, freeMapStays);
+        final var freeMap = FriezeFreeMapFactory.createFriezeFreeMap(freeMapID, frieze, freeMapProperties, dateHandles, freeMapPersons, freeMapPlaces, freeMapStays);
         freeMap.setName(freeMapName);
         // create Portraits
         freeMapPersonsAndElements.forEach(pair -> parseFreeMapPersonStep03(pair.getValue(), pair.getKey(), freeMapStaysById));
@@ -291,103 +363,103 @@ public class FreeMapProviderV4 {
         frieze.addFriezeFreeMap(freeMap);
     }
 
-    private static Map<String, String> parseFreeMapParameters(Element freemapElement) {
-        Map<String, String> parameters = new HashMap<>();
+    private static Map<String, String> parseFreeMapParameters(final Element freemapElement) {
+        final Map<String, String> parameters = new HashMap<>();
         //
-        var freemapParametersElements = freemapElement.getElementsByTagName(PARAMETER_ELEMENT);
+        final var freemapParametersElements = freemapElement.getElementsByTagName(PARAMETER_ELEMENT);
         for (int i = 0; i < freemapParametersElements.getLength(); i++) {
-            var paramElement = (Element) freemapParametersElements.item(i);
-            var paramName = paramElement.getAttribute(PARAMETER_NAME_ATR);
-            var paramValue = paramElement.getAttribute(PARAMETER_VALUE_ATR);
+            final var paramElement = (Element) freemapParametersElements.item(i);
+            final var paramName = paramElement.getAttribute(PARAMETER_NAME_ATR);
+            final var paramValue = paramElement.getAttribute(PARAMETER_VALUE_ATR);
             parameters.put(paramName, paramValue);
         }
         return parameters;
     }
 
-    private static List<FreeMapDateHandle> parseFreeMapDateHandles(Element freemapElement, long parentFreeMapID) {
-        var freemapDateHandleGroupElement = firstDirectChildByTagName(freemapElement, FREEMAP_DATE_HANDLES_GROUP);
+    private static List<FreeMapDateHandle> parseFreeMapDateHandles(final Element freemapElement, final long parentFreeMapID) {
+        final var freemapDateHandleGroupElement = firstDirectChildByTagName(freemapElement, FREEMAP_DATE_HANDLES_GROUP);
         if (freemapDateHandleGroupElement == null) {
             throw new IllegalStateException("Error while parsing FreeMapDateHandles: " + FREEMAP_DATE_HANDLES_GROUP + " count = 0");
         }
 
-        List<FreeMapDateHandle> freeMapDateHandles = new LinkedList<>();
-        var freemapDateHandlesElements = freemapDateHandleGroupElement.getElementsByTagName(FREEMAP_DATE_HANDLE_ELEMENT);
+        final List<FreeMapDateHandle> freeMapDateHandles = new LinkedList<>();
+        final var freemapDateHandlesElements = freemapDateHandleGroupElement.getElementsByTagName(FREEMAP_DATE_HANDLE_ELEMENT);
         for (int i = 0; i < freemapDateHandlesElements.getLength(); i++) {
-            var dateHandleElement = (Element) freemapDateHandlesElements.item(i);
-            var date = parseDoubleAttribute(dateHandleElement, DATE_ATR);
-            var xPos = parseDoubleAttribute(dateHandleElement, X_POS_ATR);
-            var yPos = parseDoubleAttribute(dateHandleElement, Y_POS_ATR);
-            var type = FreeMapDateHandle.TimeType.valueOf(dateHandleElement.getAttribute(TYPE_ATR));
-            var freemapDateHandle = FreeMapDateHandle.createFreeMapDateHandle(parentFreeMapID, date, type, new Point2D(xPos, yPos));
+            final var dateHandleElement = (Element) freemapDateHandlesElements.item(i);
+            final var date = parseDoubleAttribute(dateHandleElement, DATE_ATR);
+            final var xPos = parseDoubleAttribute(dateHandleElement, X_POS_ATR);
+            final var yPos = parseDoubleAttribute(dateHandleElement, Y_POS_ATR);
+            final var type = FreeMapDateHandle.TimeType.valueOf(dateHandleElement.getAttribute(TYPE_ATR));
+            final var freemapDateHandle = FreeMapDateHandle.createFreeMapDateHandle(parentFreeMapID, date, type, new Point2D(xPos, yPos));
             freeMapDateHandles.add(freemapDateHandle);
         }
         return freeMapDateHandles;
     }
 
-    private static List<Pair<FreeMapPerson, Element>> parseFreeMapPersons(Element freemapElement, long parentFreeMapID) {
-        var freemapPersonsElement = firstDirectChildByTagName(freemapElement, FREEMAP_PERSONS_GROUP);
+    private static List<Pair<FreeMapPerson, Element>> parseFreeMapPersons(final Element freemapElement, final long parentFreeMapID) {
+        final var freemapPersonsElement = firstDirectChildByTagName(freemapElement, FREEMAP_PERSONS_GROUP);
         if (freemapPersonsElement == null) {
             throw new IllegalStateException("Error while parsing FreeMapPersons: " + FREEMAP_PERSONS_GROUP + " count = 0");
         }
         //
-        List<Pair<FreeMapPerson, Element>> freeMapPersons = new LinkedList<>();
-        var freemapPersonsElements = freemapPersonsElement.getElementsByTagName(FREEMAP_PERSON_ELEMENT);
+        final List<Pair<FreeMapPerson, Element>> freeMapPersons = new LinkedList<>();
+        final var freemapPersonsElements = freemapPersonsElement.getElementsByTagName(FREEMAP_PERSON_ELEMENT);
         for (int i = 0; i < freemapPersonsElements.getLength(); i++) {
-            var personElement = (Element) freemapPersonsElements.item(i);
-            var freeMapPerson = parseFreeMapPersonStep01(personElement, parentFreeMapID);
+            final var personElement = (Element) freemapPersonsElements.item(i);
+            final var freeMapPerson = parseFreeMapPersonStep01(personElement, parentFreeMapID);
             freeMapPersons.add(new Pair<>(freeMapPerson, personElement));
         }
         return freeMapPersons;
     }
 
-    private static FreeMapPerson parseFreeMapPersonStep01(Element freemapPersonElement, long parentFreeMapID) {
-        var personID = Long.parseLong(freemapPersonElement.getAttribute(ID_ATR));
+    private static FreeMapPerson parseFreeMapPersonStep01(final Element freemapPersonElement, final long parentFreeMapID) {
+        final var personID = Long.parseLong(freemapPersonElement.getAttribute(ID_ATR));
         // a FreeMapPerson shall always have the same id as the person it represents
-        var person = PersonFactory.getPerson(personID);
-        var freeMapPerson = FreeMapPerson.createFreeMapPerson(parentFreeMapID, person);
+        final var person = PersonFactory.getPerson(personID);
+        final var freeMapPerson = FreeMapPerson.createFreeMapPerson(parentFreeMapID, person);
         LOG.log(Level.FINE, "Created {0}", new Object[]{freeMapPerson});
         return freeMapPerson;
     }
 
-    private static List<FreeMapStay> parseFreeMapPersonStep02(Element freemapPersonElement, FreeMapPerson freeMapPerson, Map<Long, FreeMapPlace> freeMapPlacesById) {
+    private static List<FreeMapStay> parseFreeMapPersonStep02(final Element freemapPersonElement, final FreeMapPerson freeMapPerson, final Map<Long, FreeMapPlace> freeMapPlacesById) {
         // parse stays
-        var freemapStaysGroupElement = firstDirectChildByTagName(freemapPersonElement, FREEMAP_STAYS_GROUP);
+        final var freemapStaysGroupElement = firstDirectChildByTagName(freemapPersonElement, FREEMAP_STAYS_GROUP);
         if (freemapStaysGroupElement == null) {
             throw new IllegalStateException("Error while parsing FreemapStays: " + FREEMAP_STAYS_GROUP + " count = 0");
         }
         //
-        List<FreeMapStay> stays = new LinkedList<>();
-        var freemapStaysElements = freemapStaysGroupElement.getElementsByTagName(FREEMAP_STAY_ELEMENT);
+        final List<FreeMapStay> stays = new LinkedList<>();
+        final var freemapStaysElements = freemapStaysGroupElement.getElementsByTagName(FREEMAP_STAY_ELEMENT);
         for (int i = 0; i < freemapStaysElements.getLength(); i++) {
-            var freemapStayElement = (Element) freemapStaysElements.item(i);
-            var freemapStay = parseFreeMapStay(freemapStayElement, freeMapPerson, freeMapPlacesById);
+            final var freemapStayElement = (Element) freemapStaysElements.item(i);
+            final var freemapStay = parseFreeMapStay(freemapStayElement, freeMapPerson, freeMapPlacesById);
             stays.add(freemapStay);
         }
         return stays;
     }
 
-    private static FreeMapStay parseFreeMapStay(Element freemapStayElement, FreeMapPerson freeMapPerson, Map<Long, FreeMapPlace> freeMapPlacesById) {
-        var freeMapStayID = Long.parseLong(freemapStayElement.getAttribute(ID_ATR));
-        var isMerged = Boolean.parseBoolean(freemapStayElement.getAttribute(FREEMAP_IS_MERGED_ATR));
+    private static FreeMapStay parseFreeMapStay(final Element freemapStayElement, final FreeMapPerson freeMapPerson, final Map<Long, FreeMapPlace> freeMapPlacesById) {
+        final var freeMapStayID = Long.parseLong(freemapStayElement.getAttribute(ID_ATR));
+        final var isMerged = Boolean.parseBoolean(freemapStayElement.getAttribute(FREEMAP_IS_MERGED_ATR));
         if (isMerged) {
             throw new UnsupportedOperationException("TODO: handle merged freemap stays");
         }
         //
-        var startID = Long.parseLong(freemapStayElement.getAttribute(START_ID_ATR));
-        var endID = Long.parseLong(freemapStayElement.getAttribute(END_ID_ATR));
-        var personID = Long.parseLong(freemapStayElement.getAttribute(PERSON_REF_ATR));
-        var placeID = Long.parseLong(freemapStayElement.getAttribute(PLACE_REF_ATR));
+        final var startID = Long.parseLong(freemapStayElement.getAttribute(START_ID_ATR));
+        final var endID = Long.parseLong(freemapStayElement.getAttribute(END_ID_ATR));
+        final var personID = Long.parseLong(freemapStayElement.getAttribute(PERSON_REF_ATR));
+        final var placeID = Long.parseLong(freemapStayElement.getAttribute(PLACE_REF_ATR));
         //
         if (freeMapPerson.getId() != personID) {
             throw new IllegalStateException("Could not parse FreeMapStay: could not find corresponding FreeMapPerson " + personID + " since was give " + freeMapPerson);
         }
-        var place = freeMapPlacesById.get(placeID);
+        final var place = freeMapPlacesById.get(placeID);
         if (place == null) {
             throw new IllegalStateException("Could not parse FreeMapStay: could not find corresponding FreeMapPlace " + placeID);
         }
         // this is only the case since I do not handle yet merged stays
-        var stayPeriodID = Long.parseLong(freemapStayElement.getAttribute(STAY_ID_ATR));
-        var stayPeriod = StayFactory.getStay(stayPeriodID);
+        final var stayPeriodID = Long.parseLong(freemapStayElement.getAttribute(STAY_ID_ATR));
+        final var stayPeriod = StayFactory.getStay(stayPeriodID);
         if (stayPeriod == null) {
             /*
             var allStaysIncluded = freeMapStay.getStayPeriods();
@@ -400,40 +472,40 @@ public class FreeMapProviderV4 {
 
             throw new IllegalStateException("Could not parse FreeMapStay: could not find corresponding StayPeriod " + stayPeriodID);
         }
-        var freeMapStay = FreeMapStayFactory.createFreeMapStay(freeMapStayID, stayPeriod, startID, endID, freeMapPerson, place);
+        final var freeMapStay = FreeMapStayFactory.createFreeMapStay(freeMapStayID, stayPeriod, startID, endID, freeMapPerson, place);
         //
         return freeMapStay;
     }
 
-    private static void parseFreeMapPersonStep03(Element freemapPersonElement, FreeMapPerson freeMapPerson, Map<Long, FreeMapStay> freeMapStaysById) {
+    private static void parseFreeMapPersonStep03(final Element freemapPersonElement, final FreeMapPerson freeMapPerson, final Map<Long, FreeMapStay> freeMapStaysById) {
         // parse portrais
-        var freemapPortraitsGroupElement = firstDirectChildByTagName(freemapPersonElement, FREEMAP_PORTRAITS_GROUP);
+        final var freemapPortraitsGroupElement = firstDirectChildByTagName(freemapPersonElement, FREEMAP_PORTRAITS_GROUP);
         if (freemapPortraitsGroupElement == null) {
             throw new IllegalStateException("Error while parsing FreemapPortraits: " + FREEMAP_PORTRAITS_GROUP + " count = 0");
         }
         //
-        var freemapPortraitsElements = freemapPortraitsGroupElement.getElementsByTagName(PORTRAIT_ELEMENT);
+        final var freemapPortraitsElements = freemapPortraitsGroupElement.getElementsByTagName(PORTRAIT_ELEMENT);
         for (int i = 0; i < freemapPortraitsElements.getLength(); i++) {
-            var freemapPortraitElement = (Element) freemapPortraitsElements.item(i);
-            var freemapPortrait = parseFreeMapPortrait(freemapPortraitElement, freeMapPerson, freeMapStaysById);
+            final var freemapPortraitElement = (Element) freemapPortraitsElements.item(i);
+            final var freemapPortrait = parseFreeMapPortrait(freemapPortraitElement, freeMapPerson, freeMapStaysById);
             LOG.log(Level.FINE, "Created FreeMapPortrait: {0}", new Object[]{freemapPortrait});
         }
     }
 
-    private static FreeMapPortrait parseFreeMapPortrait(Element freemapPortraitElement, FreeMapPerson freeMapPerson, Map<Long, FreeMapStay> freeMapStaysById) {
-        var freeMapPortraitID = Long.parseLong(freemapPortraitElement.getAttribute(ID_ATR));
-        var personID = Long.parseLong(freemapPortraitElement.getAttribute(PERSON_ATR));
-        var portraitRef = Long.parseLong(freemapPortraitElement.getAttribute(PORTRAIT_REF_ATR));
-        var xPos = parseDoubleAttribute(freemapPortraitElement, X_POS_ATR);
-        var yPos = parseDoubleAttribute(freemapPortraitElement, Y_POS_ATR);
-        var radius = parseDoubleAttribute(freemapPortraitElement, RADIUS_ATR);
+    private static FreeMapPortrait parseFreeMapPortrait(final Element freemapPortraitElement, final FreeMapPerson freeMapPerson, final Map<Long, FreeMapStay> freeMapStaysById) {
+        final var freeMapPortraitID = Long.parseLong(freemapPortraitElement.getAttribute(ID_ATR));
+        final var personID = Long.parseLong(freemapPortraitElement.getAttribute(PERSON_ATR));
+        final var portraitRef = Long.parseLong(freemapPortraitElement.getAttribute(PORTRAIT_REF_ATR));
+        final var xPos = parseDoubleAttribute(freemapPortraitElement, X_POS_ATR);
+        final var yPos = parseDoubleAttribute(freemapPortraitElement, Y_POS_ATR);
+        final var radius = parseDoubleAttribute(freemapPortraitElement, RADIUS_ATR);
         //
-        var person = PersonFactory.getPerson(personID);
-        var portrait = person.getPortrait(portraitRef);
+        final var person = PersonFactory.getPerson(personID);
+        final var portrait = person.getPortrait(portraitRef);
         //
-        var freemapPortrait = FreeMapPortraitFactory.createFreeMapPortrait(freeMapPortraitID, portrait, freeMapPerson, radius);
+        final var freemapPortrait = FreeMapPortraitFactory.createFreeMapPortrait(freeMapPortraitID, portrait, freeMapPerson, radius);
         //
-        var aPortraitLink = parsePortraitLink(freemapPortraitElement, freemapPortrait, freeMapStaysById);
+        final var aPortraitLink = parsePortraitLink(freemapPortraitElement, freemapPortrait, freeMapStaysById);
         //
         freeMapPerson.addFreeMapPortrait(freemapPortrait, aPortraitLink);
         //
@@ -444,85 +516,85 @@ public class FreeMapProviderV4 {
         return freemapPortrait;
     }
 
-    private static PortraitLink parsePortraitLink(Element freeMapPortraitElement, FreeMapPortrait aFreeMapPortrait, Map<Long, FreeMapStay> freeMapStaysById) {
-        var portraitLinkElement = firstDirectChildByTagName(freeMapPortraitElement, FREEMAP_PORTRAIT_LINK_ELEMENT);
+    private static PortraitLink parsePortraitLink(final Element freeMapPortraitElement, final FreeMapPortrait aFreeMapPortrait, final Map<Long, FreeMapStay> freeMapStaysById) {
+        final var portraitLinkElement = firstDirectChildByTagName(freeMapPortraitElement, FREEMAP_PORTRAIT_LINK_ELEMENT);
         if (portraitLinkElement == null) {
             throw new IllegalStateException("Not 1 " + FREEMAP_PORTRAIT_LINK_ELEMENT + " in freeMapPortraitElement but 0.");
         }
-        var anID = Long.parseLong(portraitLinkElement.getAttribute(ID_ATR));
+        final var anID = Long.parseLong(portraitLinkElement.getAttribute(ID_ATR));
         //
         //
-        var stayConnectorElement = firstDirectChildByTagName(portraitLinkElement, FREEMAP_CONNECTOR_ELEMENT);
+        final var stayConnectorElement = firstDirectChildByTagName(portraitLinkElement, FREEMAP_CONNECTOR_ELEMENT);
         if (stayConnectorElement == null) {
             throw new IllegalStateException("Not 1 " + FREEMAP_CONNECTOR_ELEMENT + " in freeMapPortraitElement but 0.");
         }
-        var stayConnector = parseConnectorElement(stayConnectorElement, freeMapStaysById);
+        final var stayConnector = parseConnectorElement(stayConnectorElement, freeMapStaysById);
         //
-        var portraitLink = FreeMapLinkFactory.createPortraitLink(anID, aFreeMapPortrait, stayConnector);
+        final var portraitLink = FreeMapLinkFactory.createPortraitLink(anID, aFreeMapPortrait, stayConnector);
         LOG.log(Level.INFO, "Created protrait link: {0}.", new Object[]{portraitLink});
         return portraitLink;
     }
 
-    private static List<FreeMapPlace> parseFreeMapPlaces(Element freemapElement, long parentFreeMapID, FriezeFreeMapProperties freeMapProperties, Map<Long, FreeMapPerson> freeMapPersonsById) {
-        var freemapPlacesElement = firstDirectChildByTagName(freemapElement, FREEMAP_PLACES_GROUP);
+    private static List<FreeMapPlace> parseFreeMapPlaces(final Element freemapElement, final long parentFreeMapID, final FriezeFreeMapProperties freeMapProperties, final Map<Long, FreeMapPerson> freeMapPersonsById) {
+        final var freemapPlacesElement = firstDirectChildByTagName(freemapElement, FREEMAP_PLACES_GROUP);
         if (freemapPlacesElement == null) {
             throw new IllegalStateException("Error while parsing FreeMapPlaces: " + FREEMAP_PERSONS_GROUP + " count = 0");
         }
         //
-        List<FreeMapPlace> freeMapPlaces = new LinkedList<>();
-        var freemapPlacesElements = freemapPlacesElement.getElementsByTagName(FREEMAP_PLACE_ELEMENT);
+        final List<FreeMapPlace> freeMapPlaces = new LinkedList<>();
+        final var freemapPlacesElements = freemapPlacesElement.getElementsByTagName(FREEMAP_PLACE_ELEMENT);
         for (int i = 0; i < freemapPlacesElements.getLength(); i++) {
-            var placeElement = (Element) freemapPlacesElements.item(i);
-            var freeMapPlace = parseFreeMapPlace(placeElement, parentFreeMapID, freeMapProperties, freeMapPersonsById);
+            final var placeElement = (Element) freemapPlacesElements.item(i);
+            final var freeMapPlace = parseFreeMapPlace(placeElement, parentFreeMapID, freeMapProperties, freeMapPersonsById);
             freeMapPlaces.add(freeMapPlace);
         }
         return freeMapPlaces;
     }
 
-    private static FreeMapPlace parseFreeMapPlace(Element freemapPlaceElement, long parentFreeMapID, FriezeFreeMapProperties freeMapProperties, Map<Long, FreeMapPerson> freeMapPersonsById) {
-        var placeID = Long.parseLong(freemapPlaceElement.getAttribute(PLACE_ID_ATR));
-        var height = parseDoubleAttribute(freemapPlaceElement, HEIGHT_ATR);
-        var yPos = parseDoubleAttribute(freemapPlaceElement, Y_POS_ATR);
-        var fontSize = parseDoubleAttribute(freemapPlaceElement, FREEMAP_FONT_SIZE_ATR);
-        var nameWidth = parseDoubleAttribute(freemapPlaceElement, FREEMAP_PLACE_NAME_WIDTH_ATR);
+    private static FreeMapPlace parseFreeMapPlace(final Element freemapPlaceElement, final long parentFreeMapID, final FriezeFreeMapProperties freeMapProperties, final Map<Long, FreeMapPerson> freeMapPersonsById) {
+        final var placeID = Long.parseLong(freemapPlaceElement.getAttribute(PLACE_ID_ATR));
+        final var height = parseDoubleAttribute(freemapPlaceElement, HEIGHT_ATR);
+        final var yPos = parseDoubleAttribute(freemapPlaceElement, Y_POS_ATR);
+        final var fontSize = parseDoubleAttribute(freemapPlaceElement, FREEMAP_FONT_SIZE_ATR);
+        final var nameWidth = parseDoubleAttribute(freemapPlaceElement, FREEMAP_PLACE_NAME_WIDTH_ATR);
         //
-        var place = PlaceFactory.getPlace(placeID);
+        final var place = PlaceFactory.getPlace(placeID);
         //
-        var freeMapPlace = FreeMapPlace.createFreeMapPlace(parentFreeMapID, place, freeMapProperties.plotSeparation(), nameWidth, fontSize);
+        final var freeMapPlace = FreeMapPlace.createFreeMapPlace(parentFreeMapID, place, freeMapProperties.plotSeparation(), nameWidth, fontSize);
         //
         freeMapPlace.setHeight(height);
         freeMapPlace.setY(yPos);
         //
-        var freemapPersonsElements = freemapPlaceElement.getElementsByTagName(FREEMAP_PERSON_ELEMENT);
-        FreeMapPerson[] sortedPersonsInPlace = new FreeMapPerson[freemapPersonsElements.getLength()];
+        final var freemapPersonsElements = freemapPlaceElement.getElementsByTagName(FREEMAP_PERSON_ELEMENT);
+        final FreeMapPerson[] sortedPersonsInPlace = new FreeMapPerson[freemapPersonsElements.getLength()];
         for (int i = 0; i < freemapPersonsElements.getLength(); i++) {
-            var personElement = (Element) freemapPersonsElements.item(i);
-            var personId = Long.parseLong(personElement.getAttribute(ID_ATR));
-            var personIndex = Integer.parseInt(personElement.getAttribute(INDEX_ATR));
-            var person = freeMapPersonsById.get(personId);
+            final var personElement = (Element) freemapPersonsElements.item(i);
+            final var personId = Long.parseLong(personElement.getAttribute(ID_ATR));
+            final var personIndex = Integer.parseInt(personElement.getAttribute(INDEX_ATR));
+            final var person = freeMapPersonsById.get(personId);
             sortedPersonsInPlace[personIndex] = person;
         }
         freeMapPlace.setPersonOrder(sortedPersonsInPlace);
         return freeMapPlace;
     }
 
-    private static FreeMapConnector parseConnectorElement(Element freeMapConnectorElement, Map<Long, FreeMapStay> freeMapStaysById) {
-        var connectorID = Long.parseLong(freeMapConnectorElement.getAttribute(ID_ATR));
-        var date = parseDoubleAttribute(freeMapConnectorElement, DATE_ATR);
-        var colorS = freeMapConnectorElement.getAttribute(COLOR_ATR);
-        var xPos = parseDoubleAttribute(freeMapConnectorElement, X_POS_ATR);
-        var yPos = parseDoubleAttribute(freeMapConnectorElement, Y_POS_ATR);
+    private static FreeMapConnector parseConnectorElement(final Element freeMapConnectorElement, final Map<Long, FreeMapStay> freeMapStaysById) {
+        final var connectorID = Long.parseLong(freeMapConnectorElement.getAttribute(ID_ATR));
+        final var date = parseDoubleAttribute(freeMapConnectorElement, DATE_ATR);
+        final var colorS = freeMapConnectorElement.getAttribute(COLOR_ATR);
+        final var xPos = parseDoubleAttribute(freeMapConnectorElement, X_POS_ATR);
+        final var yPos = parseDoubleAttribute(freeMapConnectorElement, Y_POS_ATR);
         LOG.log(Level.FINE, "parseConnectorElement ignoring field color: {0}.", new Object[]{colorS});
         LOG.log(Level.FINE, "parseConnectorElement ignoring field xPos: {0}.", new Object[]{xPos});
         LOG.log(Level.FINE, "parseConnectorElement ignoring field yPos: {0}.", new Object[]{yPos});
-        var plotSize = parseDoubleAttribute(freeMapConnectorElement, PLOT_SIZE_ATR);
-        var linkedElementID = Long.parseLong(freeMapConnectorElement.getAttribute(FREEMAP_LINKED_ELEMENT_ID_ATR));
+        final var plotSize = parseDoubleAttribute(freeMapConnectorElement, PLOT_SIZE_ATR);
+        final var linkedElementID = Long.parseLong(freeMapConnectorElement.getAttribute(FREEMAP_LINKED_ELEMENT_ID_ATR));
         //
-        var stayLink = freeMapStaysById.get(linkedElementID);
+        final var stayLink = freeMapStaysById.get(linkedElementID);
         if (stayLink == null) {
             throw new IllegalStateException("Could not find stay with id=" + linkedElementID + "for connectorID=" + connectorID);
         }
-        var stayLinkConnector = FreeMapConnectorFactory.createFreeMapLinkConnector(connectorID, stayLink, date, plotSize);
+        final var stayLinkConnector = FreeMapConnectorFactory.createFreeMapLinkConnector(connectorID, stayLink, date, plotSize);
         LOG.log(Level.INFO, "Created freemapConnector {0}.", new Object[]{stayLinkConnector});
         //
         return stayLinkConnector;

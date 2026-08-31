@@ -58,9 +58,8 @@ public final class XMLHandler {
         saveProvider = providers.get(0);
         saveVersion = saveProvider.getSupportedVersions().get(0);
         providers.forEach(candidateparser -> {
-            String mostRecentVersion = candidateparser.getSupportedVersions().stream()
-                    .max(XMLHandler::compareVersions).get();
-            int versionComparison = compareVersions(mostRecentVersion, saveVersion);
+            String mostRecentVersion = candidateparser.getSupportedVersions().stream().max(XMLHandler::compareVersions).get();
+            final int versionComparison = compareVersions(mostRecentVersion, saveVersion);
             if (versionComparison > 0) {
                 saveProvider = candidateparser;
                 saveVersion = mostRecentVersion;

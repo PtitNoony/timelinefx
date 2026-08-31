@@ -45,7 +45,7 @@ public class TestExample {
         Map<String, String> configParams = Map.of(
                 TimeLineProject.PROJECT_FOLDER_KEY, projectFolderPath
         );
-        TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Test Project", configParams, TimeFormat.TIME_MIN);
+        final TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Test Project", configParams, TimeFormat.TIME_MIN);
         //
         Place galaxy = PlaceFactory.createPlace("Galaxy", PlaceLevel.GALAXY, null, Color.WHEAT);
         Place placeA = PlaceFactory.createPlace("PLACE_A", PlaceLevel.INTER_SYSTEM_SPACE, galaxy, Color.LIGHTSTEELBLUE);

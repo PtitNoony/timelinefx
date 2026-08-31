@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.core;
 
 import com.github.noony.app.timelinefx.utils.MathUtils;
@@ -109,7 +110,11 @@ public abstract class AbstractPicture implements IPicture {
         filePath = aFilePath;
         //
         timeFormat = TimeFormat.LOCAL_TIME;
-        date = aDate != null ? aDate : LocalDate.EPOCH;
+        if (aDate != null) {
+            date = aDate;
+        } else {
+            date = LocalDate.EPOCH;
+        }
         timestamp = -1;
         //
         name = aName;

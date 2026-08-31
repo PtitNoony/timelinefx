@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.github.noony.app.timelinefx.save.v4;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -80,98 +81,323 @@ import org.w3c.dom.NodeList;
 import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
 
 /**
+ * Reads and writes {@link TimeLineProject} objects for save format version 4.
  *
  * @author hamon
  */
 @ServiceProvider(service = TimelineProjectProvider.class)
 public class TimeProjectProviderV4 implements TimelineProjectProvider {
 
+    /**
+     * XML root element name for a project.
+     */
     public static final String PROJECT_GROUP = "PROJECT";
 
+    /**
+     * XML group element name for the project's places.
+     */
     public static final String PLACES_GROUP = "PLACES";
 
+    /**
+     * XML group element name for the project's persons.
+     */
     public static final String PERSONS_GROUP = "PERSONS";
 
+    /**
+     * XML group element name for the project's pictures.
+     */
     public static final String PICTURES_GROUP = "PICTURES";
 
+    /**
+     * XML group element name for the project's friezes.
+     */
     public static final String FRIEZES_GROUP = "FRIEZES";
 
+    /**
+     * XML group element name for the project's stays.
+     */
     public static final String STAYS_GROUP = "STAYS";
 
+    /**
+     * XML group element name for a frieze's stay references.
+     */
     public static final String STAYS_REF_GROUP = "stays";
 
+    /**
+     * XML group element name for a person's portraits.
+     */
     public static final String PORTRAITS_GROUP = "portraits";
 
+    /**
+     * XML group element name for the project's picture chronologies.
+     */
     public static final String PICTURE_CHRONOLOGIES_GROUP = "PICTURE_CHRONOLOGIES";
 
+    /**
+     * XML element name for a place.
+     */
     public static final String PLACE_ELEMENT = "place";
 
+    /**
+     * XML element name for a reference to a place.
+     */
     public static final String PLACE_REF_ELEMENT = "placeRef";
 
+    /**
+     * XML element name for a person.
+     */
     public static final String PERSON_ELEMENT = "person";
 
+    /**
+     * XML element name for a reference to a person.
+     */
     public static final String PERSON_REF_ELEMENT = "personRef";
 
+    /**
+     * XML element name for a picture.
+     */
     public static final String PICTURE_ELEMENT = "picture";
 
+    /**
+     * XML element name for a reference to a picture.
+     */
     public static final String PICTURE_REF_ELEMENT = "pictureRef";
 
+    /**
+     * XML element name for a frieze.
+     */
     public static final String FRIEZE_ELEMENT = "frieze";
 
+    /**
+     * XML element name for a stay.
+     */
     public static final String STAY_ELEMENT = "stay";
 
+    /**
+     * XML element name for a reference to a stay.
+     */
     public static final String STAY_ELEMENT_REF = "stayRef";
 
+    /**
+     * XML element name for a portrait.
+     */
     public static final String PORTRAIT_ELEMENT = "portrait";
 
+    /**
+     * XML element name for a picture chronology.
+     */
     public static final String PICTURE_CHRONOLOGY_ELEMENT = "pictureChronology";
+
+    /**
+     * XML element name for a picture chronology miniature.
+     */
     public static final String PICTURE_CHRONOLOGY_MINIATURE_ELEMENT = "pictureChronologyMiniature";
+
+    /**
+     * XML element name for a picture chronology link.
+     */
     public static final String PICTURE_CHRONOLOGY_LINK_ELEMENT = "pictureChronologyLink";
-    //
+
+    /**
+     * XML attribute name for the pictures folder location.
+     */
     public static final String PICTURES_LOCATION_ATR = "picsLoc";
-    //
+
+    /**
+     * XML attribute name for the portraits folder location.
+     */
     public static final String PORTRAIT_FOLDER_ATR = "portraitsFolder";
+
+    /**
+     * XML attribute name for the pictures folder location.
+     */
     public static final String PICTURES_FOLDER_ATR = "picturesFolder";
+
+    /**
+     * XML attribute name for the miniatures folder location.
+     */
     public static final String MINIATURES_FOLDER_ATR = "miniaturesFolder";
-    //
+
+    /**
+     * XML attribute name for an element's id.
+     */
     public static final String ID_ATR = "id";
+
+    /**
+     * XML attribute name for an element's name.
+     */
     public static final String NAME_ATR = "name";
+
+    /**
+     * XML attribute name for an element's type.
+     */
     public static final String TYPE_ATR = "type";
+
+    /**
+     * XML attribute name for a file path.
+     */
     public static final String PATH_ATR = "path";
+
+    /**
+     * XML attribute name for a date/time value.
+     */
     public static final String DATE_ATR = "date";
+
+    /**
+     * XML attribute name for a place's level.
+     */
     public static final String PLACE_LEVEL_ATR = "level";
+
+    /**
+     * XML attribute name for a color value.
+     */
     public static final String COLOR_ATR = "color";
+
+    /**
+     * XML attribute name for a reference to a stay's person.
+     */
     public static final String PERSON_ATR = "person";
+
+    /**
+     * XML attribute name for a person's default portrait reference.
+     */
     public static final String DEFAULT_PORTRAIT_REF_ATR = "defaultPortraitRef";
+
+    /**
+     * XML attribute name for a person's date of birth.
+     */
     public static final String DATE_OF_BIRTH_ATR = "dateOfBirth";
+
+    /**
+     * XML attribute name for a person's date of death.
+     */
     public static final String DATE_OF_DEATH_ATR = "dateOfDeath";
+
+    /**
+     * XML attribute name for a stay's start date.
+     */
     public static final String START_DATE_ATR = "startDate";
+
+    /**
+     * XML attribute name for a stay's end date.
+     */
     public static final String END_DATE_ATR = "endDate";
+
+    /**
+     * XML attribute name for a time format value.
+     */
     public static final String TIME_FORMAT_ATR = "timeFormat";
+
+    /**
+     * XML attribute name for a reference to a stay period.
+     */
     public static final String STAY_ID_ATR = "stayID";
+
+    /**
+     * XML attribute name for a stay's start plot id.
+     */
     public static final String START_ID_ATR = "startID";
+
+    /**
+     * XML attribute name for a stay's end plot id.
+     */
     public static final String END_ID_ATR = "endID";
+
+    /**
+     * XML attribute name for a reference to a place.
+     */
     public static final String PLACE_ID_ATR = "placeID";
+
+    /**
+     * XML attribute name for a chronology link's origin.
+     */
     public static final String FROM_ATR = "from";
+
+    /**
+     * XML attribute name for a chronology link's destination.
+     */
     public static final String TO_ATR = "to";
+
+    /**
+     * XML attribute name for a reference to a person.
+     */
     public static final String PERSON_REF_ATR = "personRef";
+
+    /**
+     * XML attribute name for a reference to a place.
+     */
     public static final String PLACE_REF_ATR = "placeRef";
+
+    /**
+     * XML attribute name for a reference to a portrait.
+     */
     public static final String PORTRAIT_REF_ATR = "portraitRef";
+
+    /**
+     * XML attribute name for a chronology link's parameters.
+     */
     public static final String PARAMETERS_ATR = "params";
+
+    /**
+     * XML attribute name for the id of a linked object.
+     */
     public static final String LINKED_OBJECT_ID_ATR = "linkedObjectID";
-    //
+
+    /**
+     * XML attribute name for a width value.
+     */
     public static final String WIDTH_ATR = "width";
+
+    /**
+     * XML attribute name for a height value.
+     */
     public static final String HEIGHT_ATR = "height";
+
+    /**
+     * XML attribute name for an X position.
+     */
     public static final String X_POS_ATR = "xPos";
+
+    /**
+     * XML attribute name for a Y position.
+     */
     public static final String Y_POS_ATR = "yPos";
+
+    /**
+     * XML attribute name for a radius value.
+     */
     public static final String RADIUS_ATR = "radius";
+
+    /**
+     * XML attribute name for a scale value.
+     */
     public static final String SCALE_ATR = "scale";
+
+    /**
+     * XML attribute name for a person's index within a place.
+     */
     public static final String INDEX_ATR = "index";
+
+    /**
+     * XML attribute name for a connector's plot size.
+     */
     public static final String PLOT_SIZE_ATR = "plotSize";
 
+    /**
+     * Logger used by this class.
+     */
     private static final Logger LOG = Logger.getGlobal();
 
+    /**
+     * The save format version this provider reads and writes.
+     */
     private static final String TARGET_VERSION = "4";
+
+    /**
+     * Default constructor, required for this provider to be discoverable as a service.
+     */
+    public TimeProjectProviderV4() {
+    }
 
     @Override
     public List<String> getSupportedVersions() {
@@ -179,44 +405,44 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     @Override
-    public TimeLineProject load(File projectFile, Element e) {
-        var loadMethodName = getClass().getSimpleName() + "__load";
+    public TimeLineProject load(final File projectFile, final Element e) {
+        final var loadMethodName = getClass().getSimpleName() + "__load";
         CustomProfiler.start(loadMethodName);
-        String projectName = e.getAttribute(NAME_ATR);
+        final String projectName = e.getAttribute(NAME_ATR);
         // Load project properties
-        var portraitsFolderValue = e.hasAttribute(PORTRAIT_FOLDER_ATR) ? e.getAttribute(PORTRAIT_FOLDER_ATR) : TimeLineProject.DEFAULT_PORTRAIT_FOLDER;
-        var picturesFolderValue = e.hasAttribute(PICTURES_FOLDER_ATR) ? e.getAttribute(PICTURES_FOLDER_ATR) : TimeLineProject.DEFAULT_PICTURES_FOLDER;
-        var miniaturesFolderValue = e.hasAttribute(MINIATURES_FOLDER_ATR) ? e.getAttribute(MINIATURES_FOLDER_ATR) : TimeLineProject.DEFAULT_MINIATURES_FOLDER;
+        final var portraitsFolderValue = e.hasAttribute(PORTRAIT_FOLDER_ATR) ? e.getAttribute(PORTRAIT_FOLDER_ATR) : TimeLineProject.DEFAULT_PORTRAIT_FOLDER;
+        final var picturesFolderValue = e.hasAttribute(PICTURES_FOLDER_ATR) ? e.getAttribute(PICTURES_FOLDER_ATR) : TimeLineProject.DEFAULT_PICTURES_FOLDER;
+        final var miniaturesFolderValue = e.hasAttribute(MINIATURES_FOLDER_ATR) ? e.getAttribute(MINIATURES_FOLDER_ATR) : TimeLineProject.DEFAULT_MINIATURES_FOLDER;
         //
-        Map<String, String> configParams = Map.of(
+        final Map<String, String> configParams = Map.of(
                 TimeLineProject.PROJECT_FOLDER_KEY, projectFile.getParent(),
                 TimeLineProject.PORTRAIT_FOLDER_KEY, portraitsFolderValue,
                 TimeLineProject.PICTURES_FOLDER_KEY, picturesFolderValue,
                 TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
         );
-        var timeFormatValue = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : TimeFormat.LOCAL_TIME;
-        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormatValue);
+        final var timeFormatValue = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : TimeFormat.LOCAL_TIME;
+        final TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormatValue);
         //
-        List<String> relativePathLoaded = new LinkedList<>();
+        final List<String> relativePathLoaded = new LinkedList<>();
         //
-        NodeList rootChildren = e.getChildNodes();
+        final NodeList rootChildren = e.getChildNodes();
         for (int i = 0; i < rootChildren.getLength(); i++) {
-            Node node = rootChildren.item(i);
+            final Node node = rootChildren.item(i);
             if (node instanceof Element element) {
                 switch (element.getTagName()) {
                     case PLACES_GROUP -> {
-                        List<Place> places = parsePlaces(element, null);
+                        final List<Place> places = parsePlaces(element, null);
                         places.stream().filter(p -> p.getParent() == null).forEach(p -> project.addHighLevelPlace(p));
                     }
                     case PERSONS_GROUP -> {
-                        List<Person> persons = parsePersons(element, project, relativePathLoaded);
+                        final List<Person> persons = parsePersons(element, project, relativePathLoaded);
                         persons.forEach(p -> project.addPerson(p));
                     }
                     case PICTURES_GROUP -> {
                         parsePictures(element, project, relativePathLoaded);
                     }
                     case STAYS_GROUP -> {
-                        List<StayPeriod> stays = parseStays(element, timeFormatValue);
+                        final List<StayPeriod> stays = parseStays(element, timeFormatValue);
                         stays.forEach(s -> project.addStay(s));
                     }
                     case FRIEZES_GROUP -> {
@@ -232,21 +458,21 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         }
         // check every file exists
         relativePathLoaded.forEach(path -> {
-            var absolutePath = CustomFileUtils.fromProjectRelativeToAbsolute(project, path);
+            final var absolutePath = CustomFileUtils.fromProjectRelativeToAbsolute(project, path);
             // not optimal ...
-            File file = new File(absolutePath);
+            final File file = new File(absolutePath);
             if (!file.exists()) {
                 LOG.log(Level.SEVERE, "The file {0} does not exists. (saved as {1})", new Object[]{absolutePath, path});
             }
         });
         //
-        Set<Path> absolutePathsLoaded = relativePathLoaded
+        final Set<Path> absolutePathsLoaded = relativePathLoaded
                 .stream()
                 .map(p -> Paths.get(CustomFileUtils.fromProjectRelativeToAbsolute(project, p)))
                 .map(p -> p.normalize())
                 .collect(Collectors.toSet());
         // * Portraits
-        File portraitFolder = project.getPortraitsAbsoluteFolder();
+        final File portraitFolder = project.getPortraitsAbsoluteFolder();
         FileUtils.listFiles(portraitFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
                 .stream()
                 .map(portraitFile -> Paths.get(portraitFile.toURI()))
@@ -256,7 +482,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                         LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath})
                 );
         // * Pictures
-        File picturesFolder = project.getPicturesFolder();
+        final File picturesFolder = project.getPicturesFolder();
         FileUtils.listFiles(picturesFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
                 .stream()
                 .map(pictureFile -> Paths.get(pictureFile.toURI()))
@@ -273,59 +499,59 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     @Override
-    public boolean save(TimeLineProject project, File destFile) {
+    public boolean save(final TimeLineProject project, final File destFile) {
         try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             docFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             // root elements
-            Document doc = docBuilder.newDocument();
-            Element rootElement = doc.createElement(PROJECT_GROUP);
+            final Document doc = docBuilder.newDocument();
+            final Element rootElement = doc.createElement(PROJECT_GROUP);
             rootElement.setAttribute(NAME_ATR, project.getName());
             rootElement.setAttribute(PROJECT_VERSION_ATR, TARGET_VERSION);
             //TODO can use other method
-            var portraitsFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getPortraitsAbsoluteFolder());
-            var picturesFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getPicturesFolder());
-            var miniaturesFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getMiniaturesFolder());
+            final var portraitsFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getPortraitsAbsoluteFolder());
+            final var picturesFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getPicturesFolder());
+            final var miniaturesFolderName = CustomFileUtils.fromAbsoluteToProjectRelative(project, project.getMiniaturesFolder());
             rootElement.setAttribute(PORTRAIT_FOLDER_ATR, portraitsFolderName);
             rootElement.setAttribute(PICTURES_LOCATION_ATR, picturesFolderName);
             rootElement.setAttribute(MINIATURES_FOLDER_ATR, miniaturesFolderName);
             rootElement.setAttribute(TIME_FORMAT_ATR, project.getTimeFormat().name());
             doc.appendChild(rootElement);
             // save places
-            Element placesGroupElement = doc.createElement(PLACES_GROUP);
+            final Element placesGroupElement = doc.createElement(PLACES_GROUP);
             rootElement.appendChild(placesGroupElement);
             project.getHighLevelPlaces().forEach(place -> placesGroupElement.appendChild(createPlaceElement(doc, place, "root")));
             // save persons
-            Element personsGroupElement = doc.createElement(PERSONS_GROUP);
+            final Element personsGroupElement = doc.createElement(PERSONS_GROUP);
             rootElement.appendChild(personsGroupElement);
             project.getPersons().forEach(person -> personsGroupElement.appendChild(createPersonElement(doc, person)));
             // save pictures
-            Element picturesGroupElement = doc.createElement(PICTURES_GROUP);
+            final Element picturesGroupElement = doc.createElement(PICTURES_GROUP);
             rootElement.appendChild(picturesGroupElement);
             PictureFactory.getPictures().forEach(picture -> picturesGroupElement.appendChild(createPictureElement(doc, picture)));
             // save stays
-            Element staysGroupElement = doc.createElement(STAYS_GROUP);
+            final Element staysGroupElement = doc.createElement(STAYS_GROUP);
             rootElement.appendChild(staysGroupElement);
             project.getStays().forEach(stay -> staysGroupElement.appendChild(createStayElement(doc, stay)));
             // save friezes
-            Element friezesGroupElement = doc.createElement(FRIEZES_GROUP);
+            final Element friezesGroupElement = doc.createElement(FRIEZES_GROUP);
             rootElement.appendChild(friezesGroupElement);
             project.getFriezes().forEach(frieze -> friezesGroupElement.appendChild(createFriezeElement(doc, frieze)));
             // save picture chronologies
-            Element pictureChronologiesGroupElement = doc.createElement(PICTURE_CHRONOLOGIES_GROUP);
+            final Element pictureChronologiesGroupElement = doc.createElement(PICTURE_CHRONOLOGIES_GROUP);
             rootElement.appendChild(pictureChronologiesGroupElement);
             project.getPictureChronologies().forEach(picChronology -> pictureChronologiesGroupElement.appendChild(createPictureChronologyElement(doc, picChronology)));
             //
             rootElement.normalize();
             // write the content into xml file
-            TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
+            final TransformerFactory transformerFactory = TransformerFactory.newDefaultInstance();
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            Transformer transformer = transformerFactory.newTransformer();
+            final Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(destFile);
+            final DOMSource source = new DOMSource(doc);
+            final StreamResult result = new StreamResult(destFile);
             transformer.transform(source, result);
         } catch (ParserConfigurationException | TransformerException ex) {
             LOG.log(Level.SEVERE, " Exception while exporting timeline :: {0}", new Object[]{ex});
@@ -335,15 +561,15 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     /**
-     * Finds the first direct child element with the given tag name, without recursing into descendants (unlike {@link Element#getElementsByTagName(String)}, which walks the whole
-     * subtree).
+     * Finds the first direct child element with the given tag name, without recursing into
+     * descendants (unlike {@link Element#getElementsByTagName(String)}, which walks the whole subtree).
      *
      * @param parent the element whose direct children are searched
      * @param tagName the tag name to look for
      * @return the first matching direct child, or {@code null} if none exists
      */
     protected static Element firstDirectChildByTagName(final Element parent, final String tagName) {
-        var children = parent.getChildNodes();
+        final var children = parent.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             if (children.item(i) instanceof Element child && child.getTagName().equals(tagName)) {
                 return child;
@@ -353,15 +579,15 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     /**
-     * Parses the given attribute as a double, failing with a message identifying the element, attribute and raw value instead of the bare
-     * {@link NumberFormatException} {@link Double#parseDouble(String)} would throw.
+     * Parses the given attribute as a double, failing with a message identifying the element, attribute and
+     * raw value instead of the bare {@link NumberFormatException} {@link Double#parseDouble(String)} would throw.
      *
      * @param element the element carrying the attribute
      * @param attributeName the attribute to parse
      * @return the parsed value
      */
     protected static double parseDoubleAttribute(final Element element, final String attributeName) {
-        var value = element.getAttribute(attributeName);
+        final var value = element.getAttribute(attributeName);
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
@@ -369,61 +595,61 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         }
     }
 
-    private static List<Place> parsePlaces(Element placesRootElement, Place parentPlace) {
-        List<Place> places = new LinkedList<>();
-        NodeList placeElements = placesRootElement.getChildNodes();
+    private static List<Place> parsePlaces(final Element placesRootElement, final Place parentPlace) {
+        final List<Place> places = new LinkedList<>();
+        final NodeList placeElements = placesRootElement.getChildNodes();
         for (int i = 0; i < placeElements.getLength(); i++) {
             if (placeElements.item(i).getNodeName().equals(PLACE_ELEMENT)) {
-                Element e = (Element) placeElements.item(i);
-                Place p = parsePlace(e, parentPlace);
+                final Element e = (Element) placeElements.item(i);
+                final Place p = parsePlace(e, parentPlace);
                 places.add(p);
             }
         }
         return places;
     }
 
-    private static Place parsePlace(Element placeElement, Place parentPlace) {
+    private static Place parsePlace(final Element placeElement, final Place parentPlace) {
         // <place color="0xf5deb3ff" id="1" level="GALAXY" name="Galaxy">
-        Color color = Color.valueOf(placeElement.getAttribute(COLOR_ATR));
-        long id = Long.parseLong(placeElement.getAttribute(ID_ATR));
-        PlaceLevel level = PlaceLevel.valueOf(placeElement.getAttribute(PLACE_LEVEL_ATR));
-        String name = placeElement.getAttribute(NAME_ATR);
-        Place place = PlaceFactory.createPlace(id, name, level, parentPlace, color);
+        final Color color = Color.valueOf(placeElement.getAttribute(COLOR_ATR));
+        final long id = Long.parseLong(placeElement.getAttribute(ID_ATR));
+        final PlaceLevel level = PlaceLevel.valueOf(placeElement.getAttribute(PLACE_LEVEL_ATR));
+        final String name = placeElement.getAttribute(NAME_ATR);
+        final Place place = PlaceFactory.createPlace(id, name, level, parentPlace, color);
         parsePlaces(placeElement, place);
         return place;
     }
 
-    private static List<Person> parsePersons(Element personsRootElement, TimeLineProject project, List<String> relativePathLoaded) {
-        List<Person> persons = new LinkedList<>();
-        NodeList personElements = personsRootElement.getChildNodes();
+    private static List<Person> parsePersons(final Element personsRootElement, final TimeLineProject project, final List<String> relativePathLoaded) {
+        final List<Person> persons = new LinkedList<>();
+        final NodeList personElements = personsRootElement.getChildNodes();
         for (int i = 0; i < personElements.getLength(); i++) {
             if (personElements.item(i).getNodeName().equals(PERSON_ELEMENT)) {
-                Element e = (Element) personElements.item(i);
-                Person p = parsePerson(e, project, relativePathLoaded);
+                final Element e = (Element) personElements.item(i);
+                final Person p = parsePerson(e, project, relativePathLoaded);
                 persons.add(p);
             }
         }
         return persons;
     }
 
-    private static Person parsePerson(Element personElement, TimeLineProject project, List<String> relativePathLoaded) {
+    private static Person parsePerson(final Element personElement, final TimeLineProject project, final List<String> relativePathLoaded) {
         // <person color="0x7fffd4ff" id="1" name="Obi Wan Kenobi"/>
-        var color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
-        var id = Long.parseLong(personElement.getAttribute(ID_ATR));
-        var name = personElement.getAttribute(NAME_ATR);
+        final var color = Color.valueOf(personElement.getAttribute(COLOR_ATR));
+        final var id = Long.parseLong(personElement.getAttribute(ID_ATR));
+        final var name = personElement.getAttribute(NAME_ATR);
         var defaultPortraitRef = Long.MIN_VALUE;
         if (personElement.hasAttribute(DEFAULT_PORTRAIT_REF_ATR)) {
             defaultPortraitRef = Long.parseLong(personElement.getAttribute(DEFAULT_PORTRAIT_REF_ATR));
         }
-        var person = PersonFactory.createPerson(project, id, name, color);
-        var childrenElements = personElement.getChildNodes();
+        final var person = PersonFactory.createPerson(project, id, name, color);
+        final var childrenElements = personElement.getChildNodes();
         for (int i = 0; i < childrenElements.getLength(); i++) {
             if (childrenElements.item(i).getNodeName().equals(PORTRAIT_ELEMENT)) {
                 // <portrait id="147" path="portraits\obi_wan.png"/>
-                var portraitElement = (Element) childrenElements.item(i);
-                var portraitID = Long.parseLong(portraitElement.getAttribute(ID_ATR));
-                var portraitPath = portraitElement.getAttribute(PATH_ATR);
-                var portrait = PortraitFactory.createPortrait(portraitID, person, portraitPath);
+                final var portraitElement = (Element) childrenElements.item(i);
+                final var portraitID = Long.parseLong(portraitElement.getAttribute(ID_ATR));
+                final var portraitPath = portraitElement.getAttribute(PATH_ATR);
+                final var portrait = PortraitFactory.createPortrait(portraitID, person, portraitPath);
                 if (portrait.getId() == defaultPortraitRef) {
                     person.setDefaultPortrait(portrait);
                 } else {
@@ -435,30 +661,30 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         }
         //
         if (personElement.hasAttribute(TIME_FORMAT_ATR)) {
-            var timeFormat = TimeFormat.valueOf(personElement.getAttribute(TIME_FORMAT_ATR));
+            final var timeFormat = TimeFormat.valueOf(personElement.getAttribute(TIME_FORMAT_ATR));
             person.setTimeFormat(timeFormat);
             switch (timeFormat) {
                 case LOCAL_TIME -> {
                     if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
-                        var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
-                        var dateOfBirth = LocalDate.parse(dateOfBirthS);
+                        final var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+                        final var dateOfBirth = LocalDate.parse(dateOfBirthS);
                         person.setDateOfBirth(dateOfBirth);
                     }
                     if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
-                        var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
-                        var dateOfDeath = LocalDate.parse(dateOfDeathS);
+                        final var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+                        final var dateOfDeath = LocalDate.parse(dateOfDeathS);
                         person.setDateOfDeath(dateOfDeath);
                     }
                 }
                 case TIME_MIN -> {
                     if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
-                        var timeOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
-                        var timeOfBirth = Long.parseLong(timeOfBirthS);
+                        final var timeOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+                        final var timeOfBirth = Long.parseLong(timeOfBirthS);
                         person.setTimeOfBirth(timeOfBirth);
                     }
                     if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
-                        var timeOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
-                        var timeOfDeath = Long.parseLong(timeOfDeathS);
+                        final var timeOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+                        final var timeOfDeath = Long.parseLong(timeOfDeathS);
                         person.setTimeOfDeath(timeOfDeath);
                     }
                 }
@@ -469,14 +695,14 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return person;
     }
 
-    protected static void parseObjectTimeValue(Element sourceElement, IDateObject aDateObject, TimeFormat aTimeFormat) {
+    protected static void parseObjectTimeValue(final Element sourceElement, final IDateObject aDateObject, final TimeFormat aTimeFormat) {
         aDateObject.setTimeFormat(aTimeFormat);
         switch (aTimeFormat) {
             case LOCAL_TIME -> {
                 if (sourceElement.hasAttribute(DATE_ATR)) {
-                    var dateS = sourceElement.getAttribute(DATE_ATR);
+                    final var dateS = sourceElement.getAttribute(DATE_ATR);
                     try {
-                        var date = LocalDate.parse(dateS);
+                        final var date = LocalDate.parse(dateS);
                         aDateObject.setDate(date);
                     } catch (Exception e) {
                         LOG.log(Level.SEVERE, "Could not parse date {0}, for element {1}, using default date.", new Object[]{e.getMessage(), sourceElement});
@@ -486,7 +712,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
             }
             case TIME_MIN -> {
                 if (sourceElement.hasAttribute(DATE_ATR)) {
-                    var time = parseDoubleAttribute(sourceElement, DATE_ATR);
+                    final var time = parseDoubleAttribute(sourceElement, DATE_ATR);
                     aDateObject.setTimestamp(time);
                 }
             }
@@ -495,45 +721,45 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         }
     }
 
-    private static List<Picture> parsePictures(Element picturesRootElement, TimeLineProject project, List<String> relativePathLoaded) {
-        List<Picture> pictures = new LinkedList<>();
-        NodeList picturesElements = picturesRootElement.getChildNodes();
+    private static List<Picture> parsePictures(final Element picturesRootElement, final TimeLineProject project, final List<String> relativePathLoaded) {
+        final List<Picture> pictures = new LinkedList<>();
+        final NodeList picturesElements = picturesRootElement.getChildNodes();
         for (int i = 0; i < picturesElements.getLength(); i++) {
             if (picturesElements.item(i).getNodeName().equals(PICTURE_ELEMENT)) {
-                Element e = (Element) picturesElements.item(i);
-                Picture p = parsePicture(e, project, relativePathLoaded);
+                final Element e = (Element) picturesElements.item(i);
+                final Picture p = parsePicture(e, project, relativePathLoaded);
                 pictures.add(p);
             }
         }
         return pictures;
     }
 
-    private static Picture parsePicture(Element pictureElement, TimeLineProject project, List<String> relativePathLoaded) {
-        Long milliIn = System.currentTimeMillis();
-        var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
-        var name = pictureElement.getAttribute(NAME_ATR);
-        var path = pictureElement.getAttribute(PATH_ATR);
+    private static Picture parsePicture(final Element pictureElement, final TimeLineProject project, final List<String> relativePathLoaded) {
+        final Long milliIn = System.currentTimeMillis();
+        final var id = Long.parseLong(pictureElement.getAttribute(ID_ATR));
+        final var name = pictureElement.getAttribute(NAME_ATR);
+        final var path = pictureElement.getAttribute(PATH_ATR);
         relativePathLoaded.add(path);
-        var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
-        var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));
+        final var width = Integer.parseInt(pictureElement.getAttribute(WIDTH_ATR));
+        final var height = Integer.parseInt(pictureElement.getAttribute(HEIGHT_ATR));
         //
-        Picture picture = PictureFactory.createPicture(project, id, name, LocalDateTime.MIN, path, width, height);
+        final Picture picture = PictureFactory.createPicture(project, id, name, LocalDateTime.MIN, path, width, height);
         parseObjectTimeValue(pictureElement, picture, project.getTimeFormat());
         //
-        var pictureChildrenElements = pictureElement.getChildNodes();
+        final var pictureChildrenElements = pictureElement.getChildNodes();
         for (int i = 0; i < pictureChildrenElements.getLength(); i++) {
-            Node n = pictureChildrenElements.item(i);
+            final Node n = pictureChildrenElements.item(i);
             switch (n.getNodeName()) {
                 case PERSON_REF_ELEMENT -> {
-                    Element e = (Element) n;
-                    long personID = Long.parseLong(e.getAttribute(ID_ATR));
-                    Person person = PersonFactory.getPerson(personID);
+                    final Element e = (Element) n;
+                    final long personID = Long.parseLong(e.getAttribute(ID_ATR));
+                    final Person person = PersonFactory.getPerson(personID);
                     picture.addPerson(person);
                 }
                 case PLACE_REF_ELEMENT -> {
-                    Element e = (Element) n;
-                    long placeID = Long.parseLong(e.getAttribute(ID_ATR));
-                    Place place = PlaceFactory.getPlace(placeID);
+                    final Element e = (Element) n;
+                    final long placeID = Long.parseLong(e.getAttribute(ID_ATR));
+                    final Place place = PlaceFactory.getPlace(placeID);
                     picture.addPlace(place);
                 }
                 case "#text" ->
@@ -543,39 +769,39 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
             }
         }
         //
-        var milliOut = System.currentTimeMillis();
-        var time = milliOut - milliIn;
+        final var milliOut = System.currentTimeMillis();
+        final var time = milliOut - milliIn;
         if (time > 1) {
             LOG.log(Level.SEVERE, "Parsed picture: {0}\n > took {1}ms.", new Object[]{name, Long.toString(time)});
         }
         return picture;
     }
 
-    private List<Frieze> parseFriezes(TimeLineProject project, Element friezesRootElement) {
-        List<Frieze> friezes = new LinkedList<>();
-        NodeList friezeElements = friezesRootElement.getChildNodes();
+    private List<Frieze> parseFriezes(final TimeLineProject project, final Element friezesRootElement) {
+        final List<Frieze> friezes = new LinkedList<>();
+        final NodeList friezeElements = friezesRootElement.getChildNodes();
         for (int i = 0; i < friezeElements.getLength(); i++) {
             if (friezeElements.item(i).getNodeName().equals(FRIEZE_ELEMENT)) {
-                Element e = (Element) friezeElements.item(i);
-                Frieze f = parseFrieze(project, e);
+                final Element e = (Element) friezeElements.item(i);
+                final Frieze f = parseFrieze(project, e);
                 friezes.add(f);
             }
         }
         return friezes;
     }
 
-    private Frieze parseFrieze(TimeLineProject project, Element friezeElement) {
+    private Frieze parseFrieze(final TimeLineProject project, final Element friezeElement) {
         // <frieze name="SW 1-2">
-        var name = friezeElement.getAttribute(NAME_ATR);
-        var id = Long.parseLong(friezeElement.getAttribute(ID_ATR));
-        var staysElement = firstDirectChildByTagName(friezeElement, STAYS_REF_GROUP);
+        final var name = friezeElement.getAttribute(NAME_ATR);
+        final var id = Long.parseLong(friezeElement.getAttribute(ID_ATR));
+        final var staysElement = firstDirectChildByTagName(friezeElement, STAYS_REF_GROUP);
         if (staysElement == null) {
             throw new IllegalStateException("Wrong number of STAYS_GROUP : 0");
         }
-        var stays = parseStaysInFreize(staysElement);
-        var frieze = FriezeFactory.createFrieze(id, project, name, stays);
+        final var stays = parseStaysInFreize(staysElement);
+        final var frieze = FriezeFactory.createFrieze(id, project, name, stays);
         //
-        var freemapsElement = firstDirectChildByTagName(friezeElement, FreeMapProviderV4.FREEMAPS_GROUP);
+        final var freemapsElement = firstDirectChildByTagName(friezeElement, FreeMapProviderV4.FREEMAPS_GROUP);
         if (freemapsElement == null) {
             throw new IllegalStateException("Wrong number of FREEMAPS_GROUP : 0");
         }
@@ -584,15 +810,15 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return frieze;
     }
 
-    private List<StayPeriod> parseStays(Element staysRootElement, TimeFormat aTimeFormat) {
-        List<StayPeriod> stayPeriods = new LinkedList<>();
-        NodeList stayElements = staysRootElement.getChildNodes();
+    private List<StayPeriod> parseStays(final Element staysRootElement, final TimeFormat aTimeFormat) {
+        final List<StayPeriod> stayPeriods = new LinkedList<>();
+        final NodeList stayElements = staysRootElement.getChildNodes();
         for (int i = 0; i < stayElements.getLength(); i++) {
             if (stayElements.item(i).getNodeName().equals(STAY_ELEMENT)) {
-                Element e = (Element) stayElements.item(i);
+                final Element e = (Element) stayElements.item(i);
                 // a stay keeps the time format it was created with, which may predate a later change to the
                 // project's own time format, so prefer its own attribute over the project's current default
-                var stayTimeFormat = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : aTimeFormat;
+                final var stayTimeFormat = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : aTimeFormat;
                 switch (stayTimeFormat) {
                     case LOCAL_TIME ->
                         stayPeriods.add(parseStayPeriodLocalTime(e));
@@ -606,14 +832,14 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return stayPeriods;
     }
 
-    private List<StayPeriod> parseStaysInFreize(Element staysRootElement) {
-        List<StayPeriod> stayPeriods = new LinkedList<>();
-        NodeList stayElements = staysRootElement.getChildNodes();
+    private List<StayPeriod> parseStaysInFreize(final Element staysRootElement) {
+        final List<StayPeriod> stayPeriods = new LinkedList<>();
+        final NodeList stayElements = staysRootElement.getChildNodes();
         for (int i = 0; i < stayElements.getLength(); i++) {
             if (stayElements.item(i).getNodeName().equals(STAY_ELEMENT_REF)) {
-                Element e = (Element) stayElements.item(i);
-                long id = Long.parseLong(e.getAttribute(ID_ATR));
-                var stay = StayFactory.getStay(id);
+                final Element e = (Element) stayElements.item(i);
+                final long id = Long.parseLong(e.getAttribute(ID_ATR));
+                final var stay = StayFactory.getStay(id);
                 if (stay == null) {
                     throw new UnsupportedOperationException("StayPeriod reference does not exist " + id);
                 }
@@ -623,93 +849,93 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return stayPeriods;
     }
 
-    private StayPeriodLocalDate parseStayPeriodLocalTime(Element stayElement) {
+    private StayPeriodLocalDate parseStayPeriodLocalTime(final Element stayElement) {
         // <stay endDate="20" id="1" person="5" startDate="0" timeFormat="LOCAL_TIME"/>
-        long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
-        long personID = Long.parseLong(stayElement.getAttribute(PERSON_ATR));
-        Person person = PersonFactory.getPerson(personID);
+        final long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
+        final long personID = Long.parseLong(stayElement.getAttribute(PERSON_ATR));
+        final Person person = PersonFactory.getPerson(personID);
         if (person == null) {
             throw new IllegalStateException();
         }
-        long placeID = Long.parseLong(stayElement.getAttribute(PLACE_ID_ATR));
-        Place place = PlaceFactory.getPlace(placeID);
+        final long placeID = Long.parseLong(stayElement.getAttribute(PLACE_ID_ATR));
+        final Place place = PlaceFactory.getPlace(placeID);
         if (place == null) {
             throw new IllegalStateException();
         }
-        String startS = stayElement.getAttribute(START_DATE_ATR);
-        String endS = stayElement.getAttribute(END_DATE_ATR);
-        LocalDate start = LocalDate.parse(startS);
-        LocalDate end = LocalDate.parse(endS);
+        final String startS = stayElement.getAttribute(START_DATE_ATR);
+        final String endS = stayElement.getAttribute(END_DATE_ATR);
+        final LocalDate start = LocalDate.parse(startS);
+        final LocalDate end = LocalDate.parse(endS);
         return StayFactory.createStayPeriodLocalDate(id, person, start, end, place);
     }
 
-    private StayPeriodSimpleTime parseStayPeriodSimpleTime(Element stayElement) {
+    private StayPeriodSimpleTime parseStayPeriodSimpleTime(final Element stayElement) {
         // <stay endDate="20" id="1" person="5" startDate="0" timeFormat="TIME_MIN"/>
-        long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
-        long personID = Long.parseLong(stayElement.getAttribute(PERSON_ATR));
-        Person person = PersonFactory.getPerson(personID);
+        final long id = Long.parseLong(stayElement.getAttribute(ID_ATR));
+        final long personID = Long.parseLong(stayElement.getAttribute(PERSON_ATR));
+        final Person person = PersonFactory.getPerson(personID);
         if (person == null) {
             throw new IllegalStateException("Could not load StayPeriodSimpleTime id=" + id + " with personID=" + personID);
         }
-        long placeID = Long.parseLong(stayElement.getAttribute(PLACE_ID_ATR));
-        Place place = PlaceFactory.getPlace(placeID);
+        final long placeID = Long.parseLong(stayElement.getAttribute(PLACE_ID_ATR));
+        final Place place = PlaceFactory.getPlace(placeID);
         if (place == null) {
             throw new IllegalStateException("Could not load StayPeriodSimpleTime id=" + id + " with placeID=" + placeID);
         }
-        var start = parseDoubleAttribute(stayElement, START_DATE_ATR);
-        var end = parseDoubleAttribute(stayElement, END_DATE_ATR);
+        final var start = parseDoubleAttribute(stayElement, START_DATE_ATR);
+        final var end = parseDoubleAttribute(stayElement, END_DATE_ATR);
         return StayFactory.createStayPeriodSimpleTime(id, person, start, end, place);
     }
 
-    private List<PictureChronology> parsePictureChronologies(TimeLineProject project, Element pictureChronologiesRootElement) {
-        List<PictureChronology> pictureChronologys = new LinkedList<>();
-        NodeList pictureChronologiesElements = pictureChronologiesRootElement.getChildNodes();
+    private List<PictureChronology> parsePictureChronologies(final TimeLineProject project, final Element pictureChronologiesRootElement) {
+        final List<PictureChronology> pictureChronologys = new LinkedList<>();
+        final NodeList pictureChronologiesElements = pictureChronologiesRootElement.getChildNodes();
         for (int i = 0; i < pictureChronologiesElements.getLength(); i++) {
             if (pictureChronologiesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_ELEMENT)) {
-                Element e = (Element) pictureChronologiesElements.item(i);
-                PictureChronology pC = parsePictureChronology(project, e);
+                final Element e = (Element) pictureChronologiesElements.item(i);
+                final PictureChronology pC = parsePictureChronology(project, e);
                 pictureChronologys.add(pC);
             }
         }
         return pictureChronologys;
     }
 
-    private PictureChronology parsePictureChronology(TimeLineProject project, Element pictureChronologyElement) {
-        long id = Long.parseLong(pictureChronologyElement.getAttribute(ID_ATR));
-        String name = pictureChronologyElement.getAttribute(NAME_ATR);
-        double width = parseDoubleAttribute(pictureChronologyElement, WIDTH_ATR);
-        double height = parseDoubleAttribute(pictureChronologyElement, HEIGHT_ATR);
+    private PictureChronology parsePictureChronology(final TimeLineProject project, final Element pictureChronologyElement) {
+        final long id = Long.parseLong(pictureChronologyElement.getAttribute(ID_ATR));
+        final String name = pictureChronologyElement.getAttribute(NAME_ATR);
+        final double width = parseDoubleAttribute(pictureChronologyElement, WIDTH_ATR);
+        final double height = parseDoubleAttribute(pictureChronologyElement, HEIGHT_ATR);
         //
-        List<ChronologyPictureMiniature> miniatures = new LinkedList<>();
-        List<ChronologyLink> links = new LinkedList<>();
+        final List<ChronologyPictureMiniature> miniatures = new LinkedList<>();
+        final List<ChronologyLink> links = new LinkedList<>();
         //
-        NodeList miniaturesElements = pictureChronologyElement.getChildNodes();
+        final NodeList miniaturesElements = pictureChronologyElement.getChildNodes();
         for (int i = 0; i < miniaturesElements.getLength(); i++) {
             if (miniaturesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT)) {
-                Element e = (Element) miniaturesElements.item(i);
-                var miniature = parseChronologyPictureMiniature(e, project.getTimeFormat());
+                final Element e = (Element) miniaturesElements.item(i);
+                final var miniature = parseChronologyPictureMiniature(e, project.getTimeFormat());
                 miniatures.add(miniature);
             } else if (miniaturesElements.item(i).getNodeName().equals(PICTURE_CHRONOLOGY_LINK_ELEMENT)) {
-                Element e = (Element) miniaturesElements.item(i);
+                final Element e = (Element) miniaturesElements.item(i);
                 links.add(parsePictureChronologyLink(e));
             }
         }
         //
-        var pictureChronology = PictureChronologyFactory.createPictureChronology(id, project, name, miniatures, links);
+        final var pictureChronology = PictureChronologyFactory.createPictureChronology(id, project, name, miniatures, links);
         pictureChronology.setWidth(width);
         pictureChronology.setHeight(height);
         //
         return pictureChronology;
     }
 
-    private ChronologyPictureMiniature parseChronologyPictureMiniature(Element miniatureElement, TimeFormat aTimeFormat) {
+    private ChronologyPictureMiniature parseChronologyPictureMiniature(final Element miniatureElement, final TimeFormat aTimeFormat) {
 //        <pictureChronologyMiniature id="138" pictureRef="125" xPos="897.0" yPos="329.0" scale="0.5"/>
-        long id = Long.parseLong(miniatureElement.getAttribute(ID_ATR));
-        long pictureRef = Long.parseLong(miniatureElement.getAttribute(PICTURE_REF_ELEMENT));
-        double xPos = parseDoubleAttribute(miniatureElement, X_POS_ATR);
-        double yPos = parseDoubleAttribute(miniatureElement, Y_POS_ATR);
-        double scale = parseDoubleAttribute(miniatureElement, SCALE_ATR);
-        var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
+        final long id = Long.parseLong(miniatureElement.getAttribute(ID_ATR));
+        final long pictureRef = Long.parseLong(miniatureElement.getAttribute(PICTURE_REF_ELEMENT));
+        final double xPos = parseDoubleAttribute(miniatureElement, X_POS_ATR);
+        final double yPos = parseDoubleAttribute(miniatureElement, Y_POS_ATR);
+        final double scale = parseDoubleAttribute(miniatureElement, SCALE_ATR);
+        final var miniature = PictureChronologyFactory.createChronologyPictureMiniature(id, IPicture.getPicture(pictureRef), new Point2D(xPos, yPos), scale);
         miniature.setUseCustomTime(!miniature.isInSyncWithPicture());
         if (!miniature.isInSyncWithPicture()) {
             parseObjectTimeValue(miniatureElement, miniature.getDateObject(), aTimeFormat);
@@ -717,23 +943,23 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return miniature;
     }
 
-    private static ChronologyLink parsePictureChronologyLink(Element linkElement) {
-        var id = Long.parseLong(linkElement.getAttribute(ID_ATR));
-        var type = ChronologyLinkType.valueOf(linkElement.getAttribute(TYPE_ATR));
-        var fromID = Long.parseLong(linkElement.getAttribute(FROM_ATR));
-        var from = PictureChronologyFactory.getChronologyPictureMiniature(fromID);
-        var toID = Long.parseLong(linkElement.getAttribute(TO_ATR));
-        var to = PictureChronologyFactory.getChronologyPictureMiniature(toID);
-        var personRef = Long.parseLong(linkElement.getAttribute(PERSON_REF_ATR));
-        var person = PersonFactory.getPerson(personRef);
-        var paramsAsString = linkElement.getAttribute(PARAMETERS_ATR);
-        var parameters = CustomFileUtils.toDoubleArray(paramsAsString);
+    private static ChronologyLink parsePictureChronologyLink(final Element linkElement) {
+        final var id = Long.parseLong(linkElement.getAttribute(ID_ATR));
+        final var type = ChronologyLinkType.valueOf(linkElement.getAttribute(TYPE_ATR));
+        final var fromID = Long.parseLong(linkElement.getAttribute(FROM_ATR));
+        final var from = PictureChronologyFactory.getChronologyPictureMiniature(fromID);
+        final var toID = Long.parseLong(linkElement.getAttribute(TO_ATR));
+        final var to = PictureChronologyFactory.getChronologyPictureMiniature(toID);
+        final var personRef = Long.parseLong(linkElement.getAttribute(PERSON_REF_ATR));
+        final var person = PersonFactory.getPerson(personRef);
+        final var paramsAsString = linkElement.getAttribute(PARAMETERS_ATR);
+        final var parameters = CustomFileUtils.toDoubleArray(paramsAsString);
         return PictureChronologyFactory.createChronologyLink(id, person, from, to, type, parameters);
     }
 
-    private static Element createPlaceElement(Document doc, Place place, String fromPlace) {
+    private static Element createPlaceElement(final Document doc, final Place place, final String fromPlace) {
         LOG.log(Level.FINE, "> Creating place {0} from {1}", new Object[]{place.getName(), fromPlace});
-        var placeElement = doc.createElement(PLACE_ELEMENT);
+        final var placeElement = doc.createElement(PLACE_ELEMENT);
         placeElement.setAttribute(ID_ATR, Long.toString(place.getId()));
         placeElement.setAttribute(NAME_ATR, place.getName());
         placeElement.setAttribute(PLACE_LEVEL_ATR, place.getLevel().name());
@@ -742,9 +968,9 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return placeElement;
     }
 
-    private static Element createPersonElement(Document doc, Person person) {
+    private static Element createPersonElement(final Document doc, final Person person) {
         LOG.log(Level.FINE, "> Creating person {0}", new Object[]{person.getName()});
-        var personElement = doc.createElement(PERSON_ELEMENT);
+        final var personElement = doc.createElement(PERSON_ELEMENT);
         personElement.setAttribute(ID_ATR, Long.toString(person.getId()));
         personElement.setAttribute(NAME_ATR, person.getName());
         if (person.getDefaultPortrait() != null) {
@@ -769,7 +995,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + person.getTimeFormat());
         }
         person.getPortraits().forEach(portrait -> {
-            var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
+            final var portraitElement = doc.createElement(PORTRAIT_ELEMENT);
             portraitElement.setAttribute(ID_ATR, Long.toString(portrait.getId()));
             portraitElement.setAttribute(PATH_ATR, portrait.getProjectRelativePath());
             saveObjectTime(portraitElement, portrait);
@@ -778,7 +1004,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return personElement;
     }
 
-    private static void saveObjectTime(Element targetElement, IDateObject aDateObject) {
+    private static void saveObjectTime(final Element targetElement, final IDateObject aDateObject) {
         switch (aDateObject.getTimeFormat()) {
             case LOCAL_TIME -> {
                 if (aDateObject.getDate() != null) {
@@ -793,20 +1019,20 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         }
     }
 
-    private static Element createPictureElement(Document doc, Picture picture) {
-        Element pictureElement = doc.createElement(PICTURE_ELEMENT);
+    private static Element createPictureElement(final Document doc, final Picture picture) {
+        final Element pictureElement = doc.createElement(PICTURE_ELEMENT);
         pictureElement.setAttribute(ID_ATR, Long.toString(picture.getId()));
         pictureElement.setAttribute(NAME_ATR, picture.getName());
         pictureElement.setAttribute(PATH_ATR, picture.getProjectRelativePath());
         pictureElement.setAttribute(WIDTH_ATR, Integer.toString((int) picture.getWidth()));
         pictureElement.setAttribute(HEIGHT_ATR, Integer.toString((int) picture.getHeight()));
         picture.getPersons().forEach(person -> {
-            Element personElement = doc.createElement(PERSON_REF_ELEMENT);
+            final Element personElement = doc.createElement(PERSON_REF_ELEMENT);
             personElement.setAttribute(ID_ATR, Long.toString(person.getId()));
             pictureElement.appendChild(personElement);
         });
         picture.getPlaces().forEach(place -> {
-            Element placeElement = doc.createElement(PLACE_REF_ELEMENT);
+            final Element placeElement = doc.createElement(PLACE_REF_ELEMENT);
             placeElement.setAttribute(ID_ATR, Long.toString(place.getId()));
             pictureElement.appendChild(placeElement);
         });
@@ -814,30 +1040,30 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return pictureElement;
     }
 
-    private static Element createFriezeElement(Document doc, Frieze frieze) {
+    private static Element createFriezeElement(final Document doc, final Frieze frieze) {
         LOG.log(Level.INFO, "Saving Frieze {0}", new Object[]{frieze.getName()});
-        var friezeElement = doc.createElement(FRIEZE_ELEMENT);
+        final var friezeElement = doc.createElement(FRIEZE_ELEMENT);
         friezeElement.setAttribute(NAME_ATR, frieze.getName());
         friezeElement.setAttribute(ID_ATR, Long.toString(frieze.getId()));
         // Stays
-        var staysElement = doc.createElement(STAYS_REF_GROUP);
+        final var staysElement = doc.createElement(STAYS_REF_GROUP);
         friezeElement.appendChild(staysElement);
         frieze.getStayPeriods().forEach(stay -> staysElement.appendChild(createStayElementInFreize(doc, stay)));
         // FreeMaps
-        var freemapsElement = doc.createElement(FreeMapProviderV4.FREEMAPS_GROUP);
+        final var freemapsElement = doc.createElement(FreeMapProviderV4.FREEMAPS_GROUP);
         friezeElement.appendChild(freemapsElement);
         frieze.getFriezeFreeMaps().forEach(freeMap -> freemapsElement.appendChild(FreeMapProviderV4.saveFreeMapElement(doc, freeMap)));
         return friezeElement;
     }
 
-    private static Element createStayElement(Document doc, StayPeriod stay) {
-        Element stayElement = doc.createElement(STAY_ELEMENT);
+    private static Element createStayElement(final Document doc, final StayPeriod stay) {
+        final Element stayElement = doc.createElement(STAY_ELEMENT);
         stayElement.setAttribute(ID_ATR, Long.toString(stay.getId()));
         stayElement.setAttribute(PERSON_ATR, Long.toString(stay.getPerson().getId()));
         switch (stay.getTimeFormat()) {
             case LOCAL_TIME -> {
-                LocalDate startDate = LocalDate.ofEpochDay((long) stay.getStartDate());
-                LocalDate endDate = LocalDate.ofEpochDay((long) stay.getEndDate());
+                final LocalDate startDate = LocalDate.ofEpochDay((long) stay.getStartDate());
+                final LocalDate endDate = LocalDate.ofEpochDay((long) stay.getEndDate());
                 stayElement.setAttribute(START_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(startDate));
                 stayElement.setAttribute(END_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(endDate));
             }
@@ -853,14 +1079,14 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return stayElement;
     }
 
-    private static Element createStayElementInFreize(Document doc, StayPeriod stay) {
-        Element stayElement = doc.createElement(STAY_ELEMENT_REF);
+    private static Element createStayElementInFreize(final Document doc, final StayPeriod stay) {
+        final Element stayElement = doc.createElement(STAY_ELEMENT_REF);
         stayElement.setAttribute(ID_ATR, Long.toString(stay.getId()));
         return stayElement;
     }
 
-    private static Element createPictureChronologyElement(Document doc, PictureChronology pictureChronology) {
-        var pictureChronologyElement = doc.createElement(PICTURE_CHRONOLOGY_ELEMENT);
+    private static Element createPictureChronologyElement(final Document doc, final PictureChronology pictureChronology) {
+        final var pictureChronologyElement = doc.createElement(PICTURE_CHRONOLOGY_ELEMENT);
         pictureChronologyElement.setAttribute(ID_ATR, Long.toString(pictureChronology.getId()));
         pictureChronologyElement.setAttribute(NAME_ATR, pictureChronology.getName());
         pictureChronologyElement.setAttribute(WIDTH_ATR, Double.toString(pictureChronology.getWidth()));
@@ -871,8 +1097,8 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return pictureChronologyElement;
     }
 
-    private static Element createPictureChronologyMiniature(Document doc, ChronologyPictureMiniature miniature) {
-        var pictureChronologyMiniatureElement = doc.createElement(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT);
+    private static Element createPictureChronologyMiniature(final Document doc, final ChronologyPictureMiniature miniature) {
+        final var pictureChronologyMiniatureElement = doc.createElement(PICTURE_CHRONOLOGY_MINIATURE_ELEMENT);
         pictureChronologyMiniatureElement.setAttribute(ID_ATR, Long.toString(miniature.getId()));
         pictureChronologyMiniatureElement.setAttribute(X_POS_ATR, Double.toString(miniature.getPosition().getX()));
         pictureChronologyMiniatureElement.setAttribute(Y_POS_ATR, Double.toString(miniature.getPosition().getY()));
@@ -884,8 +1110,8 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         return pictureChronologyMiniatureElement;
     }
 
-    private static Element createPictureChronologyLink(Document doc, ChronologyLink link) {
-        var pictureChronologyLinkElement = doc.createElement(PICTURE_CHRONOLOGY_LINK_ELEMENT);
+    private static Element createPictureChronologyLink(final Document doc, final ChronologyLink link) {
+        final var pictureChronologyLinkElement = doc.createElement(PICTURE_CHRONOLOGY_LINK_ELEMENT);
         pictureChronologyLinkElement.setAttribute(ID_ATR, Long.toString(link.getId()));
         pictureChronologyLinkElement.setAttribute(TYPE_ATR, link.getLinkType().name());
         pictureChronologyLinkElement.setAttribute(FROM_ATR, Long.toString(link.getStartMiniature().getId()));

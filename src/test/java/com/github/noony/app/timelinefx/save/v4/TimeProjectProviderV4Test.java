@@ -18,7 +18,6 @@
 package com.github.noony.app.timelinefx.save.v4;
 
 import com.github.noony.app.timelinefx.core.PersonFactory;
-import com.github.noony.app.timelinefx.core.Picture;
 import com.github.noony.app.timelinefx.core.PictureFactory;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;

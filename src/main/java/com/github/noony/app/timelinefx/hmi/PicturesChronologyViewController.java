@@ -220,7 +220,7 @@ public final class PicturesChronologyViewController implements Initializable {
 
     private void handleProjectChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED, TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED, TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED, TimeLineProject.TIME_FORMAT_CHANGED -> {
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED, TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED, TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED, TimeLineProject.TIME_FORMAT_CHANGED -> {
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);

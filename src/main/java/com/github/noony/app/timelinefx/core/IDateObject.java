@@ -41,7 +41,7 @@ public interface IDateObject {
     /**
      * The default date.
      */
-    final LocalDate DEFAULT_DATE = LocalDate.EPOCH;
+    LocalDate DEFAULT_DATE = LocalDate.EPOCH;
 
     /**
      * The default time stamp.

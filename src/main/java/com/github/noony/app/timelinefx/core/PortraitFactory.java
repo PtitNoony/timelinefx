@@ -164,7 +164,7 @@ public final class PortraitFactory {
     }
 
     private static Portrait createPortraitImpl(final long id, final Person person, final PictureInfo picInfo, final String filePath) {
-        Portrait portrait;
+        final Portrait portrait;
         switch (person.getProject().getTimeFormat()) {
             case LOCAL_TIME -> {
                 final LocalDate date;

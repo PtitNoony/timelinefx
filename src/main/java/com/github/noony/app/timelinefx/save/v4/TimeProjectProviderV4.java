@@ -50,6 +50,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -394,6 +395,11 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     private static final String TARGET_VERSION = "4";
 
     /**
+     * Regex matching any file name, used when scanning the portraits/pictures folders for unused files.
+     */
+    private static final String ANY_FILE_REGEX = "^(.*?)";
+
+    /**
      * Default constructor, required for this provider to be discoverable as a service.
      */
     public TimeProjectProviderV4() {
@@ -410,9 +416,9 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         CustomProfiler.start(loadMethodName);
         final String projectName = e.getAttribute(NAME_ATR);
         // Load project properties
-        final var portraitsFolderValue = e.hasAttribute(PORTRAIT_FOLDER_ATR) ? e.getAttribute(PORTRAIT_FOLDER_ATR) : TimeLineProject.DEFAULT_PORTRAIT_FOLDER;
-        final var picturesFolderValue = e.hasAttribute(PICTURES_FOLDER_ATR) ? e.getAttribute(PICTURES_FOLDER_ATR) : TimeLineProject.DEFAULT_PICTURES_FOLDER;
-        final var miniaturesFolderValue = e.hasAttribute(MINIATURES_FOLDER_ATR) ? e.getAttribute(MINIATURES_FOLDER_ATR) : TimeLineProject.DEFAULT_MINIATURES_FOLDER;
+        final var portraitsFolderValue = attributeOrDefault(e, PORTRAIT_FOLDER_ATR, TimeLineProject.DEFAULT_PORTRAIT_FOLDER);
+        final var picturesFolderValue = attributeOrDefault(e, PICTURES_FOLDER_ATR, TimeLineProject.DEFAULT_PICTURES_FOLDER);
+        final var miniaturesFolderValue = attributeOrDefault(e, MINIATURES_FOLDER_ATR, TimeLineProject.DEFAULT_MINIATURES_FOLDER);
         //
         final Map<String, String> configParams = Map.of(
                 TimeLineProject.PROJECT_FOLDER_KEY, projectFile.getParent(),
@@ -420,7 +426,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 TimeLineProject.PICTURES_FOLDER_KEY, picturesFolderValue,
                 TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
         );
-        final var timeFormatValue = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : TimeFormat.LOCAL_TIME;
+        final var timeFormatValue = timeFormatOrDefault(e, TimeFormat.LOCAL_TIME);
         final TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormatValue);
         //
         final List<String> relativePathLoaded = new LinkedList<>();
@@ -456,41 +462,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 }
             }
         }
-        // check every file exists
-        relativePathLoaded.forEach(path -> {
-            final var absolutePath = CustomFileUtils.fromProjectRelativeToAbsolute(project, path);
-            // not optimal ...
-            final File file = new File(absolutePath);
-            if (!file.exists()) {
-                LOG.log(Level.SEVERE, "The file {0} does not exists. (saved as {1})", new Object[]{absolutePath, path});
-            }
-        });
-        //
-        final Set<Path> absolutePathsLoaded = relativePathLoaded
-                .stream()
-                .map(p -> Paths.get(CustomFileUtils.fromProjectRelativeToAbsolute(project, p)))
-                .map(p -> p.normalize())
-                .collect(Collectors.toSet());
-        // * Portraits
-        final File portraitFolder = project.getPortraitsAbsoluteFolder();
-        FileUtils.listFiles(portraitFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
-                .stream()
-                .map(portraitFile -> Paths.get(portraitFile.toURI()))
-                .filter(portraitAbsolutePath -> !absolutePathsLoaded.contains(portraitAbsolutePath))
-                .forEach(portraitAbsolutePath
-                        -> // FUTURE IMPROVMENT : create actions
-                        LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath})
-                );
-        // * Pictures
-        final File picturesFolder = project.getPicturesFolder();
-        FileUtils.listFiles(picturesFolder, new RegexFileFilter("^(.*?)"), DirectoryFileFilter.DIRECTORY)
-                .stream()
-                .map(pictureFile -> Paths.get(pictureFile.toURI()))
-                .filter(pictureAbsolutePath -> !absolutePathsLoaded.contains(pictureAbsolutePath))
-                .forEach(pictureAbsolutePath
-                        -> // FUTURE IMPROVMENT : create actions
-                        LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath})
-                );
+        warnAboutFileIssues(project, relativePathLoaded);
         //
         // FUTURE IMPROVMENT : ENABLE AUTO IMPORT => in config
         //
@@ -595,6 +567,74 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         }
     }
 
+    /**
+     * Returns the given attribute's value, or a default value if the attribute is absent.
+     *
+     * @param element the element carrying the attribute
+     * @param attributeName the attribute to look up
+     * @param defaultValue the value to return if the attribute is absent
+     * @return the attribute's value, or {@code defaultValue}
+     */
+    private static String attributeOrDefault(final Element element, final String attributeName, final String defaultValue) {
+        if (element.hasAttribute(attributeName)) {
+            return element.getAttribute(attributeName);
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Returns the {@link TimeFormat} held by the {@link #TIME_FORMAT_ATR} attribute, or a default value if the
+     * attribute is absent.
+     *
+     * @param element the element possibly carrying the {@link #TIME_FORMAT_ATR} attribute
+     * @param defaultValue the value to return if the attribute is absent
+     * @return the parsed time format, or {@code defaultValue}
+     */
+    private static TimeFormat timeFormatOrDefault(final Element element, final TimeFormat defaultValue) {
+        if (element.hasAttribute(TIME_FORMAT_ATR)) {
+            return TimeFormat.valueOf(element.getAttribute(TIME_FORMAT_ATR));
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Checks that every loaded file still exists, and warns about portrait/picture files present on disk but
+     * referenced by nothing that was loaded.
+     *
+     * @param project the project being loaded
+     * @param relativePathLoaded the project-relative file paths that were referenced while loading
+     */
+    private static void warnAboutFileIssues(final TimeLineProject project, final List<String> relativePathLoaded) {
+        // check every file exists
+        relativePathLoaded.forEach(path -> {
+            final var absolutePath = CustomFileUtils.fromProjectRelativeToAbsolute(project, path);
+            // not optimal ...
+            final File file = new File(absolutePath);
+            if (!file.exists()) {
+                LOG.log(Level.SEVERE, "The file {0} does not exists. (saved as {1})", new Object[]{absolutePath, path});
+            }
+        });
+        //
+        final Set<Path> absolutePathsLoaded = relativePathLoaded.stream().
+                map(p -> Paths.get(CustomFileUtils.fromProjectRelativeToAbsolute(project, p))).
+                map(p -> p.normalize()).
+                collect(Collectors.toSet());
+        // * Portraits
+        final File portraitFolder = project.getPortraitsAbsoluteFolder();
+        // FUTURE IMPROVMENT : create actions for unused portrait files instead of just warning
+        FileUtils.listFiles(portraitFolder, new RegexFileFilter(ANY_FILE_REGEX), DirectoryFileFilter.DIRECTORY).stream().
+                map(portraitFile -> Paths.get(portraitFile.toURI())).
+                filter(portraitAbsolutePath -> !absolutePathsLoaded.contains(portraitAbsolutePath)).
+                forEach(portraitAbsolutePath -> LOG.log(Level.WARNING, "Found unused portrait file: {0}", new Object[]{portraitAbsolutePath}));
+        // * Pictures
+        final File picturesFolder = project.getPicturesFolder();
+        // FUTURE IMPROVMENT : create actions for unused picture files instead of just warning
+        FileUtils.listFiles(picturesFolder, new RegexFileFilter(ANY_FILE_REGEX), DirectoryFileFilter.DIRECTORY).stream().
+                map(pictureFile -> Paths.get(pictureFile.toURI())).
+                filter(pictureAbsolutePath -> !absolutePathsLoaded.contains(pictureAbsolutePath)).
+                forEach(pictureAbsolutePath -> LOG.log(Level.WARNING, "Found unused picture file: {0}", new Object[]{pictureAbsolutePath}));
+    }
+
     private static List<Place> parsePlaces(final Element placesRootElement, final Place parentPlace) {
         final List<Place> places = new LinkedList<>();
         final NodeList placeElements = placesRootElement.getChildNodes();
@@ -642,6 +682,27 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
             defaultPortraitRef = Long.parseLong(personElement.getAttribute(DEFAULT_PORTRAIT_REF_ATR));
         }
         final var person = PersonFactory.createPerson(project, id, name, color);
+        parsePersonPortraits(personElement, person, defaultPortraitRef, relativePathLoaded, project.getTimeFormat());
+        //
+        if (personElement.hasAttribute(TIME_FORMAT_ATR)) {
+            final var timeFormat = TimeFormat.valueOf(personElement.getAttribute(TIME_FORMAT_ATR));
+            person.setTimeFormat(timeFormat);
+            parsePersonDates(personElement, person, timeFormat);
+        }
+        return person;
+    }
+
+    /**
+     * Parses a person's {@code <portrait>} children, registering each one and its default-portrait status.
+     *
+     * @param personElement the {@code <person>} element being parsed
+     * @param person the person the portraits belong to
+     * @param defaultPortraitRef the id of the portrait to use as the default one, or {@code Long.MIN_VALUE} if none was specified
+     * @param relativePathLoaded accumulator of project-relative file paths referenced while loading
+     * @param timeFormat the project's time format, used to parse each portrait's own time value
+     */
+    private static void parsePersonPortraits(final Element personElement, final Person person, final long defaultPortraitRef,
+            final List<String> relativePathLoaded, final TimeFormat timeFormat) {
         final var childrenElements = personElement.getChildNodes();
         for (int i = 0; i < childrenElements.getLength(); i++) {
             if (childrenElements.item(i).getNodeName().equals(PORTRAIT_ELEMENT)) {
@@ -655,44 +716,48 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 } else {
                     person.addPortrait(portrait);
                 }
-                parseObjectTimeValue(portraitElement, portrait, project.getTimeFormat());
+                parseObjectTimeValue(portraitElement, portrait, timeFormat);
                 relativePathLoaded.add(portraitPath);
             }
         }
-        //
-        if (personElement.hasAttribute(TIME_FORMAT_ATR)) {
-            final var timeFormat = TimeFormat.valueOf(personElement.getAttribute(TIME_FORMAT_ATR));
-            person.setTimeFormat(timeFormat);
-            switch (timeFormat) {
-                case LOCAL_TIME -> {
-                    if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
-                        final var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
-                        final var dateOfBirth = LocalDate.parse(dateOfBirthS);
-                        person.setDateOfBirth(dateOfBirth);
-                    }
-                    if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
-                        final var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
-                        final var dateOfDeath = LocalDate.parse(dateOfDeathS);
-                        person.setDateOfDeath(dateOfDeath);
-                    }
+    }
+
+    /**
+     * Parses a person's birth/death date or time value, in whichever form matches the given time format.
+     *
+     * @param personElement the {@code <person>} element being parsed
+     * @param person the person the dates belong to
+     * @param timeFormat the time format the dates are expressed in
+     */
+    private static void parsePersonDates(final Element personElement, final Person person, final TimeFormat timeFormat) {
+        switch (timeFormat) {
+            case LOCAL_TIME -> {
+                if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
+                    final var dateOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+                    final var dateOfBirth = LocalDate.parse(dateOfBirthS);
+                    person.setDateOfBirth(dateOfBirth);
                 }
-                case TIME_MIN -> {
-                    if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
-                        final var timeOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
-                        final var timeOfBirth = Long.parseLong(timeOfBirthS);
-                        person.setTimeOfBirth(timeOfBirth);
-                    }
-                    if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
-                        final var timeOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
-                        final var timeOfDeath = Long.parseLong(timeOfDeathS);
-                        person.setTimeOfDeath(timeOfDeath);
-                    }
+                if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
+                    final var dateOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+                    final var dateOfDeath = LocalDate.parse(dateOfDeathS);
+                    person.setDateOfDeath(dateOfDeath);
                 }
-                default ->
-                    throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
             }
+            case TIME_MIN -> {
+                if (personElement.hasAttribute(DATE_OF_BIRTH_ATR)) {
+                    final var timeOfBirthS = personElement.getAttribute(DATE_OF_BIRTH_ATR);
+                    final var timeOfBirth = Long.parseLong(timeOfBirthS);
+                    person.setTimeOfBirth(timeOfBirth);
+                }
+                if (personElement.hasAttribute(DATE_OF_DEATH_ATR)) {
+                    final var timeOfDeathS = personElement.getAttribute(DATE_OF_DEATH_ATR);
+                    final var timeOfDeath = Long.parseLong(timeOfDeathS);
+                    person.setTimeOfDeath(timeOfDeath);
+                }
+            }
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
         }
-        return person;
     }
 
     protected static void parseObjectTimeValue(final Element sourceElement, final IDateObject aDateObject, final TimeFormat aTimeFormat) {
@@ -704,7 +769,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                     try {
                         final var date = LocalDate.parse(dateS);
                         aDateObject.setDate(date);
-                    } catch (Exception e) {
+                    } catch (DateTimeParseException e) {
                         LOG.log(Level.SEVERE, "Could not parse date {0}, for element {1}, using default date.", new Object[]{e.getMessage(), sourceElement});
                         aDateObject.setDate(LocalDate.EPOCH);
                     }
@@ -818,7 +883,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 final Element e = (Element) stayElements.item(i);
                 // a stay keeps the time format it was created with, which may predate a later change to the
                 // project's own time format, so prefer its own attribute over the project's current default
-                final var stayTimeFormat = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : aTimeFormat;
+                final var stayTimeFormat = timeFormatOrDefault(e, aTimeFormat);
                 switch (stayTimeFormat) {
                     case LOCAL_TIME ->
                         stayPeriods.add(parseStayPeriodLocalTime(e));
@@ -929,7 +994,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     private ChronologyPictureMiniature parseChronologyPictureMiniature(final Element miniatureElement, final TimeFormat aTimeFormat) {
-//        <pictureChronologyMiniature id="138" pictureRef="125" xPos="897.0" yPos="329.0" scale="0.5"/>
+        // <pictureChronologyMiniature id="138" pictureRef="125" xPos="897.0" yPos="329.0" scale="0.5"/>
         final long id = Long.parseLong(miniatureElement.getAttribute(ID_ATR));
         final long pictureRef = Long.parseLong(miniatureElement.getAttribute(PICTURE_REF_ELEMENT));
         final double xPos = parseDoubleAttribute(miniatureElement, X_POS_ATR);

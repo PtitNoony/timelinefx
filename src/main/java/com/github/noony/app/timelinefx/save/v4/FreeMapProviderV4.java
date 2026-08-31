@@ -53,7 +53,7 @@ import static com.github.noony.app.timelinefx.save.v4.TimeProjectProviderV4.*;
  *
  * @author hamon
  */
-public class FreeMapProviderV4 {
+public final class FreeMapProviderV4 {
 
     /**
      * XML group element name for the free maps section.
@@ -267,7 +267,7 @@ public class FreeMapProviderV4 {
         } else {
             stayElement.setAttribute(FREEMAP_IS_MERGED_ATR, Boolean.TRUE.toString());
             subStays.forEach(subStay -> stayElement.appendChild(saveFreeMapStayElement(doc, subStay)));
-            // TODO: improve, but will require to update stay management in merge stays
+            // could be improved, but will require to update stay management in merge stays first
             allStaysIncluded.forEach(includedStay -> {
                 final var includedStaylement = doc.createElement(STAY_ELEMENT_REF);
                 includedStaylement.setAttribute(ID_ATR, Long.toString(includedStay.getId()));

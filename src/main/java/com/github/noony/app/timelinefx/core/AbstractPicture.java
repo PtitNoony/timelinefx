@@ -223,7 +223,6 @@ public abstract class AbstractPicture implements IPicture {
     @Override
     public void setTimeFormat(final TimeFormat aTimeFormat) {
         timeFormat = aTimeFormat;
-        System.err.println(" changing time format for " + getName() + " ==> " + aTimeFormat);
         switch (timeFormat) {
             case LOCAL_TIME ->
                 propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);

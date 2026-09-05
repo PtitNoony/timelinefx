@@ -26,6 +26,7 @@ import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.PlaceLevel;
 import com.github.noony.app.timelinefx.core.StayFactory;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import java.io.File;
@@ -44,7 +45,7 @@ public class TestExample {
         Map<String, String> configParams = Map.of(
                 TimeLineProject.PROJECT_FOLDER_KEY, projectFolderPath
         );
-        TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Test Project", configParams);
+        final TimeLineProject timeLineProject = TimeLineProjectFactory.createProject("Test Project", configParams, TimeFormat.TIME_MIN);
         //
         Place galaxy = PlaceFactory.createPlace("Galaxy", PlaceLevel.GALAXY, null, Color.WHEAT);
         Place placeA = PlaceFactory.createPlace("PLACE_A", PlaceLevel.INTER_SYSTEM_SPACE, galaxy, Color.LIGHTSTEELBLUE);

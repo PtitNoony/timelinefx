@@ -110,7 +110,11 @@ public abstract class AbstractPicture implements IPicture {
         filePath = aFilePath;
         //
         timeFormat = TimeFormat.LOCAL_TIME;
-        date = aDate != null ? aDate : LocalDate.MIN;
+        if (aDate != null) {
+            date = aDate;
+        } else {
+            date = LocalDate.EPOCH;
+        }
         timestamp = -1;
         //
         name = aName;
@@ -133,11 +137,13 @@ public abstract class AbstractPicture implements IPicture {
         name = aName;
     }
 
-    @Override public long getId() {
+    @Override
+    public long getId() {
         return id;
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return name;
     }
 

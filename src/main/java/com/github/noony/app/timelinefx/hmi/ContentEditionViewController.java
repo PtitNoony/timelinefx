@@ -210,6 +210,7 @@ public final class ContentEditionViewController implements Initializable {
         }
         timeLineProject = aTimeLineProject;
         timeLineProject.addListener(timelineChangeListener);
+        updateCreateButtonState();
         //
         if (staysCreationViewController != null) {
             staysCreationViewController.setTimelineProject(aTimeLineProject);
@@ -234,12 +235,18 @@ public final class ContentEditionViewController implements Initializable {
     }
 
     private void updatePersonTab() {
+        if (timeLineProject == null) {
+            personCheckListView.getItems().clear();
+            return;
+        }
         personCheckListView.getItems().setAll(timeLineProject.getPersons());
     }
 
     private void updatePlacesTab() {
         var rootPlaceItem = createRootPlaceItem();
-        timeLineProject.getHighLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
+        if (timeLineProject != null) {
+            timeLineProject.getHighLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));
+        }
         placesCheckTreeView.setRoot(rootPlaceItem);
         rootPlaceItem.setExpanded(true);
         placesCheckTreeView.refresh();
@@ -260,9 +267,15 @@ public final class ContentEditionViewController implements Initializable {
 
     private void setEditMode(EditType mode) {
         editType = mode;
+        updateCreateButtonState();
+    }
+
+    private void updateCreateButtonState() {
         switch (editType) {
             case PERSON, PLACE ->
-                createButton.setDisable(false);
+                // creating a person/place needs an active project (its default portrait, or its
+                // registration in the project, both dereference it) -- see updateCreateButtonState callers
+                createButton.setDisable(timeLineProject == null);
             case NONE ->
                 createButton.setDisable(true);
             default ->
@@ -378,18 +391,19 @@ public final class ContentEditionViewController implements Initializable {
                 place = (Place) event.getNewValue();
                 customModalWindow.hide();
                 final var createdPlace = place;
-                UndoManager.execute(new SimpleCommand("Create place",
-                        () -> timeLineProject.addPlace(createdPlace),
-                        () -> timeLineProject.removePlace(createdPlace)));
+                if (timeLineProject != null) {
+                    UndoManager.execute(new SimpleCommand("Create place",
+                            () -> timeLineProject.addPlace(createdPlace),
+                            () -> timeLineProject.removePlace(createdPlace)));
+                }
                 updatePlacesTab();
             }
 
             case PlaceCreationViewController.PLACE_EDITIED -> {
                 place = (Place) event.getNewValue();
-                if (place.isRootPlace()) {
+                if (place.isRootPlace() && timeLineProject != null) {
                     timeLineProject.addHighLevelPlace(place);
                 } else {
-//                    timeLineProject.addHighLevelPlace(place);
 // nothing is needed since the parent place will take care of things
                 }
                 customModalWindow.hide();
@@ -404,12 +418,15 @@ public final class ContentEditionViewController implements Initializable {
 
     private void handleTimelineChanges(PropertyChangeEvent event) {
         switch (event.getPropertyName()) {
-            case TimeLineProject.PLACE_REMOVED, TimeLineProject.PLACE_ADDED ->
+            case TimeLineProject.PLACE_REMOVED, TimeLineProject.PLACE_ADDED, TimeLineProject.HIGH_LEVEL_PLACE_ADDED ->
                 runLater(this::updatePlacesTab);
             case TimeLineProject.PERSON_ADDED, TimeLineProject.PERSON_REMOVED ->
                 runLater(this::updatePersonTab);
             case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
                 // TODO : see if ignoring is OK
+            }
+            case TimeLineProject.TIME_FORMAT_CHANGED -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
@@ -423,9 +440,11 @@ public final class ContentEditionViewController implements Initializable {
                 person = (Person) event.getNewValue();
                 customModalWindow.hide();
                 final var createdPerson = person;
-                UndoManager.execute(new SimpleCommand("Create person",
-                        () -> timeLineProject.addPerson(createdPerson),
-                        () -> timeLineProject.removePerson(createdPerson)));
+                if (timeLineProject != null) {
+                    UndoManager.execute(new SimpleCommand("Create person",
+                            () -> timeLineProject.addPerson(createdPerson),
+                            () -> timeLineProject.removePerson(createdPerson)));
+                }
                 updatePersonTab();
             }
             case PersonCreationViewController.PERSON_EDITIED -> {

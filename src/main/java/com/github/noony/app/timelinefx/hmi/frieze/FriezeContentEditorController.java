@@ -53,7 +53,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
@@ -101,6 +103,14 @@ public class FriezeContentEditorController implements Initializable {
     // properties
     @FXML
     private GridPane timeGrid;
+    @FXML
+    private Label projectStartDateLabel;
+    @FXML
+    private Label projectEndDateLabel;
+    @FXML
+    private CheckBox constraintStartCB;
+    @FXML
+    private CheckBox constraintEndCB;
 
     private List<CheckBoxTreeItem<Place>> allTreeItems = new LinkedList<>();
 
@@ -118,6 +128,12 @@ public class FriezeContentEditorController implements Initializable {
     private TextField friezeStartTimeField;
 
     private TextField friezeEndTimeField;
+
+    private TextField constraintStartDateField;
+
+    private TextField constraintEndDateField;
+
+    private boolean updatingConstraintControls = false;
 
     private AnchorPane spatialViewRootPane;
 
@@ -146,6 +162,31 @@ public class FriezeContentEditorController implements Initializable {
             if (frieze != null) {
                 frieze.setName(t1);
                 nameField.setText(frieze.getName());
+            }
+        });
+        //
+        constraintStartCB.setSelected(false);
+        constraintStartCB.selectedProperty().addListener((var ov, var t, var t1) -> {
+            constraintStartDateField.setDisable(!t1);
+            if (updatingConstraintControls || frieze == null) {
+                return;
+            }
+            if (t1) {
+                applyConstraintMinDate();
+            } else {
+                frieze.clearConstraintMinDate();
+            }
+        });
+        constraintEndCB.setSelected(false);
+        constraintEndCB.selectedProperty().addListener((var ov, var t, var t1) -> {
+            constraintEndDateField.setDisable(!t1);
+            if (updatingConstraintControls || frieze == null) {
+                return;
+            }
+            if (t1) {
+                applyConstraintMaxDate();
+            } else {
+                frieze.clearConstraintMaxDate();
             }
         });
         //
@@ -265,6 +306,7 @@ public class FriezeContentEditorController implements Initializable {
         }
         timeLineProject = aTimeLineProject;
         timeLineProject.addListener(projectListener);
+        updateProjectDatesDisplay();
         updatePeoplePane();
         updatePlacesPane();
         updatePeoplePane();
@@ -279,6 +321,7 @@ public class FriezeContentEditorController implements Initializable {
         frieze = aFrieze;
         frieze.addListener(friezeListener);
         updatePropertiesTab();
+        updateConstraintControls();
         updatePeoplePane();
         updatePlacesPane();
         updateStaysPane();
@@ -294,32 +337,70 @@ public class FriezeContentEditorController implements Initializable {
         updatePeoplePane();
         updatePlacesPane();
         updatePropertiesTab();
+        updateProjectDatesDisplay();
     }
 
     private void updatePropertiesTab() {
         if (frieze != null) {
             nameField.setText(frieze.getName());
-            switch (frieze.getTimeFormat()) {
-                case LOCAL_TIME -> {
-//                    throw new AssertionError();
-                    System.err.println("TODO:: updatePropertiesTab -> LOCAL_TIME");
-                }
-                case TIME_MIN -> {
-                    friezeStartTimeField.setText(Double.toString(frieze.getMinDate()));
-                    friezeEndTimeField.setText(Double.toString(frieze.getMaxDate()));
-                    if (!timeGrid.getChildren().contains(friezeStartTimeField)) {
-                        timeGrid.add(friezeStartTimeField, 1, 2);
-                    }
-                    if (!timeGrid.getChildren().contains(friezeEndTimeField)) {
-                        timeGrid.add(friezeEndTimeField, 4, 2);
-                    }
-                }
-                default ->
-                    throw new AssertionError();
-            }
+            updateFriezeDatesDisplay();
         } else {
             nameField.setText("");
         }
+    }
+
+    private void updateFriezeDatesDisplay() {
+        if (frieze == null) {
+            return;
+        }
+        switch (frieze.getTimeFormat()) {
+            case LOCAL_TIME -> {
+//                    throw new AssertionError();
+                System.err.println("TODO:: updateFriezeDatesDisplay -> LOCAL_TIME");
+            }
+            case TIME_MIN -> {
+                friezeStartTimeField.setText(Double.toString(frieze.getMinDate()));
+                friezeEndTimeField.setText(Double.toString(frieze.getMaxDate()));
+                if (!timeGrid.getChildren().contains(friezeStartTimeField)) {
+                    timeGrid.add(friezeStartTimeField, 1, 2);
+                }
+                if (!timeGrid.getChildren().contains(friezeEndTimeField)) {
+                    timeGrid.add(friezeEndTimeField, 4, 2);
+                }
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void updateProjectDatesDisplay() {
+        if (timeLineProject == null || timeLineProject.getStays().isEmpty()) {
+            projectStartDateLabel.setText("");
+            projectEndDateLabel.setText("");
+        } else {
+            projectStartDateLabel.setText(Double.toString(timeLineProject.getMinDate()));
+            projectEndDateLabel.setText(Double.toString(timeLineProject.getMaxDate()));
+        }
+    }
+
+    private void updateConstraintControls() {
+        if (frieze == null) {
+            return;
+        }
+        if (!timeGrid.getChildren().contains(constraintStartDateField)) {
+            timeGrid.add(constraintStartDateField, 1, 3);
+        }
+        if (!timeGrid.getChildren().contains(constraintEndDateField)) {
+            timeGrid.add(constraintEndDateField, 4, 3);
+        }
+        updatingConstraintControls = true;
+        constraintStartCB.setSelected(frieze.isMinDateConstrained());
+        constraintStartDateField.setDisable(!frieze.isMinDateConstrained());
+        constraintStartDateField.setText(frieze.isMinDateConstrained() ? Double.toString(frieze.getConstraintMinDate()) : "");
+        constraintEndCB.setSelected(frieze.isMaxDateConstrained());
+        constraintEndDateField.setDisable(!frieze.isMaxDateConstrained());
+        constraintEndDateField.setText(frieze.isMaxDateConstrained() ? Double.toString(frieze.getConstraintMaxDate()) : "");
+        updatingConstraintControls = false;
     }
 
     private void updatePeoplePane() {
@@ -485,7 +566,46 @@ public class FriezeContentEditorController implements Initializable {
         friezeStartTimeField = new TextField();
         //
         friezeEndTimeField = new TextField();
+        //
+        constraintStartDateField = new TextField();
+        constraintStartDateField.setDisable(true);
+        constraintStartDateField.textProperty().addListener((var ov, var t, var t1) -> {
+            if (!updatingConstraintControls && constraintStartCB.isSelected() && frieze != null) {
+                applyConstraintMinDate();
+            }
+        });
+        //
+        constraintEndDateField = new TextField();
+        constraintEndDateField.setDisable(true);
+        constraintEndDateField.textProperty().addListener((var ov, var t, var t1) -> {
+            if (!updatingConstraintControls && constraintEndCB.isSelected() && frieze != null) {
+                applyConstraintMaxDate();
+            }
+        });
+    }
 
+    private void applyConstraintMinDate() {
+        final var text = constraintStartDateField.getText();
+        if (text.isBlank()) {
+            return;
+        }
+        try {
+            frieze.setConstraintMinDate(Double.parseDouble(text));
+        } catch (NumberFormatException e) {
+            LOG.log(Level.FINEST, "The following value is not a valid constraint start date {0}. {1}", new Object[]{text, e});
+        }
+    }
+
+    private void applyConstraintMaxDate() {
+        final var text = constraintEndDateField.getText();
+        if (text.isBlank()) {
+            return;
+        }
+        try {
+            frieze.setConstraintMaxDate(Double.parseDouble(text));
+        } catch (NumberFormatException e) {
+            LOG.log(Level.FINEST, "The following value is not a valid constraint end date {0}. {1}", new Object[]{text, e});
+        }
     }
 
     private void createSpatialView() {
@@ -520,10 +640,12 @@ public class FriezeContentEditorController implements Initializable {
                 addPeopleToPeoplePane((Person) event.getNewValue());
             case TimeLineProject.PERSON_REMOVED ->
                 removePersonFromPeoplePane((Person) event.getNewValue());
-            case TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED ->
+            case TimeLineProject.PLACE_ADDED, TimeLineProject.PLACE_REMOVED, TimeLineProject.HIGH_LEVEL_PLACE_ADDED ->
                 updatePlacesPane();
-            case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED -> {
-                // ignored
+            case TimeLineProject.STAY_ADDED, TimeLineProject.STAY_REMOVED ->
+                updateProjectDatesDisplay();
+            case TimeLineProject.TIME_FORMAT_CHANGED -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException(this.getClass().getSimpleName() + " :: " + event);
@@ -537,8 +659,10 @@ public class FriezeContentEditorController implements Initializable {
             }
             case Frieze.PLACE_ADDED, Frieze.PLACE_REMOVED ->
                 updatePlacesPane();
-            case Frieze.STAY_ADDED, Frieze.STAY_REMOVED, Frieze.STAY_UPDATED ->
+            case Frieze.STAY_ADDED, Frieze.STAY_REMOVED, Frieze.STAY_UPDATED -> {
                 updateStaysPane();
+                updateFriezeDatesDisplay();
+            }
             case Frieze.DATE_WINDOW_CHANGED -> {
                 // TODO
             }

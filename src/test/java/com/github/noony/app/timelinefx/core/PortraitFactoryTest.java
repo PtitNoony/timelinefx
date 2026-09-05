@@ -19,6 +19,7 @@ package com.github.noony.app.timelinefx.core;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,6 +108,30 @@ public final class PortraitFactoryTest {
         final var relativePath = person.getProject().getPortraitsRelativeFolder() + File.separator + Person.DEFAULT_PICTURE_NAME;
         final var portrait = PortraitFactory.createPortrait(42L, person, relativePath);
         assertEquals(42L, portrait.getId());
+    }
+
+    /**
+     * Test of createPortrait(Person) method, of class PortraitFactory, with the project's default (LOCAL_TIME)
+     * time format: the portrait's date is taken from the picture's own (parsed, or metadata-parser-default)
+     * creation date, not from an unrelated default value.
+     */
+    @Test
+    public void testCreatePortraitUsesLocalTimeFormat() {
+        final var portrait = PortraitFactory.createPortrait(person);
+        assertEquals(TimeFormat.LOCAL_TIME, portrait.getTimeFormat());
+        assertEquals(LocalDate.MIN, portrait.getDate());
+    }
+
+    /**
+     * Test of createPortrait(Person) method, of class PortraitFactory, with the project set to the TIME_MIN
+     * time format: the portrait's timestamp is derived from the picture's own creation date.
+     */
+    @Test
+    public void testCreatePortraitUsesTimeMinFormat() {
+        project.setTimeFormat(TimeFormat.TIME_MIN);
+        final var portrait = PortraitFactory.createPortrait(person);
+        assertEquals(TimeFormat.TIME_MIN, portrait.getTimeFormat());
+        assertEquals(LocalDate.MIN.toEpochDay(), portrait.getTimestamp());
     }
 
     /**

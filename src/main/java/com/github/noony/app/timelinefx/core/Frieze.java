@@ -663,7 +663,7 @@ public final class Frieze implements FriezeObject {
      * @param newMinDateWindow the new earliest visible date
      */
     public void setMinDateWindow(final double newMinDateWindow) {
-        minDateWindow = newMinDateWindow;
+        minDateWindow = Math.max(newMinDateWindow, constraintMinDate);
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
     }
 
@@ -671,8 +671,76 @@ public final class Frieze implements FriezeObject {
      * @param newMaxDateWindow the new latest visible date
      */
     public void setMaxDateWindow(final double newMaxDateWindow) {
-        maxDateWindow = newMaxDateWindow;
+        maxDateWindow = Math.min(newMaxDateWindow, constraintMaxDate);
         propertyChangeSupport.firePropertyChange(DATE_WINDOW_CHANGED, minDateWindow, maxDateWindow);
+    }
+
+    /**
+     * @return whether the visible date window's lower bound is currently constrained
+     */
+    public boolean isMinDateConstrained() {
+        return constraintMinDate != Double.NEGATIVE_INFINITY;
+    }
+
+    /**
+     * @return whether the visible date window's upper bound is currently constrained
+     */
+    public boolean isMaxDateConstrained() {
+        return constraintMaxDate != Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * @return the lowest date allowed in the visible date window
+     */
+    public double getConstraintMinDate() {
+        return constraintMinDate;
+    }
+
+    /**
+     * @return the highest date allowed in the visible date window
+     */
+    public double getConstraintMaxDate() {
+        return constraintMaxDate;
+    }
+
+    /**
+     * Constrains the visible date window to never go below the given date, pushing the current window's
+     * lower bound up to it if needed.
+     *
+     * @param newConstraintMinDate the new lowest date allowed in the visible date window
+     */
+    public void setConstraintMinDate(final double newConstraintMinDate) {
+        constraintMinDate = newConstraintMinDate;
+        if (minDateWindow < constraintMinDate) {
+            setMinDateWindow(constraintMinDate);
+        }
+    }
+
+    /**
+     * Constrains the visible date window to never go above the given date, pulling the current window's
+     * upper bound down to it if needed.
+     *
+     * @param newConstraintMaxDate the new highest date allowed in the visible date window
+     */
+    public void setConstraintMaxDate(final double newConstraintMaxDate) {
+        constraintMaxDate = newConstraintMaxDate;
+        if (maxDateWindow > constraintMaxDate) {
+            setMaxDateWindow(constraintMaxDate);
+        }
+    }
+
+    /**
+     * Removes the lower-bound constraint on the visible date window.
+     */
+    public void clearConstraintMinDate() {
+        constraintMinDate = Double.NEGATIVE_INFINITY;
+    }
+
+    /**
+     * Removes the upper-bound constraint on the visible date window.
+     */
+    public void clearConstraintMaxDate() {
+        constraintMaxDate = Double.POSITIVE_INFINITY;
     }
 
     /**
@@ -694,7 +762,7 @@ public final class Frieze implements FriezeObject {
             case TimeLineProject.HIGH_LEVEL_PLACE_ADDED, TimeLineProject.PLACE_ADDED -> {
                 // Nothing to do
             }
-            case TimeLineProject.PERSON_ADDED, TimeLineProject.STAY_ADDED -> {
+            case TimeLineProject.PERSON_ADDED, TimeLineProject.STAY_ADDED, TimeLineProject.TIME_FORMAT_CHANGED -> {
                 // Nothing to do
             }
             //            case TimeLineProject.STAY_ADDED ->

@@ -20,6 +20,7 @@ package com.github.noony.app.timelinefx.hmi;
 import com.github.noony.app.timelinefx.Configuration;
 import com.github.noony.app.timelinefx.core.Frieze;
 import com.github.noony.app.timelinefx.core.FriezeFactory;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.examples.StarWars;
@@ -27,6 +28,7 @@ import com.github.noony.app.timelinefx.examples.TestExample;
 import static com.github.noony.app.timelinefx.hmi.AppInstanceConfiguration.ANCHOR_CONSTRAINT_ZERO;
 import com.github.noony.app.timelinefx.hmi.frieze.FriezeContentEditorController;
 import com.github.noony.app.timelinefx.save.XMLHandler;
+import com.github.noony.app.timelinefx.undo.SimpleCommand;
 import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.CustomProfiler;
 import java.beans.PropertyChangeEvent;
@@ -98,6 +100,10 @@ public final class ProjectViewController implements Initializable {
     private MenuItem undoMenuItem;
     @FXML
     private MenuItem redoMenuItem;
+    @FXML
+    private RadioMenuItem dateTimeFormatMI;
+    @FXML
+    private RadioMenuItem minTimeFormatMI;
 
     private final Map<CheckMenuItem, Frieze> friezeMenuItems = new HashMap<>();
 
@@ -138,6 +144,10 @@ public final class ProjectViewController implements Initializable {
     private ToggleGroup toolbarToggleGroup;
 
     private ToggleGroup viewToggleGroup;
+
+    private ToggleGroup timeFormatToggleGroup;
+
+    private boolean updatingTimeFormatSelection = false;
 
     private ACTION_ON_HOLD actionOnHold = ACTION_ON_HOLD.NONE;
 
@@ -193,6 +203,20 @@ public final class ProjectViewController implements Initializable {
             } else {
                 throw new UnsupportedOperationException("View not supported, action on " + t1);
             }
+        });
+        //
+        timeFormatToggleGroup = new ToggleGroup();
+        dateTimeFormatMI.setToggleGroup(timeFormatToggleGroup);
+        minTimeFormatMI.setToggleGroup(timeFormatToggleGroup);
+        timeFormatToggleGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle t, Toggle t1) -> {
+            if (timeLineProject == null || updatingTimeFormatSelection) {
+                return;
+            }
+            final var newFormat = t1 == dateTimeFormatMI ? TimeFormat.LOCAL_TIME : TimeFormat.TIME_MIN;
+            final var oldFormat = timeLineProject.getTimeFormat();
+            UndoManager.execute(new SimpleCommand("Change time format",
+                    () -> applyTimeFormat(newFormat),
+                    () -> applyTimeFormat(oldFormat)));
         });
         //
         AppInstanceConfiguration.addPropertyChangeListener(this::handleAppInstanceConfigChanges);
@@ -278,6 +302,20 @@ public final class ProjectViewController implements Initializable {
         redoMenuItem.setDisable(!UndoManager.canRedo());
     }
 
+    private void applyTimeFormat(final TimeFormat format) {
+        updatingTimeFormatSelection = true;
+        switch (format) {
+            case LOCAL_TIME ->
+                dateTimeFormatMI.setSelected(true);
+            case TIME_MIN ->
+                minTimeFormatMI.setSelected(true);
+            default ->
+                throw new UnsupportedOperationException();
+        }
+        timeLineProject.setTimeFormat(format);
+        updatingTimeFormatSelection = false;
+    }
+
     @FXML
     protected void handleFriezeCreation(ActionEvent event) {
         LOG.log(Level.INFO, "handleFriezeCreation {0}", event);
@@ -316,11 +354,25 @@ public final class ProjectViewController implements Initializable {
             // TODO: each view
             contentEditionView.setDisable(true);
             friezeContentEditorView.setDisable(true);
+            dateTimeFormatMI.setDisable(true);
+            minTimeFormatMI.setDisable(true);
         } else {
             contentEditionView.setDisable(false);
             friezeContentEditorView.setDisable(false);
             timeLineProject.getFriezes().forEach(this::createFriezeCheckMenuItem);
             updateFrizeMenuItemsSelection(AppInstanceConfiguration.getSelectedFrieze());
+            dateTimeFormatMI.setDisable(false);
+            minTimeFormatMI.setDisable(false);
+            updatingTimeFormatSelection = true;
+            switch (timeLineProject.getTimeFormat()) {
+                case LOCAL_TIME ->
+                    dateTimeFormatMI.setSelected(true);
+                case TIME_MIN ->
+                    minTimeFormatMI.setSelected(true);
+                default ->
+                    throw new UnsupportedOperationException();
+            }
+            updatingTimeFormatSelection = false;
         }
     }
 
@@ -542,11 +594,13 @@ public final class ProjectViewController implements Initializable {
                 @SuppressWarnings("unchecked")
                 var configParams = (Map<String, String>) event.getNewValue();
                 String projectName = configParams.get(TimeLineProject.PROJECT_NAME_KEY);
-                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
+                var timeFormat = TimeFormat.valueOf(configParams.get(TimeLineProject.TIME_FORMAT_KEY));
+                TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormat);
                 loadProject(project);
                 contentEditionView.setDisable(false);
                 friezeContentEditorView.setDisable(false);
                 displayContentEditionView();
+                AppInstanceConfiguration.setSelectedTimeline(project);
             }
             default ->
                 throw new UnsupportedOperationException("" + event);

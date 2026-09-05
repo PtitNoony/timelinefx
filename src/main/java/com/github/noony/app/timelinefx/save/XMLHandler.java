@@ -58,10 +58,8 @@ public final class XMLHandler {
         saveProvider = providers.get(0);
         saveVersion = saveProvider.getSupportedVersions().get(0);
         providers.forEach(candidateparser -> {
-            String mostRecentVersion = candidateparser.getSupportedVersions().stream()
-                    .sorted((v1, v2) -> compareVersions(v1, v2))
-                    .findFirst().get();
-            int versionComparison = compareVersions(saveVersion, mostRecentVersion);
+            final String mostRecentVersion = candidateparser.getSupportedVersions().stream().max(XMLHandler::compareVersions).get();
+            final int versionComparison = compareVersions(mostRecentVersion, saveVersion);
             if (versionComparison > 0) {
                 saveProvider = candidateparser;
                 saveVersion = mostRecentVersion;
@@ -70,6 +68,7 @@ public final class XMLHandler {
     }
 
     public static TimeLineProject loadFile(File file) {
+        LOG.log(Level.INFO, "Trying to load file {0}.", new Object[]{file});
         TimeLineProject project = null;
         if (file != null) {
             FriezeObjectFactory.reset();
@@ -87,8 +86,9 @@ public final class XMLHandler {
                 boolean foundProvider = false;
                 for (TimelineProjectProvider candidateprovider : INSTANCE.providers) {
                     if (candidateprovider.getSupportedVersions().contains(version)) {
-                        project = candidateprovider.load(file, e);
                         foundProvider = true;
+                        LOG.log(Level.INFO, "Using provider {0}.", new Object[]{candidateprovider});
+                        project = candidateprovider.load(file, e);
                         break;
                     }
                 }

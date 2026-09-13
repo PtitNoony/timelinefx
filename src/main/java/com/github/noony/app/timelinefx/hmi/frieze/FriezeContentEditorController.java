@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.hmi.frieze;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -27,6 +26,7 @@ import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
 import com.github.noony.app.timelinefx.drawings.IFriezeView;
 import com.github.noony.app.timelinefx.hmi.AppInstanceConfiguration;
+import com.github.noony.app.timelinefx.hmi.DateViewer;
 import com.github.noony.app.timelinefx.hmi.FriezePeopleViewController;
 import com.github.noony.app.timelinefx.hmi.StageFactory;
 import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
@@ -101,7 +101,7 @@ public class FriezeContentEditorController implements Initializable {
     private Button clearPlaceSelectionB;
     @FXML
     private CheckListView<StayPeriod> staysCheckListView;
-    // properties
+
     @FXML
     private GridPane timeGrid;
     @FXML
@@ -124,15 +124,14 @@ public class FriezeContentEditorController implements Initializable {
     private FriezePlaceViewController spatialViewController;
 
     private FriezePeopleViewController peopleViewController;
-    // properties
 
-    private TextField friezeStartTimeField;
+    private DateViewer friezeStartDateViewer;
 
-    private TextField friezeEndTimeField;
+    private DateViewer friezeEndDateViewer;
 
-    private TextField constraintStartDateField;
+    private DateViewer constraintStartDateViewer;
 
-    private TextField constraintEndDateField;
+    private DateViewer constraintEndDateViewer;
 
     private boolean updatingConstraintControls = false;
 
@@ -166,9 +165,29 @@ public class FriezeContentEditorController implements Initializable {
             }
         });
         //
+        var currentTimeFormat = AppInstanceConfiguration.getSelectedProject().getTimeFormat();
+        friezeStartDateViewer = new DateViewer(currentTimeFormat);
+        friezeStartDateViewer.setDisable(true);
+        friezeEndDateViewer = new DateViewer(currentTimeFormat);
+        friezeEndDateViewer.setDisable(true);
+        timeGrid.add(friezeStartDateViewer.getNode(), 1, 3);
+        timeGrid.add(friezeEndDateViewer.getNode(), 4, 2);
+        //
+        constraintStartDateViewer = new DateViewer(currentTimeFormat);
+        constraintStartDateViewer.setDisable(true);
+        constraintEndDateViewer = new DateViewer(currentTimeFormat);
+        constraintEndDateViewer.setDisable(true);
+        timeGrid.add(constraintStartDateViewer.getNode(), 1, 3);
+        timeGrid.add(constraintEndDateViewer.getNode(), 4, 3);
+//        if (!timeGrid.getChildren().contains(constraintStartDateField)) {
+//            timeGrid.add(constraintStartDateField, 1, 3);
+//        }
+//        if (!timeGrid.getChildren().contains(constraintEndDateField)) {
+//        }
+        //
         constraintStartCB.setSelected(false);
         constraintStartCB.selectedProperty().addListener((var ov, var t, var t1) -> {
-            constraintStartDateField.setDisable(!t1);
+            constraintStartDateViewer.setDisable(!t1);
             if (updatingConstraintControls || frieze == null) {
                 return;
             }
@@ -180,7 +199,7 @@ public class FriezeContentEditorController implements Initializable {
         });
         constraintEndCB.setSelected(false);
         constraintEndCB.selectedProperty().addListener((var ov, var t, var t1) -> {
-            constraintEndDateField.setDisable(!t1);
+            constraintEndDateViewer.setDisable(!t1);
             if (updatingConstraintControls || frieze == null) {
                 return;
             }
@@ -354,14 +373,9 @@ public class FriezeContentEditorController implements Initializable {
         if (frieze == null) {
             return;
         }
-        friezeStartTimeField.setText(TimeFormatToString.timeToString((long) frieze.getMinDate(), frieze.getTimeFormat()));
-        friezeEndTimeField.setText(TimeFormatToString.timeToString((long) frieze.getMaxDate(), frieze.getTimeFormat()));
-        if (!timeGrid.getChildren().contains(friezeStartTimeField)) {
-            timeGrid.add(friezeStartTimeField, 1, 2);
-        }
-        if (!timeGrid.getChildren().contains(friezeEndTimeField)) {
-            timeGrid.add(friezeEndTimeField, 4, 2);
-        }
+        System.err.println(" TODO fix !!");
+//        friezeStartDateViewer.setDate(frieze.getMinDate());
+//        friezeEndDateViewer.setDate(frieze.getMaxDate());
     }
 
     private void updateProjectDatesDisplay() {
@@ -378,19 +392,13 @@ public class FriezeContentEditorController implements Initializable {
         if (frieze == null) {
             return;
         }
-        if (!timeGrid.getChildren().contains(constraintStartDateField)) {
-            timeGrid.add(constraintStartDateField, 1, 3);
-        }
-        if (!timeGrid.getChildren().contains(constraintEndDateField)) {
-            timeGrid.add(constraintEndDateField, 4, 3);
-        }
         updatingConstraintControls = true;
         constraintStartCB.setSelected(frieze.isMinDateConstrained());
-        constraintStartDateField.setDisable(!frieze.isMinDateConstrained());
-        constraintStartDateField.setText(frieze.isMinDateConstrained() ? Double.toString(frieze.getConstraintMinDate()) : "");
+//        constraintStartDateField.setDisable(!frieze.isMinDateConstrained());
+//        constraintStartDateField.setText(frieze.isMinDateConstrained() ? Double.toString(frieze.getConstraintMinDate()) : "");
         constraintEndCB.setSelected(frieze.isMaxDateConstrained());
-        constraintEndDateField.setDisable(!frieze.isMaxDateConstrained());
-        constraintEndDateField.setText(frieze.isMaxDateConstrained() ? Double.toString(frieze.getConstraintMaxDate()) : "");
+//        constraintEndDateField.setDisable(!frieze.isMaxDateConstrained());
+//        constraintEndDateField.setText(frieze.isMaxDateConstrained() ? Double.toString(frieze.getConstraintMaxDate()) : "");
         updatingConstraintControls = false;
     }
 
@@ -554,49 +562,49 @@ public class FriezeContentEditorController implements Initializable {
     }
 
     private void createPropertyControls() {
-        friezeStartTimeField = new TextField();
-        //
-        friezeEndTimeField = new TextField();
-        //
-        constraintStartDateField = new TextField();
-        constraintStartDateField.setDisable(true);
-        constraintStartDateField.textProperty().addListener((var ov, var t, var t1) -> {
-            if (!updatingConstraintControls && constraintStartCB.isSelected() && frieze != null) {
-                applyConstraintMinDate();
-            }
-        });
-        //
-        constraintEndDateField = new TextField();
-        constraintEndDateField.setDisable(true);
-        constraintEndDateField.textProperty().addListener((var ov, var t, var t1) -> {
-            if (!updatingConstraintControls && constraintEndCB.isSelected() && frieze != null) {
-                applyConstraintMaxDate();
-            }
-        });
+//        friezeStartTimeField = new TextField();
+//        //
+//        friezeEndTimeField = new TextField();
+//        //
+//        constraintStartDateField = new TextField();
+//        constraintStartDateField.setDisable(true);
+//        constraintStartDateField.textProperty().addListener((var ov, var t, var t1) -> {
+//            if (!updatingConstraintControls && constraintStartCB.isSelected() && frieze != null) {
+//                applyConstraintMinDate();
+//            }
+//        });
+//        //
+//        constraintEndDateField = new TextField();
+//        constraintEndDateField.setDisable(true);
+//        constraintEndDateField.textProperty().addListener((var ov, var t, var t1) -> {
+//            if (!updatingConstraintControls && constraintEndCB.isSelected() && frieze != null) {
+//                applyConstraintMaxDate();
+//            }
+//        });
     }
 
     private void applyConstraintMinDate() {
-        final var text = constraintStartDateField.getText();
-        if (text.isBlank()) {
-            return;
-        }
-        try {
-            frieze.setConstraintMinDate(Double.parseDouble(text));
-        } catch (NumberFormatException e) {
-            LOG.log(Level.FINEST, "The following value is not a valid constraint start date {0}. {1}", new Object[]{text, e});
-        }
+//        final var text = constraintStartDateField.getText();
+//        if (text.isBlank()) {
+//            return;
+//        }
+//        try {
+//            frieze.setConstraintMinDate(Double.parseDouble(text));
+//        } catch (NumberFormatException e) {
+//            LOG.log(Level.FINEST, "The following value is not a valid constraint start date {0}. {1}", new Object[]{text, e});
+//        }
     }
 
     private void applyConstraintMaxDate() {
-        final var text = constraintEndDateField.getText();
-        if (text.isBlank()) {
-            return;
-        }
-        try {
-            frieze.setConstraintMaxDate(Double.parseDouble(text));
-        } catch (NumberFormatException e) {
-            LOG.log(Level.FINEST, "The following value is not a valid constraint end date {0}. {1}", new Object[]{text, e});
-        }
+//        final var text = constraintEndDateField.getText();
+//        if (text.isBlank()) {
+//            return;
+//        }
+//        try {
+//            frieze.setConstraintMaxDate(Double.parseDouble(text));
+//        } catch (NumberFormatException e) {
+//            LOG.log(Level.FINEST, "The following value is not a valid constraint end date {0}. {1}", new Object[]{text, e});
+//        }
     }
 
     private void createSpatialView() {

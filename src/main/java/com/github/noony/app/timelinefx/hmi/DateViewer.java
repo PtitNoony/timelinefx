@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.Date;
@@ -30,9 +29,8 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 
 /**
- * A JavaFX component displaying and editing a {@link Date} from the core module: a {@link DatePicker}
- * when the date is backed by a {@code LocalDate}, or a {@link TextField} when it is backed by a raw
- * numeric value.
+ * A JavaFX component displaying and editing a {@link Date} from the core module: a {@link DatePicker} when the date is backed by a {@code LocalDate}, or a {@link TextField} when
+ * it is backed by a raw numeric value.
  *
  * @author hamon
  */
@@ -56,7 +54,9 @@ public final class DateViewer {
     /**
      * The date represented by this viewer.
      */
-    private final Date date;
+    private Date date;
+
+    private TimeFormat timeFormat;
 
     /**
      * The control rendering this viewer's date.
@@ -78,14 +78,34 @@ public final class DateViewer {
      */
     private boolean updating = false;
 
+    private boolean isDisabled = false;
+
     /**
-     * Creates a viewer for the given date, rendered as a {@link DatePicker} or a {@link TextField}
-     * depending on how the date is represented.
+     * Creates a viewer for the given date, rendered as a {@link DatePicker} or a {@link TextField} depending on how the date is represented.
+     *
+     * @param aTimeFormat the TimeFormat used to represent the date / times
+     */
+    public DateViewer(TimeFormat aTimeFormat) {
+        date = null;
+        timeFormat = aTimeFormat;
+        node = switch (timeFormat) {
+            case LOCAL_TIME ->
+                createDatePicker();
+            case TIME_MIN ->
+                createTextField();
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + date.getTimeFormat());
+        };
+    }
+
+    /**
+     * Creates a viewer for the given date, rendered as a {@link DatePicker} or a {@link TextField} depending on how the date is represented.
      *
      * @param aDate the date to represent
      */
     public DateViewer(final Date aDate) {
         date = aDate;
+        timeFormat = date.getTimeFormat();
         node = switch (date.getTimeFormat()) {
             case LOCAL_TIME ->
                 createDatePicker();
@@ -101,6 +121,11 @@ public final class DateViewer {
      */
     public Node getNode() {
         return node;
+    }
+
+    public void setDate(Date newDate) {
+        date = newDate;
+        updateValue();
     }
 
     /**
@@ -161,6 +186,11 @@ public final class DateViewer {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
+    public void setDisabled(boolean newIsDisabled) {
+        isDisabled = newIsDisabled;
+        node.setDisable(isDisabled);
+    }
+
     private DatePicker createDatePicker() {
         datePicker = new DatePicker(date.getDateAsLocal());
         datePicker.setConverter(DateUtils.CONVERTER);
@@ -189,6 +219,17 @@ public final class DateViewer {
             }
         });
         return textField;
+    }
+
+    private void updateValue() {
+        switch (timeFormat) {
+            case LOCAL_TIME ->
+                datePicker.setValue(date.getDateAsLocal());
+            case TIME_MIN ->
+                textField.setText(MathUtils.doubleToString(date.getDateAsDouble()));
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + date.getTimeFormat());
+        }
     }
 
 }

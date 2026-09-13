@@ -41,8 +41,10 @@
                                  <columnConstraints>
                                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                     <ColumnConstraints hgrow="NEVER" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
                                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
                                     <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
                                  </columnConstraints>
                                  <rowConstraints>
@@ -54,13 +56,13 @@
                                  <children>
                                     <Label maxWidth="1.7976931348623157E308" text="Time properties" underline="true" />
                                     <Label text="Project start:" GridPane.rowIndex="1" />
-                                    <Label text="Project end:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <Label text="Project end:" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                                     <Label text="Frieze's stays star:t" GridPane.rowIndex="2" />
-                                    <Label text="Frieze's stays end:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <Label text="Frieze's stays end:" GridPane.columnIndex="4" GridPane.rowIndex="2" />
                                     <CheckBox fx:id="constraintStartCB" mnemonicParsing="false" text="Constraint start:" GridPane.rowIndex="3" />
-                                    <CheckBox fx:id="constraintEndCB" mnemonicParsing="false" text="Constraint end:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <CheckBox fx:id="constraintEndCB" mnemonicParsing="false" text="Constraint end:" GridPane.columnIndex="4" GridPane.rowIndex="3" />
                                     <Label fx:id="projectStartDateLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label fx:id="projectEndDateLabel" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                                    <Label fx:id="projectEndDateLabel" GridPane.columnIndex="6" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                               <Separator prefWidth="200.0" />

@@ -18,6 +18,8 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.core.AnchorSide;
+import com.github.noony.app.timelinefx.core.Date;
+import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyPictureMiniature;
 import com.github.noony.app.timelinefx.core.picturechronology.PictureChronology;
@@ -33,14 +35,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -48,6 +48,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 
 /**
  *
@@ -74,9 +75,7 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
     @FXML
     private CheckBox customDateCB;
     @FXML
-    private DatePicker customDatePicker;
-    @FXML
-    private TextField customDateField;
+    private HBox customDateBox;
     @FXML
     private TableView<ChronologyLink> linksTable;
     @FXML
@@ -87,6 +86,8 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
     private ChronologyPictureMiniature currentMiniature = null;
 
     private PictureChronology pictureChronology = null;
+
+    private DateViewer customDateViewer;
 
     private boolean applyingUndoRedo = false;
 
@@ -118,23 +119,6 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
                     currentMiniature.setScale(newScale);
                 } catch (NumberFormatException e) {
                 }
-            }
-        });
-        // custom date part
-        customDateField.setOnKeyTyped((KeyEvent t) -> {
-            if (currentMiniature != null) {
-                try {
-                    currentMiniature.setCurrenltyUsedTimeValue(customDateField.getText().trim());
-                } catch (NumberFormatException e) {
-                }
-            }
-        });
-        customDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            if (currentMiniature != null && !applyingUndoRedo) {
-                final var oldDate = currentMiniature.getCurrenltyUsedTimeValue();
-                UndoManager.execute(new SimpleCommand("Change picture date",
-                        () -> setCustomDate(t1),
-                        () -> setCustomDate(oldDate)));
             }
         });
         customDateCB.selectedProperty().addListener((ov, t, t1) -> {
@@ -178,9 +162,56 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
 
     private void setCustomDate(final LocalDate date) {
         applyingUndoRedo = true;
-        customDatePicker.setValue(date);
+        customDateViewer.setValue(date);
         currentMiniature.setCurrenltyUsedTimeValue(date);
         applyingUndoRedo = false;
+    }
+
+    private void createCustomDateViewer() {
+        final Date seed = switch (pictureChronology.getTimeFormat()) {
+            case LOCAL_TIME ->
+                new Date(currentMiniature.getCurrenltyUsedTimeValue());
+            case TIME_MIN ->
+                new Date(currentMiniature.getDateObject().getTimestamp());
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + pictureChronology.getTimeFormat());
+        };
+        customDateViewer = new DateViewer(seed);
+        customDateViewer.addListener(this::handleCustomDateViewerChanged);
+        customDateBox.getChildren().setAll(customDateViewer.getNode());
+    }
+
+    private void handleCustomDateViewerChanged(final PropertyChangeEvent event) {
+        if (applyingUndoRedo) {
+            return;
+        }
+        switch (pictureChronology.getTimeFormat()) {
+            case LOCAL_TIME -> {
+                final var newDate = (LocalDate) event.getNewValue();
+                final var oldDate = currentMiniature.getCurrenltyUsedTimeValue();
+                UndoManager.execute(new SimpleCommand("Change picture date",
+                        () -> setCustomDate(newDate),
+                        () -> setCustomDate(oldDate)));
+            }
+            case TIME_MIN ->
+                currentMiniature.setCurrenltyUsedTimeValue((String) event.getNewValue());
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + pictureChronology.getTimeFormat());
+        }
+    }
+
+    private void updateCustomDateViewerDisplay() {
+        if (customDateViewer == null) {
+            return;
+        }
+        switch (pictureChronology.getTimeFormat()) {
+            case LOCAL_TIME ->
+                customDateViewer.setValue(currentMiniature.getDateObject().getDate());
+            case TIME_MIN ->
+                customDateViewer.setValue(currentMiniature.getDateObject().getTimestamp());
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + pictureChronology.getTimeFormat());
+        }
     }
 
     @FXML
@@ -205,22 +236,7 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
             pictureDateField.setText(currentMiniature.getPicture().getAbsoluteTimeAsString());
             customDateCB.setSelected(currentMiniature.usesCustomTime());
             currentMiniature.addListener(this::handleMiniatureChanges);
-            switch (pictureChronology.getTimeFormat()) {
-                case LOCAL_TIME:
-                    customDatePicker.setDisable(false);
-                    customDateField.setDisable(true);
-                    customDatePicker.setValue(chronologyPictureMiniature.getCurrenltyUsedTimeValue());
-                    customDateField.setText("");
-                    break;
-                case TIME_MIN:
-                    customDatePicker.setDisable(true);
-                    customDateField.setDisable(false);
-                    customDateField.setText(currentMiniature.getDateObject().getAbsoluteTimeAsString());
-                    customDatePicker.setValue(LocalDate.now());
-                    break;
-                default:
-                    throw new AssertionError();
-            }
+            createCustomDateViewer();
             //
             addLinks();
         } else {
@@ -243,10 +259,8 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
         scaleField.setText("");
         pictureDateField.setText("");
         customDateCB.setSelected(false);
-        customDatePicker.setValue(LocalDate.now());
-        customDateField.setText("");
-        customDatePicker.setDisable(true);
-        customDateField.setDisable(true);
+        customDateBox.getChildren().clear();
+        customDateViewer = null;
         linksTable.getItems().clear();
     }
 
@@ -261,7 +275,7 @@ public class ChronologyMiniatureConfiguratorController implements Initializable 
                 scaleField.setText(Double.toString((double) event.getNewValue()));
             case ChronologyPictureMiniature.TIME_CHANGED -> {
                 pictureDateField.setText(currentMiniature.getPicture().getAbsoluteTimeAsString());
-                customDateField.setText(currentMiniature.getDateObject().getAbsoluteTimeAsString());
+                updateCustomDateViewerDisplay();
             }
             case ChronologyPictureMiniature.REQUEST_LINKS_UPDATE -> {
                 //Nothing to do: links are only getting repositioned

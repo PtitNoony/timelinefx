@@ -18,6 +18,7 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
+import com.github.noony.app.timelinefx.core.Date;
 import com.github.noony.app.timelinefx.core.Messages;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.PersonFactory;
@@ -29,7 +30,6 @@ import com.github.noony.app.timelinefx.drawings.GalleryTiles;
 import com.github.noony.app.timelinefx.undo.SimpleCommand;
 import com.github.noony.app.timelinefx.undo.UndoManager;
 import com.github.noony.app.timelinefx.utils.CustomFileUtils;
-import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -55,7 +55,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -103,9 +102,11 @@ public final class PersonCreationViewController implements Initializable {
     @FXML
     private HBox portraitTimeHB;
 
-    private DatePicker birthDatePicker, deathDatePicker, portraitDatePicker;
+    private DateViewer birthDateViewer;
 
-    private TextField birthTimeField, deathTimeField, portraitTimeField;
+    private DateViewer deathDateViewer;
+
+    private DateViewer portraitDateViewer;
 
     private Image image;
 
@@ -127,15 +128,9 @@ public final class PersonCreationViewController implements Initializable {
 
     private Color personColor = null;
 
-    private LocalDate dateOfBirth = null;
-
-    private LocalDate dateOfDeath = null;
-
     private Portrait portraitSelected = null;
 
-    private Map<Portrait, LocalDate> updatedPortraitDates;
-
-    private Map<Portrait, String> updatedPortraitTimes;
+    private Map<Portrait, Date> updatedPortraitDates;
 
     //
     private boolean nameOK = false;
@@ -147,12 +142,6 @@ public final class PersonCreationViewController implements Initializable {
         galleryTiles = new GalleryTiles();
         fileChooser = new FileChooser();
         fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Image files", "*.png", "*.jpeg", "*.jpg"));
-        birthDatePicker = new DatePicker();
-        deathDatePicker = new DatePicker();
-        portraitDatePicker = new DatePicker();
-        birthTimeField = new TextField();
-        deathTimeField = new TextField();
-        portraitTimeField = new TextField();
         galleryScrollPane.setContent(galleryTiles.getNode());
         galleryTiles.addPropertyChangeListener(this::handleGalleryTilesChanges);
         // TODO ? check if size is OK
@@ -175,21 +164,6 @@ public final class PersonCreationViewController implements Initializable {
         });
         colorPicker.valueProperty().addListener((ObservableValue<? extends Color> ov, Color t, Color t1) -> {
             updateColor(t1);
-        });
-        birthDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            dateOfBirth = t1;
-            updateStatus();
-        });
-        deathDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            dateOfDeath = t1;
-            updateStatus();
-        });
-        // Updating the temporary values for the portraits dates/times
-        portraitDatePicker.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            updatedPortraitDates.put(portraitSelected, t1);
-        });
-        portraitTimeField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            updatedPortraitTimes.put(portraitSelected, t1);
         });
     }
 
@@ -271,11 +245,12 @@ public final class PersonCreationViewController implements Initializable {
         timeFormatCB.getSelectionModel().select(currentEditedPerson.getTimeFormat());
         switch (currentEditedPerson.getTimeFormat()) {
             case LOCAL_TIME -> {
-                birthDatePicker.setValue(currentEditedPerson.getDateOfBirth());
+                birthDateViewer.setValue(currentEditedPerson.getDateOfBirth());
+                deathDateViewer.setValue(currentEditedPerson.getDateOfDeath());
             }
             case TIME_MIN -> {
-                birthTimeField.setText(Long.toString(currentEditedPerson.getTimeOfBirth()));
-                deathTimeField.setText(Long.toString(currentEditedPerson.getTimeOfDeath()));
+                birthDateViewer.setValue((double) currentEditedPerson.getTimeOfBirth());
+                deathDateViewer.setValue((double) currentEditedPerson.getTimeOfDeath());
             }
             default ->
                 throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + currentEditedPerson.getTimeFormat());
@@ -287,7 +262,6 @@ public final class PersonCreationViewController implements Initializable {
     protected final void reset() {
         currentEditedPerson = null;
         updatedPortraitDates = new HashMap<>();
-        updatedPortraitTimes = new HashMap<>();
         //
         nameOK = false;
         colorOK = false;
@@ -302,18 +276,16 @@ public final class PersonCreationViewController implements Initializable {
         colorPicker.setValue(null);
         timeFormatCB.setItems(FXCollections.observableArrayList(TimeFormat.values()));
         timeFormatCB.setValue(TimeFormat.LOCAL_TIME);
-        birthDatePicker.setValue(null);
-        deathDatePicker.setValue(null);
+        birthDateViewer.setValue((LocalDate) null);
+        deathDateViewer.setValue((LocalDate) null);
 //        setEditionMode(EditionMode.CREATION);
         //
         currentPortaitsList = new LinkedList<>();
         addPortraitButton.setDisable(false);
         removePortraitButton.setDisable(true);
         portraitTimeHB.setDisable(true);
-        portraitDatePicker.setDisable(true);
-        portraitTimeField.setDisable(true);
-        portraitDatePicker.setValue(null);
-        portraitTimeField.setText("");
+        portraitDateViewer.setDisable(true);
+        portraitDateViewer.setValue((LocalDate) null);
         //
         updateStatus();
     }
@@ -346,33 +318,33 @@ public final class PersonCreationViewController implements Initializable {
     }
 
     private void setTimeFormat(TimeFormat timeFormat) {
-        switch (timeFormat) {
-            case LOCAL_TIME -> {
-                propertiesGrid.getChildren().remove(birthTimeField);
-                propertiesGrid.getChildren().remove(deathTimeField);
-                portraitTimeHB.getChildren().remove(portraitTimeField);
-                updatedPortraitTimes.clear();
-                if (!propertiesGrid.getChildren().contains(birthDatePicker)) {
-                    propertiesGrid.add(birthDatePicker, 1, 3);
-                    propertiesGrid.add(deathDatePicker, 1, 4);
-                    portraitTimeHB.getChildren().add(portraitDatePicker);
-                }
-            }
-            case TIME_MIN -> {
-                propertiesGrid.getChildren().remove(birthDatePicker);
-                propertiesGrid.getChildren().remove(deathDatePicker);
-                portraitTimeHB.getChildren().remove(portraitDatePicker);
-                updatedPortraitDates.clear();
-                if (!propertiesGrid.getChildren().contains(birthTimeField)) {
-                    propertiesGrid.add(birthTimeField, 1, 3);
-                    propertiesGrid.add(deathTimeField, 1, 4);
-                    portraitTimeHB.getChildren().add(portraitTimeField);
-                }
-            }
+        if (birthDateViewer != null) {
+            propertiesGrid.getChildren().remove(birthDateViewer.getNode());
+            propertiesGrid.getChildren().remove(deathDateViewer.getNode());
+            portraitTimeHB.getChildren().remove(portraitDateViewer.getNode());
         }
+        updatedPortraitDates.clear();
+        birthDateViewer = createDateViewer(timeFormat);
+        deathDateViewer = createDateViewer(timeFormat);
+        portraitDateViewer = createDateViewer(timeFormat);
+        propertiesGrid.add(birthDateViewer.getNode(), 1, 3);
+        propertiesGrid.add(deathDateViewer.getNode(), 1, 4);
+        portraitTimeHB.getChildren().add(portraitDateViewer.getNode());
         if (timeFormat != timeFormatCB.getValue()) {
             timeFormatCB.setValue(timeFormat);
         }
+    }
+
+    private DateViewer createDateViewer(final TimeFormat aTimeFormat) {
+        final Date seed = switch (aTimeFormat) {
+            case LOCAL_TIME ->
+                new Date(LocalDate.now());
+            case TIME_MIN ->
+                new Date(0d);
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + aTimeFormat);
+        };
+        return new DateViewer(seed);
     }
 
     private void updatePortraitCB() {
@@ -427,9 +399,11 @@ public final class PersonCreationViewController implements Initializable {
 
     private PersonSnapshot capturePersonSnapshot(Person person) {
         var portraitDates = new HashMap<Portrait, LocalDate>();
-        updatedPortraitDates.keySet().forEach(portrait -> portraitDates.put(portrait, portrait.getDate()));
         var portraitTimestamps = new HashMap<Portrait, Double>();
-        updatedPortraitTimes.keySet().forEach(portrait -> portraitTimestamps.put(portrait, portrait.getTimestamp()));
+        updatedPortraitDates.keySet().forEach(portrait -> {
+            portraitDates.put(portrait, portrait.getDate());
+            portraitTimestamps.put(portrait, portrait.getTimestamp());
+        });
         return new PersonSnapshot(person.getName(), new ArrayList<>(person.getPortraits()), person.getDefaultPortrait(),
                 person.getColor(), person.getTimeFormat(), person.getDateOfBirth(), person.getDateOfDeath(),
                 person.getTimeOfBirth(), person.getTimeOfDeath(), portraitDates, portraitTimestamps);
@@ -472,31 +446,14 @@ public final class PersonCreationViewController implements Initializable {
         person.setTimeFormat(timeFormat);
         switch (timeFormat) {
             case LOCAL_TIME -> {
-                person.setDateOfBirth(dateOfBirth);
-                person.setDateOfDeath(dateOfDeath);
-                updatedPortraitDates.forEach((portrait, date) -> portrait.setDate(date));
+                person.setDateOfBirth(birthDateViewer.getDate().getDateAsLocal());
+                person.setDateOfDeath(deathDateViewer.getDate().getDateAsLocal());
+                updatedPortraitDates.forEach((portrait, date) -> portrait.setDate(date.getDateAsLocal()));
             }
             case TIME_MIN -> {
-                try {
-                    person.setTimeOfBirth(Long.parseLong(birthTimeField.getText().trim()));
-                } catch (NumberFormatException e) {
-                    LOG.log(Level.INFO, "Birth time for {0} is not a valid timestamp: {1} :: {2}", new Object[]{person, birthTimeField.getText(), e.getMessage()});
-                    person.setTimeOfBirth(Portrait.DEFAULT_TIMESTAMP);
-                }
-                try {
-                    person.setTimeOfDeath(Long.parseLong(deathTimeField.getText().trim()));
-                } catch (NumberFormatException e) {
-                    LOG.log(Level.INFO, "Death time for {0} is not a valid timestamp: {1} :: {2}", new Object[]{person, deathTimeField.getText(), e.getMessage()});
-                    person.setTimeOfDeath(Portrait.DEFAULT_TIMESTAMP);
-                }
-                updatedPortraitTimes.forEach((portrait, date) -> {
-                    try {
-                        portrait.setTimestamp(Long.parseLong(date.trim()));
-                    } catch (NumberFormatException e) {
-                        LOG.log(Level.INFO, "Time for {0} is not a valid timestamp: {1} :: {2}", new Object[]{portrait, date, e.getMessage()});
-                        portrait.setTimestamp(Portrait.DEFAULT_TIMESTAMP);
-                    }
-                });
+                person.setTimeOfBirth((long) birthDateViewer.getDate().getDateAsDouble());
+                person.setTimeOfDeath((long) deathDateViewer.getDate().getDateAsDouble());
+                updatedPortraitDates.forEach((portrait, date) -> portrait.setTimestamp(date.getDateAsDouble()));
             }
             default ->
                 throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
@@ -515,46 +472,33 @@ public final class PersonCreationViewController implements Initializable {
                     portraitSelected = (Portrait) event.getOldValue();
                     removePortraitButton.setDisable(false);
                     portraitTimeHB.setDisable(false);
-                    portraitDatePicker.setDisable(false);
-                    portraitTimeField.setDisable(false);
-                    switch (timeFormatCB.getSelectionModel().getSelectedItem()) {
-                        case LOCAL_TIME -> {
-                            var portraitDate = updatedPortraitDates.get(portraitSelected);
-                            if (portraitDate == null) {
-                                portraitDate = portraitSelected.getDate();
-                            }
-                            if (portraitDate != null) {
-                                portraitDatePicker.setValue(portraitDate);
-                            } else {
-                                portraitDatePicker.setValue(null);
-                            }
-                            portraitTimeField.setText("");
-                        }
-                        case TIME_MIN -> {
-                            var portraitTime = updatedPortraitTimes.get(portraitSelected);
-                            if (portraitTime != null) {
-                                portraitTimeField.setText(portraitTime);
-                            } else if (portraitSelected.getTimestamp() != Portrait.DEFAULT_TIMESTAMP) {
-                                portraitTimeField.setText(MathUtils.doubleToString(portraitSelected.getTimestamp()));
-                            } else {
-                                portraitTimeField.setText("");
-                            }
-                            portraitDatePicker.setValue(LocalDate.now());
-                        }
-                        default ->
-                            throw new UnsupportedOperationException("Unsupported time mode : " + event.getPropertyName());
-                    }
+                    refreshPortraitDateViewer();
                 } else {
                     removePortraitButton.setDisable(true);
                     portraitTimeHB.setDisable(true);
-                    portraitDatePicker.setDisable(true);
-                    portraitTimeField.setDisable(true);
-                    portraitDatePicker.setValue(LocalDate.MIN);
-                    portraitTimeField.setText("");
                 }
             }
             default ->
                 throw new UnsupportedOperationException("While handleGalleryTilesChanges :: " + event.getPropertyName());
         }
+    }
+
+    private void refreshPortraitDateViewer() {
+        portraitTimeHB.getChildren().remove(portraitDateViewer.getNode());
+        final var currentFormat = timeFormatCB.getSelectionModel().getSelectedItem();
+        var seed = updatedPortraitDates.get(portraitSelected);
+        if (seed == null) {
+            seed = switch (currentFormat) {
+                case LOCAL_TIME ->
+                    new Date(portraitSelected.getDate());
+                case TIME_MIN ->
+                    new Date(portraitSelected.getTimestamp());
+                default ->
+                    throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + currentFormat);
+            };
+        }
+        portraitDateViewer = new DateViewer(seed);
+        portraitDateViewer.addListener(evt -> updatedPortraitDates.put(portraitSelected, portraitDateViewer.getDate()));
+        portraitTimeHB.getChildren().add(portraitDateViewer.getNode());
     }
 }

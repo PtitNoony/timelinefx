@@ -105,7 +105,13 @@ public final class PictureFactory {
         }
         final var picInfo = MetadataParser.parseMetadata(project, pictureFile);
         assert picInfo != null;
-        final var picture = new Picture(project, FACTORY.getNextID(), pictureName, picInfo.getCreationDate().toLocalDate(), picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
+        Date date;
+        switch (project.getTimeFormat()) {
+            case LOCAL_TIME -> date = new Date(picInfo.getCreationDate().toLocalDate());
+            case TIME_MIN -> date = new Date(picInfo.getCreationDate().toLocalDate().toEpochDay());
+            default -> throw new UnsupportedOperationException("Unsupported timeformat: "+project.getTimeFormat());
+        }
+        final var picture = new Picture(project, FACTORY.getNextID(), pictureName, date, picInfo.getPath(), picInfo.getWidth(), picInfo.getHeight());
         FACTORY.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;
@@ -128,7 +134,44 @@ public final class PictureFactory {
         if (!FACTORY.isIdAvailable(id)) {
             throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));
         }
-        final var picture = new Picture(project, id, pictureName, pictureCreationDate.toLocalDate(), picturePath, pictureWidth, pictureHeight);
+        Date date;
+        switch (project.getTimeFormat()) {
+            case LOCAL_TIME -> date = new Date(pictureCreationDate.toLocalDate());
+            case TIME_MIN -> date = new Date(pictureCreationDate.toLocalDate().toEpochDay());
+            default -> throw new UnsupportedOperationException("Unsupported timeformat: "+project.getTimeFormat());
+        }
+        final var picture = new Picture(project, id, pictureName, date, picturePath, pictureWidth, pictureHeight);
+        FACTORY.addObject(picture);
+        PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
+        return picture;
+    }
+
+
+
+    /**
+     * Creates a new picture with a specific id, referencing an already-existing file.
+     *
+     * @param project the project the picture belongs to
+     * @param id the id to assign to the new picture
+     * @param pictureName the picture's name
+     * @param pictureCreationTime the picture's creation time
+     * @param picturePath the picture file's path
+     * @param pictureWidth the picture's width
+     * @param pictureHeight the picture's height
+     * @return the created picture
+     */
+    public static Picture createPicture(final TimeLineProject project, final long id, final String pictureName, final double pictureCreationTime, final String picturePath, final int pictureWidth, int pictureHeight) {
+        LOG.log(Factory.CREATION_LOGGING_LEVEL, "Creating picture with id={0} pictureName={1}", new Object[]{id, pictureName});
+        if (!FACTORY.isIdAvailable(id)) {
+            throw new IllegalArgumentException("Trying to create picture " + pictureName + " with existing id=" + id + " :: " + FACTORY.get(id));
+        }
+        Date date;
+        switch (project.getTimeFormat()) {
+            case LOCAL_TIME -> date = new Date(IDateObject.DEFAULT_DATE);
+            case TIME_MIN -> date = new Date(pictureCreationTime);
+            default -> throw new UnsupportedOperationException("Unsupported timeformat: "+project.getTimeFormat());
+        }
+        final var picture = new Picture(project, id, pictureName, date, picturePath, pictureWidth, pictureHeight);
         FACTORY.addObject(picture);
         PROPERTY_CHANGE_SUPPORT.firePropertyChange(PICTURE_ADDED, null, picture);
         return picture;

@@ -32,13 +32,13 @@ import java.util.Map;
 import javafx.scene.paint.Color;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Element;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link TimeProjectProviderV4}.
@@ -59,6 +59,11 @@ public final class TimeProjectProviderV4Test {
     private TimeLineProject project;
 
     /**
+     * The project used in these tests with time.
+     */
+    private TimeLineProject projectTime;
+
+    /**
      * Default constructor.
      */
     public TimeProjectProviderV4Test() {
@@ -75,6 +80,7 @@ public final class TimeProjectProviderV4Test {
         PictureFactory.reset();
         final var configParams = Map.of(TimeLineProject.PROJECT_FOLDER_KEY, tempDir.toString());
         project = TimeLineProjectFactory.createProject("TimeProjectProviderV4Test", configParams);
+        projectTime = TimeLineProjectFactory.createProject("TimeProjectProviderV4Test", configParams, TimeFormat.TIME_MIN);
     }
 
     /**
@@ -152,7 +158,7 @@ public final class TimeProjectProviderV4Test {
         final var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         final var element = doc.createElement("picture");
         element.setAttribute("date", "42.0");
-        final var picture = PictureFactory.createPicture(project, 1L, "testPicture", LocalDateTime.MIN, "pictures/foo.png", 10, 10);
+        final var picture = PictureFactory.createPicture(projectTime, 1L, "testPicture", LocalDateTime.MIN, "pictures/foo.png", 10, 10);
         TimeProjectProviderV4.parseObjectTimeValue(element, picture, TimeFormat.TIME_MIN);
         assertEquals(TimeFormat.TIME_MIN, picture.getTimeFormat());
         assertEquals(42.0, picture.getTimestamp());

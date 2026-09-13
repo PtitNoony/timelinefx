@@ -17,7 +17,6 @@
 
 package com.github.noony.app.timelinefx.core;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,23 +51,23 @@ public final class Portrait extends AbstractPicture {
      */
     private final ArrayList<Person> persons;
 
-    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, long aTimestamp) {
-        super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aTimestamp);
-        person = aPerson;
-        persons = new ArrayList<>(1);
-        persons.add(person);
-    }
-
-    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, Date aDate) {
         super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aDate);
         person = aPerson;
         persons = new ArrayList<>(1);
         persons.add(person);
     }
 
-    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight) {
-        this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, DEFAULT_TIMESTAMP);
-    }
+//    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight, LocalDate aDate) {
+//        super(aPortraitID, aFilePath, aFilePath, aWidth, aHeight, aDate);
+//        person = aPerson;
+//        persons = new ArrayList<>(1);
+//        persons.add(person);
+//    }
+
+//    protected Portrait(final long aPortraitID, final Person aPerson, final String aFilePath, int aWidth, int aHeight) {
+//        this(aPortraitID, aPerson, aFilePath, aWidth, aHeight, new D);
+//    }
 
     @Override
     public List<Person> getPersons() {

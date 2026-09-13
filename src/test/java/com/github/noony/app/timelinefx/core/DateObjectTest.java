@@ -18,11 +18,11 @@
 package com.github.noony.app.timelinefx.core;
 
 import java.time.LocalDate;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for {@link DateObject}.
@@ -55,7 +55,7 @@ public final class DateObjectTest {
     @Test
     public void testLocalDateConstructorWithNull() {
         final var instance = new DateObject((LocalDate) null);
-        assertEquals(LocalDate.MIN, instance.getDate());
+        assertEquals(IDateObject.DEFAULT_DATE, instance.getDate());
     }
 
     /**
@@ -67,7 +67,7 @@ public final class DateObjectTest {
         assertEquals(TimeFormat.TIME_MIN, instance.getTimeFormat());
         assertEquals(42.0, instance.getTimestamp());
         assertEquals(42.0, instance.getAbsoluteTime());
-        assertNull(instance.getDate());
+        assertEquals(IDateObject.DEFAULT_DATE, instance.getDate());
     }
 
     /**
@@ -111,8 +111,8 @@ public final class DateObjectTest {
         final var instance = new DateObject(42.0);
         final var other = new DateObject(LocalDate.of(2023, 1, 2));
         instance.setDate(other);
-        assertEquals(TimeFormat.LOCAL_TIME, instance.getTimeFormat());
-        assertEquals(other.getDate(), instance.getDate());
+        assertEquals(TimeFormat.TIME_MIN, instance.getTimeFormat());
+        assertNotEquals(other.getDate(), instance.getDate());
     }
 
     /**
@@ -120,10 +120,17 @@ public final class DateObjectTest {
      */
     @Test
     public void testSetTimestamp() {
-        final var instance = new DateObject(LocalDate.of(2023, 1, 2));
-        instance.setTimestamp(99.0);
-        assertEquals(TimeFormat.TIME_MIN, instance.getTimeFormat());
-        assertEquals(99.0, instance.getTimestamp());
+        final var initDate = LocalDate.of(2023, 1, 2);
+        final var initTime = 99.0;
+        final var instance = new DateObject(initDate);
+        instance.setTimestamp(initTime);
+        assertEquals(TimeFormat.LOCAL_TIME, instance.getTimeFormat());
+        assertEquals(initTime, instance.getTimestamp());
+        //
+        final var instance2 = new DateObject(initTime);
+        instance2.setTimestamp(initTime);
+        assertEquals(TimeFormat.TIME_MIN, instance2.getTimeFormat());
+        assertEquals(initTime, instance2.getTimestamp());
     }
 
     /**

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.core;
 
 import java.io.File;
@@ -23,16 +22,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
- * Note: also covers the {@link AbstractPicture} behavior shared with {@link Portrait}, since
- * {@code AbstractPicture} is abstract and {@link Picture} does not override most of it.
+ * Note: also covers the {@link AbstractPicture} behavior shared with {@link Portrait}, since {@code AbstractPicture} is abstract and {@link Picture} does not override most of it.
  *
  * @author hamon
  */
@@ -48,6 +46,11 @@ public final class PictureTest {
      * The project used in these tests.
      */
     private TimeLineProject project;
+
+    /**
+     * The project used in these tests for time setup.
+     */
+    private TimeLineProject projectTime;
 
     /**
      * A person used in these tests.
@@ -80,6 +83,18 @@ public final class PictureTest {
         PlaceFactory.reset();
         final var configParams = Map.of(TimeLineProject.PROJECT_FOLDER_KEY, tempDir.toString());
         project = TimeLineProjectFactory.createProject("PictureTest", configParams);
+        projectTime = TimeLineProjectFactory.createProject("PictureTest", configParams, TimeFormat.TIME_MIN);
+        personA = PersonFactory.createPerson(project, "personA");
+        personB = PersonFactory.createPerson(project, "personB");
+        place = PlaceFactory.createPlace("testPlace", PlaceLevel.PLANET, null);
+    }
+
+    public void setUpWithTime() {
+        PictureFactory.reset();
+        PersonFactory.reset();
+        PlaceFactory.reset();
+        final var configParams = Map.of(TimeLineProject.PROJECT_FOLDER_KEY, tempDir.toString());
+        project = TimeLineProjectFactory.createProject("PictureTest", configParams, TimeFormat.TIME_MIN);
         personA = PersonFactory.createPerson(project, "personA");
         personB = PersonFactory.createPerson(project, "personB");
         place = PlaceFactory.createPlace("testPlace", PlaceLevel.PLANET, null);
@@ -95,8 +110,12 @@ public final class PictureTest {
         PlaceFactory.reset();
     }
 
-    private Picture createPicture() {
+    private Picture createPictureLocalDate() {
         return PictureFactory.createPicture(project, 7L, "testPicture", LocalDateTime.of(2023, 1, 2, 3, 4, 5), "pictures/foo.png", 640, 480);
+    }
+
+    private Picture createPictureTime() {
+        return PictureFactory.createPicture(projectTime, 7L, "testPicture", 12.0, "pictures/foo.png", 640, 480);
     }
 
     /**
@@ -104,7 +123,7 @@ public final class PictureTest {
      */
     @Test
     public void testGetId() {
-        assertEquals(7L, createPicture().getId());
+        assertEquals(7L, createPictureLocalDate().getId());
     }
 
     /**
@@ -112,7 +131,7 @@ public final class PictureTest {
      */
     @Test
     public void testGetProject() {
-        assertEquals(project, createPicture().getProject());
+        assertEquals(project, createPictureLocalDate().getProject());
     }
 
     /**
@@ -120,7 +139,7 @@ public final class PictureTest {
      */
     @Test
     public void testName() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         assertEquals("testPicture", instance.getName());
         instance.setName("newName");
         assertEquals("newName", instance.getName());
@@ -131,7 +150,7 @@ public final class PictureTest {
      */
     @Test
     public void testDimensions() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         assertEquals(640, instance.getWidth());
         assertEquals(480, instance.getHeight());
     }
@@ -141,7 +160,7 @@ public final class PictureTest {
      */
     @Test
     public void testPaths() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         assertEquals("pictures/foo.png", instance.getProjectRelativePath());
         assertEquals(project.getProjectFolder().getAbsolutePath() + File.separator + "pictures/foo.png", instance.getAbsolutePath());
     }
@@ -151,7 +170,7 @@ public final class PictureTest {
      */
     @Test
     public void testPersons() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         assertTrue(instance.getPersons().isEmpty());
         assertTrue(instance.addPerson(personA));
         assertFalse(instance.addPerson(personA));
@@ -166,7 +185,7 @@ public final class PictureTest {
      */
     @Test
     public void testPlaces() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         assertTrue(instance.getPlaces().isEmpty());
         assertTrue(instance.addPlace(place));
         assertFalse(instance.addPlace(place));
@@ -181,7 +200,7 @@ public final class PictureTest {
      */
     @Test
     public void testMovePerson() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         instance.addPerson(personA);
         instance.addPerson(personB);
         assertEquals(personA, instance.getPersons().get(0));
@@ -201,7 +220,7 @@ public final class PictureTest {
      */
     @Test
     public void testDate() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         assertEquals(TimeFormat.LOCAL_TIME, instance.getTimeFormat());
         assertEquals(LocalDate.of(2023, 1, 2), instance.getDate());
         final var newDate = LocalDate.of(2024, 5, 6);
@@ -210,11 +229,12 @@ public final class PictureTest {
     }
 
     /**
-     * Test of setTimestamp method, of class Picture: switches to TIME_MIN.
+     * Test of setTimestamp method, of class Picture:
      */
     @Test
     public void testSetTimestamp() {
-        final var instance = createPicture();
+        setUpWithTime();
+        final var instance = createPictureTime();
         instance.setTimestamp(99.0);
         assertEquals(TimeFormat.TIME_MIN, instance.getTimeFormat());
         assertEquals(99.0, instance.getTimestamp());
@@ -226,7 +246,7 @@ public final class PictureTest {
      */
     @Test
     public void testSetValue() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         instance.setValue("2024-05-06");
         assertEquals(LocalDate.of(2024, 5, 6), instance.getDate());
     }
@@ -236,7 +256,7 @@ public final class PictureTest {
      */
     @Test
     public void testGetAbsoluteTimeAsString() {
-        assertFalse(createPicture().getAbsoluteTimeAsString().isEmpty());
+        assertFalse(createPictureLocalDate().getAbsoluteTimeAsString().isEmpty());
     }
 
     /**
@@ -244,7 +264,7 @@ public final class PictureTest {
      */
     @Test
     public void testPropertyChangeListener() {
-        final var instance = createPicture();
+        final var instance = createPictureLocalDate();
         final var fired = new boolean[]{false};
         final java.beans.PropertyChangeListener listener = e -> fired[0] = true;
         instance.addPropertyChangeListener(listener);
@@ -262,7 +282,7 @@ public final class PictureTest {
      */
     @Test
     public void testToString() {
-        assertEquals("Pic[testPicture]", createPicture().toString());
+        assertEquals("Pic[testPicture]", createPictureLocalDate().toString());
     }
 
 }

@@ -17,7 +17,9 @@
 
 package com.github.noony.app.timelinefx.utils;
 
+import com.github.noony.app.timelinefx.core.DateObject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javafx.util.StringConverter;
 
@@ -52,5 +54,10 @@ public class DateUtils {
 
     private DateUtils() {
         // private utility constructor
+    }
+
+    public static final DateObject toDateObject(LocalDateTime aLocalDateTime){
+        System.err.println("TODO:: manage time format here !!!");
+        return new DateObject(aLocalDateTime.toLocalDate());
     }
 }

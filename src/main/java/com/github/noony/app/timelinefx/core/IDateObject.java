@@ -60,12 +60,6 @@ public interface IDateObject {
 
     /**
      *
-     * @param aTimeFormat the new time format to be used by the instance
-     */
-    void setTimeFormat(TimeFormat aTimeFormat);
-
-    /**
-     *
      * @return the instance date value, or null if not set or if the time format is not compatible
      */
     LocalDate getDate();

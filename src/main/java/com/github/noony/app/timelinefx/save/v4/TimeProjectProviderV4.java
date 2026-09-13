@@ -35,6 +35,7 @@ import com.github.noony.app.timelinefx.core.StayPeriod;
 import com.github.noony.app.timelinefx.core.StayPeriodLocalDate;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
+import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.TimeLineProjectFactory;
 import com.github.noony.app.timelinefx.core.picturechronology.ChronologyLink;
@@ -79,7 +80,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
 
 /**
  * Reads and writes {@link TimeLineProject} objects for save format version 4.
@@ -761,7 +761,6 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     protected static void parseObjectTimeValue(final Element sourceElement, final IDateObject aDateObject, final TimeFormat aTimeFormat) {
-        aDateObject.setTimeFormat(aTimeFormat);
         switch (aTimeFormat) {
             case LOCAL_TIME -> {
                 if (sourceElement.hasAttribute(DATE_ATR)) {

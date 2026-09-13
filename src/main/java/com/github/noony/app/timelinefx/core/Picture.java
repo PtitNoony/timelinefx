@@ -17,8 +17,6 @@
 
 package com.github.noony.app.timelinefx.core;
 
-import java.time.LocalDate;
-
 /**
  * A picture that belongs to a project (as opposed to a portrait).
  *
@@ -31,7 +29,7 @@ public class Picture extends AbstractPicture {
      */
     private final TimeLineProject project;
 
-    protected Picture(final TimeLineProject aProject, final long id, final String pictureName, final LocalDate pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
+    protected Picture(final TimeLineProject aProject, final long id, final String pictureName, final Date pictureCreationDate, String picturePath, int pictureWidth, int pictureHeight) {
         super(id, pictureName, picturePath, pictureWidth, pictureHeight, pictureCreationDate);
         project = aProject;
     }

@@ -33,6 +33,7 @@ import com.github.noony.app.timelinefx.hmi.byplace.FriezePlaceViewController;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapListCellImpl;
 import com.github.noony.app.timelinefx.hmi.freemap.FreeMapView;
 import com.github.noony.app.timelinefx.utils.SplitPaneDividerPersister;
+import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -353,23 +354,13 @@ public class FriezeContentEditorController implements Initializable {
         if (frieze == null) {
             return;
         }
-        switch (frieze.getTimeFormat()) {
-            case LOCAL_TIME -> {
-//                    throw new AssertionError();
-                System.err.println("TODO:: updateFriezeDatesDisplay -> LOCAL_TIME");
-            }
-            case TIME_MIN -> {
-                friezeStartTimeField.setText(Double.toString(frieze.getMinDate()));
-                friezeEndTimeField.setText(Double.toString(frieze.getMaxDate()));
-                if (!timeGrid.getChildren().contains(friezeStartTimeField)) {
-                    timeGrid.add(friezeStartTimeField, 1, 2);
-                }
-                if (!timeGrid.getChildren().contains(friezeEndTimeField)) {
-                    timeGrid.add(friezeEndTimeField, 4, 2);
-                }
-            }
-            default ->
-                throw new AssertionError();
+        friezeStartTimeField.setText(TimeFormatToString.timeToString((long) frieze.getMinDate(), frieze.getTimeFormat()));
+        friezeEndTimeField.setText(TimeFormatToString.timeToString((long) frieze.getMaxDate(), frieze.getTimeFormat()));
+        if (!timeGrid.getChildren().contains(friezeStartTimeField)) {
+            timeGrid.add(friezeStartTimeField, 1, 2);
+        }
+        if (!timeGrid.getChildren().contains(friezeEndTimeField)) {
+            timeGrid.add(friezeEndTimeField, 4, 2);
         }
     }
 
@@ -378,8 +369,8 @@ public class FriezeContentEditorController implements Initializable {
             projectStartDateLabel.setText("");
             projectEndDateLabel.setText("");
         } else {
-            projectStartDateLabel.setText(Double.toString(timeLineProject.getMinDate()));
-            projectEndDateLabel.setText(Double.toString(timeLineProject.getMaxDate()));
+            projectStartDateLabel.setText(TimeFormatToString.timeToString((long) timeLineProject.getMinDate(), timeLineProject.getTimeFormat()));
+            projectEndDateLabel.setText(TimeFormatToString.timeToString((long) timeLineProject.getMaxDate(), timeLineProject.getTimeFormat()));
         }
     }
 

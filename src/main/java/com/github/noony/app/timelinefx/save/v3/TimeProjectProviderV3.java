@@ -472,7 +472,6 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     protected static void parseObjectTimeValue(Element sourceElement, IDateObject aDateObject) {
         if (sourceElement.hasAttribute(TIME_FORMAT_ATR)) {
             var timeFormat = TimeFormat.valueOf(sourceElement.getAttribute(TIME_FORMAT_ATR));
-            aDateObject.setTimeFormat(timeFormat);
             switch (timeFormat) {
                 case LOCAL_TIME -> {
                     if (sourceElement.hasAttribute(DATE_ATR)) {

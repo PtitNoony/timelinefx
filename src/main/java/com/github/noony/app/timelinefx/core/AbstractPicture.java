@@ -17,17 +17,12 @@
 
 package com.github.noony.app.timelinefx.core;
 
-import com.github.noony.app.timelinefx.utils.MathUtils;
-import com.github.noony.app.timelinefx.utils.TimeFormatToString;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -35,17 +30,12 @@ import java.util.logging.Logger;
  *
  * @author hamon
  */
-public abstract class AbstractPicture implements IPicture {
+public abstract class AbstractPicture extends DateObject implements IPicture {
 
     /**
      * Logger used by this class.
      */
     private static final Logger LOG = Logger.getGlobal();
-
-    /**
-     * Support object used to fire property change events.
-     */
-    private final PropertyChangeSupport propertyChangeSupport;
 
     /**
      * This picture's unique id.
@@ -76,63 +66,21 @@ public abstract class AbstractPicture implements IPicture {
      * The picture's height.
      */
     private final int height;
-    //
 
     /**
      * The picture's display name.
      */
     private String name;
-    //
-
-    /**
-     * Whether {@link #date} or {@link #timestamp} holds this picture's time value.
-     */
-    private TimeFormat timeFormat;
-
-    /**
-     * This picture's raw numeric time value, used when {@link #timeFormat} is {@code TIME_MIN}.
-     */
-    private double timestamp;
-
-    /**
-     * This picture's calendar date value, used when {@link #timeFormat} is {@code LOCAL_TIME}.
-     */
-    private LocalDate date;
 
     @SuppressWarnings("this-escape")
-    protected AbstractPicture(final long anID, final String aName, final String aFilePath, final int aWidth, final int aHeight, final LocalDate aDate) {
+    protected AbstractPicture(final long anID, final String aName, final String aFilePath, final int aWidth, final int aHeight, final Date aDate) {
+        super(aDate);
         id = anID;
-        propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
         persons = new LinkedList<>();
         places = new LinkedList<>();
         width = aWidth;
         height = aHeight;
         filePath = aFilePath;
-        //
-        timeFormat = TimeFormat.LOCAL_TIME;
-        if (aDate != null) {
-            date = aDate;
-        } else {
-            date = LocalDate.EPOCH;
-        }
-        timestamp = -1;
-        //
-        name = aName;
-    }
-
-    @SuppressWarnings("this-escape")
-    protected AbstractPicture(final long anID, final String aName, final String aFilePath, final int aWidth, final int aHeight, final double aTimestamp) {
-        id = anID;
-        propertyChangeSupport = new PropertyChangeSupport(AbstractPicture.this);
-        persons = new LinkedList<>();
-        places = new LinkedList<>();
-        width = aWidth;
-        height = aHeight;
-        filePath = aFilePath;
-        //
-        timeFormat = TimeFormat.TIME_MIN;
-        timestamp = aTimestamp;
-        date = null;
         //
         name = aName;
     }
@@ -213,133 +161,6 @@ public abstract class AbstractPicture implements IPicture {
     @Override
     public double getHeight() {
         return height;
-    }
-
-    @Override
-    public TimeFormat getTimeFormat() {
-        return timeFormat;
-    }
-
-    @Override
-    public void setTimeFormat(final TimeFormat aTimeFormat) {
-        timeFormat = aTimeFormat;
-        switch (timeFormat) {
-            case LOCAL_TIME ->
-                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
-            case TIME_MIN ->
-                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
-            default ->
-                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
-        }
-    }
-
-    @Override
-    public LocalDate getDate() {
-        return date;
-    }
-
-    @Override
-    public double getTimestamp() {
-        return timestamp;
-    }
-
-    @Override
-    public void setDate(final LocalDate aDate) {
-        if (aDate != null) {
-            if (date != null && !date.equals(aDate)) {
-                date = aDate;
-                timeFormat = TimeFormat.LOCAL_TIME;
-                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
-            }
-        }
-    }
-
-    @Override
-    public void setValue(final String aTimeValue) {
-        if (aTimeValue == null) {
-            return;
-        }
-        switch (timeFormat) {
-            case LOCAL_TIME -> {
-                try {
-                    final var newDate = LocalDate.parse(aTimeValue);
-                    if (!newDate.isEqual(date)) {
-                        date = newDate;
-                        propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
-                    }
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Could not set date value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
-                }
-            }
-            case TIME_MIN -> {
-                try {
-                    timestamp = Double.parseDouble(aTimeValue);
-                } catch (NumberFormatException e) {
-                    LOG.log(Level.WARNING, "Could not set timestamp value to {0}, with '{1}': error: {2}", new Object[]{this, aTimeValue, e.getMessage()});
-                }
-                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
-            }
-            default ->
-                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
-        }
-    }
-
-    @Override
-    public void setTimestamp(final double aTimestamp) {
-        if (aTimestamp != timestamp) {
-            timestamp = aTimestamp;
-            timeFormat = TimeFormat.TIME_MIN;
-            propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
-        }
-    }
-
-    @Override
-    public void setDate(final IDateObject aDateObject) {
-        if (aDateObject == null) {
-            return;
-        }
-        timeFormat = aDateObject.getTimeFormat();
-        switch (timeFormat) {
-            case LOCAL_TIME -> {
-                date = LocalDate.ofEpochDay(aDateObject.getDate().toEpochDay());
-                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, date);
-            }
-            case TIME_MIN -> {
-                timestamp = aDateObject.getTimestamp();
-                propertyChangeSupport.firePropertyChange(DATE_CHANGED, timeFormat, timestamp);
-            }
-            default ->
-                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
-        }
-    }
-
-    @Override
-    public double getAbsoluteTime() {
-        switch (timeFormat) {
-            case LOCAL_TIME -> {
-                return date.toEpochDay();
-            }
-            case TIME_MIN -> {
-                return timestamp;
-            }
-            default ->
-                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
-        }
-    }
-
-    @Override
-    public String getAbsoluteTimeAsString() {
-        switch (timeFormat) {
-            case LOCAL_TIME -> {
-                return date.format(TimeFormatToString.DATE_TIME_FORMATTER);
-            }
-            case TIME_MIN -> {
-                return MathUtils.doubleToString(timestamp);
-            }
-            default ->
-                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + timeFormat);
-        }
-
     }
 
     @Override

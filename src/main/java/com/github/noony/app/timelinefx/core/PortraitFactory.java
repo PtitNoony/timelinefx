@@ -22,7 +22,6 @@ import com.github.noony.app.timelinefx.utils.MetadataParser;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Logger;
 import static com.github.noony.app.timelinefx.core.TimeFormat.LOCAL_TIME;
@@ -167,20 +166,20 @@ public final class PortraitFactory {
         final Portrait portrait;
         switch (person.getProject().getTimeFormat()) {
             case LOCAL_TIME -> {
-                final LocalDate date;
+                final Date date;
                 if (picInfo.getCreationDate() == null) {
-                    date = IDateObject.DEFAULT_DATE;
+                    date = new Date(IDateObject.DEFAULT_DATE);
                 } else {
-                    date = picInfo.getCreationDate().toLocalDate();
+                    date = new Date(picInfo.getCreationDate().toLocalDate());
                 }
                 portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight(), date);
             }
             case TIME_MIN -> {
-                final long time;
+                final Date time;
                 if (picInfo.getCreationDate() == null) {
-                    time = IDateObject.DEFAULT_TIMESTAMP;
+                    time = new Date(IDateObject.DEFAULT_TIMESTAMP);
                 } else {
-                    time = picInfo.getCreationDate().toLocalDate().toEpochDay();
+                    time = new Date(picInfo.getCreationDate().toLocalDate().toEpochDay());
                 }
                 portrait = new Portrait(id, person, filePath, picInfo.getWidth(), picInfo.getHeight(), time);
             }

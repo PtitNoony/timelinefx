@@ -62,7 +62,7 @@
                                     <CheckBox fx:id="constraintStartCB" mnemonicParsing="false" text="Constraint start:" GridPane.rowIndex="3" />
                                     <CheckBox fx:id="constraintEndCB" mnemonicParsing="false" text="Constraint end:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                     <Label fx:id="projectStartDateLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label fx:id="projectEndDateLabel" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                                    <Label fx:id="projectEndDateLabel" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                               <Separator prefWidth="200.0" />

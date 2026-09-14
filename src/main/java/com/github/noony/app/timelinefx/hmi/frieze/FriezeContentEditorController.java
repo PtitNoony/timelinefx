@@ -21,6 +21,7 @@ import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
 import com.github.noony.app.timelinefx.core.StayPeriod;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMap;
 import com.github.noony.app.timelinefx.core.freemap.FriezeFreeMapFactory;
@@ -165,12 +166,13 @@ public class FriezeContentEditorController implements Initializable {
             }
         });
         //
-        var currentTimeFormat = AppInstanceConfiguration.getSelectedProject().getTimeFormat();
+        var currentTimeFormat = AppInstanceConfiguration.getSelectedProject() != null ?
+                AppInstanceConfiguration.getSelectedProject().getTimeFormat() : TimeFormat.LOCAL_TIME;
         friezeStartDateViewer = new DateViewer(currentTimeFormat);
         friezeStartDateViewer.setDisable(true);
         friezeEndDateViewer = new DateViewer(currentTimeFormat);
         friezeEndDateViewer.setDisable(true);
-        timeGrid.add(friezeStartDateViewer.getNode(), 1, 3);
+        timeGrid.add(friezeStartDateViewer.getNode(), 1, 2);
         timeGrid.add(friezeEndDateViewer.getNode(), 4, 2);
         //
         constraintStartDateViewer = new DateViewer(currentTimeFormat);

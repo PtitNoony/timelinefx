@@ -192,7 +192,10 @@ public final class DateViewer {
     }
 
     private DatePicker createDatePicker() {
-        datePicker = new DatePicker(date.getDateAsLocal());
+        datePicker = new DatePicker();
+        if (date != null) {
+            datePicker.setValue(date.getDateAsLocal());
+        }
         datePicker.setConverter(DateUtils.CONVERTER);
         datePicker.setPromptText("dd-MM-yyyy");
         datePicker.valueProperty().addListener((var ov, final var oldValue, final var newValue) -> {

@@ -49,7 +49,19 @@ public final class TimeLineProjectFactory {
      * @return the created project
      */
     public static TimeLineProject createProject(final String name, final Map<String, String> configParams) {
-        final TimeLineProject timeLineProject = new TimeLineProject(name, configParams);
+        return createProject(name, configParams, TimeFormat.LOCAL_TIME);
+    }
+
+    /**
+     * Creates a new, empty project with an explicit time format.
+     *
+     * @param name the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     * @param timeFormat the time format to use for stays created in this project
+     * @return the created project
+     */
+    public static TimeLineProject createProject(final String name, final Map<String, String> configParams, final TimeFormat timeFormat) {
+        final TimeLineProject timeLineProject = new TimeLineProject(name, configParams, timeFormat);
         FriezeObjectFactory.reset();
         return timeLineProject;
     }

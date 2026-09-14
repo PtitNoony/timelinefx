@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -22,22 +23,25 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
           <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
           <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Button fx:id="createB" mnemonicParsing="false" onAction="#handleCreate" text="Create" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-            <Button cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" GridPane.rowIndex="6" />
+            <Button fx:id="createB" mnemonicParsing="false" onAction="#handleCreate" text="Create" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <Button cancelButton="true" defaultButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" GridPane.rowIndex="7" />
             <Label text="Project Name:" />
             <TextField fx:id="nameField" prefWidth="250.0" GridPane.columnIndex="1" />
             <Label text="Project Directory:" GridPane.rowIndex="1" />
             <Label text="Portraits SubFolder:" GridPane.rowIndex="2" />
             <Label text="Pictures SubFolder:" GridPane.rowIndex="3" />
             <Label text="Miniatures SubFolder:" GridPane.rowIndex="4" />
+            <Label text="Time Format:" GridPane.rowIndex="5" />
             <TextField fx:id="directoryField" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="portraitsField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="picturesField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="miniaturesField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="timeFormatCB" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleDirectoryButton" text="..." textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>

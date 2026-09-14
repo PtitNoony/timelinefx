@@ -17,6 +17,7 @@
 
 package com.github.noony.app.timelinefx.hmi;
 
+import com.github.noony.app.timelinefx.core.Date;
 import com.github.noony.app.timelinefx.core.Person;
 import com.github.noony.app.timelinefx.core.Place;
 import com.github.noony.app.timelinefx.core.PlaceFactory;
@@ -26,8 +27,6 @@ import com.github.noony.app.timelinefx.core.StayPeriodLocalDate;
 import com.github.noony.app.timelinefx.core.StayPeriodSimpleTime;
 import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
-import com.github.noony.app.timelinefx.utils.DateUtils;
-import com.github.noony.app.timelinefx.utils.MathUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -45,13 +44,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import org.controlsfx.control.SearchableComboBox;
 
 /**
@@ -65,20 +60,13 @@ public final class StaysCreationViewController implements Initializable {
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(StaysCreationViewController.this);
 
     @FXML
-    private RadioButton timeRB, dateRB;
-    //
-    @FXML
     private SearchableComboBox<Person> personCB;
     //
     @FXML
     private SearchableComboBox<Place> placesSearchCB;
     //
     @FXML
-    private Label startTimeL, startDateL, endTimeL, endDateL;
-    @FXML
-    private TextField startTimeTF, endTimeTF;
-    @FXML
-    private DatePicker startDateP, endDateP;
+    private HBox startDateBox, endDateBox;
     //
     @FXML
     private Button createB, updateB;
@@ -97,13 +85,9 @@ public final class StaysCreationViewController implements Initializable {
 
     private boolean placeOK = false;
 
-    private boolean startOK = false;
+    private DateViewer startDateViewer;
 
-    private boolean endOK = false;
-
-    private long startTime = -1;
-
-    private long endTime = -1;
+    private DateViewer endDateViewer;
 
     private StayPeriod selectedStayPeriod = null;
 
@@ -112,66 +96,13 @@ public final class StaysCreationViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        ToggleGroup stayModeToggelGroup = new ToggleGroup();
-        timeRB.setToggleGroup(stayModeToggelGroup);
-        dateRB.setToggleGroup(stayModeToggelGroup);
         updateB.setDisable(true);
-        timeRB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-            if (t1) {
-                timeFormat = TimeFormat.TIME_MIN;
-                startTimeL.setDisable(false);
-                endTimeL.setDisable(false);
-                startTimeTF.setDisable(false);
-                endTimeTF.setDisable(false);
-                startDateL.setDisable(true);
-                endDateL.setDisable(true);
-                startDateP.setDisable(true);
-                endDateP.setDisable(true);
-                //
-                retreiveStartTime(startTimeTF.getText());
-                retreiveEndTime(endTimeTF.getText());
-                updateCreateStatus();
-            }
-        });
-        dateRB.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) -> {
-            if (t1) {
-                timeFormat = TimeFormat.LOCAL_TIME;
-                startTimeL.setDisable(true);
-                endTimeL.setDisable(true);
-                startTimeTF.setDisable(true);
-                endTimeTF.setDisable(true);
-                startDateL.setDisable(false);
-                endDateL.setDisable(false);
-                startDateP.setDisable(false);
-                endDateP.setDisable(false);
-                //
-                startOK = startDateP.getValue() != null;
-                endOK = endDateP.getValue() != null;
-                updateCreateStatus();
-            }
-        });
-        dateRB.setSelected(true);
-        //
         personCB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Person> ov, Person t, Person t1) -> {
             personOK = t1 != null;
             updateCreateStatus();
         });
         placesSearchCB.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Place> ov, Place t, Place t1) -> {
             placeOK = t1 != null;
-            updateCreateStatus();
-        });
-        startTimeTF.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            retreiveStartTime(t1);
-        });
-        endTimeTF.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-            retreiveEndTime(t1);
-        });
-        startDateP.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            startOK = t1 != null;
-            updateCreateStatus();
-        });
-        endDateP.valueProperty().addListener((ObservableValue<? extends LocalDate> ov, LocalDate t, LocalDate t1) -> {
-            endOK = t1 != null;
             updateCreateStatus();
         });
         //
@@ -187,23 +118,7 @@ public final class StaysCreationViewController implements Initializable {
                 selectedStayPeriod = null;
                 updateB.setDisable(true);
                 clearFields();
-            }
-        });
-        //
-        startDateP.getEditor().setOnAction(eh -> {
-            System.err.println("!! " + eh);
-        });
-
-        // Converter
-        startDateP.setConverter(DateUtils.CONVERTER);
-        startDateP.setPromptText("dd-MM-yyyy");
-        //
-        startDateP.getEditor().setOnKeyTyped(eh -> {
-            try {
-                var aDate = DateUtils.CONVERTER.fromString(startDateP.getEditor().getText());
-                startDateP.setValue(aDate);
-            } catch (Exception e) {
-                LOG.log(Level.FINE, "Ignoring date conversion error: {0}", new Object[]{e});
+                applyProjectTimeFormat();
             }
         });
         //
@@ -217,13 +132,13 @@ public final class StaysCreationViewController implements Initializable {
         switch (timeFormat) {
             case LOCAL_TIME -> {
                 var stay = (StayPeriodLocalDate) selectedStayPeriod;
-                stay.setStartDate(startDateP.getValue());
-                stay.setEndDate(endDateP.getValue());
+                stay.setStartDate(startDateViewer.getDate().getDateAsLocal());
+                stay.setEndDate(endDateViewer.getDate().getDateAsLocal());
             }
             case TIME_MIN -> {
                 var stay = (StayPeriodSimpleTime) selectedStayPeriod;
-                stay.setStartDate(startTime);
-                stay.setEndDate(endTime);
+                stay.setStartDate(startDateViewer.getDate().getDateAsDouble());
+                stay.setEndDate(endDateViewer.getDate().getDateAsDouble());
             }
             default ->
                 throw new UnsupportedOperationException("Trying to create a Stay of unsupported type :: " + timeFormat);
@@ -241,9 +156,9 @@ public final class StaysCreationViewController implements Initializable {
         StayPeriod stay;
         switch (timeFormat) {
             case LOCAL_TIME ->
-                stay = StayFactory.createStayPeriodLocalDate(personCB.getValue(), startDateP.getValue(), endDateP.getValue(), placesSearchCB.getValue());
+                stay = StayFactory.createStayPeriodLocalDate(personCB.getValue(), startDateViewer.getDate().getDateAsLocal(), endDateViewer.getDate().getDateAsLocal(), placesSearchCB.getValue());
             case TIME_MIN ->
-                stay = StayFactory.createStayPeriodSimpleTime(personCB.getValue(), startTime, endTime, placesSearchCB.getValue());
+                stay = StayFactory.createStayPeriodSimpleTime(personCB.getValue(), startDateViewer.getDate().getDateAsDouble(), endDateViewer.getDate().getDateAsDouble(), placesSearchCB.getValue());
             default ->
                 throw new UnsupportedOperationException("Trying to create a Stay of unsupported type :: " + timeFormat);
         }
@@ -261,6 +176,7 @@ public final class StaysCreationViewController implements Initializable {
         timeline = aTimeline;
         if (timeline != null) {
             timeline.addListener(timelineListener);
+            applyProjectTimeFormat();
             runLater(() -> {
                 personCB.getItems().setAll(timeline.getPersons());
                 chronologyListView.getItems().setAll(timeline.getStays());
@@ -315,33 +231,36 @@ public final class StaysCreationViewController implements Initializable {
                 chronologyListView.getItems().add((StayPeriod) event.getNewValue());
             case TimeLineProject.STAY_REMOVED ->
                 chronologyListView.getItems().remove((StayPeriod) event.getNewValue());
+            case TimeLineProject.TIME_FORMAT_CHANGED -> {
+                if (selectedStayPeriod == null) {
+                    applyProjectTimeFormat();
+                }
+            }
             default ->
                 throw new UnsupportedOperationException(event.toString());
         }
     }
 
-    private void retreiveStartTime(String value) {
-        try {
-            startTime = Long.parseLong(value);
-            startOK = true;
-        } catch (NumberFormatException e) {
-            startOK = false;
+    /**
+     * Rebuilds the start/end {@link DateViewer}s to match the project's own time format,
+     * used as the format for the next stay to be created.
+     */
+    private void applyProjectTimeFormat() {
+        if (timeline == null) {
+            return;
         }
-        updateCreateStatus();
-    }
-
-    private void retreiveEndTime(String value) {
-        try {
-            endTime = Long.parseLong(value);
-            endOK = true;
-        } catch (NumberFormatException e) {
-            endOK = false;
+        switch (timeline.getTimeFormat()) {
+            case LOCAL_TIME ->
+                setDateViewers(LocalDate.now(), LocalDate.now());
+            case TIME_MIN ->
+                setDateViewers(0d, 0d);
+            default ->
+                throw new UnsupportedOperationException();
         }
-        updateCreateStatus();
     }
 
     private void updateCreateStatus() {
-        var ready = personOK && placeOK && startOK && endOK;
+        var ready = personOK && placeOK;
         createB.setDisable(!ready);
     }
 
@@ -350,16 +269,12 @@ public final class StaysCreationViewController implements Initializable {
             return;
         }
         switch (selectedStayPeriod.getTimeFormat()) {
-            case LOCAL_TIME -> {
-                dateRB.setSelected(true);
-                startDateP.setValue(LocalDate.ofEpochDay((long) selectedStayPeriod.getStartDate()));
-                endDateP.setValue(LocalDate.ofEpochDay((long) selectedStayPeriod.getEndDate()));
-            }
-            case TIME_MIN -> {
-                timeRB.setSelected(true);
-                startTimeTF.setText(MathUtils.doubleToString(selectedStayPeriod.getStartDate()));
-                endTimeTF.setText(MathUtils.doubleToString(selectedStayPeriod.getEndDate()));
-            }
+            case LOCAL_TIME ->
+                setDateViewers(
+                        LocalDate.ofEpochDay((long) selectedStayPeriod.getStartDate()),
+                        LocalDate.ofEpochDay((long) selectedStayPeriod.getEndDate()));
+            case TIME_MIN ->
+                setDateViewers(selectedStayPeriod.getStartDate(), selectedStayPeriod.getEndDate());
             default ->
                 throw new UnsupportedOperationException();
         }
@@ -371,10 +286,23 @@ public final class StaysCreationViewController implements Initializable {
     private void clearFields() {
         placesSearchCB.getSelectionModel().clearSelection();
         personCB.getSelectionModel().clearSelection();
-        startTimeTF.setText("");
-        endTimeTF.setText("");
-        startDateP.setValue(null);
-        endDateP.setValue(null);
+    }
+
+    private void setDateViewers(final LocalDate startDate, final LocalDate endDate) {
+        timeFormat = TimeFormat.LOCAL_TIME;
+        installDateViewers(new Date(startDate), new Date(endDate));
+    }
+
+    private void setDateViewers(final double startValue, final double endValue) {
+        timeFormat = TimeFormat.TIME_MIN;
+        installDateViewers(new Date(startValue), new Date(endValue));
+    }
+
+    private void installDateViewers(final Date startSeed, final Date endSeed) {
+        startDateViewer = new DateViewer(startSeed);
+        endDateViewer = new DateViewer(endSeed);
+        startDateBox.getChildren().setAll(startDateViewer.getNode());
+        endDateBox.getChildren().setAll(endDateViewer.getNode());
     }
 
     private static class StayPeriodListCellImpl extends ListCell<StayPeriod> {

@@ -82,6 +82,11 @@ public final class TimeLineProject {
      * Name of the property change event fired when a stay is removed.
      */
     public static final String STAY_REMOVED = "stayRemoved";
+
+    /**
+     * Name of the property change event fired when the project's time format changes.
+     */
+    public static final String TIME_FORMAT_CHANGED = "timeFormatChanged";
     //
 
     /**
@@ -108,6 +113,11 @@ public final class TimeLineProject {
      * Configuration key for the portraits folder location.
      */
     public static final String PORTRAIT_FOLDER_KEY = "portraitsFolderKey";
+
+    /**
+     * Configuration key for the project's time format.
+     */
+    public static final String TIME_FORMAT_KEY = "timeFormatKey";
 
     /**
      * Default portraits folder name, relative to the project folder.
@@ -205,7 +215,25 @@ public final class TimeLineProject {
      */
     private final List<PictureChronology> pictureChronologies;
 
+    /**
+     * The time format used for stays created in this project.
+     */
+    private TimeFormat timeFormat;
+
+    /**
+     * @param projectName the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     */
     protected TimeLineProject(final String projectName, final Map<String, String> configParams) {
+        this(projectName, configParams, TimeFormat.LOCAL_TIME);
+    }
+
+    /**
+     * @param projectName the project's name
+     * @param configParams optional configuration overrides (folder locations, etc.)
+     * @param aTimeFormat the time format to use for stays created in this project
+     */
+    protected TimeLineProject(final String projectName, final Map<String, String> configParams, final TimeFormat aTimeFormat) {
         name = projectName;
         initFolders(configParams);
         propertyChangeSupport = new PropertyChangeSupport(TimeLineProject.this);
@@ -215,6 +243,7 @@ public final class TimeLineProject {
         stays = new LinkedList<>();
         friezes = new LinkedList<>();
         pictureChronologies = new LinkedList<>();
+        timeFormat = aTimeFormat;
     }
 
     private void initFolders(final Map<String, String> configParams) {
@@ -370,6 +399,21 @@ public final class TimeLineProject {
     }
 
     /**
+     * @return the time format used for stays created in this project
+     */
+    public TimeFormat getTimeFormat() {
+        return timeFormat;
+    }
+
+    /**
+     * @param newTimeFormat the new time format to use for stays created in this project
+     */
+    public void setTimeFormat(final TimeFormat newTimeFormat) {
+        timeFormat = newTimeFormat;
+        propertyChangeSupport.firePropertyChange(TIME_FORMAT_CHANGED, this, timeFormat);
+    }
+
+    /**
      * Adds a place (and its ancestors) to the project.
      *
      * @param aPlace the place to add
@@ -479,6 +523,20 @@ public final class TimeLineProject {
      */
     public List<StayPeriod> getStays() {
         return Collections.unmodifiableList(stays);
+    }
+
+    /**
+     * @return the earliest start date across every stay in the project, or {@code 0} if it has no stays
+     */
+    public double getMinDate() {
+        return stays.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(0);
+    }
+
+    /**
+     * @return the latest end date across every stay in the project, or {@code 0} if it has no stays
+     */
+    public double getMaxDate() {
+        return stays.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(0);
     }
 
     protected boolean addFrieze(final Frieze frieze) {

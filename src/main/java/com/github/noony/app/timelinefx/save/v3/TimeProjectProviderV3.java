@@ -194,7 +194,8 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
                 TimeLineProject.PICTURES_FOLDER_KEY, picturesFolderValue,
                 TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderValue
         );
-        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams);
+        var timeFormatValue = e.hasAttribute(TIME_FORMAT_ATR) ? TimeFormat.valueOf(e.getAttribute(TIME_FORMAT_ATR)) : TimeFormat.LOCAL_TIME;
+        TimeLineProject project = TimeLineProjectFactory.createProject(projectName, configParams, timeFormatValue);
         //
         List<String> relativePathLoaded = new LinkedList<>();
         //
@@ -289,6 +290,7 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
             rootElement.setAttribute(PORTRAIT_FOLDER_ATR, portraitsFolderName);
             rootElement.setAttribute(PICTURES_LOCATION_ATR, picturesFolderName);
             rootElement.setAttribute(MINIATURES_FOLDER_ATR, miniaturesFolderName);
+            rootElement.setAttribute(TIME_FORMAT_ATR, project.getTimeFormat().name());
             doc.appendChild(rootElement);
             // save places
             Element placesGroupElement = doc.createElement(PLACES_GROUP);
@@ -470,7 +472,6 @@ public class TimeProjectProviderV3 implements TimelineProjectProvider {
     protected static void parseObjectTimeValue(Element sourceElement, IDateObject aDateObject) {
         if (sourceElement.hasAttribute(TIME_FORMAT_ATR)) {
             var timeFormat = TimeFormat.valueOf(sourceElement.getAttribute(TIME_FORMAT_ATR));
-            aDateObject.setTimeFormat(timeFormat);
             switch (timeFormat) {
                 case LOCAL_TIME -> {
                     if (sourceElement.hasAttribute(DATE_ATR)) {

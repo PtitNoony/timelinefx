@@ -18,6 +18,7 @@
 package com.github.noony.app.timelinefx.hmi;
 
 import com.github.noony.app.timelinefx.Configuration;
+import com.github.noony.app.timelinefx.core.TimeFormat;
 import com.github.noony.app.timelinefx.core.TimeLineProject;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -26,10 +27,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 
@@ -60,6 +63,8 @@ public final class ProjectCreationWizardController implements Initializable {
     private TextField picturesField;
     @FXML
     private TextField miniaturesField;
+    @FXML
+    private ChoiceBox<TimeFormat> timeFormatCB;
 
     private String name = "";
 
@@ -77,6 +82,7 @@ public final class ProjectCreationWizardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        timeFormatCB.setItems(FXCollections.observableArrayList(TimeFormat.values()));
         nameField.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             name = t1.trim();
             if (incompleteProjectFolder != null) {
@@ -112,6 +118,7 @@ public final class ProjectCreationWizardController implements Initializable {
         portraitsField.setText(portraitsFolderName);
         picturesField.setText(picturesFolderName);
         miniaturesField.setText(miniaturesFolderName);
+        timeFormatCB.getSelectionModel().select(TimeFormat.LOCAL_TIME);
         update();
     }
 
@@ -143,7 +150,8 @@ public final class ProjectCreationWizardController implements Initializable {
                 TimeLineProject.PROJECT_FOLDER_KEY, projectFolderPath,
                 TimeLineProject.PORTRAIT_FOLDER_KEY, portraitsFolderName,
                 TimeLineProject.PICTURES_FOLDER_KEY, picturesFolderName,
-                TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderName
+                TimeLineProject.MINIATURES_FOLDER_KEY, miniaturesFolderName,
+                TimeLineProject.TIME_FORMAT_KEY, timeFormatCB.getValue().name()
         );
         propertyChangeSupport.firePropertyChange(CREATE, this, configParams);
     }

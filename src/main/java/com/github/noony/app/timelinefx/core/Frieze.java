@@ -198,23 +198,23 @@ public final class Frieze implements FriezeObject {
     /**
      * The earliest date across this frieze's stays.
      */
-    private double minDate = DEFAULT_MIN_DATE;
+    private Date minDate = new Date((double) DEFAULT_MIN_DATE);
 
     /**
      * The latest date across this frieze's stays.
      */
-    private double maxDate = DEFAULT_MAX_DATE;
+    private Date maxDate = new Date((double) DEFAULT_MAX_DATE);
     //
 
     /**
      * The earliest date currently visible.
      */
-    private double minDateWindow = minDate;
+    private double minDateWindow = minDate.getAbsoluteTime();
 
     /**
      * The latest date currently visible.
      */
-    private double maxDateWindow = maxDate;
+    private double maxDateWindow = maxDate.getAbsoluteTime();
     //
 
     /**
@@ -363,17 +363,19 @@ public final class Frieze implements FriezeObject {
                 personsAtPlaces.get(stay.getPlace()).add(stay.getPerson());
             }
             // handle dates
-            if (!dates.contains(stay.getStartDate())) {
-                dates.add(stay.getStartDate());
+            final var stayStartDate = stay.getStartDate().getAbsoluteTime();
+            final var stayEndDate = stay.getEndDate().getAbsoluteTime();
+            if (!dates.contains(stayStartDate)) {
+                dates.add(stayStartDate);
             }
-            if (!dates.contains(stay.getEndDate())) {
-                dates.add(stay.getEndDate());
+            if (!dates.contains(stayEndDate)) {
+                dates.add(stayEndDate);
             }
-            if (!startDates.contains(stay.getStartDate())) {
-                startDates.add(stay.getStartDate());
+            if (!startDates.contains(stayStartDate)) {
+                startDates.add(stayStartDate);
             }
-            if (!endDates.contains(stay.getEndDate())) {
-                endDates.add(stay.getEndDate());
+            if (!endDates.contains(stayEndDate)) {
+                endDates.add(stayEndDate);
             }
             //
             updateMinMaxDates();
@@ -383,8 +385,11 @@ public final class Frieze implements FriezeObject {
     }
 
     private void updateMinMaxDates() {
-        minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-        maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+        final var format = getTimeFormat();
+        final var newMinValue = stayPeriods.stream().mapToDouble(s -> s.getStartDate().getAbsoluteTime()).min().orElse(DEFAULT_MIN_DATE);
+        final var newMaxValue = stayPeriods.stream().mapToDouble(s -> s.getEndDate().getAbsoluteTime()).max().orElse(DEFAULT_MAX_DATE);
+        minDate = Date.of(format, newMinValue);
+        maxDate = Date.of(format, newMaxValue);
     }
 
     /**
@@ -418,11 +423,10 @@ public final class Frieze implements FriezeObject {
             //
             updateMinMaxDates();
             //
-            final var startDate = stay.getStartDate();
-            final var endDate = stay.getEndDate();
-            final var removeStart = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == startDate);
-            final var removeEnd = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == endDate);
-            maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+            final var startDate = stay.getStartDate().getAbsoluteTime();
+            final var endDate = stay.getEndDate().getAbsoluteTime();
+            final var removeStart = stayPeriods.stream().mapToDouble(s -> s.getStartDate().getAbsoluteTime()).noneMatch(d -> d == startDate);
+            final var removeEnd = stayPeriods.stream().mapToDouble(s -> s.getEndDate().getAbsoluteTime()).noneMatch(d -> d == endDate);
             if (removeStart) {
                 startDates.remove(startDate);
                 // TODO fire ?
@@ -431,12 +435,12 @@ public final class Frieze implements FriezeObject {
                 endDates.remove(endDate);
                 // TODO fire ?
             }
-            if (stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == startDate)
-                    && stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == startDate)) {
+            if (stayPeriods.stream().mapToDouble(s -> s.getStartDate().getAbsoluteTime()).noneMatch(d -> d == startDate)
+                    && stayPeriods.stream().mapToDouble(s -> s.getEndDate().getAbsoluteTime()).noneMatch(d -> d == startDate)) {
                 dates.remove(startDate);
             }
-            if (stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == endDate)
-                    && stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == endDate)) {
+            if (stayPeriods.stream().mapToDouble(s -> s.getStartDate().getAbsoluteTime()).noneMatch(d -> d == endDate)
+                    && stayPeriods.stream().mapToDouble(s -> s.getEndDate().getAbsoluteTime()).noneMatch(d -> d == endDate)) {
                 dates.remove(endDate);
             }
             //
@@ -627,14 +631,14 @@ public final class Frieze implements FriezeObject {
     /**
      * @return the earliest date across this frieze's stays
      */
-    public double getMinDate() {
+    public Date getMinDate() {
         return minDate;
     }
 
     /**
      * @return the latest date across this frieze's stays
      */
-    public double getMaxDate() {
+    public Date getMaxDate() {
         return maxDate;
     }
 
@@ -829,8 +833,8 @@ public final class Frieze implements FriezeObject {
     }
 
     private void updateDatesOnRemoval(final double dateRemoved, final boolean isStartDate) {
-        final var notInStartDates = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).noneMatch(d -> d == dateRemoved);
-        final var notInEndDates = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).noneMatch(d -> d == dateRemoved);
+        final var notInStartDates = stayPeriods.stream().mapToDouble(s -> s.getStartDate().getAbsoluteTime()).noneMatch(d -> d == dateRemoved);
+        final var notInEndDates = stayPeriods.stream().mapToDouble(s -> s.getEndDate().getAbsoluteTime()).noneMatch(d -> d == dateRemoved);
         if (isStartDate && notInStartDates) {
             startDates.remove(dateRemoved);
             propertyChangeSupport.firePropertyChange(START_DATE_REMOVED, this, dateRemoved);
@@ -846,12 +850,11 @@ public final class Frieze implements FriezeObject {
 
     private void updateDatesOnCreation(final double dateAdded, final boolean isStartDate) {
         // start by updating min max
-        final var minWindowsAtMinDate = minDate == minDateWindow;
-        final var maxWindowsAtMaxDate = maxDate == maxDateWindow;
-        final var oldMinDate = minDate;
-        final var oldMaxDate = maxDate;
-        minDate = stayPeriods.stream().mapToDouble(StayPeriod::getStartDate).min().orElse(DEFAULT_MIN_DATE);
-        maxDate = stayPeriods.stream().mapToDouble(StayPeriod::getEndDate).max().orElse(DEFAULT_MAX_DATE);
+        final var minWindowAtMinDate = minDate.getAbsoluteTime() == minDateWindow;
+        final var maxWindowAtMaxDate = maxDate.getAbsoluteTime() == maxDateWindow;
+        final var oldMinDate = minDate.getAbsoluteTime();
+        final var oldMaxDate = maxDate.getAbsoluteTime();
+        updateMinMaxDates();
         //
         if (!dates.contains(dateAdded)) {
             dates.add(dateAdded);
@@ -863,11 +866,11 @@ public final class Frieze implements FriezeObject {
             endDates.add(dateAdded);
             propertyChangeSupport.firePropertyChange(END_DATE_ADDED, this, dateAdded);
         }
-        if (minWindowsAtMinDate && oldMinDate != minDate) {
-            setMinDateWindow(minDate);
+        if (minWindowAtMinDate && oldMinDate != minDate.getAbsoluteTime()) {
+            setMinDateWindow(minDate.getAbsoluteTime());
         }
-        if (maxWindowsAtMaxDate && oldMaxDate != maxDate) {
-            setMaxDateWindow(maxDate);
+        if (maxWindowAtMaxDate && oldMaxDate != maxDate.getAbsoluteTime()) {
+            setMaxDateWindow(maxDate.getAbsoluteTime());
         }
     }
 

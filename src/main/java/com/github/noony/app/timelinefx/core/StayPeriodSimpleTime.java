@@ -52,22 +52,22 @@ public class StayPeriodSimpleTime extends StayPeriod {
         endTime = anEndTime;
     }
 
-    @Override public double getPreviousStartDate() {
-        return previousStartTime;
+    @Override public Date getPreviousStartDate() {
+        return new Date(previousStartTime);
     }
 
-    @Override public double getPreviousEndDate() {
-        return previousEndTime;
-    }
-
-    @Override
-    public double getStartDate() {
-        return startTime;
+    @Override public Date getPreviousEndDate() {
+        return new Date(previousEndTime);
     }
 
     @Override
-    public double getEndDate() {
-        return endTime;
+    public Date getStartDate() {
+        return new Date(startTime);
+    }
+
+    @Override
+    public Date getEndDate() {
+        return new Date(endTime);
     }
 
     /**

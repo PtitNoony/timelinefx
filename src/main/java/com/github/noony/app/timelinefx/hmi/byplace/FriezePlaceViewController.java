@@ -173,10 +173,10 @@ public class FriezePlaceViewController implements Initializable {
         friezePane.getChildren().setAll(friezeSpaceLinearDrawing.getNode());
         friezeSpaceLinearDrawing.setWidth(friezePaneWidth);
         friezeSpaceLinearDrawing.setHeight(friezePaneHeight);
-        timeSlider.setMin(frieze.getMinDate());
-        timeSlider.setMax(frieze.getMaxDate());
-        timeSlider.setLowValue(frieze.getMinDate());
-        timeSlider.setHighValue(frieze.getMaxDate());
+        timeSlider.setMin(frieze.getMinDate().getAbsoluteTime());
+        timeSlider.setMax(frieze.getMaxDate().getAbsoluteTime());
+        timeSlider.setLowValue(frieze.getMinDate().getAbsoluteTime());
+        timeSlider.setHighValue(frieze.getMaxDate().getAbsoluteTime());
     }
 
     private void updateLowerTimeValue() {

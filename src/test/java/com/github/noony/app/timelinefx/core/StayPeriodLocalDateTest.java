@@ -124,11 +124,11 @@ public final class StayPeriodLocalDateTest {
     @Test
     public void testStartDate() {
         final var instance = createStay();
-        assertEquals(LocalDate.of(2023, 1, 1).toEpochDay(), instance.getStartDate());
+        assertEquals(LocalDate.of(2023, 1, 1), instance.getStartDate().getDateAsLocal());
         final var newStart = LocalDate.of(2023, 2, 1);
         instance.setStartDate(newStart);
-        assertEquals(newStart.toEpochDay(), instance.getStartDate());
-        assertEquals(LocalDate.of(2023, 1, 1).toEpochDay(), instance.getPreviousStartDate());
+        assertEquals(newStart, instance.getStartDate().getDateAsLocal());
+        assertEquals(LocalDate.of(2023, 1, 1), instance.getPreviousStartDate().getDateAsLocal());
     }
 
     /**
@@ -137,11 +137,11 @@ public final class StayPeriodLocalDateTest {
     @Test
     public void testEndDate() {
         final var instance = createStay();
-        assertEquals(LocalDate.of(2023, 1, 10).toEpochDay(), instance.getEndDate());
+        assertEquals(LocalDate.of(2023, 1, 10), instance.getEndDate().getDateAsLocal());
         final var newEnd = LocalDate.of(2023, 2, 10);
         instance.setEndDate(newEnd);
-        assertEquals(newEnd.toEpochDay(), instance.getEndDate());
-        assertEquals(LocalDate.of(2023, 1, 10).toEpochDay(), instance.getPreviousEndDate());
+        assertEquals(newEnd, instance.getEndDate().getDateAsLocal());
+        assertEquals(LocalDate.of(2023, 1, 10), instance.getPreviousEndDate().getDateAsLocal());
     }
 
     /**

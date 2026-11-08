@@ -133,12 +133,12 @@ public final class FreeMapSimpleStay implements FreeMapStay {
      */
     @Override
     public double getStartDate() {
-        return stay.getStartDate();
+        return stay.getStartDate().getAbsoluteTime();
     }
 
     @Override
     public double getEndDate() {
-        return stay.getEndDate();
+        return stay.getEndDate().getAbsoluteTime();
     }
 
     @Override

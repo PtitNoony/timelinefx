@@ -1126,14 +1126,12 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
         stayElement.setAttribute(PERSON_ATR, Long.toString(stay.getPerson().getId()));
         switch (stay.getTimeFormat()) {
             case LOCAL_TIME -> {
-                final LocalDate startDate = LocalDate.ofEpochDay((long) stay.getStartDate());
-                final LocalDate endDate = LocalDate.ofEpochDay((long) stay.getEndDate());
-                stayElement.setAttribute(START_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(startDate));
-                stayElement.setAttribute(END_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(endDate));
+                stayElement.setAttribute(START_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(stay.getStartDate().getDateAsLocal()));
+                stayElement.setAttribute(END_DATE_ATR, IDateObject.DEFAULT_DATE_FORMATTER.format(stay.getEndDate().getDateAsLocal()));
             }
             case TIME_MIN -> {
-                stayElement.setAttribute(START_DATE_ATR, Double.toString(stay.getStartDate()));
-                stayElement.setAttribute(END_DATE_ATR, Double.toString(stay.getEndDate()));
+                stayElement.setAttribute(START_DATE_ATR, Double.toString(stay.getStartDate().getDateAsDouble()));
+                stayElement.setAttribute(END_DATE_ATR, Double.toString(stay.getEndDate().getDateAsDouble()));
             }
             default ->
                 throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + stay.getTimeFormat());

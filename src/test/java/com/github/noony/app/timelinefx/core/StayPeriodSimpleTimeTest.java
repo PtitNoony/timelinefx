@@ -89,10 +89,10 @@ public final class StayPeriodSimpleTimeTest {
     @Test
     public void testStartDate() {
         final var instance = createStay();
-        assertEquals(0.0, instance.getStartDate());
+        assertEquals(0.0, instance.getStartDate().getDateAsDouble());
         instance.setStartDate(5.0);
-        assertEquals(5.0, instance.getStartDate());
-        assertEquals(0.0, instance.getPreviousStartDate());
+        assertEquals(5.0, instance.getStartDate().getDateAsDouble());
+        assertEquals(0.0, instance.getPreviousStartDate().getDateAsDouble());
     }
 
     /**
@@ -101,10 +101,10 @@ public final class StayPeriodSimpleTimeTest {
     @Test
     public void testEndDate() {
         final var instance = createStay();
-        assertEquals(10.0, instance.getEndDate());
+        assertEquals(10.0, instance.getEndDate().getDateAsDouble());
         instance.setEndDate(20.0);
-        assertEquals(20.0, instance.getEndDate());
-        assertEquals(10.0, instance.getPreviousEndDate());
+        assertEquals(20.0, instance.getEndDate().getDateAsDouble());
+        assertEquals(10.0, instance.getPreviousEndDate().getDateAsDouble());
     }
 
     /**

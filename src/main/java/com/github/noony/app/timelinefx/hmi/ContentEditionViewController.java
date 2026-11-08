@@ -205,6 +205,7 @@ public final class ContentEditionViewController implements Initializable {
     }
 
     private void setTimelineProject(TimeLineProject aTimeLineProject) {
+        LOG.log(Level.INFO, "setTimelineProject: {0}.", new Object[]{aTimeLineProject});
         if (timeLineProject != null) {
             timeLineProject.removeListener(timelineChangeListener);
         }
@@ -243,6 +244,7 @@ public final class ContentEditionViewController implements Initializable {
     }
 
     private void updatePlacesTab() {
+        LOG.log(Level.INFO, "updatePlacesTab");
         var rootPlaceItem = createRootPlaceItem();
         if (timeLineProject != null) {
             timeLineProject.getHighLevelPlaces().forEach(p -> rootPlaceItem.getChildren().add(createTreeItemPlace(p)));

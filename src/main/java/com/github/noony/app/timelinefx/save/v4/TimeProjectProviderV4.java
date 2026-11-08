@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.noony.app.timelinefx.save.v4;
 
 import com.github.noony.app.timelinefx.core.Frieze;
@@ -438,7 +437,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
                 switch (element.getTagName()) {
                     case PLACES_GROUP -> {
                         final List<Place> places = parsePlaces(element, null);
-                        places.stream().filter(p -> p.getParent() == null).forEach(p -> project.addHighLevelPlace(p));
+                        places.stream().filter(p -> p.isRootPlace()).forEach(p -> project.addHighLevelPlace(p));
                     }
                     case PERSONS_GROUP -> {
                         final List<Person> persons = parsePersons(element, project, relativePathLoaded);
@@ -533,8 +532,8 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     /**
-     * Finds the first direct child element with the given tag name, without recursing into
-     * descendants (unlike {@link Element#getElementsByTagName(String)}, which walks the whole subtree).
+     * Finds the first direct child element with the given tag name, without recursing into descendants (unlike {@link Element#getElementsByTagName(String)}, which walks the whole
+     * subtree).
      *
      * @param parent the element whose direct children are searched
      * @param tagName the tag name to look for
@@ -551,8 +550,8 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     /**
-     * Parses the given attribute as a double, failing with a message identifying the element, attribute and
-     * raw value instead of the bare {@link NumberFormatException} {@link Double#parseDouble(String)} would throw.
+     * Parses the given attribute as a double, failing with a message identifying the element, attribute and raw value instead of the bare
+     * {@link NumberFormatException} {@link Double#parseDouble(String)} would throw.
      *
      * @param element the element carrying the attribute
      * @param attributeName the attribute to parse
@@ -583,8 +582,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     /**
-     * Returns the {@link TimeFormat} held by the {@link #TIME_FORMAT_ATR} attribute, or a default value if the
-     * attribute is absent.
+     * Returns the {@link TimeFormat} held by the {@link #TIME_FORMAT_ATR} attribute, or a default value if the attribute is absent.
      *
      * @param element the element possibly carrying the {@link #TIME_FORMAT_ATR} attribute
      * @param defaultValue the value to return if the attribute is absent
@@ -598,8 +596,7 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
     }
 
     /**
-     * Checks that every loaded file still exists, and warns about portrait/picture files present on disk but
-     * referenced by nothing that was loaded.
+     * Checks that every loaded file still exists, and warns about portrait/picture files present on disk but referenced by nothing that was loaded.
      *
      * @param project the project being loaded
      * @param relativePathLoaded the project-relative file paths that were referenced while loading
@@ -637,11 +634,31 @@ public class TimeProjectProviderV4 implements TimelineProjectProvider {
 
     private static List<Place> parsePlaces(final Element placesRootElement, final Place parentPlace) {
         final List<Place> places = new LinkedList<>();
-        final NodeList placeElements = placesRootElement.getChildNodes();
-        for (int i = 0; i < placeElements.getLength(); i++) {
-            if (placeElements.item(i).getNodeName().equals(PLACE_ELEMENT)) {
-                final Element e = (Element) placeElements.item(i);
-                final Place p = parsePlace(e, parentPlace);
+        final NodeList elements = placesRootElement.getChildNodes();
+        //
+        List<Element> placesElements = new LinkedList<>();
+        for (int i = 0; i < elements.getLength(); i++) {
+            if (elements.item(i).getNodeName().equals(PLACE_ELEMENT)) {
+                placesElements.add((Element) elements.item(i));
+            }
+        }
+        // in case this is the first call.
+        if (parentPlace == null) {
+            // if first call, there should be only one root place.
+            if (placesElements.isEmpty()) {
+                LOG.log(Level.WARNING, "No place found in this file.");
+            } else if (placesElements.size() > 1) {
+                LOG.log(Level.SEVERE, "Sereval root places found, they will be ignored.");
+                for (int i = 0; i < placesElements.size(); i++) {
+                    LOG.log(Level.SEVERE, "==> {0} ", new Object[]{placesElements.get(i).getNodeName()});
+                }
+            } else {
+                final Place p = parsePlace(placesElements.get(0), parentPlace);
+                places.add(p);
+            }
+        } else {
+            for (int i = 0; i < placesElements.size(); i++) {
+                final Place p = parsePlace(placesElements.get(i), parentPlace);
                 places.add(p);
             }
         }

@@ -41,8 +41,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * A timeline project: the top-level container for a set of places, persons, stays,
- * friezes and picture chronologies, backed by a folder on disk.
+ * A timeline project: the top-level container for a set of places, persons, stays, friezes and picture chronologies, backed by a folder on disk.
  *
  * @author hamon
  */
@@ -440,6 +439,7 @@ public final class TimeLineProject {
      * @return true if the place was added, false if it was already present
      */
     public boolean addHighLevelPlace(final Place aPlace) {
+        LOG.log(Level.INFO, "addHighLevelPlace {0}.", new Object[]{aPlace});
         if (!highLevelPlaces.contains(aPlace)) {
             highLevelPlaces.add(aPlace);
             highLevelPlaces.sort(Place.COMPARATOR);
@@ -449,6 +449,8 @@ public final class TimeLineProject {
             }
             propertyChangeSupport.firePropertyChange(HIGH_LEVEL_PLACE_ADDED, this, aPlace);
             return true;
+        } else {
+            LOG.log(Level.INFO, " > HighLevelPlace already added {0}.", new Object[]{aPlace});
         }
         return false;
     }
@@ -681,6 +683,11 @@ public final class TimeLineProject {
     private void removeStaysAt(final Place aPlace) {
         final List<StayPeriod> staysToRemove = stays.stream().filter(s -> s.getPlace() == aPlace).toList();
         staysToRemove.forEach(this::removeStay);
+    }
+
+    @Override
+    public String toString() {
+        return "Timeline[" + name + "]";
     }
 
 }

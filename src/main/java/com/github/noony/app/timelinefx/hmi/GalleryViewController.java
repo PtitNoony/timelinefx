@@ -234,8 +234,10 @@ public final class GalleryViewController implements Initializable, ViewControlle
             loadPictureLoaderView();
         }
         pictureLoaderController.setMode(mode);
-        if (currentPicture != null) {
+        if (mode == EditionMode.EDITION && currentPicture != null) {
             pictureLoaderController.setPicture(currentPicture);
+        } else {
+            pictureLoaderController.reset();
         }
         propertyChangeSupport.firePropertyChange(DISPLAY_PICTURE_LOADER, pictureLoaderController, pictureLoaderView);
     }
@@ -262,6 +264,9 @@ public final class GalleryViewController implements Initializable, ViewControlle
                         picturesTableView.refresh();
                     }
                 });
+            }
+            case PictureLoaderViewController.FILE_REQUEST_EVENT -> {
+                // nothing to do
             }
             default ->
                 throw new UnsupportedOperationException("Unsupported event in handlePictureLoaderControllerChanges: " + event);

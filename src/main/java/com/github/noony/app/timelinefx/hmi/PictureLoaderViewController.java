@@ -121,13 +121,8 @@ public final class PictureLoaderViewController implements Initializable, ViewCon
 
     public void reset() {
         // TODO manage order and selection
-        PersonFactory.getPERSONS().stream()
-                .filter(p -> !peopleCheckListView.getItems().contains(p))
-                .forEach(p -> peopleCheckListView.getItems().add(p));
-        //
-        PlaceFactory.getPlaces().stream()
-                .filter(p -> !placesCheckListView.getItems().contains(p))
-                .forEach(p -> placesCheckListView.getItems().add(p));
+        peopleCheckListView.getItems().setAll(PersonFactory.getPERSONS());
+        placesCheckListView.getItems().setAll(PlaceFactory.getPlaces());
         //
         peopleCheckListView.getCheckModel().clearChecks();
         placesCheckListView.getCheckModel().clearChecks();
@@ -180,6 +175,11 @@ public final class PictureLoaderViewController implements Initializable, ViewCon
 
     private void setTimelineProject(TimeLineProject aProject) {
         project = aProject;
+        if(aProject != null){
+            timeformatCB.getSelectionModel().select(project.getTimeFormat());
+        }else {
+            timeformatCB.getSelectionModel().select(TimeFormat.LOCAL_TIME);
+        }
     }
 
     protected void setPicture(Picture aPicture) {

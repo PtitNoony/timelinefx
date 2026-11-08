@@ -174,8 +174,8 @@ public final class FriezeFreeMap implements FriezeObject {
         //
         applyProperties(properties);
         //
-        minDate = frieze.getMinDate();
-        maxDate = frieze.getMaxDate();
+        minDate = frieze.getMinDate().getAbsoluteTime();
+        maxDate = frieze.getMaxDate().getAbsoluteTime();
         //
         dateHandles.forEach(dateHandle -> {
             switch (dateHandle.getTimeType()) {
@@ -559,9 +559,9 @@ public final class FriezeFreeMap implements FriezeObject {
             return;
         }
         // This should be the responsability of the Frieze to propagate changes on these...
-        var startDate = stayPeriod.getStartDate();
+        var startDate = stayPeriod.getStartDate().getAbsoluteTime();
         createDateHandle(startDate, FreeMapDateHandle.TimeType.START);
-        var endDate = stayPeriod.getEndDate();
+        var endDate = stayPeriod.getEndDate().getAbsoluteTime();
         createDateHandle(endDate, FreeMapDateHandle.TimeType.END);
         freeMapPerson.addStay(stayPeriod, freeMapPlace);
     }
@@ -709,8 +709,8 @@ public final class FriezeFreeMap implements FriezeObject {
     private void updateDatePositions() {
         var oldMinDate = minDate;
         var oldMaxDate = maxDate;
-        minDate = frieze.getMinDate();
-        maxDate = frieze.getMaxDate();
+        minDate = frieze.getMinDate().getAbsoluteTime();
+        maxDate = frieze.getMaxDate().getAbsoluteTime();
         //
         double windowChangedRadio = (maxDate - minDate) / (oldMaxDate - oldMinDate);
         //

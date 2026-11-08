@@ -271,10 +271,12 @@ public final class StaysCreationViewController implements Initializable {
         switch (selectedStayPeriod.getTimeFormat()) {
             case LOCAL_TIME ->
                 setDateViewers(
-                        LocalDate.ofEpochDay((long) selectedStayPeriod.getStartDate()),
-                        LocalDate.ofEpochDay((long) selectedStayPeriod.getEndDate()));
+                        selectedStayPeriod.getStartDate().getDateAsLocal(),
+                        selectedStayPeriod.getEndDate().getDateAsLocal());
             case TIME_MIN ->
-                setDateViewers(selectedStayPeriod.getStartDate(), selectedStayPeriod.getEndDate());
+                setDateViewers(
+                        selectedStayPeriod.getStartDate().getDateAsDouble(),
+                        selectedStayPeriod.getEndDate().getDateAsDouble());
             default ->
                 throw new UnsupportedOperationException();
         }

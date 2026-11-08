@@ -243,8 +243,8 @@ public final class FriezeTest {
     public void testDatesRange() {
         final var instance = FriezeFactory.createFrieze(project, "testDatesRange");
         instance.addStay(stay);
-        assertEquals(10.0, instance.getMinDate());
-        assertEquals(20.0, instance.getMaxDate());
+        assertEquals(10.0, instance.getMinDate().getAbsoluteTime());
+        assertEquals(20.0, instance.getMaxDate().getAbsoluteTime());
         assertEquals(2, instance.getNbDates());
         assertTrue(instance.getDates().containsAll(List.of(10.0, 20.0)));
         assertTrue(instance.getStartDates().contains(10.0));

@@ -177,10 +177,10 @@ public class FriezePeopleViewController implements Initializable {
         peopleViewPane.getChildren().setAll(friezePeopleLinearDrawing.getNode());
         friezePeopleLinearDrawing.setWidth(friezePaneWidth);
         friezePeopleLinearDrawing.setHeight(friezePaneHeight);
-        peopleViewTimeSlider.setMin(frieze.getMinDate());
-        peopleViewTimeSlider.setMax(frieze.getMaxDate());
-        peopleViewTimeSlider.setLowValue(frieze.getMinDate());
-        peopleViewTimeSlider.setHighValue(frieze.getMaxDate());
+        peopleViewTimeSlider.setMin(frieze.getMinDate().getAbsoluteTime());
+        peopleViewTimeSlider.setMax(frieze.getMaxDate().getAbsoluteTime());
+        peopleViewTimeSlider.setLowValue(frieze.getMinDate().getAbsoluteTime());
+        peopleViewTimeSlider.setHighValue(frieze.getMaxDate().getAbsoluteTime());
     }
 
     private void updateLowerTimeValue() {

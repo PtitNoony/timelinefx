@@ -54,6 +54,22 @@ public class Date {
         dateAsDouble = aDateAsDouble;
     }
 
+    /**
+     * @param aTimeFormat the time format to interpret the given absolute value with
+     * @param anAbsoluteValue an absolute time value, as returned by {@link #getAbsoluteTime()}
+     * @return the corresponding {@link Date}
+     */
+    public static Date of(final TimeFormat aTimeFormat, final double anAbsoluteValue) {
+        return switch (aTimeFormat) {
+            case LOCAL_TIME ->
+                new Date(LocalDate.ofEpochDay((long) anAbsoluteValue));
+            case TIME_MIN ->
+                new Date(anAbsoluteValue);
+            default ->
+                throw new UnsupportedOperationException(Messages.UNSUPPORTED_TIME_FORMAT + aTimeFormat);
+        };
+    }
+
     public TimeFormat getTimeFormat() {
         return timeFormat;
     }

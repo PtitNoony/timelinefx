@@ -32,7 +32,7 @@ public abstract class StayPeriod implements FriezeObject {
     /**
      * Orders stays by start date.
      */
-    public static final Comparator<? super StayPeriod> STAY_COMPARATOR = Comparator.comparingDouble(StayPeriod::getStartDate);
+    public static final Comparator<? super StayPeriod> STAY_COMPARATOR = Comparator.comparingDouble(s -> s.getStartDate().getAbsoluteTime());
 
     /**
      * Name of the property change event fired when the stay's person changes.
@@ -145,22 +145,22 @@ public abstract class StayPeriod implements FriezeObject {
     /**
      * @return the start date before the last change
      */
-    public abstract double getPreviousStartDate();
+    public abstract Date getPreviousStartDate();
 
     /**
      * @return the end date before the last change
      */
-    public abstract double getPreviousEndDate();
+    public abstract Date getPreviousEndDate();
 
     /**
      * @return the stay's start date
      */
-    public abstract double getStartDate();
+    public abstract Date getStartDate();
 
     /**
      * @return the stay's end date
      */
-    public abstract double getEndDate();
+    public abstract Date getEndDate();
 
     /**
      * @return the time format used to represent this stay's dates

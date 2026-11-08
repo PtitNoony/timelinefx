@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class TimeFormatToString {
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     public static String timeToString(long time, TimeFormat timeFormat) {
         switch (timeFormat) {
